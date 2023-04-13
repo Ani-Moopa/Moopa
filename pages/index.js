@@ -8,6 +8,8 @@ import Image from "next/image";
 import Content from "../components/hero/content";
 import { useRouter } from "next/router";
 
+import { motion } from "framer-motion";
+
 import { useSession, signIn } from "next-auth/react";
 
 export function Navigasi() {
@@ -323,7 +325,6 @@ export default function Home({ detail, populars }) {
       </div>
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
-
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center md:flex md:h-[467px] md:w-[80%] md:justify-between">
@@ -364,7 +365,6 @@ export default function Home({ detail, populars }) {
             </div>
           </div>
         </div>
-
         {session && (
           <div className="w-screen flex md:justify-center mx-3 md:mx-0 mt-10 md:mt-0">
             <div className="md:w-[86%] md:text-3xl text-2xl font-bold font-karla">
@@ -372,35 +372,65 @@ export default function Home({ detail, populars }) {
             </div>
           </div>
         )}
-
         {/* Mobile */}
-
         <div className="md:mt-16 mt-12 flex flex-col items-center">
-          <div className="w-screen flex-none lg:w-[87%]">
+          <motion.div
+            className="w-screen flex-none lg:w-[87%]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
+          >
+            {/* SECTION 1 */}
             {session && user?.recentWatch && (
-              <Content
-                ids="recentlyWatched"
-                section="Recently Watched"
-                data={user.recentWatch.reverse()}
-              />
+              <motion.div // Add motion.div to each child component
+                key="recentlyWatched"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="recentlyWatched"
+                  section="Recently Watched"
+                  data={user.recentWatch.reverse()}
+                />
+              </motion.div>
             )}
 
+            {/* SECTION 2 */}
             {detail && (
-              <Content
-                ids="trendingAnime"
-                section="Trending Now"
-                data={detail.data}
-              />
+              <motion.div // Add motion.div to each child component
+                key="trendingAnime"
+                initial={{ y: 20, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="trendingAnime"
+                  section="Trending Now"
+                  data={detail.data}
+                />
+              </motion.div>
             )}
 
+            {/* SECTION 3 */}
             {popular && (
-              <Content
-                ids="popularAnime"
-                section="Popular Anime"
-                data={popular}
-              />
+              <motion.div // Add motion.div to each child component
+                key="popularAnime"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="popularAnime"
+                  section="Popular Anime"
+                  data={popular}
+                />
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
       <Footer />
