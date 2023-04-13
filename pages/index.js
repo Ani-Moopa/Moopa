@@ -88,6 +88,7 @@ export default function Home({ detail, populars }) {
   const { data: session, status } = useSession();
   const [isVisible, setIsVisible] = useState(false);
   const [recently, setRecently] = useState(null);
+  const [user, setUser] = useState(null);
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -102,14 +103,23 @@ export default function Home({ detail, populars }) {
   };
 
   useEffect(() => {
+    async function userData() {
+      if (!session) return;
+      const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
+      const data = await res.json();
+      setUser(data);
+    }
     function fetchData() {
       const recent = JSON.parse(localStorage.getItem("recentWatch"));
       if (recent) {
         setRecently(recent);
       }
     }
+    userData();
     fetchData();
-  }, []);
+  }, [session]);
+
+  // console.log(user?.recentWatch.reverse());
 
   return (
     <>
@@ -344,7 +354,7 @@ export default function Home({ detail, populars }) {
                 <Image
                   draggable={false}
                   src={data.coverImage?.extraLarge || data.image}
-                  alt={data.title.english || data.title.romaji}
+                  alt={`alt for ${data.title.english || data.title.romaji}`}
                   width={460}
                   height={662}
                   priority
@@ -367,11 +377,11 @@ export default function Home({ detail, populars }) {
 
         <div className="md:mt-16 mt-12 flex flex-col items-center">
           <div className="w-screen flex-none lg:w-[87%]">
-            {recently && (
+            {session && user?.recentWatch && (
               <Content
                 ids="recentlyWatched"
                 section="Recently Watched"
-                data={recently}
+                data={user.recentWatch.reverse()}
               />
             )}
 

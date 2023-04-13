@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const result = await collection.updateOne(
       { name: name },
-      { $set: newData }
+      { $addToSet: newData }
     );
 
     res.status(200).json(result);

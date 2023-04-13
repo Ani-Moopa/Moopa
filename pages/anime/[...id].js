@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion as m } from "framer-motion";
 import { META } from "@consumet/extensions";
 
 import Link from "next/link";
@@ -9,6 +8,8 @@ import Head from "next/head";
 import { closestMatch } from "closest-match";
 import Content from "../../components/hero/content";
 import Image from "next/image";
+
+import { useSession } from "next-auth/react";
 
 export default function Himitsu({
   info,
@@ -26,6 +27,8 @@ export default function Himitsu({
   const [load, setLoad] = useState(true);
   const [Lang, setLang] = useState(true);
   const [showAll, setShowAll] = useState(false);
+
+  const { data: session } = useSession();
 
   const [lastPlayed, setLastPlayed] = useState(null);
   const episode = episodeList;
@@ -70,20 +73,20 @@ export default function Himitsu({
     });
   }, [color]);
 
-  const handleStore = (props) => {
-    let existingData = JSON.parse(localStorage.getItem("recentWatch"));
-    if (!Array.isArray(existingData)) {
-      existingData = [];
-    }
-    const index = existingData.findIndex(
-      (item) => item.title.romaji === props.title.romaji
-    );
-    if (index !== -1) {
-      existingData.splice(index, 1);
-    }
-    const updatedData = [props, ...existingData];
-    localStorage.setItem("recentWatch", JSON.stringify(updatedData));
-  };
+  // const handleStore = (props) => {
+  //   let existingData = JSON.parse(localStorage.getItem("recentWatch"));
+  //   if (!Array.isArray(existingData)) {
+  //     existingData = [];
+  //   }
+  //   const index = existingData.findIndex(
+  //     (item) => item.title.romaji === props.title.romaji
+  //   );
+  //   if (index !== -1) {
+  //     existingData.splice(index, 1);
+  //   }
+  //   const updatedData = [props, ...existingData];
+  //   localStorage.setItem("recentWatch", JSON.stringify(updatedData));
+  // };
 
   if (!info) {
     return;
@@ -94,6 +97,23 @@ export default function Himitsu({
     episodeIndo = episode.slice(0, epIndo);
   } else {
     episodeIndo = episode;
+  }
+
+  async function handleUpdate(data) {
+    if (!session) return;
+    const res = await fetch("/api/update-user", {
+      method: "POST",
+      body: JSON.stringify({
+        name: session?.user.name,
+        newData: {
+          recentWatch: data,
+        },
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // console.log(res.status);
   }
 
   // console.log({ NEXT: subIndo });
@@ -177,7 +197,7 @@ export default function Himitsu({
                           <Link
                             href={`/anime/watch/${epi1[0].id}/${info.id}`}
                             onClick={() =>
-                              handleStore({
+                              handleUpdate({
                                 title: {
                                   romaji:
                                     info.title.romaji ||
@@ -357,7 +377,7 @@ export default function Himitsu({
                                 }}
                                 className="w-full shrink h-[126px] bg-secondary flex rounded-md"
                               >
-                                <div className="min-w-[20%] bg-image rounded-l-md shrink-0">
+                                <div className="w-[90px] bg-image rounded-l-md shrink-0">
                                   <img
                                     src={relation.image}
                                     alt={relation.id}
@@ -368,7 +388,7 @@ export default function Himitsu({
                                   <div className="text-action font-outfit font-bold">
                                     {relation.relationType}
                                   </div>
-                                  <div className="font-outfit font-thin italic line-clamp-2">
+                                  <div className="font-outfit font-thin line-clamp-2">
                                     {relation.title.romaji}
                                   </div>
                                   <div className={``}>{relation.type}</div>
@@ -420,7 +440,7 @@ export default function Himitsu({
                           <div key={index} className="flex flex-col gap-3">
                             <Link
                               onClick={() =>
-                                handleStore({
+                                handleUpdate({
                                   title: {
                                     romaji:
                                       info.title.romaji ||
