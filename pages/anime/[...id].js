@@ -7,7 +7,6 @@ import Head from "next/head";
 
 import { closestMatch } from "closest-match";
 import Content from "../../components/hero/content";
-import Image from "next/image";
 
 import { useSession } from "next-auth/react";
 
@@ -23,7 +22,6 @@ export default function Himitsu({
 }) {
   const [isLoading, setIsloading] = useState(false);
   const [showText, setShowtext] = useState(false);
-  const [title, setTitle] = useState(info.title.english || info.title.romaji);
   const [load, setLoad] = useState(true);
   const [Lang, setLang] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -31,6 +29,7 @@ export default function Himitsu({
   const { data: session } = useSession();
 
   const [lastPlayed, setLastPlayed] = useState(null);
+  const [user, setUser] = useState(null);
   const episode = episodeList;
   const epi1 = episode1;
 
@@ -44,13 +43,22 @@ export default function Himitsu({
     setLang(false);
   }
 
-  // const { ref } = useParallax({ speed: 10 });
-
   useEffect(() => {
-    const playedStr = JSON.parse(localStorage.getItem("lastPlayed"));
-    setLastPlayed(
-      playedStr?.filter((item) => item.title === info.title.romaji)[0]?.data
-    );
+    async function userData() {
+      setLoad(false);
+      if (!session) return;
+      setLoad(true);
+      const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
+      const data = await res.json();
+      setLastPlayed(
+        data?.recentWatch.filter(
+          (item) => item.title.romaji === info.title.romaji
+        )[0]?.episode
+      );
+      setUser(data);
+      setLoad(false);
+    }
+
     function getBrightness(color) {
       const rgb = color.match(/\d+/g);
       return (299 * rgb[0] + 587 * rgb[1] + 114 * rgb[2]) / 1000;
@@ -71,22 +79,9 @@ export default function Himitsu({
     elements.forEach((element) => {
       setTextColor(element);
     });
-  }, [color]);
 
-  // const handleStore = (props) => {
-  //   let existingData = JSON.parse(localStorage.getItem("recentWatch"));
-  //   if (!Array.isArray(existingData)) {
-  //     existingData = [];
-  //   }
-  //   const index = existingData.findIndex(
-  //     (item) => item.title.romaji === props.title.romaji
-  //   );
-  //   if (index !== -1) {
-  //     existingData.splice(index, 1);
-  //   }
-  //   const updatedData = [props, ...existingData];
-  //   localStorage.setItem("recentWatch", JSON.stringify(updatedData));
-  // };
+    userData();
+  }, [color, session]);
 
   if (!info) {
     return;
@@ -113,18 +108,9 @@ export default function Himitsu({
         "Content-Type": "application/json",
       },
     });
-    // console.log(res.status);
+    console.log(res.status);
   }
 
-  // console.log({ NEXT: subIndo });
-
-  // console.log(episodeIndo);
-
-  // console.log(lastPlayed);
-
-  function handleLoad() {
-    setLoad(false);
-  }
   return (
     <>
       <Head>
@@ -430,12 +416,14 @@ export default function Himitsu({
                     </div>
                   </div>
                   <div className="flex h-[640px] flex-col gap-5 overflow-y-hidden scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full hover:overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                    {episode && Lang ? (
+                    {load ? (
+                      <p>Loading...</p>
+                    ) : episode && Lang ? (
                       episode.map((episode, index) => {
                         const item = lastPlayed?.find(
                           (item) => item.id === episode.id
                         );
-                        // console.log(item);
+                        console.log(item);
                         return (
                           <div key={index} className="flex flex-col gap-3">
                             <Link

@@ -90,7 +90,7 @@ export default function VideoPlayer({
                 // use >= instead of >
                 markProgress(aniId, progress);
               } else {
-                console.log("Something went wrong");
+                return;
               }
             });
 
@@ -99,11 +99,25 @@ export default function VideoPlayer({
               console.log("Video ended");
             });
 
-            art.on("destroy", () => {
+            art.on("destroy", async () => {
+              if (!session) return;
               const lastPlayed = {
                 id: id,
                 time: art.currentTime,
               };
+              const res = await fetch("/api/watched-episode", {
+                method: "POST",
+                body: JSON.stringify({
+                  username: session?.user.name,
+                  id: aniId,
+                  newData: lastPlayed,
+                }),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+
+              console.log(res.status);
 
               const title = titles;
               const prevDataStr = localStorage.getItem("lastPlayed") || "[]";

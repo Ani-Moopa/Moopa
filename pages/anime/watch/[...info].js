@@ -60,7 +60,7 @@ export default function Info({ info }) {
     return <p>Loading...</p>;
   }
 
-  console.log(parseInt(playingEpisode));
+  console.log();
 
   return (
     <>

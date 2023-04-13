@@ -9,6 +9,16 @@ export default async function handler(req, res) {
   const { name, newData } = req.body; // id is the user ID and newData is the new data you want to set
 
   try {
+    const existingData = await collection.findOne({
+      name: name,
+      "recentWatch.id": newData.recentWatch.id,
+    });
+
+    if (existingData) {
+      res.status(200).json({ message: "Data already exists" });
+      return;
+    }
+
     const result = await collection.updateOne(
       { name: name },
       { $addToSet: newData }
