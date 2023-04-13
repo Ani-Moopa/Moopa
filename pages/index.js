@@ -200,7 +200,7 @@ export default function Home({ detail, populars }) {
                 <img
                   src={session?.user.image.large}
                   alt="user avatar"
-                  className="object-cover"
+                  className="object-cover w-[60px] h-[60px] rounded-full"
                 />
               )}
             </button>
