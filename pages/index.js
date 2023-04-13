@@ -113,7 +113,7 @@ export default function Home({ detail, populars }) {
       if (!session) return;
       const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
       const data = await res.json();
-      setArray(data?.recentWatch);
+      setArray(data?.recentWatch.reverse());
       setUser(data);
     }
     function fetchData() {
@@ -398,7 +398,7 @@ export default function Home({ detail, populars }) {
                 <Content
                   ids="recentlyWatched"
                   section="Recently Watched"
-                  data={array.reverse()}
+                  data={array}
                 />
               </motion.div>
             )}
