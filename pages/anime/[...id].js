@@ -75,7 +75,9 @@ export default function Himitsu({
     if (!Array.isArray(existingData)) {
       existingData = [];
     }
-    const index = existingData.findIndex((item) => item.title === props.title);
+    const index = existingData.findIndex(
+      (item) => item.title.romaji === props.title.romaji
+    );
     if (index !== -1) {
       existingData.splice(index, 1);
     }
@@ -176,13 +178,17 @@ export default function Himitsu({
                             href={`/anime/watch/${epi1[0].id}/${info.id}`}
                             onClick={() =>
                               handleStore({
-                                title:
-                                  info.title?.english ||
-                                  info.title.romaji ||
-                                  info.title.native,
+                                title: {
+                                  romaji:
+                                    info.title.romaji ||
+                                    info.title.english ||
+                                    info.title.native,
+                                },
                                 description: info.description,
-                                image: info.image,
-                                id: info.id,
+                                coverImage: {
+                                  extraLarge: info.image,
+                                },
+                                id: parseInt(info.id),
                               })
                             }
                           >
@@ -358,7 +364,7 @@ export default function Himitsu({
                                     className="object-cover h-full w-full shrink-0 rounded-l-md"
                                   />
                                 </div>
-                                <div className="min-w-[80%] h-full grid px-3 items-center">
+                                <div className="h-full grid px-3 items-center">
                                   <div className="text-action font-outfit font-bold">
                                     {relation.relationType}
                                   </div>
@@ -415,13 +421,17 @@ export default function Himitsu({
                             <Link
                               onClick={() =>
                                 handleStore({
-                                  title:
-                                    info.title?.english ||
-                                    info.title.romaji ||
-                                    info.title.native,
+                                  title: {
+                                    romaji:
+                                      info.title.romaji ||
+                                      info.title.english ||
+                                      info.title.native,
+                                  },
                                   description: info.description,
-                                  image: info.image,
-                                  id: info.id,
+                                  coverImage: {
+                                    extraLarge: info.image,
+                                  },
+                                  id: parseInt(info.id),
                                 })
                               }
                               href={`/anime/watch/${episode.id}/${info.id}/${

@@ -1,10 +1,22 @@
 import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
+import { useAniList } from "../lib/useAnilist";
 
-export default function VideoPlayer({ data, seek, titles, id }) {
+export default function VideoPlayer({
+  data,
+  seek,
+  titles,
+  id,
+  progress,
+  session,
+  aniId,
+}) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { markProgress } = useAniList(session);
+
+  // console.log(progress);
 
   useEffect(() => {
     async function compiler() {
@@ -67,6 +79,24 @@ export default function VideoPlayer({ data, seek, titles, id }) {
               } else {
                 art.currentTime = seek;
               }
+            });
+
+            art.on("destroy", () => {
+              const currentTime = art.currentTime;
+              const duration = art.duration;
+              const percentage = currentTime / duration;
+
+              if (percentage >= 0.9) {
+                // use >= instead of >
+                markProgress(aniId, progress);
+              } else {
+                console.log("Something went wrong");
+              }
+            });
+
+            art.on("video:ended", () => {
+              art.destroy();
+              console.log("Video ended");
             });
 
             art.on("destroy", () => {

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 function Navbar(props) {
+  const { data: session, status } = useSession();
   const [isVisible, setIsVisible] = useState(false);
   const [fade, setFade] = useState(false);
   const { systemTheme, theme, setTheme } = useTheme();
@@ -21,6 +24,8 @@ function Navbar(props) {
     setIsVisible(false);
     setFade(false);
   };
+
+  // console.log(session.user?.image);
 
   return (
     <header className={`${props.className}`}>
@@ -181,7 +186,7 @@ function Navbar(props) {
         </div>
 
         <nav className="left-0 top-[-100%] hidden w-auto items-center gap-10 px-5 md:flex">
-          <ul className="hidden gap-10 font-roboto text-xl md:flex ">
+          <ul className="hidden gap-10 font-roboto text-xl md:flex items-center">
             <li>
               <Link
                 href="/"
@@ -206,6 +211,21 @@ function Navbar(props) {
                 search
               </Link>
             </li>
+            {!session && (
+              <li>
+                <button
+                  onClick={() => signIn("AniListProvider")}
+                  className="ring-1 ring-action font-karla font-bold  p-2 rounded-md"
+                >
+                  Sign in
+                </button>
+              </li>
+            )}
+            {session && (
+              <li className="h-16 w-16 p-2">
+                <img src={session?.user.image.large} alt="imagine" />
+              </li>
+            )}
           </ul>
         </nav>
       </div>

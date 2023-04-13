@@ -1,4 +1,3 @@
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { aniListData } from "../lib/AniList";
 import React, { useState, useEffect } from "react";
 import ReactHtmlParser from "kt-react-html-parser";
@@ -9,12 +8,90 @@ import Image from "next/image";
 import Content from "../components/hero/content";
 import { useRouter } from "next/router";
 
-export default function Home({ detail, populars, topDesc }) {
+import { useSession, signIn } from "next-auth/react";
+
+export function Navigasi() {
+  const { data: session, status } = useSession();
+
+  const router = useRouter();
+
+  const handleFormSubmission = (inputValue) => {
+    router.push(`/search?hasil=${encodeURIComponent(inputValue)}`);
+  };
+
+  const handleKeyDown = async (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const inputValue = event.target.value;
+      handleFormSubmission(inputValue);
+    }
+  };
+  return (
+    <>
+      {/* NAVBAR PC */}
+      <div className="flex items-center justify-center">
+        <div className="flex w-full items-center justify-between px-5 md:mx-[94px]">
+          <div className="flex items-center md:gap-16 md:pt-7">
+            <Link
+              href="/"
+              className=" font-outfit text-[40px] font-bold text-[#FF7F57]"
+            >
+              moopa
+            </Link>
+            <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] md:flex">
+              <Link href="/search">
+                <li>AniList Index</li>
+              </Link>
+              <Link href="/test">
+                <li>Manga</li>
+              </Link>
+              <li>Anime</li>
+              {status === "loading" && <li>Loading...</li>}
+              {!session && (
+                <li>
+                  <button
+                    onClick={() => signIn("AniListProvider")}
+                    className="ring-1 ring-action font-karla font-bold px-2 py-1 rounded-md"
+                  >
+                    Sign in
+                  </button>
+                </li>
+              )}
+              {session && (
+                <li className="text-center">
+                  {/* <div className="p-2"><img src={session?.user.image.large} alt="imagine" /></div> */}
+                  My List
+                </li>
+              )}
+            </ul>
+          </div>
+          <div className="relative flex scale-75 items-center mb-7 md:mb-0">
+            <div className="search-box ">
+              <input
+                className="search-text"
+                type="text"
+                placeholder="Search Anime"
+                onKeyDown={handleKeyDown}
+              />
+              <a href="#" className="search-btn">
+                <i className="fas fa-search"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function Home({ detail, populars }) {
+  const { data: session, status } = useSession();
   const [isVisible, setIsVisible] = useState(false);
   const [recently, setRecently] = useState(null);
-  const popular = populars.data;
+  const popular = populars?.data;
   const data = detail.data[0];
-  const router = useRouter();
+
+  const greeting = getGreeting();
 
   const handleShowClick = () => {
     setIsVisible(true);
@@ -33,32 +110,6 @@ export default function Home({ detail, populars, topDesc }) {
     }
     fetchData();
   }, []);
-
-  function handleRemove() {
-    localStorage.removeItem("recentWatch");
-    setRecently(null);
-  }
-
-  const slideLeft = () => {
-    var slider = document.getElementById("recentslider");
-    slider.scrollLeft = slider.scrollLeft - 500;
-  };
-  const slideRight = () => {
-    var slider = document.getElementById("recentslider");
-    slider.scrollLeft = slider.scrollLeft + 500;
-  };
-
-  const handleFormSubmission = (inputValue) => {
-    router.push(`/search?hasil=${encodeURIComponent(inputValue)}`);
-  };
-
-  const handleKeyDown = async (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      const inputValue = event.target.value;
-      handleFormSubmission(inputValue);
-    }
-  };
 
   return (
     <>
@@ -80,6 +131,8 @@ export default function Home({ detail, populars, topDesc }) {
         />
         <link rel="icon" href="/c.svg" />
       </Head>
+
+      {/* NAVBAR */}
       <div className="z-50">
         {!isVisible && (
           <button
@@ -103,7 +156,38 @@ export default function Home({ detail, populars, topDesc }) {
         )}
 
         {/* Mobile Menu */}
-        <div>
+        <div className="md:hidden">
+          {isVisible && (
+            <button
+              type="button"
+              onClick={() => signIn("AniListProvider")}
+              className="fixed bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#101925]"
+            >
+              {!session && (
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="26"
+                    fill="none"
+                    viewBox="0 0 33 26"
+                  >
+                    <path
+                      fill="#fff"
+                      d="M15.167 24.638v-1.732h8.942c.209 0 .4-.087.573-.26.174-.174.26-.365.26-.573V3.28c0-.209-.086-.4-.26-.573-.173-.174-.364-.26-.573-.26h-8.942V.714h8.942c.707 0 1.311.25 1.813.753.502.502.753 1.106.753 1.813v18.792c0 .706-.25 1.31-.753 1.812a2.471 2.471 0 01-1.813.753h-8.942zm-1.532-6.536l-1.303-1.26 3.32-3.322H3.86v-1.732h11.766l-3.321-3.321 1.321-1.233 5.448 5.448-5.438 5.42z"
+                    ></path>
+                  </svg>
+                </div>
+              )}
+              {session && (
+                <img
+                  src={session?.user.image.large}
+                  alt="user avatar"
+                  className="object-cover"
+                />
+              )}
+            </button>
+          )}
           {isVisible && (
             <div className="fixed bottom-[25px] right-[15px] z-50 flex h-[66px] w-[255px] items-center justify-center gap-8 rounded-[10px] text-[11px] bg-[#101925] shadow-menu md:hidden">
               <div className="flex gap-7">
@@ -227,47 +311,17 @@ export default function Home({ detail, populars, topDesc }) {
           )}
         </div>
       </div>
-      <div className="h-auto w-screen bg-[#141519] text-white">
-        <div className="flex items-center justify-center">
-          <div className="flex w-full items-center justify-between px-5 md:mx-[94px]">
-            <div className="flex items-center md:gap-16 md:pt-7">
-              <h1 className=" font-outfit text-[40px] font-bold text-[#FF7F57]">
-                moopa
-              </h1>
-              <ul className="hidden gap-10 pt-2 font-outfit text-[14px] md:flex">
-                <Link href="/search">
-                  <li>AniList Index</li>
-                </Link>
-                <Link href="/test">
-                  <li>Manga</li>
-                </Link>
-                <li>Anime</li>
-              </ul>
-            </div>
-            <div className="relative flex scale-75 items-center">
-              <div className="search-box ">
-                <input
-                  className="search-text"
-                  type="text"
-                  placeholder="Search Anime"
-                  onKeyDown={handleKeyDown}
-                />
-                <a href="#" className="search-btn">
-                  <i className="fas fa-search"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
+        <Navigasi />
 
         {/* PC / TABLET */}
-        <div className="mt-10 hidden justify-center lg:flex">
-          <div className="relative grid grid-rows-2 items-center md:flex md:h-[760px] md:w-[80%] md:justify-between">
+        <div className=" hidden justify-center lg:flex my-16">
+          <div className="relative grid grid-rows-2 items-center md:flex md:h-[467px] md:w-[80%] md:justify-between">
             <div className="row-start-2 flex h-full flex-col gap-7 md:w-[55%] md:justify-center">
-              <h1 className="w-[85%] font-outfit font-extrabold md:text-[45px] line-clamp-2">
+              <h1 className="w-[85%] font-outfit font-extrabold md:text-[34px] line-clamp-2">
                 {data.title.english || data.title.romaji || data.title.native}
               </h1>
-              <div className="font-roboto font-light md:text-[24px] line-clamp-5">
+              <div className="font-roboto font-light md:text-[18px] line-clamp-5">
                 {ReactHtmlParser(data.description)}
               </div>
 
@@ -277,84 +331,48 @@ export default function Home({ detail, populars, topDesc }) {
                   legacyBehavior
                   className="flex"
                 >
-                  <a className="rounded-sm p-3 font-karla font-light ring-1 ring-[#FF7F57]">
+                  <a className="rounded-sm p-3 text-md font-karla font-light ring-1 ring-[#FF7F57]">
                     START WATCHING
                   </a>
                 </Link>
               </div>
             </div>
             <div className="z-10 row-start-1 flex justify-center ">
-              <div className="relative  md:h-[662px] md:w-[460px] md:scale-100">
-                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent md:h-[662px] md:w-[460px]" />
+              <div className="relative  md:h-[467px] md:w-[322px] md:scale-100">
+                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent md:h-[467px] md:w-[322px]" />
 
                 <Image
                   draggable={false}
-                  src={data.coverImage.extraLarge}
+                  src={data.coverImage?.extraLarge || data.image}
                   alt={data.title.english || data.title.romaji}
                   width={460}
                   height={662}
                   priority
-                  className="rounded-tl-xl  rounded-tr-xl object-cover bg-blend-overlay md:h-[662px] md:w-[460px] "
+                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay md:h-[467,6px] md:w-[322px]"
                 />
               </div>
             </div>
           </div>
         </div>
 
+        {session && (
+          <div className="w-screen flex md:justify-center mx-3 md:mx-0 mt-10 md:mt-0">
+            <div className="md:w-[86%] md:text-3xl text-2xl font-bold font-karla">
+              {greeting}, {session?.user.name}
+            </div>
+          </div>
+        )}
+
         {/* Mobile */}
 
-        <div className="mt-16 flex flex-col items-center">
+        <div className="md:mt-16 mt-12 flex flex-col items-center">
           <div className="w-screen flex-none lg:w-[87%]">
             {recently && (
-              <div>
-                <div className="flex items-center gap-5 lg:gap-10">
-                  <h1 className="px-5 font-outfit text-[20px] font-extrabold lg:text-[27px]">
-                    Recently Watched
-                  </h1>
-                  <div
-                    className="cursor-pointer font-outfit font-light text-[#8f8f8f]"
-                    onClick={() => handleRemove()}
-                  >
-                    Clear all
-                  </div>
-                </div>
-                <div className="relative z-10 flex items-center py-10 lg:gap-2">
-                  <MdChevronLeft
-                    onClick={slideLeft}
-                    size={40}
-                    className="mb-5 cursor-pointer opacity-50 hover:opacity-100"
-                  />
-                  <div
-                    id="recentslider"
-                    className="scroll flex h-full w-full items-center overflow-x-scroll scroll-smooth whitespace-nowrap overflow-y-hidden scrollbar-hide lg:gap-5"
-                  >
-                    {recently.map((anime, index) => {
-                      const url = encodeURIComponent(anime.title);
-
-                      return (
-                        <Link
-                          href={`/anime/${anime.id}`}
-                          key={index}
-                          className="shrink-0 "
-                        >
-                          <Image
-                            src={anime.image}
-                            alt={anime.title || "cover image"}
-                            width={209}
-                            height={300}
-                            className="z-20 h-[230px] w-[168px] object-cover p-2 duration-300 ease-in-out hover:scale-105 lg:h-[290px] lg:w-[209px]"
-                          />
-                        </Link>
-                      );
-                    })}
-                  </div>
-                  <MdChevronRight
-                    onClick={slideRight}
-                    size={40}
-                    className="mb-5 cursor-pointer opacity-50 hover:opacity-100"
-                  />
-                </div>
-              </div>
+              <Content
+                ids="recentlyWatched"
+                section="Recently Watched"
+                data={recently}
+              />
             )}
 
             {detail && (
@@ -390,16 +408,27 @@ export async function getServerSideProps({ req, res }) {
     page: 1,
   });
   const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
-  const newTrend = await trendingDetail.props;
-  const trends = newTrend.data[0];
-  const topDesc = trends.description.slice(0, 350) + "...";
 
   return {
     props: {
-      topDesc: topDesc,
       genre: genreDetail.props,
       detail: trendingDetail.props,
       populars: popularDetail.props,
     },
   };
+}
+
+function getGreeting() {
+  const time = new Date().getHours();
+  let greeting = "";
+
+  if (time >= 5 && time < 12) {
+    greeting = "Good morning";
+  } else if (time >= 12 && time < 18) {
+    greeting = "Good afternoon";
+  } else {
+    greeting = "Good evening";
+  }
+
+  return greeting;
 }

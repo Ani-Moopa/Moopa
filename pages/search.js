@@ -107,8 +107,6 @@ export default function Card() {
     advance();
   }, [search, type, seasonYear, season, genres, perPage, sort]);
 
-  console.log(data);
-
   // useEffect(() => {
   //   async function fetchData() {
   //     setLoading(true);
@@ -420,11 +418,4 @@ export default function Card() {
       <Footer />
     </>
   );
-}
-
-{
-  /* <div className=" w-[228px]">
-        <div className="bg-[#3B3C41] h-[313px] rounded-[10px]" />
-        <h1 className="font-outfit font-extrabold text-[24px]">Anime Title</h1>
-      </div> */
 }

@@ -22,7 +22,7 @@ export default function DMCA() {
         <link rel="icon" href="/c.svg" />
       </Head>
       <Layout>
-        <div className="min-h-screen flex w-screen justify-center items-center">
+        <div className="min-h-screen z-20 flex w-screen justify-center items-center">
           <div className="w-[75%] text-2xl gap-7 flex flex-col my-[10rem]">
             <div className="flex">
               <h1 className="text-4xl font-bold font-karla rounded-md bg-[#212121] p-3">

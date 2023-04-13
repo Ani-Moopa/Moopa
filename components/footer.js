@@ -5,7 +5,7 @@ import Image from "next/image";
 
 function Footer() {
   return (
-    <section className=" text-white z-50 bg-black md:flex md:h-[14rem] md:items-center md:justify-between">
+    <section className=" text-white z-40 bg-black md:flex md:h-[14rem] md:items-center md:justify-between">
       <div className="mx-auto flex w-[78%] flex-col space-y-10 py-10 md:flex-row md:items-center md:justify-between md:space-y-0 md:py-0">
         <div className="md:flex md:flex-col md:gap-y-[3.88rem]">
           <h1 className="font-outfit text-[2.56rem]">moopa</h1>

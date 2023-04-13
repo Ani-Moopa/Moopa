@@ -9,16 +9,58 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import Modal from "../../../components/modal";
 
+import { useNotification } from "../../../lib/useNotify";
+
+import { useSession, signIn, signOut } from "next-auth/react";
+import AniList from "../../../components/media/aniList";
+
+import { AnimatePresence, motion as m } from "framer-motion";
+import Navbar from "../../../components/navbar";
+import { Navigasi } from "../..";
+
 export default function Info({ info }) {
+  const { data: session, status } = useSession();
   const title = info.aniData.title.romaji || info.aniData.title.english;
   const data = info.aniData;
   const fallback = info.epiFallback;
+  const { Notification: NotificationComponent, show } = useNotification();
+
+  // console.log(session);
+
+  const playingEpisode = data.episodes
+    .filter((item) => item.id == info.id)
+    .map((item) => item.number);
 
   const [open, setOpen] = useState(false);
+  const [aniStatus, setAniStatus] = useState("");
+  const [aniProgress, setAniProgress] = useState(parseInt(playingEpisode));
+
+  const handleStatus = (e) => {
+    setAniStatus(e.target.value);
+  };
+
+  const handleProgress = (e) => {
+    const value = parseFloat(e.target.value);
+    if (!isNaN(value) && value >= 0 && value <= data.totalEpisodes) {
+      setAniProgress(value);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = { status: aniStatus, progress: aniProgress };
+    console.log(formData);
+  };
 
   const playingTitle = data.episodes
     .filter((item) => item.id == info.id)
     .map((item) => item.title);
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  console.log(parseInt(playingEpisode));
 
   return (
     <>
@@ -27,29 +69,91 @@ export default function Info({ info }) {
           {fallback ? data.title.romaji || data.title.english : playingTitle}
         </title>
       </Head>
+
+      <NotificationComponent />
+
       <Modal open={open} onClose={() => setOpen(false)}>
-        <div className="bg-[#202020] rounded-lg w-[268px] text-center">
+        <div className="bg-[#202020] rounded-lg text-center">
           <div className="p-5 grid gap-2 justify-center place-items-center">
             <h1 className="text-md font-extrabold font-karla">
               Save this Anime to Your List
             </h1>
-            <h1 className="text-sm font-karla font-extralight w-[205px]">
-              Are you sure you want to save this anime to your list?
-            </h1>
-            <div className="flex gap-12 items-center pt-3 justify-between">
-              <button className="p-2 font-karla font-extrabold text-sm bg-[#93FF3E] w-[84px] rounded-[10px] text-black shadow">
-                YES
-              </button>
+            {!session && (
               <button
-                onClick={() => setOpen(false)}
-                className="p-2 font-karla font-extrabold text-sm bg-white w-[84px] rounded-[10px] text-black shadow-lg"
+                className="flex items-center bg-[#3a3a3a] mt-4 rounded-md text-white p-1"
+                onClick={() => signIn("AniListProvider")}
               >
-                NO
+                <h1 className="px-1 font-bold font-karla">
+                  Login with AniList
+                </h1>
+                <div className="scale-[60%] pb-[1px]">
+                  <AniList />
+                </div>
               </button>
-            </div>
+            )}
+            {session && (
+              <>
+                <form
+                  onSubmit={handleSubmit}
+                  className="grid grid-cols-2 gap-5 max-w-sm mx-auto mt-5 items-center"
+                >
+                  <div className="mb-4">
+                    <label
+                      htmlFor="option"
+                      className="block font-bold mb-2 text-sm"
+                    >
+                      Select an option
+                    </label>
+                    <select
+                      id="option"
+                      value={aniStatus}
+                      onChange={handleStatus}
+                      className="form-select block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300"
+                    >
+                      {aniStatus === "" && (
+                        <option value="" hidden>
+                          Select an option
+                        </option>
+                      )}
+                      <option value="option1">Option 1</option>
+                      <option value="option2">Option 2</option>
+                      <option value="option3">Option 3</option>
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="number"
+                      className="block text-sm font-bold mb-2"
+                    >
+                      Episode Progress
+                    </label>
+                    <input
+                      id="number"
+                      type="number"
+                      step="1"
+                      min="0"
+                      max={data.totalEpisodes}
+                      className="form-input block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300"
+                      value={aniProgress}
+                      onChange={handleProgress}
+                    />
+                  </div>
+                  <div className="col-start-2 row-start-2 w-full justify-items-end text-center">
+                    <button
+                      type="submit"
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => setOpen(false)}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </Modal>
+      <Navigasi />
       <div className="min-h-screen flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
         <div className="w-screen lg:w-[67%]">
           <div className="h-auto aspect-video z-20">
@@ -59,6 +163,9 @@ export default function Info({ info }) {
               seek={info.seek}
               titles={title}
               id={info.id}
+              progress={parseInt(playingEpisode)}
+              session={session}
+              aniId={parseInt(data.id)}
             />
           </div>
           <div>

@@ -13,7 +13,7 @@ import { useAniList } from "../lib/useAnilist";
 
 export default function AniTest() {
   const { data: session, status } = useSession();
-  const { media, aniAdvanceSearch } = useAniList(session);
+  const { media, aniAdvanceSearch, markComplete } = useAniList(session);
   const [advanceSearch, setAdvanceSearch] = useState();
 
   const [search, setSearch] = useState();
@@ -53,6 +53,11 @@ export default function AniTest() {
 
   // const [open, setOpen] = useState(false);
 
+  async function markAsComplete(id) {
+    const response = await markComplete(id);
+    console.log(response);
+  }
+
   async function advance() {
     const data = await aniAdvanceSearch(
       search,
@@ -80,7 +85,7 @@ export default function AniTest() {
   //   search: "naruto",
   // });
 
-  console.log(advanceSearch);
+  // console.log(advanceSearch);
 
   return (
     // <div className="h-[720px] w-[1280px]">
@@ -124,9 +129,6 @@ export default function AniTest() {
           />
         </div>
       )}
-      {advanceSearch?.media.map((item) => {
-        return <div key={item.id}>{item.title.userPreferred}</div>;
-      })}
       {media?.length > 0 && (
         <div className="flex-center flex-col gap-5">
           {media.map((item, index) => {
@@ -156,14 +158,7 @@ export default function AniTest() {
                             </h3>
                             {item.name === "Watching" && (
                               <button
-                                onClick={() =>
-                                  handleUpdateMediaEntry(
-                                    items.media.id,
-                                    "COMPLETED",
-                                    items.media.episodes,
-                                    8
-                                  )
-                                }
+                                onClick={() => markAsComplete(items.media.id)}
                               >
                                 Mark as Complete
                               </button>

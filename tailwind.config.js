@@ -55,6 +55,7 @@ module.exports = {
       outfit: ["Outfit", "sans-serif"],
       karla: ["Karla", "sans-serif"],
       roboto: ["Roboto", "sans-serif"],
+      inter: ["Inter", "sans-serif"],
     },
   },
   variants: {
