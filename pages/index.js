@@ -91,6 +91,7 @@ export default function Home({ detail, populars }) {
   const [isVisible, setIsVisible] = useState(false);
   const [recently, setRecently] = useState(null);
   const [user, setUser] = useState(null);
+  const [array, setArray] = useState([]);
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -104,11 +105,15 @@ export default function Home({ detail, populars }) {
     setIsVisible(false);
   };
 
+  // const reversed = user?.recentWatch.reverse();
+  // console.log(array);
+
   useEffect(() => {
     async function userData() {
       if (!session) return;
       const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
       const data = await res.json();
+      setArray(data?.recentWatch.reverse());
       setUser(data);
     }
     function fetchData() {
@@ -323,6 +328,7 @@ export default function Home({ detail, populars }) {
           )}
         </div>
       </div>
+
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
         {/* PC / TABLET */}
@@ -392,7 +398,7 @@ export default function Home({ detail, populars }) {
                 <Content
                   ids="recentlyWatched"
                   section="Recently Watched"
-                  data={user.recentWatch.reverse()}
+                  data={array}
                 />
               </motion.div>
             )}
