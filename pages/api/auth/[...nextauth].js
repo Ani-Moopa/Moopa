@@ -1,15 +1,13 @@
 import NextAuth from "next-auth";
 import { GET_CURRENT_USER } from "../../../queries";
 import { client } from "../../../lib/apolloClient";
-import crypto from "crypto";
 import clientPromise from "../../../lib/mongodb";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-
-const jwtSecret = crypto.randomBytes(64).toString("hex");
 
 export const authOptions = {
   // Configure one or more authentication providers
   adapter: MongoDBAdapter(clientPromise),
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     {
       id: "AniListProvider",
@@ -52,15 +50,9 @@ export const authOptions = {
       },
     },
   ],
-  secret: jwtSecret,
   session: {
     //Sets the session to use JSON Web Token
     strategy: "jwt",
-    cookie: {
-      // Set the cookie to be secure and HTTP-only
-      secure: true,
-      httpOnly: true,
-    },
   },
   callbacks: {
     async jwt({ token, user }) {
