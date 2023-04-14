@@ -48,22 +48,28 @@ export function Navigasi() {
                 <li>Manga</li>
               </Link>
               <li>Anime</li>
-              {status === "loading" && <li>Loading...</li>}
-              {!session && (
-                <li>
-                  <button
-                    onClick={() => signIn("AniListProvider")}
-                    className="ring-1 ring-action font-karla font-bold px-2 py-1 rounded-md"
-                  >
-                    Sign in
-                  </button>
-                </li>
-              )}
-              {session && (
-                <li className="text-center">
-                  {/* <div className="p-2"><img src={session?.user.image.large} alt="imagine" /></div> */}
-                  My List
-                </li>
+
+              {status === "loading" ? (
+                <li>Loading...</li>
+              ) : (
+                <>
+                  {!session && (
+                    <li>
+                      <button
+                        onClick={() => signIn("AniListProvider")}
+                        className="ring-1 ring-action font-karla font-bold px-2 py-1 rounded-md"
+                      >
+                        Sign in
+                      </button>
+                    </li>
+                  )}
+                  {session && (
+                    <li className="text-center">
+                      {/* <div className="p-2"><img src={session?.user.image.large} alt="imagine" /></div> */}
+                      My List
+                    </li>
+                  )}
+                </>
               )}
             </ul>
           </div>
