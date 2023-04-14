@@ -52,13 +52,17 @@ export default function Content({ ids, section, data }) {
               >
                 <Link
                   href={`/anime/${anime.id}`}
-                  className="hover:scale-105 duration-300 ease-in-out"
+                  className="hover:scale-105 group relative duration-300 ease-in-out"
                 >
+                  {/* <div className="fixed top-0 z-40 bg-black invisible group-hover:visible">
+                    {anime.title.romaji || anime.title.english}
+                  </div> */}
                   <Image
                     draggable={false}
                     src={
                       anime.image ||
                       anime.coverImage?.extraLarge ||
+                      anime.coverImage?.large ||
                       "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
                     }
                     alt={anime.title.romaji || anime.title.english}
@@ -68,6 +72,7 @@ export default function Content({ ids, section, data }) {
                     blurDataURL={
                       anime.image ||
                       anime.coverImage?.extraLarge ||
+                      anime.coverImage?.large ||
                       "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
                     }
                     className="z-20 h-[192px] w-[135px] object-cover lg:h-[265px] lg:w-[185px] rounded-md"

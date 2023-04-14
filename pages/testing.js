@@ -1,8 +1,7 @@
-import { getUser } from "./api/get-user";
-import { useSession, signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-export default function Testing({ user }) {
-  const { data: session } = useSession();
+export default function Testing() {
+  const { data: session, status } = useSession();
   async function handleUpdate() {
     const lastPlayed = {
       id: "apahisya",
@@ -24,23 +23,14 @@ export default function Testing({ user }) {
     console.log(res.status);
   }
 
-  console.log(user.settings);
+  console.log(session);
   return (
     <div>
       <button onClick={() => handleUpdate()}>Click for update</button>
       {!session && (
         <button onClick={() => signIn("AniListProvider")}>LOGIN</button>
       )}
+      {session && <button onClick={() => signOut()}>LOGOUT</button>}
     </div>
   );
-}
-
-export async function getServerSideProps(context) {
-  const user = await getUser("Factiven");
-  console.log(user);
-  return {
-    props: {
-      user: user,
-    },
-  };
 }

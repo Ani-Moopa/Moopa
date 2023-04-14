@@ -120,17 +120,15 @@ export default function Himitsu({
         <link rel="icon" href="/c.svg" />
       </Head>
 
-      <Layout navTop="text-white bg-[#121212] md:pt-0 md:px-0 bg-slate bg-opacity-40">
-        <div className="text static flex w-screen flex-col justify-center pt-nav pb-10">
+      <Layout navTop="text-white bg-primary md:pt-0 md:px-0 bg-slate bg-opacity-40">
+        <div className="text static bg-primary flex w-screen flex-col justify-center pt-nav md:pt-1 pb-10">
           <div className="pointer-events-none absolute top-0 left-0">
-            <div className="brightness-90 bg-gradient-to-t from-[#121212] to-transparent">
-              <img
-                // ref={ref}
-                src={info.cover || info.image}
-                className="h-[300px] w-screen object-cover brightness-75 mix-blend-darken"
-              />
-              <div className="z-10 h-full drop-shadow-2xl bg-[#121212]" />
-            </div>
+            <div className="absolute bg-gradient-to-t w-screen z-20 top-0 md:h-[300px] h-[420px] from-10% from-primary to-transparent" />
+            <img
+              // ref={ref}
+              src={info.cover || info.image}
+              className="md:h-[300px] h-[420px] w-screen object-cover brightness-50"
+            />
           </div>
           {isLoading ? (
             <p>Loading cuy sabar...</p>

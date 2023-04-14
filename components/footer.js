@@ -5,7 +5,7 @@ import Image from "next/image";
 
 function Footer() {
   return (
-    <section className=" text-white z-40 bg-black md:flex md:h-[14rem] md:items-center md:justify-between">
+    <section className=" text-[#dbdcdd] z-40 bg-[#0c0d10] md:flex md:h-[14rem] md:items-center md:justify-between">
       <div className="mx-auto flex w-[78%] flex-col space-y-10 py-10 md:flex-row md:items-center md:justify-between md:space-y-0 md:py-0">
         <div className="md:flex md:flex-col md:gap-y-[3.88rem]">
           <h1 className="font-outfit text-[2.56rem]">moopa</h1>
@@ -27,30 +27,30 @@ function Footer() {
         <div className="flex flex-col gap-10 md:flex-row md:items-end md:gap-[9.06rem] ">
           <div className="flex flex-col gap-10 font-karla font-bold md:flex-row md:gap-[5.94rem]">
             <ul className="flex flex-col gap-y-[0.7rem] ">
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <a href="https://github.com/AniList/ApiV2-GraphQL-Docs">API</a>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <Link href="/staff">Staff</Link>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <Link href="/contact">Contact</Link>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <Link href="/dmca">DMCA</Link>
               </li>
             </ul>
             <ul className="flex flex-col gap-y-[0.7rem]">
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <a href="https://discord.gg/v5fjSdKwr2">Discord</a>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <a href="https://www.instagram.com/dvnabny/">Instagram</a>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <a href="https://twitter.com/Factivens">Twitter</a>
               </li>
-              <li className="cursor-pointer hover:text-cyan-500">
+              <li className="cursor-pointer hover:text-action">
                 <a href="https://github.com/DevanAbinaya">Github</a>
               </li>
             </ul>

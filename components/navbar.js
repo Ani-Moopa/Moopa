@@ -29,7 +29,7 @@ function Navbar(props) {
 
   return (
     <header className={`${props.className}`}>
-      <div className="flex h-16 w-auto items-center justify-between px-5 md:mx-auto md:w-[80%] md:px-0 text-white">
+      <div className="flex h-16 w-auto items-center justify-between px-5 md:mx-auto md:w-[80%] md:px-0 text-[#dbdcdd]">
         <div className="pb-2 font-outfit text-4xl font-semibold md:block">
           <Link href="/">moopa</Link>
         </div>
@@ -186,7 +186,7 @@ function Navbar(props) {
         </div>
 
         <nav className="left-0 top-[-100%] hidden w-auto items-center gap-10 px-5 md:flex">
-          <ul className="hidden gap-10 font-roboto text-xl md:flex items-center">
+          <ul className="hidden gap-10 font-roboto text-md md:flex items-center">
             <li>
               <Link
                 href="/"
@@ -211,20 +211,31 @@ function Navbar(props) {
                 search
               </Link>
             </li>
-            {!session && (
-              <li>
-                <button
-                  onClick={() => signIn("AniListProvider")}
-                  className="ring-1 ring-action font-karla font-bold  p-2 rounded-md"
-                >
-                  Sign in
-                </button>
-              </li>
-            )}
-            {session && (
-              <li className="h-16 w-16 p-2">
-                <img src={session?.user.image.large} alt="imagine" />
-              </li>
+            {status === "loading" ? (
+              <li>Loading...</li>
+            ) : (
+              <>
+                {!session && (
+                  <li>
+                    <button
+                      onClick={() => signIn("AniListProvider")}
+                      className="ring-1 ring-action font-karla font-bold px-2 py-1 rounded-md"
+                    >
+                      Sign in
+                    </button>
+                  </li>
+                )}
+                {session && (
+                  <li className="flex items-center justify-center">
+                    <img
+                      src={session?.user.image.large}
+                      alt="imagine"
+                      className="object-cover h-10 w-10 rounded-full"
+                    />
+                    {/* My List */}
+                  </li>
+                )}
+              </>
             )}
           </ul>
         </nav>

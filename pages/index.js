@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 
 import { useSession, signIn } from "next-auth/react";
+import { useAniList } from "../lib/useAnilist";
 
 export function Navigasi() {
   const { data: session, status } = useSession();
@@ -94,8 +95,11 @@ export function Navigasi() {
 
 export default function Home({ detail, populars }) {
   const { data: session, status } = useSession();
+  const { media } = useAniList(session);
+
   const [isVisible, setIsVisible] = useState(false);
   const [recently, setRecently] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [user, setUser] = useState(null);
   const [array, setArray] = useState([]);
   const popular = populars?.data;
@@ -112,13 +116,21 @@ export default function Home({ detail, populars }) {
   };
 
   // const reversed = user?.recentWatch.reverse();
-  // console.log(array);
+  // console.log(plan);
 
   useEffect(() => {
     async function userData() {
       if (!session) return;
       const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
       const data = await res.json();
+
+      const getMedia =
+        media.filter((item) => item.status === "PAUSED")[0] || null;
+      const plan = getMedia?.entries
+        .map(({ media }) => media)
+        .filter((media) => media);
+
+      setPlan(plan);
       setArray(data?.recentWatch.reverse());
       setUser(data);
     }
@@ -409,6 +421,22 @@ export default function Home({ detail, populars }) {
               </motion.div>
             )}
 
+            {session && plan && (
+              <motion.div // Add motion.div to each child component
+                key="plannedAnime"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="plannedAnime"
+                  section="Start Watching Again"
+                  data={plan}
+                />
+              </motion.div>
+            )}
+
             {/* SECTION 2 */}
             {detail && (
               <motion.div // Add motion.div to each child component
@@ -478,8 +506,10 @@ function getGreeting() {
     greeting = "Good morning";
   } else if (time >= 12 && time < 18) {
     greeting = "Good afternoon";
-  } else {
+  } else if (time >= 18 && time < 22) {
     greeting = "Good evening";
+  } else if (time >= 22 && time < 5) {
+    greeting = "Good night";
   }
 
   return greeting;

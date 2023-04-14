@@ -47,8 +47,8 @@ function Layout(props) {
             isAtTop
               ? `px-2 pt-2 transition-all duration-1000 ${props.navTop}`
               : isScrollingDown
-              ? "md:h-16 md:translate-y-[-100%] md:shadow-sm md:bg-black "
-              : "md:h-16 md:translate-y-0 md:shadow-sm md:bg-black"
+              ? "md:h-16 md:translate-y-[-100%] md:shadow-sm md:bg-[#0c0d10] "
+              : "md:h-16 md:translate-y-0 md:shadow-sm md:bg-[#0c0d10]"
           }`}
         />
 

@@ -45,9 +45,10 @@ module.exports = {
       },
       colors: {
         primary: "#141519",
-        secondary: "#202020",
+        secondary: "#22252E",
         action: "#FF7F57",
         image: "#3B3C41",
+        txt: "#dbdcdd",
       },
     },
     fontFamily: {
