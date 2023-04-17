@@ -153,7 +153,7 @@ export default function Info({ info, sessions, statusWatch }) {
       </Modal>
       <div className="bg-primary">
         <Navigasi />
-        <div className="min-h-screen flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
+        <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
           <div className="w-screen lg:w-[67%]">
             <div className="h-auto aspect-video z-20">
               <VideoPlayer

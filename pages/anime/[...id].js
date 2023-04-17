@@ -96,7 +96,7 @@ export default function Himitsu({
           {info ? (
             <div className="flex flex-col items-center gap-10">
               <div className="flex w-screen flex-col gap-10 md:w-[70%]">
-                <div className="z-40 flex flex-col gap-10 px-5 pt-[8rem] md:flex-row lg:mt-[5rem] lg:px-0">
+                <div className="z-40 flex flex-col gap-10 px-5 pt-[7rem] md:flex-row lg:mt-[5rem] lg:px-0">
                   <div className="flex gap-5 md:h-[250px] md:w-52">
                     <div className="flex h-[200px] w-52 bg-[#dadada50] md:h-[250px] md:w-full">
                       {info.image && (
@@ -143,7 +143,7 @@ export default function Himitsu({
                       <div className="flex">
                         {epi1 && epi1[0] ? (
                           <Link href={`/anime/watch/${epi1[0].id}/${info.id}`}>
-                            <h1 className="flex cursor-pointer items-center gap-2 rounded-[20px] bg-[#ff9537] px-4 py-2 font-bold text-[#ffffff]">
+                            <h1 className="flex cursor-pointer items-center gap-2 px-1 py-2 font-bold text-[#ffffff]">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="13"
@@ -160,7 +160,7 @@ export default function Himitsu({
                             </h1>
                           </Link>
                         ) : (
-                          <h1 className="pointer-events-none flex items-center gap-2 rounded-[20px] bg-[#ff94378f] px-4 py-2 font-bold text-[#ffffffa5]">
+                          <h1 className="pointer-events-none flex items-center gap-2 px-1 py-2 font-bold text-[#ffffffa5]">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="13"
@@ -251,7 +251,7 @@ export default function Himitsu({
 
                 <div className="">
                   <div className="flex gap-5 items-center">
-                    <div className="p-3 lg:p-0 text-[20px] font-bold font-karla">
+                    <div className="p-3 lg:p-0 text-[20px] md:text-2xl font-bold font-karla">
                       Relations
                     </div>
                     {info.relations.length > maxItems && (
@@ -334,7 +334,7 @@ export default function Himitsu({
 
                 <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
                   <div className="flex items-center md:gap-10 gap-7">
-                    <h1 className="text-[20px] font-bold font-karla">
+                    <h1 className="text-[20px] md:text-2xl font-bold font-karla">
                       Episodes
                     </h1>
                     <div className="flex items-center rounded-md">
@@ -387,7 +387,7 @@ export default function Himitsu({
                               href={`/anime/watch/${episode.id}/${info.id}/${
                                 item ? `${item.time}` : ""
                               }`}
-                              className={`text-start text-sm ${
+                              className={`text-start text-sm md:text-lg ${
                                 episode.number <= progress
                                   ? "text-[#5f5f5f]"
                                   : "text-white"
@@ -396,7 +396,7 @@ export default function Himitsu({
                               <p>Episode {episode.number}</p>
                               {episode.title && (
                                 <p
-                                  className={`text-xs ${
+                                  className={`text-xs md:text-sm ${
                                     episode.number <= progress
                                       ? "text-[#5f5f5f]"
                                       : "text-[#b1b1b1]"

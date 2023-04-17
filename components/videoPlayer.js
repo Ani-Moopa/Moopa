@@ -79,7 +79,7 @@ export default function VideoPlayer({
                 art.currentTime = 0;
                 console.log("Video restarted from the beginning");
               } else {
-                art.currentTime = seek.time;
+                art.currentTime = seekTime;
               }
             });
 
