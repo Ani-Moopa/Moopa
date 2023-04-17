@@ -112,7 +112,7 @@ export default function Himitsu({
                               width={500}
                               height={500}
                               draggable={false}
-                              className="object-cover h-[200px] w-[200px] md:h-[250px] shrink-0 bg-white shadow-md"
+                              className="object-cover h-[200px] w-[200px] md:h-[250px] shrink-0 bg-image shadow-md"
                             />
                           </div>
                         </>
@@ -120,7 +120,7 @@ export default function Himitsu({
                     </div>
 
                     {/* MOBILE */}
-                    <div className="flex w-full flex-col gap-3 lg:hidden ">
+                    <div className="w-full grid place-items-stretch gap-3 lg:hidden ">
                       <h1 className="shrink-0 text-xl font-semibold line-clamp-2">
                         {info.title.romaji || info.title.english}
                       </h1>
@@ -288,7 +288,7 @@ export default function Himitsu({
                                         info.title.native
                                     )}`
                               }
-                              className={`hover:scale-[1.02] scale-100 transition-transform duration-200 ease-out w-full ${
+                              className={`hover:scale-[1.02] hover:shadow-lg px-4 scale-100 transition-transform duration-200 ease-out w-full ${
                                 relation.type === "MUSIC"
                                   ? "pointer-events-none"
                                   : ""
