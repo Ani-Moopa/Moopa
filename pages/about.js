@@ -1,10 +1,7 @@
 import Head from "next/head";
 import Layout from "../components/layout";
-import UnderConstruction from "../components/underConst";
 
 export default function About() {
-  const clientId = process.env.ANILIST_CLIENT_ID;
-
   return (
     <>
       <Head>

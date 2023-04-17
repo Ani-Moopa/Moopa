@@ -1,4 +1,3 @@
 import GET_CURRENT_USER from "./GET_CURRENT_USER";
-import GET_MEDIA from "./GET_MEDIA";
 
-export { GET_CURRENT_USER, GET_MEDIA };
+export { GET_CURRENT_USER };

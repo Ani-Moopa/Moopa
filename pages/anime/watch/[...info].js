@@ -1,3 +1,5 @@
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 import Layout from "../../../components/layout";
 // import { data } from "../../../lib/testData";
 // import { aniData } from "../../../lib/infoData";
@@ -11,25 +13,29 @@ import Modal from "../../../components/modal";
 
 import { useNotification } from "../../../lib/useNotify";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../api/auth/[...nextauth]";
+
 import AniList from "../../../components/media/aniList";
 
-import { AnimatePresence, motion as m } from "framer-motion";
-import Navbar from "../../../components/navbar";
 import { Navigasi } from "../..";
 
-export default function Info({ info }) {
-  const { data: session, status } = useSession();
+export default function Info({ info, sessions, statusWatch }) {
   const title = info.aniData.title.romaji || info.aniData.title.english;
   const data = info.aniData;
   const fallback = info.epiFallback;
   const { Notification: NotificationComponent, show } = useNotification();
 
-  // console.log(session);
-
-  const playingEpisode = data.episodes
+  let playingEpisode = data.episodes
     .filter((item) => item.id == info.id)
     .map((item) => item.number);
+
+  if (playingEpisode == 0) {
+    playingEpisode = fallback
+      .filter((item) => item.id == info.id)
+      .map((item) => item.number);
+  }
 
   const [open, setOpen] = useState(false);
   const [aniStatus, setAniStatus] = useState("");
@@ -56,12 +62,6 @@ export default function Info({ info }) {
     .filter((item) => item.id == info.id)
     .map((item) => item.title);
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  console.log();
-
   return (
     <>
       <Head>
@@ -78,7 +78,7 @@ export default function Info({ info }) {
             <h1 className="text-md font-extrabold font-karla">
               Save this Anime to Your List
             </h1>
-            {!session && (
+            {!sessions && (
               <button
                 className="flex items-center bg-[#3a3a3a] mt-4 rounded-md text-white p-1"
                 onClick={() => signIn("AniListProvider")}
@@ -91,7 +91,7 @@ export default function Info({ info }) {
                 </div>
               </button>
             )}
-            {session && (
+            {sessions && (
               <>
                 <form
                   onSubmit={handleSubmit}
@@ -165,8 +165,9 @@ export default function Info({ info }) {
                 titles={title}
                 id={info.id}
                 progress={parseInt(playingEpisode)}
-                session={session}
+                session={sessions}
                 aniId={parseInt(data.id)}
+                stats={statusWatch}
               />
             </div>
             <div>
@@ -378,6 +379,8 @@ export default function Info({ info }) {
 }
 
 export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   const { info } = context.query;
   if (!info) {
     return {
@@ -418,6 +421,43 @@ export async function getServerSideProps(context) {
     }
   }
 
+  const playingEpisode = aniData.episodes
+    .filter((item) => item.id == id)
+    .map((item) => item.number);
+
+  const resp = await fetch(`${baseUrl}/api/get-media`, {
+    method: "POST",
+    body: JSON.stringify({
+      username: session?.user.name,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const prog = await resp.json();
+
+  const gat = prog?.lists.map((item) => item.entries);
+  const git = gat?.map((item) =>
+    item.find((item) => item.media.id === parseInt(aniId))
+  );
+  const gut = git?.find((item) => item?.media.id === parseInt(aniId));
+
+  let statusWatch = "CURRENT";
+
+  if (gut?.status === "COMPLETED") {
+    statusWatch = "REPEATING";
+  } else if (
+    gut?.status === "REPEATING" &&
+    gut?.media?.episodes === parseInt(playingEpisode)
+  ) {
+    statusWatch = "COMPLETED";
+  } else if (gut?.status === "REPEATING") {
+    statusWatch = "REPEATING";
+  } else if (aniData.totalEpisodes === parseInt(playingEpisode)) {
+    statusWatch = "COMPLETED";
+  }
+
   return {
     props: {
       info: {
@@ -427,6 +467,8 @@ export async function getServerSideProps(context) {
         aniData,
         epiFallback,
       },
+      sessions: session,
+      statusWatch: statusWatch,
     },
   };
 }

@@ -35,7 +35,7 @@ export default function Content({ ids, section, data }) {
         <MdChevronLeft
           onClick={slideLeft}
           size={35}
-          className={`mb-5 cursor-pointer absolute left-0 bg-gradient-to-r from-[#141519]  z-40 h-full hover:opacity-100 ${
+          className={`mb-5 cursor-pointer hover:text-action absolute left-0 bg-gradient-to-r from-[#141519]  z-40 h-full hover:opacity-100 ${
             scrollLeft ? "visible" : "hidden"
           }`}
         />
@@ -85,7 +85,7 @@ export default function Content({ ids, section, data }) {
         <MdChevronRight
           onClick={slideRight}
           size={30}
-          className={`mb-5 cursor-pointer absolute right-0 bg-gradient-to-l from-[#141519] z-40 h-full hover:opacity-100 hover:bg-gradient-to-l ${
+          className={`mb-5 cursor-pointer hover:text-action absolute right-0 bg-gradient-to-l from-[#141519] z-40 h-full hover:opacity-100 hover:bg-gradient-to-l ${
             scrollRight ? "visible" : "hidden"
           }`}
         />

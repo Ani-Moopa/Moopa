@@ -1,3 +1,5 @@
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 import React, { useEffect, useState } from "react";
 import { META } from "@consumet/extensions";
 
@@ -8,28 +10,26 @@ import Head from "next/head";
 import { closestMatch } from "closest-match";
 import Content from "../../components/hero/content";
 
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 export default function Himitsu({
   info,
-  slicedDesc,
   color,
   episodeList,
   episode1,
-  judul,
   subIndo,
   epIndo,
+  sessions,
+  progress,
+  status,
+  lastPlayed,
 }) {
-  const [isLoading, setIsloading] = useState(false);
   const [showText, setShowtext] = useState(false);
   const [load, setLoad] = useState(true);
   const [Lang, setLang] = useState(true);
   const [showAll, setShowAll] = useState(false);
 
-  const { data: session } = useSession();
-
-  const [lastPlayed, setLastPlayed] = useState(null);
-  const [user, setUser] = useState(null);
   const episode = episodeList;
   const epi1 = episode1;
 
@@ -44,21 +44,6 @@ export default function Himitsu({
   }
 
   useEffect(() => {
-    async function userData() {
-      setLoad(false);
-      if (!session) return;
-      setLoad(true);
-      const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
-      const data = await res.json();
-      setLastPlayed(
-        data?.recentWatch.filter(
-          (item) => item.title.romaji === info.title.romaji
-        )[0]?.episode
-      );
-      setUser(data);
-      setLoad(false);
-    }
-
     function getBrightness(color) {
       const rgb = color.match(/\d+/g);
       return (299 * rgb[0] + 587 * rgb[1] + 114 * rgb[2]) / 1000;
@@ -80,12 +65,8 @@ export default function Himitsu({
       setTextColor(element);
     });
 
-    userData();
-  }, [color, session]);
-
-  if (!info) {
-    return;
-  }
+    setLoad(false);
+  }, [color, sessions, info.id]);
 
   let episodeIndo = null;
   if (epIndo < 17) {
@@ -95,11 +76,11 @@ export default function Himitsu({
   }
 
   async function handleUpdate(data) {
-    if (!session) return;
+    if (!sessions) return;
     const res = await fetch("/api/update-user", {
       method: "POST",
       body: JSON.stringify({
-        name: session?.user.name,
+        name: sessions?.user.name,
         newData: {
           recentWatch: data,
         },
@@ -110,6 +91,8 @@ export default function Himitsu({
     });
     console.log(res.status);
   }
+
+  // console.log(lastPlayed);
 
   return (
     <>
@@ -127,12 +110,10 @@ export default function Himitsu({
             <img
               // ref={ref}
               src={info.cover || info.image}
-              className="md:h-[300px] h-[420px] w-screen object-cover brightness-50"
+              className="md:h-[300px] h-[420px] w-screen object-cover brightness-[60%]"
             />
           </div>
-          {isLoading ? (
-            <p>Loading cuy sabar...</p>
-          ) : info ? (
+          {info ? (
             <div className="flex flex-col items-center gap-10">
               <div className="flex w-screen flex-col gap-10 md:w-[70%]">
                 <div className="z-40 flex flex-col gap-10 px-5 pt-[8rem] md:flex-row lg:mt-[5rem] lg:px-0">
@@ -141,6 +122,7 @@ export default function Himitsu({
                       {info.image && (
                         <>
                           <div
+                            key={info.id}
                             style={{
                               backgroundImage: `url(${info.image})`,
                               height: "100%",
@@ -157,8 +139,8 @@ export default function Himitsu({
 
                     {/* MOBILE */}
                     <div className="flex w-full flex-col gap-5 lg:hidden ">
-                      <h1 className="shrink-0 text-2xl font-semibold">
-                        {judul}
+                      <h1 className="shrink-0 text-2xl font-semibold line-clamp-2">
+                        {info.title.romaji || info.title.english}
                       </h1>
                       <div className="flex w-[90%] flex-col gap-1">
                         <div className="flex gap-2">
@@ -278,7 +260,7 @@ export default function Himitsu({
                       </div>
                     </div>
                     <div
-                      className={`hidden h-[140px] transition-all duration-300 overflow-y-hidden scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-md hover:overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] lg:block`}
+                      className={`hidden h-[140px] transition-all duration-300 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-md overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] lg:block`}
                     >
                       <p
                         dangerouslySetInnerHTML={{ __html: info.description }}
@@ -286,11 +268,12 @@ export default function Himitsu({
                       />
                     </div>
                     <div className="lg:hidden">
-                      <div
+                      <p
+                        className={`${showText ? "" : "line-clamp-3"}`}
                         dangerouslySetInnerHTML={{
-                          __html: showText ? info.description : slicedDesc,
+                          __html: info.description,
                         }}
-                      ></div>
+                      />
                       <button
                         onClick={() => setShowtext(!showText)}
                         className="font-rama font-bold text-white"
@@ -385,15 +368,15 @@ export default function Himitsu({
                 </div>
 
                 <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
-                  <div className="flex items-center gap-10">
+                  <div className="flex items-center md:gap-10 gap-7">
                     <h1 className="text-3xl font-bold">Episodes</h1>
                     <div className="flex items-center rounded-md">
                       <button
                         onClick={handleEnLang}
                         className={
                           Lang
-                            ? `w-16 p-2 rounded-l-md bg-[#212121]`
-                            : `w-16 p-2 rounded-l-md bg-[#171717] text-[#404040]`
+                            ? `w-16 p-2 rounded-l-md bg-secondary text-action shadow-action`
+                            : `w-16 p-2 rounded-l-md bg-[#17171b] text-[#404040]`
                         }
                       >
                         EN
@@ -412,8 +395,18 @@ export default function Himitsu({
                         ID
                       </button>
                     </div>
+                    {status && (
+                      <>
+                        <div className="font-karla relative group flex justify-center">
+                          {status}
+                          <span className="absolute bottom-8  shadow-lg invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 font-karla font-light bg-secondary p-1 px-2 rounded-lg">
+                            status
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div className="flex h-[640px] flex-col gap-5 overflow-y-hidden scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full hover:overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
+                  <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
                     {load ? (
                       <p>Loading...</p>
                     ) : episode && Lang ? (
@@ -421,9 +414,8 @@ export default function Himitsu({
                         const item = lastPlayed?.find(
                           (item) => item.id === episode.id
                         );
-                        console.log(item);
                         return (
-                          <div key={index} className="flex flex-col gap-3">
+                          <div key={index} className="flex flex-col gap-3 px-2">
                             <Link
                               onClick={() =>
                                 handleUpdate({
@@ -444,14 +436,18 @@ export default function Himitsu({
                                 item ? `${item.time}` : ""
                               }`}
                               className={`text-start text-xl ${
-                                item ? "text-[#414141]" : "text-white"
+                                episode.number <= progress
+                                  ? "text-[#5f5f5f]"
+                                  : "text-white"
                               }`}
                             >
                               <p>Episode {episode.number}</p>
                               {episode.title && (
                                 <p
                                   className={`text-[14px] ${
-                                    item ? "text-[#414141]" : "text-[#b1b1b1]"
+                                    episode.number <= progress
+                                      ? "text-[#5f5f5f]"
+                                      : "text-[#b1b1b1]"
                                   } italic`}
                                 >
                                   "{episode.title}"
@@ -531,11 +527,13 @@ export default function Himitsu({
   );
 }
 
-export const getServerSideProps = async (context) => {
+export async function getServerSideProps(context) {
   context.res.setHeader(
     "Cache-Control",
     "public, s-maxage=10, stale-while-revalidate=59"
   );
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   const { id } = context.query;
   if (!id) {
     return {
@@ -551,6 +549,12 @@ export const getServerSideProps = async (context) => {
     ),
     provider.fetchEpisodesListById(id[0]),
   ]);
+
+  if (!info) {
+    return {
+      notFound: true,
+    };
+  }
 
   let episodeList = episodes;
   if (episodes.length === 0) {
@@ -608,15 +612,57 @@ export const getServerSideProps = async (context) => {
     epis = dataInf.episode;
   }
 
-  const desc = info.description.slice(0, 150) + "...";
+  let progress = null;
+  let status = null;
+  let lastPlayed = null;
+
+  if (session) {
+    const res = await fetch(`${baseUrl}/api/get-media`, {
+      method: "POST",
+      body: JSON.stringify({
+        username: session?.user.name,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const resp = await fetch(
+      `${baseUrl}/api/get-user?userName=${session?.user.name}`
+    );
+    const data = await resp.json();
+
+    lastPlayed = data?.recentWatch.filter(
+      (item) => item.title.romaji === info.title.romaji
+    )[0]?.episode;
+
+    const prog = await res.json();
+
+    const gat = prog.lists.map((item) => item.entries);
+    const git = gat.map((item) =>
+      item.find((item) => item.media.id === parseInt(info.id))
+    );
+    const gut = git?.find((item) => item?.media.id === parseInt(info.id));
+
+    if (gut) {
+      progress = gut?.progress;
+      if (gut.status === "CURRENT") {
+        status = "Watching";
+      } else if (gut.status === "PLANNING") {
+        status = "Planned to watch";
+      } else if (gut.status === "COMPLETED") {
+        status = "Completed";
+      } else if (gut.status === "DROPPED") {
+        status = "Dropped";
+      } else if (gut.status === "PAUSED") {
+        status = "Paused";
+      }
+    }
+  }
+
   const color = { backgroundColor: `${info.color}` };
   const epi1 = episodes.filter((epi) => epi.number === 1);
   const title = info.title?.userPreferred || "No Title";
-
-  const MAX = 20;
-
-  const oriJ = info.title?.english || info.title.romaji || info.title.native;
-  const judul = oriJ.length > MAX ? `${oriJ.substring(0, MAX)}...` : oriJ;
 
   return {
     props: {
@@ -627,13 +673,15 @@ export const getServerSideProps = async (context) => {
           userPreferred: title,
         },
       },
-      slicedDesc: desc,
       color,
       episodeList,
       episode1: epi1,
-      judul,
       subIndo: slug,
       epIndo: epis,
+      sessions: session,
+      progress: progress || null,
+      status: status,
+      lastPlayed: lastPlayed || null,
     },
   };
-};
+}

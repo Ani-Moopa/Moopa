@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "3.1.6",
+  "version": "3.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,12 +14,9 @@
     "@consumet/extensions": "github:consumet/consumet.ts",
     "@next-auth/mongodb-adapter": "^1.1.1",
     "@next/font": "13.0.7",
-    "@vidstack/react": "^0.4.3",
     "artplayer": "^4.6.2",
     "axios": "^1.2.2",
     "closest-match": "^1.3.3",
-    "crypto": "^1.0.1",
-    "disqus-react": "^1.1.5",
     "framer-motion": "^8.5.0",
     "gql": "^1.1.2",
     "graphql": "^15.8.0",
@@ -36,9 +33,7 @@
     "react-icons": "^4.7.1",
     "react-loading-skeleton": "^3.2.0",
     "request": "^2.88.2",
-    "tailwind-scrollbar-hide": "^1.1.7",
-    "typewriter-effect": "^2.19.0",
-    "vidstack": "^0.4.3"
+    "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",

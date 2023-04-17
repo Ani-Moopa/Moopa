@@ -7,7 +7,9 @@ export async function getUser(userName) {
   const collection = db.collection("users");
   const user = await collection.findOne({ name: userName });
 
-  user._id = String(user._id);
+  if (user && user._id) {
+    user._id = String(user._id);
+  }
 
   return user;
 }

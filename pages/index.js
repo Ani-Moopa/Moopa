@@ -10,11 +10,13 @@ import { useRouter } from "next/router";
 
 import { motion } from "framer-motion";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useAniList } from "../lib/useAnilist";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 export function Navigasi() {
-  const { data: session, status } = useSession();
+  const { data: sessions, status } = useSession();
 
   const router = useRouter();
 
@@ -54,7 +56,7 @@ export function Navigasi() {
                 <li>Loading...</li>
               ) : (
                 <>
-                  {!session && (
+                  {!sessions && (
                     <li>
                       <button
                         onClick={() => signIn("AniListProvider")}
@@ -64,10 +66,12 @@ export function Navigasi() {
                       </button>
                     </li>
                   )}
-                  {session && (
+                  {sessions && (
                     <li className="text-center">
-                      {/* <div className="p-2"><img src={session?.user.image.large} alt="imagine" /></div> */}
-                      My List
+                      {/* <div className="p-2"><img src={sessions?.user.image.large} alt="imagine" /></div> */}
+                      <Link href={`/profile/${sessions?.user.name}`}>
+                        My List
+                      </Link>
                     </li>
                   )}
                 </>
@@ -93,15 +97,14 @@ export function Navigasi() {
   );
 }
 
-export default function Home({ detail, populars }) {
-  const { data: session, status } = useSession();
-  const { media } = useAniList(session);
+export default function Home({ detail, populars, sessions }) {
+  const { media } = useAniList(sessions, { stats: "CURRENT" });
 
   const [isVisible, setIsVisible] = useState(false);
-  const [recently, setRecently] = useState(null);
   const [plan, setPlan] = useState(null);
   const [user, setUser] = useState(null);
   const [array, setArray] = useState([]);
+  const [fade, setFade] = useState(false);
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -109,42 +112,48 @@ export default function Home({ detail, populars }) {
 
   const handleShowClick = () => {
     setIsVisible(true);
+    setFade(true);
   };
 
   const handleHideClick = () => {
     setIsVisible(false);
+    setFade(false);
   };
-
-  // const reversed = user?.recentWatch.reverse();
-  // console.log(plan);
 
   useEffect(() => {
     async function userData() {
-      if (!session) return;
-      const res = await fetch(`/api/get-user?userName=${session?.user.name}`);
+      if (!sessions) return;
+      const res = await fetch(`/api/get-user?userName=${sessions?.user.name}`);
       const data = await res.json();
 
       const getMedia =
-        media.filter((item) => item.status === "PAUSED")[0] || null;
+        media.filter((item) => item.status === "CURRENT")[0] || null;
       const plan = getMedia?.entries
         .map(({ media }) => media)
         .filter((media) => media);
 
-      setPlan(plan);
-      setArray(data?.recentWatch.reverse());
+      const get = media.flatMap((item) => item.entries);
+      const newArray = [];
+
+      get.forEach((item) => {
+        if (!newArray.some((element) => element.id === item.id)) {
+          newArray.push(item);
+        }
+      });
+
+      const getlog = newArray
+        .map(({ media }) => media)
+        .filter((media) => media);
+
+      if (plan) {
+        setPlan(plan.reverse());
+      }
+
+      setArray(data?.recentWatch?.reverse());
       setUser(data);
     }
-    function fetchData() {
-      const recent = JSON.parse(localStorage.getItem("recentWatch"));
-      if (recent) {
-        setRecently(recent);
-      }
-    }
     userData();
-    fetchData();
-  }, [session]);
-
-  // console.log(user?.recentWatch.reverse());
+  }, [sessions, media]);
 
   return (
     <>
@@ -172,7 +181,7 @@ export default function Home({ detail, populars }) {
         {!isVisible && (
           <button
             onClick={handleShowClick}
-            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#101925] shadow-menu md:hidden"
+            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#17171f] shadow-lg md:hidden"
             id="bars"
           >
             <svg
@@ -189,162 +198,166 @@ export default function Home({ detail, populars }) {
             </svg>
           </button>
         )}
+      </div>
 
-        {/* Mobile Menu */}
-        <div className="md:hidden">
-          {isVisible && (
-            <button
-              type="button"
-              onClick={() => signIn("AniListProvider")}
-              className="fixed bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#101925]"
-            >
-              {!session && (
-                <div>
+      {/* Mobile Menu */}
+      <div className={`transition-all duration-150 subpixel-antialiased z-50`}>
+        {isVisible && sessions && (
+          <Link
+            href={`/profile/${sessions?.user.name}`}
+            className="fixed md:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
+          >
+            <img
+              src={sessions?.user.image.large}
+              alt="user avatar"
+              className="object-cover w-[60px] h-[60px] rounded-full"
+            />
+          </Link>
+        )}
+        {isVisible && (
+          <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg md:hidden">
+            <div className="grid grid-cols-4 place-items-center gap-6">
+              <button className="group flex flex-col items-center">
+                <Link href="/" className="">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="26"
                     fill="none"
-                    viewBox="0 0 33 26"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 group-hover:stroke-action"
                   >
                     <path
-                      fill="#fff"
-                      d="M15.167 24.638v-1.732h8.942c.209 0 .4-.087.573-.26.174-.174.26-.365.26-.573V3.28c0-.209-.086-.4-.26-.573-.173-.174-.364-.26-.573-.26h-8.942V.714h8.942c.707 0 1.311.25 1.813.753.502.502.753 1.106.753 1.813v18.792c0 .706-.25 1.31-.753 1.812a2.471 2.471 0 01-1.813.753h-8.942zm-1.532-6.536l-1.303-1.26 3.32-3.322H3.86v-1.732h11.766l-3.321-3.321 1.321-1.233 5.448 5.448-5.438 5.42z"
-                    ></path>
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                    />
                   </svg>
-                </div>
-              )}
-              {session && (
-                <img
-                  src={session?.user.image.large}
-                  alt="user avatar"
-                  className="object-cover w-[60px] h-[60px] rounded-full"
-                />
-              )}
-            </button>
-          )}
-          {isVisible && (
-            <div className="fixed bottom-[25px] right-[15px] z-50 flex h-[66px] w-[255px] items-center justify-center gap-8 rounded-[10px] text-[11px] bg-[#101925] shadow-menu md:hidden">
-              <div className="flex gap-7">
-                <button className="group flex flex-col items-center">
-                  <Link href="/" className="">
-                    <svg
-                      width="28"
-                      height="24"
-                      viewBox="0 0 28 24"
-                      className=" group-hover:fill-cyan-700 fill-white"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_224_286)">
-                        <path d="M14.0937 -0.571411C14.0937 -0.571411 5.91783 6.54859 1.34879 10.4046C1.08049 10.6499 0.876953 11.0073 0.876953 11.4286C0.876953 12.1659 1.46774 12.7619 2.19863 12.7619H4.84199V22.0953C4.84199 22.8326 5.43278 23.4286 6.16367 23.4286H10.1287C10.8596 23.4286 11.4504 22.8313 11.4504 22.0953V16.7619H16.7371V22.0953C16.7371 22.8313 17.3279 23.4286 18.0588 23.4286H22.0238C22.7547 23.4286 23.3455 22.8326 23.3455 22.0953V12.7619H25.9888C26.7197 12.7619 27.3105 12.1659 27.3105 11.4286C27.3105 11.0073 27.107 10.6499 26.8043 10.4046C22.267 6.54859 14.0937 -0.571411 14.0937 -0.571411Z" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_224_286">
-                          <rect
-                            width="27"
-                            height="24"
-                            fill="white"
-                            transform="translate(0.5)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/"
-                    className="font-karla font-bold text-[#8BA0B2] group-hover:text-cyan-700"
-                  >
-                    home
-                  </Link>
-                </button>
-                <button className="group flex flex-col items-center">
-                  <Link href="/about">
-                    <svg
-                      width="27"
-                      height="25"
-                      viewBox="0 0 27 25"
-                      className=" group-hover:fill-cyan-700 fill-white"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_224_292)">
-                        <path d="M21.3402 0.5H5.65974C4.31427 0.500087 3.02394 0.996857 2.07261 1.88103C1.12127 2.7652 0.586852 3.96435 0.586914 5.21469V19.7853C0.586852 21.0356 1.12127 22.2348 2.07261 23.119C3.02394 24.0031 4.31427 24.4999 5.65974 24.5H21.3402C22.6856 24.4999 23.976 24.0031 24.9273 23.119C25.8786 22.2348 26.4131 21.0356 26.413 19.7853V5.21469C26.4131 3.96435 25.8786 2.7652 24.9273 1.88103C23.976 0.996857 22.6856 0.500087 21.3402 0.5ZM13.5 4.93182C13.8482 4.93182 14.1887 5.02779 14.4782 5.20759C14.7678 5.3874 14.9935 5.64297 15.1268 5.94197C15.2601 6.24098 15.2949 6.57 15.227 6.88742C15.159 7.20484 14.9913 7.49642 14.7451 7.72527C14.4988 7.95412 14.1851 8.10996 13.8435 8.1731C13.5019 8.23624 13.1479 8.20384 12.8261 8.07999C12.5043 7.95613 12.2293 7.7464 12.0358 7.4773C11.8424 7.2082 11.7391 6.89182 11.7391 6.56818C11.7391 6.13419 11.9246 5.71798 12.2548 5.4111C12.5851 5.10422 13.0329 4.93182 13.5 4.93182ZM15.9212 20.1364H11.2255C10.9142 20.1364 10.6156 20.0214 10.3954 19.8168C10.1753 19.6123 10.0516 19.3348 10.0516 19.0455C10.0516 18.7561 10.1753 18.4787 10.3954 18.2741C10.6156 18.0695 10.9142 17.9545 11.2255 17.9545H12.326V11.4091H11.2255C10.9142 11.4091 10.6156 11.2942 10.3954 11.0896C10.1753 10.885 10.0516 10.6075 10.0516 10.3182C10.0516 10.0289 10.1753 9.75138 10.3954 9.54679C10.6156 9.34221 10.9142 9.22727 11.2255 9.22727H14.6739V17.9545H15.9212C16.2325 17.9545 16.5311 18.0695 16.7512 18.2741C16.9714 18.4787 17.0951 18.7561 17.0951 19.0455C17.0951 19.3348 16.9714 19.6123 16.7512 19.8168C16.5311 20.0214 16.2325 20.1364 15.9212 20.1364Z" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_224_292">
-                          <rect
-                            width="27"
-                            height="24"
-                            fill="white"
-                            transform="translate(0 0.5)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/about"
-                    className="font-karla font-bold text-[#8BA0B2] group-hover:text-cyan-700"
-                  >
-                    about
-                  </Link>
-                </button>
-                <button className="group flex gap-[1.5px] flex-col items-center ">
-                  <div>
-                    <Link href="/search">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="group-hover:fill-cyan-700 fill-white w-6 h-6"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </Link>
-                  </div>
-                  <Link
-                    href="/search"
-                    className="font-karla font-bold text-[#8BA0B2] group-hover:text-cyan-700"
-                  >
-                    search
-                  </Link>
-                </button>
-              </div>
-              <button onClick={handleHideClick}>
-                <svg
-                  width="20"
-                  height="21"
-                  className="fill-orange-500"
-                  viewBox="0 0 20 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                </Link>
+                <Link
+                  href="/"
+                  className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
-                  <rect
-                    x="2.44043"
-                    y="0.941467"
-                    width="23.5842"
-                    height="3.45134"
-                    rx="1.72567"
-                    transform="rotate(45 2.44043 0.941467)"
-                  />
-                  <rect
-                    x="19.1172"
-                    y="3.38196"
-                    width="23.5842"
-                    height="3.45134"
-                    rx="1.72567"
-                    transform="rotate(135 19.1172 3.38196)"
-                  />
-                </svg>
+                  home
+                </Link>
               </button>
+              <button className="group flex flex-col items-center">
+                <Link href="/about">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 group-hover:stroke-action"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/about"
+                  className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
+                >
+                  about
+                </Link>
+              </button>
+              <button className="group flex gap-[1.5px] flex-col items-center ">
+                <div>
+                  <Link href="/search">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 group-hover:stroke-action"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+                <Link
+                  href="/search"
+                  className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
+                >
+                  search
+                </Link>
+              </button>
+              {sessions ? (
+                <button
+                  onClick={() => signOut("AniListProvider")}
+                  className="group flex gap-[1.5px] flex-col items-center "
+                >
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 96 960 960"
+                      className="group-hover:fill-action w-6 h-6 fill-txt"
+                    >
+                      <path d="M186.666 936q-27 0-46.833-19.833T120 869.334V282.666q0-27 19.833-46.833T186.666 216H474v66.666H186.666v586.668H474V936H186.666zm470.668-176.667l-47-48 102-102H370v-66.666h341.001l-102-102 46.999-48 184 184-182.666 182.666z"></path>
+                    </svg>
+                  </div>
+                  <h1 className="font-karla font-bold text-[#8BA0B2] group-hover:text-action">
+                    logout
+                  </h1>
+                </button>
+              ) : (
+                <button
+                  onClick={() => signIn("AniListProvider")}
+                  className="group flex gap-[1.5px] flex-col items-center "
+                >
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 96 960 960"
+                      className="group-hover:fill-action w-6 h-6 fill-txt mr-2"
+                    >
+                      <path d="M486 936v-66.666h287.334V282.666H486V216h287.334q27 0 46.833 19.833T840 282.666v586.668q0 27-19.833 46.833T773.334 936H486zm-78.666-176.667l-47-48 102-102H120v-66.666h341l-102-102 47-48 184 184-182.666 182.666z"></path>
+                    </svg>
+                  </div>
+                  <h1 className="font-karla font-bold text-[#8BA0B2] group-hover:text-action">
+                    login
+                  </h1>
+                </button>
+              )}
             </div>
-          )}
-        </div>
+            <button onClick={handleHideClick}>
+              <svg
+                width="20"
+                height="21"
+                className="fill-orange-500"
+                viewBox="0 0 20 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="2.44043"
+                  y="0.941467"
+                  width="23.5842"
+                  height="3.45134"
+                  rx="1.72567"
+                  transform="rotate(45 2.44043 0.941467)"
+                />
+                <rect
+                  x="19.1172"
+                  y="3.38196"
+                  width="23.5842"
+                  height="3.45134"
+                  rx="1.72567"
+                  transform="rotate(135 19.1172 3.38196)"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
@@ -389,10 +402,19 @@ export default function Home({ detail, populars }) {
             </div>
           </div>
         </div>
-        {session && (
-          <div className="w-screen flex md:justify-center mx-3 md:mx-0 mt-10 md:mt-0">
-            <div className="md:w-[86%] md:text-3xl text-2xl font-bold font-karla">
-              {greeting}, {session?.user.name}
+        {sessions && (
+          <div className="flex items-center mx-3 md:mx-0 mt-10 md:mt-0">
+            <div className="md:text-4xl md:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
+              {greeting},<h1 className="md:hidden">{sessions?.user.name}</h1>
+              <button
+                onClick={() => signOut()}
+                className="hidden text-center relative md:flex justify-center group"
+              >
+                {sessions?.user.name}
+                <span className="absolute text-sm z-50 w-20 text-center bottom-11 text-white shadow-lg opacity-0 bg-secondary p-1 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all">
+                  Sign Out
+                </span>
+              </button>
             </div>
           </div>
         )}
@@ -405,7 +427,7 @@ export default function Home({ detail, populars }) {
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
             {/* SECTION 1 */}
-            {session && user?.recentWatch && (
+            {sessions && user?.recentWatch && (
               <motion.div // Add motion.div to each child component
                 key="recentlyWatched"
                 initial={{ y: 20, opacity: 0 }}
@@ -421,7 +443,7 @@ export default function Home({ detail, populars }) {
               </motion.div>
             )}
 
-            {session && plan && (
+            {sessions && plan && (
               <motion.div // Add motion.div to each child component
                 key="plannedAnime"
                 initial={{ y: 20, opacity: 0 }}
@@ -431,7 +453,7 @@ export default function Home({ detail, populars }) {
               >
                 <Content
                   ids="plannedAnime"
-                  section="Start Watching Again"
+                  section="Your Watch List"
                   data={plan}
                 />
               </motion.div>
@@ -478,7 +500,9 @@ export default function Home({ detail, populars }) {
   );
 }
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   const trendingDetail = await aniListData({
     sort: "TRENDING_DESC",
     page: 1,
@@ -494,6 +518,7 @@ export async function getServerSideProps({ req, res }) {
       genre: genreDetail.props,
       detail: trendingDetail.props,
       populars: popularDetail.props,
+      sessions: session,
     },
   };
 }
@@ -508,7 +533,7 @@ function getGreeting() {
     greeting = "Good afternoon";
   } else if (time >= 18 && time < 22) {
     greeting = "Good evening";
-  } else if (time >= 22 && time < 5) {
+  } else if (time >= 22 || time < 5) {
     greeting = "Good night";
   }
 

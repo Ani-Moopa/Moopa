@@ -62,16 +62,11 @@ const sorts = [
 
 export default function Card() {
   const router = useRouter();
-  // const { genres } = router.query;
-  // console.log(genres);
 
   const { aniAdvanceSearch } = useAniList();
 
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
-  // const [selectedGenre, setSelectedGenre] = useState(null);
-  // const [selectedType, setSelectedType] = useState(type[0]);
-  // const [selectedSort, setSelectedSort] = useState(null);
 
   const { hasil } = router.query;
 
@@ -85,7 +80,6 @@ export default function Card() {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  // const [query, setQuery] = useState(hasil || null);
   const inputRef = useRef(null);
 
   async function advance() {
@@ -107,32 +101,15 @@ export default function Card() {
     advance();
   }, [search, type, seasonYear, season, genres, perPage, sort]);
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     setLoading(true);
-  //     try {
-  //       const res = await fetch(
-  //         `https://api.moopa.my.id/meta/anilist/advanced-search?${
-  //           query ? `query=${query}&` : ""
-  //         }${selectedGenre ? `genres=["${selectedGenre}"]&` : ""}${
-  //           selectedType ? `type=${selectedType}&` : ""
-  //         }${selectedSort ? `sort=["${selectedSort}"]` : ""}`
-  //       );
-  //       const data = await res.json();
-  //       setData(data);
-  //       setLoading(false);
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   }
-  //   fetchData();
-  // }, [query, selectedGenre, selectedType, selectedSort]);
-
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       const inputValue = event.target.value;
-      setQuery(inputValue);
+      if (inputValue === "") {
+        setQuery(null);
+      } else {
+        setQuery(inputValue);
+      }
     }
   };
 
@@ -193,7 +170,7 @@ export default function Card() {
                 className="w-[297px] h-[46px] bg-secondary rounded-[10px] flex items-center text-center"
                 onChange={(e) => setSelectedSort(e.target.value)}
               >
-                <option value="">Sort By</option>
+                <option value={["POPULARITY_DESC"]}>Sort By</option>
                 {sorts.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -277,7 +254,7 @@ export default function Card() {
                       TYPE
                     </h1>
                     <select
-                      className="w-[195px] h-[35px] bg-[#26272B] rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
+                      className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
                       value={type}
                       onChange={(e) => setSelectedType(e.target.value)}
                     >
@@ -294,11 +271,11 @@ export default function Card() {
                       SORT
                     </h1>
                     <select
-                      className="w-[195px] h-[35px] bg-[#26272B] rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
+                      className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
                       onChange={(e) => setSelectedSort(e.target.value)}
                     >
-                      <option value="">Sort By</option>
-                      {sort.map((option) => (
+                      <option value={["POPULARITY_DESC"]}>Sort By</option>
+                      {sorts.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
@@ -317,55 +294,16 @@ export default function Card() {
               {loading ? (
                 <>
                   <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
-                    <div
-                      className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                      style={{ scale: 0.98 }}
-                    >
-                      <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                      <Skeleton width={110} height={30} />
-                    </div>
+                    {[1, 2, 4, 5, 6, 7, 8].map((item) => (
+                      <div
+                        key={item}
+                        className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
+                        style={{ scale: 0.98 }}
+                      >
+                        <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
+                        <Skeleton width={110} height={30} />
+                      </div>
+                    ))}
                   </SkeletonTheme>
                 </>
               ) : data && data.media.length === 0 ? (
@@ -390,7 +328,6 @@ export default function Card() {
                         className=""
                       >
                         <div
-                          // className=" bg-[#3B3C41] h-[313px] hover:ring-4 ring-[#ff8a57] transition-all cursor-pointer duration-100 ease-in-out rounded-[10px]"
                           className=" bg-[#3B3C41] lg:h-[313px] xs:h-[215px] h-[175px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
                           style={{
                             backgroundImage: `url(${anime.coverImage.extraLarge})`,
@@ -400,7 +337,12 @@ export default function Card() {
                         />
                       </Link>
                       <Link href={`/anime/${anime.id}`}>
-                        <h1 className="font-outfit font-bold lg:text-[20px] pt-4 title-overflow">
+                        <h1 className="font-outfit font-bold lg:text-[20px] pt-4 line-clamp-2">
+                          {anime.status === "RELEASING" ? (
+                            <span className="dots bg-green-500" />
+                          ) : anime.status === "NOT_YET_RELEASED" ? (
+                            <span className="dots bg-red-500" />
+                          ) : null}
                           {anime.title.userPreferred}
                         </h1>
                       </Link>

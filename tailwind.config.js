@@ -45,10 +45,11 @@ module.exports = {
       },
       colors: {
         primary: "#141519",
-        secondary: "#22252E",
+        secondary: "#232329",
         action: "#FF7F57",
         image: "#3B3C41",
         txt: "#dbdcdd",
+        tersier: "#0c0d10",
       },
     },
     fontFamily: {
@@ -75,8 +76,5 @@ module.exports = {
       nocompatible: true,
     }),
     require("tailwind-scrollbar-hide"),
-    require("vidstack/tailwind.cjs")({
-      prefix: "media", // paused:... -> media-paused:...
-    }),
   ],
 };

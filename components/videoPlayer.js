@@ -10,6 +10,7 @@ export default function VideoPlayer({
   progress,
   session,
   aniId,
+  stats,
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
@@ -61,7 +62,7 @@ export default function VideoPlayer({
           option={{
             url: `${url}`,
             quality: [source],
-            // autoplay: true,
+            autoplay: true,
             screenshot: true,
             type: "m3u8",
           }}
@@ -88,7 +89,7 @@ export default function VideoPlayer({
 
               if (percentage >= 0.9) {
                 // use >= instead of >
-                markProgress(aniId, progress);
+                markProgress(aniId, progress, stats);
               } else {
                 return;
               }
@@ -117,7 +118,7 @@ export default function VideoPlayer({
                 },
               });
 
-              console.log(res.status);
+              // console.log(res.status);
 
               const title = titles;
               const prevDataStr = localStorage.getItem("lastPlayed") || "[]";
