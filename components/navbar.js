@@ -64,7 +64,7 @@ function Navbar(props) {
         >
           {isVisible && session && (
             <Link
-              href={"/profile"}
+              href={`/profile/${session?.user?.name}`}
               className="fixed md:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
             >
               <img
