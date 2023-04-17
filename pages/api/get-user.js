@@ -16,7 +16,16 @@ export async function getUser(userId) {
 
 export default async function handler(req, res) {
   const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
   const user = await getUser(userId);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
   res.status(200).json(user);
 }
