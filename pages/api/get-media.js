@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const { username, status } = req.body;
+  const { username, status } = req.query;
 
   try {
     const response = await fetch("https://graphql.anilist.co/", {

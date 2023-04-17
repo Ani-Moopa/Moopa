@@ -299,15 +299,9 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const query = context.query;
 
-  const res = await fetch(`https://moopa-anilist.vercel.app/api/get-media`, {
-    method: "POST",
-    body: JSON.stringify({
-      username: query.user,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const res = await fetch(
+    `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
+  );
 
   const get = await res.json();
   const sectionOrder = get?.user.mediaListOptions.animeList.sectionOrder;

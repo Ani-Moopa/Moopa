@@ -615,15 +615,9 @@ export async function getServerSideProps(context) {
   let lastPlayed = null;
 
   if (session) {
-    const res = await fetch(`https://moopa-anilist.vercel.app/api/get-media`, {
-      method: "POST",
-      body: JSON.stringify({
-        username: session?.user.name,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
+    );
 
     const resp = await fetch(`/api/get-user?userName=${session?.user.name}`);
     const data = await resp.json();

@@ -423,15 +423,9 @@ export async function getServerSideProps(context) {
     .filter((item) => item.id == id)
     .map((item) => item.number);
 
-  const resp = await fetch(`https://moopa-anilist.vercel.app/api/get-media`, {
-    method: "POST",
-    body: JSON.stringify({
-      username: session?.user.name,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const resp = await fetch(
+    `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
+  );
 
   const prog = await resp.json();
 

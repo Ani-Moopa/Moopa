@@ -123,7 +123,7 @@ export default function Home({ detail, populars, sessions }) {
   useEffect(() => {
     async function userData() {
       if (!sessions) return;
-      const res = await fetch(`/api/get-user?userName=${sessions?.user.name}`);
+      const res = await fetch(`/api/get-user?id=${sessions?.user.id}`);
       const data = await res.json();
 
       const getMedia =
