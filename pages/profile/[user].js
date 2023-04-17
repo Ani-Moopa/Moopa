@@ -299,11 +299,73 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const query = context.query;
 
-  const res = await fetch(
-    `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
-  );
+  const response = await fetch("https://graphql.anilist.co/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
+          query ($username: String, $status: MediaListStatus) {
+            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
+              user {
+                id
+                name
+                about (asHtml: true)
+                createdAt
+                avatar {
+                    large
+                }
+                statistics {
+                  anime {
+                      count
+                      episodesWatched
+                      meanScore
+                      minutesWatched
+                  }
+              }
+                bannerImage
+                mediaListOptions {
+                  animeList {
+                      sectionOrder
+                  }
+                }
+              }
+              lists {
+                status
+                name
+                entries {
+                  id
+                  mediaId
+                  status
+                  progress
+                  score
+                  media {
+                    id
+                    status
+                    title {
+                      english
+                      romaji
+                    }
+                    episodes
+                    coverImage {
+                      large
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+      variables: {
+        username: query.user,
+      },
+    }),
+  });
 
-  const get = await res.json();
+  const data = await response.json();
+
+  const get = data.data.MediaListCollection;
   const sectionOrder = get?.user.mediaListOptions.animeList.sectionOrder;
 
   if (!sectionOrder) {
