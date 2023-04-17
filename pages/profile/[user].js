@@ -1,5 +1,3 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import Navbar from "../../components/navbar";
@@ -301,7 +299,7 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const query = context.query;
 
-  const res = await fetch(`${baseUrl}/api/get-media`, {
+  const res = await fetch(`/api/get-media`, {
     method: "POST",
     body: JSON.stringify({
       username: query.user,

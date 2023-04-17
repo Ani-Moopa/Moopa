@@ -1,5 +1,3 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 import Layout from "../../../components/layout";
 // import { data } from "../../../lib/testData";
 // import { aniData } from "../../../lib/infoData";
@@ -425,7 +423,7 @@ export async function getServerSideProps(context) {
     .filter((item) => item.id == id)
     .map((item) => item.number);
 
-  const resp = await fetch(`${baseUrl}/api/get-media`, {
+  const resp = await fetch(`/api/get-media`, {
     method: "POST",
     body: JSON.stringify({
       username: session?.user.name,

@@ -1,5 +1,3 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 import React, { useEffect, useState } from "react";
 import { META } from "@consumet/extensions";
 
@@ -617,7 +615,7 @@ export async function getServerSideProps(context) {
   let lastPlayed = null;
 
   if (session) {
-    const res = await fetch(`${baseUrl}/api/get-media`, {
+    const res = await fetch(`/api/get-media`, {
       method: "POST",
       body: JSON.stringify({
         username: session?.user.name,
@@ -627,9 +625,7 @@ export async function getServerSideProps(context) {
       },
     });
 
-    const resp = await fetch(
-      `${baseUrl}/api/get-user?userName=${session?.user.name}`
-    );
+    const resp = await fetch(`/api/get-user?userName=${session?.user.name}`);
     const data = await resp.json();
 
     lastPlayed = data?.recentWatch.filter(
