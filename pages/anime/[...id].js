@@ -657,6 +657,8 @@ export async function getServerSideProps(context) {
         status = "Dropped";
       } else if (gut.status === "PAUSED") {
         status = "Paused";
+      } else if (gut.status === "REPEATING") {
+        status = "Rewatching";
       }
     }
   }
