@@ -1,5 +1,3 @@
-// pages/api/anime-media-list.js
-
 export default async function handler(req, res) {
   const { username, status } = req.body;
 

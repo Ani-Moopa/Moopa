@@ -299,7 +299,7 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const query = context.query;
 
-  const res = await fetch(`/api/get-media`, {
+  const res = await fetch(`https://moopa-anilist.vercel.app/api/get-media`, {
     method: "POST",
     body: JSON.stringify({
       username: query.user,
