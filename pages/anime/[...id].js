@@ -10,6 +10,7 @@ import Content from "../../components/hero/content";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]";
+import Image from "next/image";
 
 export default function Himitsu({
   info,
@@ -96,29 +97,31 @@ export default function Himitsu({
             <div className="flex flex-col items-center gap-10">
               <div className="flex w-screen flex-col gap-10 md:w-[70%]">
                 <div className="z-40 flex flex-col gap-10 px-5 pt-[8rem] md:flex-row lg:mt-[5rem] lg:px-0">
-                  <div className="flex gap-10 md:h-[250px] md:w-52">
+                  <div className="flex gap-5 md:h-[250px] md:w-52">
                     <div className="flex h-[200px] w-52 bg-[#dadada50] md:h-[250px] md:w-full">
                       {info.image && (
                         <>
                           <div
                             key={info.id}
-                            style={{
-                              backgroundImage: `url(${info.image})`,
-                              height: "100%",
-                              width: "100%",
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                            }}
                             // src={info.image}
-                            className="h-[200px] w-[200px] md:h-[250px] bg-white shadow-md"
-                          />
+                            className=""
+                          >
+                            <Image
+                              src={info.image}
+                              alt="image"
+                              width={500}
+                              height={500}
+                              draggable={false}
+                              className="object-cover h-[200px] w-[200px] md:h-[250px] shrink-0 bg-white shadow-md"
+                            />
+                          </div>
                         </>
                       )}
                     </div>
 
                     {/* MOBILE */}
-                    <div className="flex w-full flex-col gap-5 lg:hidden ">
-                      <h1 className="shrink-0 text-2xl font-semibold line-clamp-2">
+                    <div className="flex w-full flex-col gap-3 lg:hidden ">
+                      <h1 className="shrink-0 text-xl font-semibold line-clamp-2">
                         {info.title.romaji || info.title.english}
                       </h1>
                       <div className="flex w-[90%] flex-col gap-1">
@@ -229,7 +232,7 @@ export default function Himitsu({
                         className="mr-5"
                       />
                     </div>
-                    <div className="lg:hidden">
+                    <div className="lg:hidden text-sm text-txt">
                       <p
                         className={`${showText ? "" : "line-clamp-3"}`}
                         dangerouslySetInnerHTML={{
@@ -248,7 +251,7 @@ export default function Himitsu({
 
                 <div className="">
                   <div className="flex gap-5 items-center">
-                    <div className="p-3 lg:p-0 text-3xl font-bold">
+                    <div className="p-3 lg:p-0 text-[20px] font-bold font-karla">
                       Relations
                     </div>
                     {info.relations.length > maxItems && (
@@ -331,14 +334,16 @@ export default function Himitsu({
 
                 <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
                   <div className="flex items-center md:gap-10 gap-7">
-                    <h1 className="text-3xl font-bold">Episodes</h1>
+                    <h1 className="text-[20px] font-bold font-karla">
+                      Episodes
+                    </h1>
                     <div className="flex items-center rounded-md">
                       <button
                         onClick={handleEnLang}
                         className={
                           Lang
-                            ? `w-16 p-2 rounded-l-md bg-secondary text-action shadow-action`
-                            : `w-16 p-2 rounded-l-md bg-[#17171b] text-[#404040]`
+                            ? `w-14 p-1 rounded-l-md bg-secondary text-action shadow-action`
+                            : `w-14 p-1 rounded-l-md bg-[#17171b] text-[#404040]`
                         }
                       >
                         EN
@@ -348,10 +353,10 @@ export default function Himitsu({
                         onClick={handleIdLang}
                         className={
                           subIndo === null
-                            ? `w-16 p-2 rounded-r-md bg-[#171717] text-[#404040] pointer-events-none`
+                            ? `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040] pointer-events-none`
                             : Lang
-                            ? `w-16 p-2 rounded-r-md bg-[#171717] text-[#404040]`
-                            : `w-16 p-2 rounded-r-md bg-[#212121]`
+                            ? `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040]`
+                            : `w-14 p-1 rounded-r-md bg-[#212121]`
                         }
                       >
                         ID
@@ -382,7 +387,7 @@ export default function Himitsu({
                               href={`/anime/watch/${episode.id}/${info.id}/${
                                 item ? `${item.time}` : ""
                               }`}
-                              className={`text-start text-xl ${
+                              className={`text-start text-sm ${
                                 episode.number <= progress
                                   ? "text-[#5f5f5f]"
                                   : "text-white"
@@ -391,7 +396,7 @@ export default function Himitsu({
                               <p>Episode {episode.number}</p>
                               {episode.title && (
                                 <p
-                                  className={`text-[14px] ${
+                                  className={`text-xs ${
                                     episode.number <= progress
                                       ? "text-[#5f5f5f]"
                                       : "text-[#b1b1b1]"
