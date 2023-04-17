@@ -84,6 +84,7 @@ export default function VideoPlayer({
             });
 
             art.on("video:timeupdate", () => {
+              if (!session) return;
               const currentTime = art.currentTime;
               const duration = art.duration;
               const percentage = currentTime / duration;
