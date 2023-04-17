@@ -4,11 +4,11 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import "react-loading-skeleton/dist/skeleton.css";
 import Link from "next/link";
-import Navbar from "../components/navbar";
+import Navbar from "../../components/navbar";
 import Head from "next/head";
-import Footer from "../components/footer";
+import Footer from "../../components/footer";
 
-import { useAniList } from "../lib/useAnilist";
+import { useAniList } from "../../lib/useAnilist";
 
 const genre = [
   "Action",
@@ -68,10 +68,23 @@ export default function Card() {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
 
-  const { hasil } = router.query;
+  let hasil = null;
+  let tipe = "ANIME";
 
-  const [search, setQuery] = useState(hasil || null);
-  const [type, setSelectedType] = useState("ANIME");
+  const query = router.query;
+  if (query.param !== "anime" && query.param !== "manga") {
+    hasil = query.param;
+  } else if (query.param === "anime") {
+    hasil = null;
+    tipe = "ANIME";
+  } else if (query.param === "manga") {
+    hasil = null;
+    tipe = "MANGA";
+  }
+  // console.log(hasil);
+
+  const [search, setQuery] = useState(hasil);
+  const [type, setSelectedType] = useState(tipe);
   const [seasonYear, setSeasonYear] = useState();
   const [season, setSeason] = useState();
   const [genres, setSelectedGenre] = useState();
@@ -124,6 +137,13 @@ export default function Card() {
     setIsVisible(!isVisible);
   }
 
+  function handleTipe(e) {
+    setSelectedType(e.target.value);
+    router.push(`/search/${e.target.value.toLowerCase()}`);
+  }
+
+  // console.log(genres);
+
   return (
     <>
       <Head>
@@ -153,7 +173,7 @@ export default function Card() {
               <select
                 className="w-[297px] h-[46px] bg-secondary rounded-[10px]  justify-between pl-[7.5rem] pr-5 flex items-center"
                 value={type}
-                onChange={(e) => setSelectedType(e.target.value)}
+                onChange={(e) => handleTipe(e)}
               >
                 {types.map((option) => (
                   <option key={option} value={option}>
@@ -241,12 +261,15 @@ export default function Card() {
                       className="w-[195px] lg:w-[297px] lg:h-[46px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
                       onChange={(e) => setSelectedGenre(e.target.value)}
                     >
-                      <option value="">Select a Genre</option>
-                      {genre.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
+                      <option value={["Action"]}>Select a Genre</option>
+                      {genre.map((option) => {
+                        // console.log(option);
+                        return (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
                   <div className="lg:hidden text-start items-center lg:items-start flex w-screen lg:w-auto px-8 lg:px-0 flex-row justify-between lg:flex-col pb-5 ">

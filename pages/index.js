@@ -21,7 +21,7 @@ export function Navigasi() {
   const router = useRouter();
 
   const handleFormSubmission = (inputValue) => {
-    router.push(`/search?hasil=${encodeURIComponent(inputValue)}`);
+    router.push(`/search/${encodeURIComponent(inputValue)}`);
   };
 
   const handleKeyDown = async (event) => {
@@ -44,13 +44,15 @@ export function Navigasi() {
               moopa
             </Link>
             <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] md:flex">
-              <Link href="/search">
-                <li>AniList Index</li>
-              </Link>
-              <Link href="/test">
-                <li>Manga</li>
-              </Link>
-              <li>Anime</li>
+              <li>
+                <Link href="/search/anime">AniList Index</Link>
+              </li>
+              <li>
+                <Link href="/search/manga">Manga</Link>
+              </li>
+              <li>
+                <Link href="/search/anime">Anime</Link>
+              </li>
 
               {status === "loading" ? (
                 <li>Loading...</li>

@@ -288,7 +288,7 @@ export default function Himitsu({
                                         info.title.native
                                     )}`
                               }
-                              className={`hover:scale-[1.02] hover:shadow-lg px-4 scale-100 transition-transform duration-200 ease-out w-full ${
+                              className={`hover:scale-[1.02] hover:shadow-lg md:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
                                 relation.type === "MUSIC"
                                   ? "pointer-events-none"
                                   : ""
