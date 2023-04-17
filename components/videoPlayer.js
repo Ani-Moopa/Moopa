@@ -83,16 +83,18 @@ export default function VideoPlayer({
               }
             });
 
-            art.on("destroy", () => {
+            art.on("video:timeupdate", () => {
               const currentTime = art.currentTime;
               const duration = art.duration;
               const percentage = currentTime / duration;
 
+              // console.log(percentage);
+
               if (percentage >= 0.9) {
                 // use >= instead of >
                 markProgress(aniId, progress, stats);
-              } else {
-                return;
+                art.off("video:timeupdate");
+                console.log("Video progress marked");
               }
             });
 
