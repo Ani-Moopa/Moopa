@@ -14,7 +14,7 @@
 }
 
 body {
-  @apply bg-primary scrollbar-hide;
+  @apply bg-primary scrollbar-hide text-txt;
 }
 
 @layer components {
