@@ -73,25 +73,6 @@ export default function Himitsu({
     episodeIndo = episode;
   }
 
-  async function handleUpdate(data) {
-    if (!sessions) return;
-    const res = await fetch("/api/update-user", {
-      method: "POST",
-      body: JSON.stringify({
-        name: sessions?.user.name,
-        newData: {
-          recentWatch: data,
-        },
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    console.log(res.status);
-  }
-
-  // console.log(lastPlayed);
-
   return (
     <>
       <Head>
@@ -158,24 +139,7 @@ export default function Himitsu({
                       </div>
                       <div className="flex">
                         {epi1 && epi1[0] ? (
-                          <Link
-                            href={`/anime/watch/${epi1[0].id}/${info.id}`}
-                            onClick={() =>
-                              handleUpdate({
-                                title: {
-                                  romaji:
-                                    info.title.romaji ||
-                                    info.title.english ||
-                                    info.title.native,
-                                },
-                                description: info.description,
-                                coverImage: {
-                                  extraLarge: info.image,
-                                },
-                                id: parseInt(info.id),
-                              })
-                            }
-                          >
+                          <Link href={`/anime/watch/${epi1[0].id}/${info.id}`}>
                             <h1 className="flex cursor-pointer items-center gap-2 rounded-[20px] bg-[#ff9537] px-4 py-2 font-bold text-[#ffffff]">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -415,21 +379,6 @@ export default function Himitsu({
                         return (
                           <div key={index} className="flex flex-col gap-3 px-2">
                             <Link
-                              onClick={() =>
-                                handleUpdate({
-                                  title: {
-                                    romaji:
-                                      info.title.romaji ||
-                                      info.title.english ||
-                                      info.title.native,
-                                  },
-                                  description: info.description,
-                                  coverImage: {
-                                    extraLarge: info.image,
-                                  },
-                                  id: parseInt(info.id),
-                                })
-                              }
                               href={`/anime/watch/${episode.id}/${info.id}/${
                                 item ? `${item.time}` : ""
                               }`}
@@ -615,18 +564,80 @@ export async function getServerSideProps(context) {
   let lastPlayed = null;
 
   if (session) {
-    const res = await fetch(
-      `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
-    );
+    const response = await fetch("https://graphql.anilist.co/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `
+          query ($username: String, $status: MediaListStatus) {
+            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
+              user {
+                id
+                name
+                about (asHtml: true)
+                createdAt
+                avatar {
+                    large
+                }
+                statistics {
+                  anime {
+                      count
+                      episodesWatched
+                      meanScore
+                      minutesWatched
+                  }
+              }
+                bannerImage
+                mediaListOptions {
+                  animeList {
+                      sectionOrder
+                  }
+                }
+              }
+              lists {
+                status
+                name
+                entries {
+                  id
+                  mediaId
+                  status
+                  progress
+                  score
+                  media {
+                    id
+                    status
+                    title {
+                      english
+                      romaji
+                    }
+                    episodes
+                    coverImage {
+                      large
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          username: session?.user.name,
+        },
+      }),
+    });
 
-    const resp = await fetch(`/api/get-user?userName=${session?.user.name}`);
-    const data = await resp.json();
+    const dat = await response.json();
 
-    lastPlayed = data?.recentWatch.filter(
+    // const resp = await fetch(`/api/get-user?userName=${session?.user.name}`);
+    // const data = await resp.json();
+
+    lastPlayed = session?.user?.recentWatch?.filter(
       (item) => item.title.romaji === info.title.romaji
     )[0]?.episode;
 
-    const prog = await res.json();
+    const prog = dat.data.MediaListCollection;
 
     const gat = prog.lists.map((item) => item.entries);
     const git = gat.map((item) =>

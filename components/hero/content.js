@@ -27,7 +27,7 @@ export default function Content({ ids, section, data }) {
   // console.log({ left: scrollLeft, right: scrollRight });
 
   const array = data;
-  let filteredData = array.filter((item) => item.status !== "Unknown");
+  let filteredData = array?.filter((item) => item.status !== "Unknown");
   return (
     <div>
       <h1 className="px-5 font-karla text-[20px] font-bold">{section}</h1>
@@ -44,7 +44,7 @@ export default function Content({ ids, section, data }) {
           className="scroll flex h-full w-full items-center select-none overflow-x-scroll scroll-smooth whitespace-nowrap overflow-y-hidden scrollbar-hide lg:gap-8 gap-5 p-10 z-30 "
           onScroll={handleScroll}
         >
-          {filteredData.map((anime) => {
+          {filteredData?.map((anime) => {
             return (
               <div
                 key={anime.id}

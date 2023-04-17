@@ -423,11 +423,73 @@ export async function getServerSideProps(context) {
     .filter((item) => item.id == id)
     .map((item) => item.number);
 
-  const resp = await fetch(
-    `https://moopa-anilist.vercel.app/api/get-media?username=${query.user}`
-  );
+  const response = await fetch("https://graphql.anilist.co/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
+          query ($username: String, $status: MediaListStatus) {
+            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
+              user {
+                id
+                name
+                about (asHtml: true)
+                createdAt
+                avatar {
+                    large
+                }
+                statistics {
+                  anime {
+                      count
+                      episodesWatched
+                      meanScore
+                      minutesWatched
+                  }
+              }
+                bannerImage
+                mediaListOptions {
+                  animeList {
+                      sectionOrder
+                  }
+                }
+              }
+              lists {
+                status
+                name
+                entries {
+                  id
+                  mediaId
+                  status
+                  progress
+                  score
+                  media {
+                    id
+                    status
+                    title {
+                      english
+                      romaji
+                    }
+                    episodes
+                    coverImage {
+                      large
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+      variables: {
+        username: session?.user.name,
+      },
+    }),
+  });
 
-  const prog = await resp.json();
+  const dat = await response.json();
+
+  const prog = dat.data.MediaListCollection;
 
   const gat = prog?.lists.map((item) => item.entries);
   const git = gat?.map((item) =>

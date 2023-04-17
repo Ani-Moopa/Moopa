@@ -102,9 +102,7 @@ export default function Home({ detail, populars, sessions }) {
 
   const [isVisible, setIsVisible] = useState(false);
   const [plan, setPlan] = useState(null);
-  const [user, setUser] = useState(null);
-  const [array, setArray] = useState([]);
-  const [fade, setFade] = useState(false);
+  // const [array, setArray] = useState(null);
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -112,20 +110,15 @@ export default function Home({ detail, populars, sessions }) {
 
   const handleShowClick = () => {
     setIsVisible(true);
-    setFade(true);
   };
 
   const handleHideClick = () => {
     setIsVisible(false);
-    setFade(false);
   };
 
   useEffect(() => {
     async function userData() {
       if (!sessions) return;
-      const res = await fetch(`/api/get-user?id=${sessions?.user.id}`);
-      const data = await res.json();
-
       const getMedia =
         media.filter((item) => item.status === "CURRENT")[0] || null;
       const plan = getMedia?.entries
@@ -141,6 +134,8 @@ export default function Home({ detail, populars, sessions }) {
         }
       });
 
+      // setArray(sessions.user?.recentWatch?.reverse());
+
       const getlog = newArray
         .map(({ media }) => media)
         .filter((media) => media);
@@ -148,9 +143,6 @@ export default function Home({ detail, populars, sessions }) {
       if (plan) {
         setPlan(plan.reverse());
       }
-
-      setArray(data?.recentWatch?.reverse());
-      setUser(data);
     }
     userData();
   }, [sessions, media]);
@@ -427,7 +419,7 @@ export default function Home({ detail, populars, sessions }) {
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
             {/* SECTION 1 */}
-            {sessions && user?.recentWatch && (
+            {/* {sessions && sessions?.user?.recentWatch && (
               <motion.div // Add motion.div to each child component
                 key="recentlyWatched"
                 initial={{ y: 20, opacity: 0 }}
@@ -441,7 +433,7 @@ export default function Home({ detail, populars, sessions }) {
                   data={array}
                 />
               </motion.div>
-            )}
+            )} */}
 
             {sessions && plan && (
               <motion.div // Add motion.div to each child component

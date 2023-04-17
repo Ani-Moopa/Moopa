@@ -69,7 +69,8 @@ export default function VideoPlayer({
           style={{ width: "100%", height: "100%", margin: "0 auto 0" }}
           getInstance={(art) => {
             art.on("ready", () => {
-              const seekTime = seek;
+              const seek = art.storage.get(id);
+              const seekTime = seek?.time || 0;
               const duration = art.duration;
               const percentage = seekTime / duration;
 
@@ -78,7 +79,7 @@ export default function VideoPlayer({
                 art.currentTime = 0;
                 console.log("Video restarted from the beginning");
               } else {
-                art.currentTime = seek;
+                art.currentTime = seek.time;
               }
             });
 
@@ -101,50 +102,7 @@ export default function VideoPlayer({
             });
 
             art.on("destroy", async () => {
-              if (!session) return;
-              const lastPlayed = {
-                id: id,
-                time: art.currentTime,
-              };
-              const res = await fetch("/api/watched-episode", {
-                method: "POST",
-                body: JSON.stringify({
-                  username: session?.user.name,
-                  id: aniId,
-                  newData: lastPlayed,
-                }),
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
-
-              // console.log(res.status);
-
-              const title = titles;
-              const prevDataStr = localStorage.getItem("lastPlayed") || "[]";
-              const prevData = JSON.parse(prevDataStr);
-              let titleExists = false;
-
-              prevData.forEach((item) => {
-                if (item.title === title) {
-                  const foundIndex = item.data.findIndex((e) => e.id === id);
-                  if (foundIndex !== -1) {
-                    item.data[foundIndex] = lastPlayed;
-                  } else {
-                    item.data.push(lastPlayed);
-                  }
-                  titleExists = true;
-                }
-              });
-
-              if (!titleExists) {
-                prevData.push({
-                  title: title,
-                  data: [lastPlayed],
-                });
-              }
-
-              localStorage.setItem("lastPlayed", JSON.stringify(prevData));
+              art.storage.set(id, { time: art.currentTime });
             });
           }}
         />
