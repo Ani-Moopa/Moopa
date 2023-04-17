@@ -127,7 +127,7 @@ function Navbar(props) {
                 </button>
                 <button className="group flex gap-[1.5px] flex-col items-center ">
                   <div>
-                    <Link href="/search">
+                    <Link href="/search/anime">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -145,7 +145,7 @@ function Navbar(props) {
                     </Link>
                   </div>
                   <Link
-                    href="/search"
+                    href="/search/anime"
                     className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                   >
                     search
@@ -240,7 +240,7 @@ function Navbar(props) {
             </li>
             <li>
               <Link
-                href="/search"
+                href="/search/anime"
                 className="p-2 transition-all duration-100 hover:text-orange-600"
               >
                 search

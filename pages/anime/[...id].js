@@ -468,7 +468,7 @@ export default function Himitsu({
                 404
               </h1>
               <p className="text-4xl font-semibold">{`> Woops.. I think we don't have that Anime :(`}</p>
-              <Link className="pt-10 text-2xl" href="/search">
+              <Link className="pt-10 text-2xl" href="/search/anime">
                 Return to search
               </Link>
             </div>

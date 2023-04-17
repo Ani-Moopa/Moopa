@@ -261,7 +261,7 @@ export default function Home({ detail, populars, sessions }) {
               </button>
               <button className="group flex gap-[1.5px] flex-col items-center ">
                 <div>
-                  <Link href="/search">
+                  <Link href="/search/anime">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -279,7 +279,7 @@ export default function Home({ detail, populars, sessions }) {
                   </Link>
                 </div>
                 <Link
-                  href="/search"
+                  href="/search/anime"
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
                   search
