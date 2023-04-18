@@ -51,8 +51,6 @@ export default function VideoPlayer({
     compiler();
   }, [data]);
 
-  // console.log(skip);
-
   return (
     <>
       {loading ? (
@@ -124,6 +122,7 @@ export default function VideoPlayer({
                 }
                 // Show the layer
                 art.layers.show = true;
+                art.layers.op.style.display = "block";
                 if (art.layers.ed) {
                   art.layers.ed.style.display = "none";
                 }
@@ -136,12 +135,12 @@ export default function VideoPlayer({
                 if (!art.layers.ed) {
                   art.layers.add({
                     name: "ed",
-                    html: `<button style="background-color: #fff; color: black; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); font-family: Karla, sans-serif; font-size: 16px; text-align: center;">Skip Ending</button>`,
+                    html: `<button class="skip-button">Skip Ending</button>`,
                     tooltip: "Skip",
                     style: {
                       position: "absolute",
                       bottom: "68px",
-                      right: "60px",
+                      right: "58px",
                     },
                     click: function (...args) {
                       art.seek = ed.interval.endTime;
@@ -150,11 +149,17 @@ export default function VideoPlayer({
                 }
                 // Show the layer
                 art.layers.show = true;
+                art.layers.ed.style.display = "block";
                 if (art.layers.op) {
                   art.layers.op.style.display = "none";
                 }
               } else {
-                art.layers.show = false;
+                if (art.layers.op) {
+                  art.layers.op.style.display = "none";
+                }
+                if (art.layers.ed) {
+                  art.layers.ed.style.display = "none";
+                }
               }
             });
 
