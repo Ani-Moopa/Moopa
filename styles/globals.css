@@ -143,3 +143,21 @@ button {
   margin-left: 2px;
   margin-bottom: 1px;
 }
+
+.skip-button {
+  @apply bg-white xs:w-28 xs:h-9 w-20 h-7 -right-8 bottom-6 rounded-md font-karla shadow-xl hover:bg-[#f1f1f1] text-black md:static absolute xs:-right-6 xs:bottom-0;
+}
+
+@media screen and (max-width: 768px) {
+  .skip-button {
+    font-size: 14px;
+    padding: 8px 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .skip-button {
+    font-size: 12px;
+    padding: 6px 16px;
+  }
+}
