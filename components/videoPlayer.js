@@ -4,20 +4,18 @@ import { useAniList } from "../lib/useAnilist";
 
 export default function VideoPlayer({
   data,
-  seek,
-  titles,
   id,
   progress,
   session,
   aniId,
   stats,
+  op,
+  ed,
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
   const [loading, setLoading] = useState(true);
   const { markProgress } = useAniList(session);
-
-  // console.log(progress);
 
   useEffect(() => {
     async function compiler() {
@@ -53,6 +51,8 @@ export default function VideoPlayer({
     compiler();
   }, [data]);
 
+  // console.log(skip);
+
   return (
     <>
       {loading ? (
@@ -64,7 +64,6 @@ export default function VideoPlayer({
             quality: [source],
             autoplay: true,
             screenshot: true,
-            type: "m3u8",
           }}
           style={{ width: "100%", height: "100%", margin: "0 auto 0" }}
           getInstance={(art) => {
@@ -77,7 +76,7 @@ export default function VideoPlayer({
               if (percentage >= 0.9) {
                 // use >= instead of >
                 art.currentTime = 0;
-                console.log("Video restarted from the beginning");
+                console.log("Video started from the beginning");
               } else {
                 art.currentTime = seekTime;
               }
@@ -99,9 +98,65 @@ export default function VideoPlayer({
               }
             });
 
-            art.on("video:ended", () => {
-              art.destroy();
-              console.log("Video ended");
+            art.on("video:timeupdate", function () {
+              // if (!skip) return;
+              var currentTime = art.currentTime;
+
+              if (
+                op &&
+                currentTime >= op.interval.startTime &&
+                currentTime <= op.interval.endTime
+              ) {
+                // Add the layer if it's not already added
+                if (!art.layers.op) {
+                  art.layers.add({
+                    name: "op",
+                    html: `<button style="background-color: #fff; color: black; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); font-family: Karla, sans-serif; font-size: 16px; text-align: center;">Skip Opening</button>`,
+                    tooltip: "Skip",
+                    style: {
+                      position: "absolute",
+                      bottom: "68px",
+                      right: "60px",
+                    },
+                    click: function (...args) {
+                      art.seek = op.interval.endTime;
+                    },
+                  });
+                }
+                // Show the layer
+                art.layers.show = true;
+                if (art.layers.ed) {
+                  art.layers.ed.style.display = "none";
+                }
+              } else if (
+                ed &&
+                currentTime >= ed.interval.startTime &&
+                currentTime <= ed.interval.endTime
+              ) {
+                // Add the layer if it's not already added
+                if (!art.layers.ed) {
+                  art.layers.add({
+                    name: "ed",
+                    html: `<button style="background-color: #fff; color: black; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); font-family: Karla, sans-serif; font-size: 16px; text-align: center;">Skip Ending</button>`,
+                    tooltip: "Skip",
+                    style: {
+                      position: "absolute",
+                      bottom: "68px",
+                      right: "60px",
+                    },
+                    click: function (...args) {
+                      art.seek = ed.interval.endTime;
+                    },
+                  });
+                }
+                // Show the layer
+                art.layers.show = true;
+                if (art.layers.op) {
+                  art.layers.op.style.display = "none";
+                }
+              } else {
+                art.layers.show = false;
+              }
             });
 
             art.on("destroy", async () => {

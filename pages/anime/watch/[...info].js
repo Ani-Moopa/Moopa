@@ -1,17 +1,14 @@
-import Layout from "../../../components/layout";
-// import { data } from "../../../lib/testData";
-// import { aniData } from "../../../lib/infoData";
 import Image from "next/image";
 import VideoPlayer from "../../../components/videoPlayer";
 import Link from "next/link";
 import { closestMatch } from "closest-match";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../../../components/modal";
 
 import { useNotification } from "../../../lib/useNotify";
 
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../api/auth/[...nextauth]";
 
@@ -23,7 +20,7 @@ export default function Info({ info, sessions, statusWatch }) {
   const title = info.aniData.title.romaji || info.aniData.title.english;
   const data = info.aniData;
   const fallback = info.epiFallback;
-  const { Notification: NotificationComponent, show } = useNotification();
+  const { Notification: NotificationComponent } = useNotification();
 
   let playingEpisode = data.episodes
     .filter((item) => item.id == info.id)
@@ -59,6 +56,8 @@ export default function Info({ info, sessions, statusWatch }) {
   const playingTitle = data.episodes
     .filter((item) => item.id == info.id)
     .map((item) => item.title);
+
+  // console.log(info.skip);
 
   return (
     <>
@@ -159,13 +158,13 @@ export default function Info({ info, sessions, statusWatch }) {
               <VideoPlayer
                 key={info.id}
                 data={info.epiData}
-                seek={info.seek}
-                titles={title}
                 id={info.id}
                 progress={parseInt(playingEpisode)}
                 session={sessions}
                 aniId={parseInt(data.id)}
                 stats={statusWatch}
+                op={info.skip.op}
+                ed={info.skip.ed}
               />
             </div>
             <div>
@@ -388,7 +387,6 @@ export async function getServerSideProps(context) {
 
   const id = info[0];
   const aniId = info[1];
-  const seek = info[2] || 0;
   let epiFallback = null;
 
   const res = await fetch(`https://api.moopa.my.id/meta/anilist/watch/${id}`);
@@ -419,9 +417,13 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const playingEpisode = aniData.episodes
-    .filter((item) => item.id == id)
-    .map((item) => item.number);
+  const playingEpisode =
+    aniData.episodes
+      .filter((item) => item.id == id)
+      .map((item) => item.number) ||
+    epiFallback.episodes
+      .filter((item) => item.id == id)
+      .map((item) => item.number);
 
   const response = await fetch("https://graphql.anilist.co/", {
     method: "POST",
@@ -512,14 +514,27 @@ export async function getServerSideProps(context) {
     statusWatch = "COMPLETED";
   }
 
+  const res4 = await fetch(
+    `https://api.aniskip.com/v2/skip-times/${aniData.malId}/${parseInt(
+      playingEpisode
+    )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
+  );
+  const skip = await res4.json();
+
+  const op = skip.results?.find((item) => item.skipType === "op") || null;
+  const ed = skip.results?.find((item) => item.skipType === "ed") || null;
+
   return {
     props: {
       info: {
         id,
-        seek,
         epiData,
         aniData,
         epiFallback,
+        skip: {
+          op: op,
+          ed: ed,
+        },
       },
       sessions: session,
       statusWatch: statusWatch,
