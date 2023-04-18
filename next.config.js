@@ -9,8 +9,13 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA({
   reactStrictMode: false,
   images: {
-    domains: ["tenor.com"],
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "s4.anilist.co",
+      },
+    ],
   },
   trailingSlash: true,
 });

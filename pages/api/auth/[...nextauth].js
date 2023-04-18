@@ -1,12 +1,12 @@
 import NextAuth from "next-auth";
 import { GET_CURRENT_USER } from "../../../queries";
 import { client } from "../../../lib/apolloClient";
-import clientPromise from "../../../lib/mongodb";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+// import clientPromise from "../../../lib/mongodb";
+// import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 
 export const authOptions = {
   // Configure one or more authentication providers
-  adapter: MongoDBAdapter(clientPromise),
+  // adapter: MongoDBAdapter(clientPromise),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     {

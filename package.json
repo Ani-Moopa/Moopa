@@ -12,7 +12,6 @@
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@consumet/extensions": "github:consumet/consumet.ts",
-    "@next-auth/mongodb-adapter": "^1.1.1",
     "@next/font": "13.0.7",
     "artplayer": "^4.6.2",
     "axios": "^1.2.2",
@@ -32,7 +31,6 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-loading-skeleton": "^3.2.0",
-    "request": "^2.88.2",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
