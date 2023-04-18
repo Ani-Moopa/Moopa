@@ -74,8 +74,6 @@ export default function Himitsu({
     episodeIndo = episode;
   }
 
-  console.log(info);
-
   return (
     <>
       <Head>
