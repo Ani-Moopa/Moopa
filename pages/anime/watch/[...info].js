@@ -57,8 +57,6 @@ export default function Info({ info, sessions, statusWatch }) {
     .filter((item) => item.id == info.id)
     .map((item) => item.title);
 
-  // console.log(info.skip);
-
   return (
     <>
       <Head>
@@ -510,7 +508,12 @@ export async function getServerSideProps(context) {
     statusWatch = "COMPLETED";
   } else if (gut?.status === "REPEATING") {
     statusWatch = "REPEATING";
-  } else if (aniData.totalEpisodes === parseInt(playingEpisode)) {
+  } else if (gut?.media?.episodes === parseInt(playingEpisode)) {
+    statusWatch = "COMPLETED";
+  } else if (
+    gut?.media?.episodes !== null &&
+    aniData.totalEpisodes === parseInt(playingEpisode)
+  ) {
     statusWatch = "COMPLETED";
   }
 
