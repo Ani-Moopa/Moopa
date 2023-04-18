@@ -99,7 +99,6 @@ export default function VideoPlayer({
             });
 
             art.on("video:timeupdate", function () {
-              // if (!skip) return;
               var currentTime = art.currentTime;
 
               if (
