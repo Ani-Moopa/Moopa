@@ -104,11 +104,10 @@ export default function Home({ detail, populars, sessions }) {
 
   const [isVisible, setIsVisible] = useState(false);
   const [plan, setPlan] = useState(null);
+  const [greeting, setGreeting] = useState("");
   // const [array, setArray] = useState(null);
   const popular = populars?.data;
   const data = detail.data[0];
-
-  const greeting = getGreeting();
 
   const handleShowClick = () => {
     setIsVisible(true);
@@ -119,6 +118,21 @@ export default function Home({ detail, populars, sessions }) {
   };
 
   useEffect(() => {
+    const time = new Date().getHours();
+    let greeting = "";
+
+    if (time >= 5 && time < 12) {
+      greeting = "Good morning";
+    } else if (time >= 12 && time < 18) {
+      greeting = "Good afternoon";
+    } else if (time >= 18 && time < 22) {
+      greeting = "Good evening";
+    } else if (time >= 22 || time < 5) {
+      greeting = "Good night";
+    }
+
+    setGreeting(greeting);
+
     async function userData() {
       if (!sessions) return;
       const getMedia =
@@ -515,21 +529,4 @@ export async function getServerSideProps(context) {
       sessions: session,
     },
   };
-}
-
-function getGreeting() {
-  const time = new Date().getHours();
-  let greeting = "";
-
-  if (time >= 5 && time < 12) {
-    greeting = "Good morning";
-  } else if (time >= 12 && time < 18) {
-    greeting = "Good afternoon";
-  } else if (time >= 18 && time < 22) {
-    greeting = "Good evening";
-  } else if (time >= 22 || time < 5) {
-    greeting = "Good night";
-  }
-
-  return greeting;
 }
