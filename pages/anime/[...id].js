@@ -239,7 +239,7 @@ export default function Himitsu({
                         </div>
                         {nextAir && (
                           <div
-                            className={`dynamic-text shadow-white shadow-button rounded-md px-2 font-karla font-bold`}
+                            className={`dynamic-text shadow-button rounded-md px-2 font-karla font-bold`}
                             style={color}
                           >
                             Ep {nextAir.episode}: {time}
