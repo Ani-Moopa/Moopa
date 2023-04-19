@@ -67,11 +67,17 @@ export default function Info({ sessions, id, aniId }) {
       // setLoading(true);
       let epiFallback = null;
 
-      const res = await fetch(
-        `https://api.moopa.my.id/meta/anilist/watch/${id}`
-      );
-      const epiData = await res.json();
-      setEpiData(epiData);
+      try {
+        const res = await fetch(
+          `https://api.moopa.my.id/meta/anilist/watch/${id}`
+        );
+        const epiData = await res.json();
+        setEpiData(epiData);
+      } catch (error) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      }
 
       const res2 = await fetch(
         `https://api.moopa.my.id/meta/anilist/info/${aniId}`
