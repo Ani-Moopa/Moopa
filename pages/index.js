@@ -404,7 +404,7 @@ export default function Home({ detail, populars, sessions }) {
                   width={460}
                   height={662}
                   priority
-                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay md:h-[467,6px] md:w-[322px]"
+                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay md:h-[467px] md:w-[322px]"
                 />
               </div>
             </div>

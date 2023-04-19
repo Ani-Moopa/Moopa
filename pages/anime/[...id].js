@@ -23,11 +23,13 @@ export default function Himitsu({
   progress,
   status,
   lastPlayed,
+  nextAir,
 }) {
   const [showText, setShowtext] = useState(false);
   const [load, setLoad] = useState(true);
   const [Lang, setLang] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const [time, setTime] = useState(0);
 
   const episode = episodeList;
   const epi1 = episode1;
@@ -42,7 +44,13 @@ export default function Himitsu({
     setLang(false);
   }
 
+  // console.log(time);
+
   useEffect(() => {
+    if (nextAir) {
+      setTime(convertSecondsToTime(nextAir.timeUntilAiring));
+    }
+
     function getBrightness(color) {
       const rgb = color.match(/\d+/g);
       return (299 * rgb[0] + 587 * rgb[1] + 114 * rgb[2]) / 1000;
@@ -139,6 +147,13 @@ export default function Himitsu({
                           <h1>Status:</h1>
                           <p>{info.status}</p>
                         </div>
+
+                        {/* {nextAir && (
+                          <div className="flex gap-2">
+                            <h1>Ep {nextAir.episode}:</h1>
+                            <p>{time}</p>
+                          </div>
+                        )} */}
                       </div>
                       <div className="flex">
                         {epi1 && epi1[0] ? (
@@ -222,6 +237,14 @@ export default function Himitsu({
                         >
                           Sub | {subIndo === null ? "EN" : "EN/ID"}
                         </div>
+                        {nextAir && (
+                          <div
+                            className={`dynamic-text shadow-white shadow-button rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            Ep {nextAir.episode}: {time}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div
@@ -567,6 +590,7 @@ export async function getServerSideProps(context) {
   let progress = null;
   let status = null;
   let lastPlayed = null;
+  let nextAir = null;
 
   if (session) {
     const response = await fetch("https://graphql.anilist.co/", {
@@ -613,6 +637,10 @@ export async function getServerSideProps(context) {
                   media {
                     id
                     status
+                    nextAiringEpisode {
+                      episode
+                      timeUntilAiring
+                    }
                     title {
                       english
                       romaji
@@ -651,6 +679,7 @@ export async function getServerSideProps(context) {
     const gut = git?.find((item) => item?.media.id === parseInt(info.id));
 
     if (gut) {
+      nextAir = gut.media.nextAiringEpisode;
       progress = gut?.progress;
       if (gut.status === "CURRENT") {
         status = "Watching";
@@ -690,6 +719,29 @@ export async function getServerSideProps(context) {
       progress: progress || null,
       status: status,
       lastPlayed: lastPlayed || null,
+      nextAir: nextAir || null,
     },
   };
+}
+
+function convertSecondsToTime(sec) {
+  let days = Math.floor(sec / (3600 * 24));
+  let hours = Math.floor((sec % (3600 * 24)) / 3600);
+  let minutes = Math.floor((sec % 3600) / 60);
+
+  let time = "";
+
+  if (days > 0) {
+    time += `${days}d `;
+  }
+
+  if (hours > 0) {
+    time += `${hours}h `;
+  }
+
+  if (minutes > 0) {
+    time += `${minutes}m `;
+  }
+
+  return time.trim();
 }
