@@ -373,7 +373,7 @@ export default function Info({ sessions, id, aniId }) {
                   />
                 </div>
               ) : (
-                <Skeleton className="lg:h-[680px] h-[280px] xs:h-[225px]" />
+                <div className="lg:h-[693px] h-[225px] xs:h-[281px] bg-image" />
               )}
               <div>
                 {data ? (
@@ -603,14 +603,14 @@ export default function Info({ sessions, id, aniId }) {
                     })
                   )
                 ) : (
-                  <div className="grid gap-7">
-                    {[1, 2, 3].map((item) => (
+                  <>
+                    {[1].map((item) => (
                       <Skeleton
                         key={item}
                         className="bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out"
                       />
                     ))}
-                  </div>
+                  </>
                 )}
               </div>
             </div>
