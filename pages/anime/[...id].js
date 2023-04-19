@@ -23,7 +23,6 @@ export default function Himitsu({
   progress,
   status,
   lastPlayed,
-  nextAir,
 }) {
   const [showText, setShowtext] = useState(false);
   const [load, setLoad] = useState(true);
@@ -44,6 +43,7 @@ export default function Himitsu({
     setLang(false);
   }
 
+  const nextAir = info.nextAiringEpisode;
   // console.log(time);
 
   useEffect(() => {
@@ -553,7 +553,7 @@ export async function getServerSideProps(context) {
   }
 
   const ress = await fetch(
-    `https://ani-api-eight.vercel.app/kuramanime/search?query=${
+    `https://ani-api-eight.vercel.app/nanime/search?query=${
       info.title.romaji || info.title?.english
     }`
   );
@@ -580,7 +580,7 @@ export async function getServerSideProps(context) {
 
     slug = anime[0]?.slug;
     const inf = await fetch(
-      `https://ani-api-eight.vercel.app/kuramanime/anime/${slug}`
+      `https://ani-api-eight.vercel.app/nanime/anime/${slug}`
     );
 
     const dataInf = await inf.json();
@@ -590,7 +590,6 @@ export async function getServerSideProps(context) {
   let progress = null;
   let status = null;
   let lastPlayed = null;
-  let nextAir = null;
 
   if (session) {
     const response = await fetch("https://graphql.anilist.co/", {
@@ -637,10 +636,6 @@ export async function getServerSideProps(context) {
                   media {
                     id
                     status
-                    nextAiringEpisode {
-                      episode
-                      timeUntilAiring
-                    }
                     title {
                       english
                       romaji
@@ -679,7 +674,6 @@ export async function getServerSideProps(context) {
     const gut = git?.find((item) => item?.media.id === parseInt(info.id));
 
     if (gut) {
-      nextAir = gut.media.nextAiringEpisode;
       progress = gut?.progress;
       if (gut.status === "CURRENT") {
         status = "Watching";
@@ -719,7 +713,6 @@ export async function getServerSideProps(context) {
       progress: progress || null,
       status: status,
       lastPlayed: lastPlayed || null,
-      nextAir: nextAir || null,
     },
   };
 }
