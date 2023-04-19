@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion as m } from "framer-motion";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useRouter } from "next/router";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
 import Head from "next/head";

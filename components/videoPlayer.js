@@ -20,9 +20,9 @@ export default function VideoPlayer({
   useEffect(() => {
     async function compiler() {
       try {
-        const dataEpi = data.sources;
-        const referer = data.headers.Referer;
-        let sumber = dataEpi.find((source) => source.quality === "default");
+        const dataEpi = data?.sources;
+        const referer = data?.headers.Referer;
+        let sumber = dataEpi?.find((source) => source.quality === "default");
 
         const source = data.sources
           .map((items) => ({
@@ -51,12 +51,13 @@ export default function VideoPlayer({
     compiler();
   }, [data]);
 
+  // console.log(source);
+
   return (
     <>
-      {loading ? (
-        ""
-      ) : (
+      {url ? (
         <Player
+          key={url}
           option={{
             url: `${url}`,
             quality: [source],
@@ -168,6 +169,8 @@ export default function VideoPlayer({
             });
           }}
         />
+      ) : (
+        ""
       )}
     </>
   );

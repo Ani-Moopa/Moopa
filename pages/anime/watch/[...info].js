@@ -1,10 +1,10 @@
 import Image from "next/image";
-import VideoPlayer from "../../../components/videoPlayer";
 import Link from "next/link";
 import { closestMatch } from "closest-match";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../../components/modal";
+import dynamic from "next/dynamic";
 
 import { useNotification } from "../../../lib/useNotify";
 
@@ -14,23 +14,220 @@ import { authOptions } from "../../api/auth/[...nextauth]";
 
 import AniList from "../../../components/media/aniList";
 
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import { Navigasi } from "../..";
 
-export default function Info({ info, sessions, statusWatch }) {
-  const title = info.aniData.title.romaji || info.aniData.title.english;
-  const data = info.aniData;
-  const fallback = info.epiFallback;
+const VideoPlayer = dynamic(() =>
+  import("../../../components/videoPlayer", { ssr: false })
+);
+
+export default function Info({ sessions, id, aniId }) {
+  const [epiData, setEpiData] = useState(null);
+  const [data, setAniData] = useState(null);
+  const [fallback, setEpiFallback] = useState(null);
+  const [skip, setSkip] = useState({ op: null, ed: null });
+  const [statusWatch, setStatusWatch] = useState("CURRENT");
+  const [playingEpisode, setPlayingEpisode] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // console.log(epiData);
+
+  useEffect(() => {
+    const defaultState = {
+      epiData: null,
+      skip: { op: null, ed: null },
+      statusWatch: "CURRENT",
+      playingEpisode: null,
+      loading: false,
+    };
+
+    // Reset all state variables to their default values
+    Object.keys(defaultState).forEach((key) => {
+      const value = defaultState[key];
+      if (Array.isArray(value)) {
+        value.length
+          ? eval(
+              `set${
+                key.charAt(0).toUpperCase() + key.slice(1)
+              }(${JSON.stringify(value)})`
+            )
+          : eval(`set${key.charAt(0).toUpperCase() + key.slice(1)}([])`);
+      } else {
+        eval(
+          `set${key.charAt(0).toUpperCase() + key.slice(1)}(${JSON.stringify(
+            value
+          )})`
+        );
+      }
+    });
+
+    const fetchData = async () => {
+      // setLoading(true);
+      let epiFallback = null;
+
+      const res = await fetch(
+        `https://api.moopa.my.id/meta/anilist/watch/${id}`
+      );
+      const epiData = await res.json();
+      setEpiData(epiData);
+
+      const res2 = await fetch(
+        `https://api.moopa.my.id/meta/anilist/info/${aniId}`
+      );
+      const aniData = await res2.json();
+      setAniData(aniData);
+
+      if (aniData.episodes.length === 0) {
+        const res = await fetch(
+          `https://api.moopa.my.id/anime/gogoanime/${
+            aniData.title.romaji || aniData.title.english
+          }`
+        );
+        const data = await res.json();
+        const match = closestMatch(
+          aniData.title.romaji,
+          data.results.map((item) => item.title)
+        );
+        const anime = data.results.filter((item) => item.title === match);
+        if (anime.length !== 0) {
+          const infos = await fetch(
+            `https://api.moopa.my.id/anime/gogoanime/info/${anime[0].id}`
+          ).then((res) => res.json());
+          epiFallback = infos.episodes;
+        }
+        setEpiFallback(epiFallback);
+      }
+
+      let playingEpisode = aniData.episodes
+        .filter((item) => item.id == id)
+        .map((item) => item.number);
+
+      if (playingEpisode == 0) {
+        playingEpisode = epiFallback
+          .filter((item) => item.id == id)
+          .map((item) => item.number);
+      }
+
+      setPlayingEpisode(playingEpisode);
+
+      const res4 = await fetch(
+        `https://api.aniskip.com/v2/skip-times/${aniData.malId}/${parseInt(
+          playingEpisode
+        )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
+      );
+      const skip = await res4.json();
+
+      const op = skip.results?.find((item) => item.skipType === "op") || null;
+      const ed = skip.results?.find((item) => item.skipType === "ed") || null;
+
+      setSkip({ op, ed });
+
+      if (sessions) {
+        const response = await fetch("https://graphql.anilist.co/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `
+          query ($username: String, $status: MediaListStatus) {
+            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
+              user {
+                id
+                name
+                about (asHtml: true)
+                createdAt
+                avatar {
+                    large
+                }
+                statistics {
+                  anime {
+                      count
+                      episodesWatched
+                      meanScore
+                      minutesWatched
+                  }
+              }
+                bannerImage
+                mediaListOptions {
+                  animeList {
+                      sectionOrder
+                  }
+                }
+              }
+              lists {
+                status
+                name
+                entries {
+                  id
+                  mediaId
+                  status
+                  progress
+                  score
+                  media {
+                    id
+                    status
+                    title {
+                      english
+                      romaji
+                    }
+                    episodes
+                    coverImage {
+                      large
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+            variables: {
+              username: sessions?.user.name,
+            },
+          }),
+        });
+
+        const dat = await response.json();
+
+        const prog = dat.data.MediaListCollection;
+
+        const gat = prog?.lists.map((item) => item.entries);
+        const git = gat?.map((item) =>
+          item?.find((item) => item.media.id === parseInt(aniId))
+        );
+        const gut = git?.find((item) => item?.media.id === parseInt(aniId));
+
+        if (gut?.status === "COMPLETED") {
+          setStatusWatch("REPEATING");
+        } else if (
+          gut?.status === "REPEATING" &&
+          gut?.media?.episodes === parseInt(playingEpisode)
+        ) {
+          setStatusWatch("COMPLETED");
+        } else if (gut?.status === "REPEATING") {
+          setStatusWatch("REPEATING");
+        } else if (gut?.media?.episodes === parseInt(playingEpisode)) {
+          setStatusWatch("COMPLETED");
+        } else if (
+          gut?.media?.episodes !== null &&
+          aniData.totalEpisodes === parseInt(playingEpisode)
+        ) {
+          setStatusWatch("COMPLETED");
+          setLoading(true);
+        }
+      }
+      setLoading(true);
+    };
+    fetchData();
+  }, [id]);
+
+  // console.log(fallback);
+
   const { Notification: NotificationComponent } = useNotification();
 
-  let playingEpisode = data.episodes
-    .filter((item) => item.id == info.id)
-    .map((item) => item.number);
-
-  if (playingEpisode == 0) {
-    playingEpisode = fallback
-      .filter((item) => item.id == info.id)
-      .map((item) => item.number);
-  }
+  // console.log();
 
   const [open, setOpen] = useState(false);
   const [aniStatus, setAniStatus] = useState("");
@@ -53,9 +250,11 @@ export default function Info({ info, sessions, statusWatch }) {
     console.log(formData);
   };
 
-  const playingTitle = data.episodes
-    .filter((item) => item.id == info.id)
+  const playingTitle = data?.episodes
+    .filter((item) => item.id == id)
     .map((item) => item.title);
+
+  // console.log(skip);
 
   return (
     <>
@@ -65,9 +264,9 @@ export default function Info({ info, sessions, statusWatch }) {
         </title>
       </Head>
 
-      <NotificationComponent />
+      {/* <NotificationComponent /> */}
 
-      <Modal open={open} onClose={() => setOpen(false)}>
+      {/* <Modal open={open} onClose={() => setOpen(false)}>
         <div className="bg-[#202020] rounded-lg text-center">
           <div className="p-5 grid gap-2 justify-center place-items-center">
             <h1 className="text-md font-extrabold font-karla">
@@ -147,48 +346,34 @@ export default function Info({ info, sessions, statusWatch }) {
             )}
           </div>
         </div>
-      </Modal>
-      <div className="bg-primary">
-        <Navigasi />
-        <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
-          <div className="w-screen lg:w-[67%]">
-            <div className="h-auto aspect-video z-20">
-              <VideoPlayer
-                key={info.id}
-                data={info.epiData}
-                id={info.id}
-                progress={parseInt(playingEpisode)}
-                session={sessions}
-                aniId={parseInt(data.id)}
-                stats={statusWatch}
-                op={info.skip.op}
-                ed={info.skip.ed}
-              />
-            </div>
-            <div>
-              <div className="">
-                {data.episodes.length > 0 ? (
-                  data.episodes
-                    .filter((items) => items.id == info.id)
-                    .map((item) => (
-                      <div key={item.id} className="p-3 grid gap-2">
-                        <div className="text-xl font-outfit font-semibold line-clamp-2">
-                          <Link
-                            href={`/anime/${data.id}`}
-                            className="inline hover:underline"
-                          >
-                            {item.title}
-                          </Link>
-                        </div>
-                        <h4 className="text-sm font-karla font-light">
-                          Episode {item.number}
-                        </h4>
-                      </div>
-                    ))
-                ) : (
-                  <>
-                    {fallback
-                      .filter((item) => item.id == info.id)
+      </Modal> */}
+      <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
+        <div className="bg-primary">
+          <Navigasi />
+          <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
+            <div className="w-screen lg:w-[67%]">
+              {loading ? (
+                <div className="h-auto aspect-video z-20">
+                  <VideoPlayer
+                    key={id}
+                    data={epiData}
+                    id={id}
+                    progress={parseInt(playingEpisode)}
+                    session={sessions}
+                    aniId={parseInt(data?.id)}
+                    stats={statusWatch}
+                    op={skip.op}
+                    ed={skip.ed}
+                  />
+                </div>
+              ) : (
+                <Skeleton className="lg:h-[680px] h-[280px] xs:h-[225px]" />
+              )}
+              <div>
+                {data ? (
+                  data.episodes.length > 0 ? (
+                    data.episodes
+                      .filter((items) => items.id == id)
                       .map((item) => (
                         <div key={item.id} className="p-3 grid gap-2">
                           <div className="text-xl font-outfit font-semibold line-clamp-2">
@@ -196,35 +381,72 @@ export default function Info({ info, sessions, statusWatch }) {
                               href={`/anime/${data.id}`}
                               className="inline hover:underline"
                             >
-                              {title}
+                              {item.title}
                             </Link>
                           </div>
                           <h4 className="text-sm font-karla font-light">
                             Episode {item.number}
                           </h4>
                         </div>
-                      ))}
-                  </>
+                      ))
+                  ) : (
+                    <>
+                      {fallback &&
+                        fallback
+                          .filter((item) => item.id == id)
+                          .map((item) => (
+                            <div key={item.id} className="p-3 grid gap-2">
+                              <div className="text-xl font-outfit font-semibold line-clamp-2">
+                                <Link
+                                  href={`/anime/${data.id}`}
+                                  className="inline hover:underline"
+                                >
+                                  {data.title.romaji || data.title.english}
+                                </Link>
+                              </div>
+                              <h4 className="text-sm font-karla font-light">
+                                Episode {item.number}
+                              </h4>
+                            </div>
+                          ))}
+                    </>
+                  )
+                ) : (
+                  <div className="p-3 grid gap-2">
+                    <div className="text-xl font-outfit font-semibold line-clamp-2">
+                      <div className="inline hover:underline">
+                        <Skeleton width={240} />
+                      </div>
+                    </div>
+                    <h4 className="text-sm font-karla font-light">
+                      <Skeleton width={75} />
+                    </h4>
+                  </div>
                 )}
-              </div>
-              <div className="h-[1px] bg-[#3b3b3b]" />
-              <div>
+                <div className="h-[1px] bg-[#3b3b3b]" />
+
                 <div className="px-4 pt-7 pb-4 h-full flex">
                   <div className="aspect-[9/13] h-[240px]">
-                    <Image
-                      src={data.image}
-                      alt="Anime Cover"
-                      width={1000}
-                      height={1000}
-                      className="object-cover aspect-[9/13] h-[240px] rounded-md"
-                    />
+                    {data ? (
+                      <Image
+                        src={data.image}
+                        alt="Anime Cover"
+                        width={1000}
+                        height={1000}
+                        className="object-cover aspect-[9/13] h-[240px] rounded-md"
+                      />
+                    ) : (
+                      <Skeleton height={240} />
+                    )}
                   </div>
                   <div className="grid w-full px-5 gap-3 h-[240px]">
                     <div className="grid grid-cols-2 gap-1 items-center">
                       <h2 className="text-sm font-light font-roboto text-[#878787]">
                         Studios
                       </h2>
-                      <div className="row-start-2">{data.studios}</div>
+                      <div className="row-start-2">
+                        {data ? data.studios : <Skeleton width={80} />}
+                      </div>
                       <div className="grid col-start-2 place-content-end relative">
                         <div className="" onClick={() => setOpen(true)}>
                           <svg
@@ -241,9 +463,6 @@ export default function Info({ info, sessions, statusWatch }) {
                               d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
                             />
                           </svg>
-                          {/* <span className=" transition-all duration-300 absolute -top-12 bg-[#2c2c2c] font-karla p-2 rounded-l-lg rounded-tr-lg right-3 select-none">
-                            Save to My List
-                          </span> */}
                         </div>
                       </div>
                     </div>
@@ -251,124 +470,147 @@ export default function Info({ info, sessions, statusWatch }) {
                       <h2 className="text-sm font-light font-roboto text-[#878787]">
                         Status
                       </h2>
-                      <div>{data.status}</div>
+                      <div>{data ? data.status : <Skeleton width={75} />}</div>
                     </div>
                     <div className="grid gap-1 items-center overflow-y-hidden">
                       <h2 className="text-sm font-light font-roboto text-[#878787]">
                         Titles
                       </h2>
                       <div className="grid grid-flow-dense grid-cols-2 gap-2 h-full w-full">
-                        <div className="line-clamp-3">
-                          {data.title.romaji || ""}
-                        </div>
-                        <div className="line-clamp-3">
-                          {data.title.english || ""}
-                        </div>
-                        <div className="line-clamp-3">
-                          {data.title.native || ""}
-                        </div>
+                        {data ? (
+                          <>
+                            <div className="line-clamp-3">
+                              {data.title.romaji || ""}
+                            </div>
+                            <div className="line-clamp-3">
+                              {data.title.english || ""}
+                            </div>
+                            <div className="line-clamp-3">
+                              {data.title.native || ""}
+                            </div>
+                          </>
+                        ) : (
+                          <Skeleton width={200} height={50} />
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-3 px-4 pt-3 ">
-                  {data.genres.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border border-action text-gray-100 py-1 px-2 rounded-md font-karla text-sm"
-                    >
-                      {item}
-                    </div>
-                  ))}
+                <div className="flex flex-wrap gap-3 px-4 pt-3">
+                  {data &&
+                    data.genres.map((item, index) => (
+                      <div
+                        key={index}
+                        className="border border-action text-gray-100 py-1 px-2 rounded-md font-karla text-sm"
+                      >
+                        {item}
+                      </div>
+                    ))}
                 </div>
                 <div className={`bg-secondary rounded-md mt-3 mx-3`}>
-                  <p
-                    dangerouslySetInnerHTML={{ __html: data.description }}
-                    className={`p-5 text-sm font-light font-roboto text-[#e4e4e4] `}
-                  />
+                  {data && (
+                    <p
+                      dangerouslySetInnerHTML={{ __html: data.description }}
+                      className={`p-5 text-sm font-light font-roboto text-[#e4e4e4] `}
+                    />
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col w-screen lg:w-[33%] ">
-            <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">
-              Up Next
-            </h1>
-            <div className="grid gap-5 lg:px-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
-              {data.episodes.length > 0
-                ? data.episodes.map((item) => {
-                    return (
-                      <Link
-                        href={`/anime/watch/${item.id}/${data.id}`}
-                        key={item.id}
-                        className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                          item.id == info.id
-                            ? "pointer-events-none ring-1 ring-action"
-                            : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                        }`}
-                      >
-                        <div className="w-[40%] h-full relative shrink-0">
-                          <Image
-                            src={item.image}
-                            alt="image"
-                            height={1000}
-                            width={1000}
-                            className={`object-cover rounded-lg h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
-                              item.id == info.id
-                                ? "brightness-[30%]"
-                                : "brightness-75"
-                            }`}
-                          />
-                          <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
-                            Episode {item.number}
-                          </span>
-                          {item.id == info.id && (
-                            <div className="absolute top-11 left-[105px] scale-[1.5]">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                className="w-5 h-5"
-                              >
-                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
-                            item.id == info.id ? "text-[#7a7a7a]" : ""
+            <div className="flex flex-col w-screen lg:w-[33%] ">
+              <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">
+                Up Next
+              </h1>
+              <div className="grid gap-5 lg:px-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
+                {data ? (
+                  data.episodes.length > 0 ? (
+                    data.episodes.map((item) => {
+                      return (
+                        <Link
+                          href={`/anime/watch/${item.id}/${data.id}`}
+                          key={item.id}
+                          className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                            item.id == id
+                              ? "pointer-events-none ring-1 ring-action"
+                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                           }`}
                         >
-                          <h1 className="font-karla font-bold italic line-clamp-1">
-                            {item.title}
-                          </h1>
-                          <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
-                            {item.description}
-                          </p>
-                        </div>
-                      </Link>
-                    );
-                  })
-                : fallback.map((item) => {
-                    return (
-                      <Link
-                        href={`/anime/watch/${item.id}/${data.id}`}
-                        key={item.id}
-                        className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                          item.id == info.id
-                            ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
-                            : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                        }`}
-                      >
-                        Episode {item.number}
-                      </Link>
-                    );
-                  })}
+                          <div className="w-[40%] h-full relative shrink-0">
+                            <Image
+                              src={item.image}
+                              alt="image"
+                              height={1000}
+                              width={1000}
+                              className={`object-cover rounded-lg h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
+                                item.id == id
+                                  ? "brightness-[30%]"
+                                  : "brightness-75"
+                              }`}
+                            />
+                            <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
+                              Episode {item.number}
+                            </span>
+                            {item.id == id && (
+                              <div className="absolute top-11 left-[105px] scale-[1.5]">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  className="w-5 h-5"
+                                >
+                                  <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div
+                            className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
+                              item.id == id ? "text-[#7a7a7a]" : ""
+                            }`}
+                          >
+                            <h1 className="font-karla font-bold italic line-clamp-1">
+                              {item.title}
+                            </h1>
+                            <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
+                              {item.description}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    fallback &&
+                    fallback.map((item) => {
+                      return (
+                        <Link
+                          href={`/anime/watch/${item.id}/${data.id}`}
+                          key={item.id}
+                          className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                            item.id == id
+                              ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
+                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                          }`}
+                        >
+                          Episode {item.number}
+                        </Link>
+                      );
+                    })
+                  )
+                ) : (
+                  <div className="grid gap-7">
+                    {[1, 2, 3].map((item) => (
+                      <Skeleton
+                        key={item}
+                        className="bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out"
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </SkeletonTheme>
     </>
   );
 }
@@ -385,162 +627,12 @@ export async function getServerSideProps(context) {
 
   const id = info[0];
   const aniId = info[1];
-  let epiFallback = null;
-
-  const res = await fetch(`https://api.moopa.my.id/meta/anilist/watch/${id}`);
-  const epiData = await res.json();
-
-  const res2 = await fetch(
-    `https://api.moopa.my.id/meta/anilist/info/${aniId}`
-  );
-  const aniData = await res2.json();
-
-  if (aniData.episodes.length === 0) {
-    const res = await fetch(
-      `https://api.moopa.my.id/anime/gogoanime/${
-        aniData.title.romaji || aniData.title.english
-      }`
-    );
-    const data = await res.json();
-    const match = closestMatch(
-      aniData.title.romaji,
-      data.results.map((item) => item.title)
-    );
-    const anime = data.results.filter((item) => item.title === match);
-    if (anime.length !== 0) {
-      const infos = await fetch(
-        `https://api.moopa.my.id/anime/gogoanime/info/${anime[0].id}`
-      ).then((res) => res.json());
-      epiFallback = infos.episodes;
-    }
-  }
-
-  const playingEpisode =
-    aniData.episodes
-      .filter((item) => item.id == id)
-      .map((item) => item.number) ||
-    epiFallback.episodes
-      .filter((item) => item.id == id)
-      .map((item) => item.number);
-
-  const response = await fetch("https://graphql.anilist.co/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: `
-          query ($username: String, $status: MediaListStatus) {
-            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
-              user {
-                id
-                name
-                about (asHtml: true)
-                createdAt
-                avatar {
-                    large
-                }
-                statistics {
-                  anime {
-                      count
-                      episodesWatched
-                      meanScore
-                      minutesWatched
-                  }
-              }
-                bannerImage
-                mediaListOptions {
-                  animeList {
-                      sectionOrder
-                  }
-                }
-              }
-              lists {
-                status
-                name
-                entries {
-                  id
-                  mediaId
-                  status
-                  progress
-                  score
-                  media {
-                    id
-                    status
-                    title {
-                      english
-                      romaji
-                    }
-                    episodes
-                    coverImage {
-                      large
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-      variables: {
-        username: session?.user.name,
-      },
-    }),
-  });
-
-  const dat = await response.json();
-
-  const prog = dat.data.MediaListCollection;
-
-  const gat = prog?.lists.map((item) => item.entries);
-  const git = gat?.map((item) =>
-    item.find((item) => item.media.id === parseInt(aniId))
-  );
-  const gut = git?.find((item) => item?.media.id === parseInt(aniId));
-
-  let statusWatch = "CURRENT";
-
-  if (gut?.status === "COMPLETED") {
-    statusWatch = "REPEATING";
-  } else if (
-    gut?.status === "REPEATING" &&
-    gut?.media?.episodes === parseInt(playingEpisode)
-  ) {
-    statusWatch = "COMPLETED";
-  } else if (gut?.status === "REPEATING") {
-    statusWatch = "REPEATING";
-  } else if (gut?.media?.episodes === parseInt(playingEpisode)) {
-    statusWatch = "COMPLETED";
-  } else if (
-    gut?.media?.episodes !== null &&
-    aniData.totalEpisodes === parseInt(playingEpisode)
-  ) {
-    statusWatch = "COMPLETED";
-  }
-
-  const res4 = await fetch(
-    `https://api.aniskip.com/v2/skip-times/${aniData.malId}/${parseInt(
-      playingEpisode
-    )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
-  );
-  const skip = await res4.json();
-
-  const op = skip.results?.find((item) => item.skipType === "op") || null;
-  const ed = skip.results?.find((item) => item.skipType === "ed") || null;
 
   return {
     props: {
-      info: {
-        id,
-        epiData,
-        aniData,
-        epiFallback,
-        skip: {
-          op: op,
-          ed: ed,
-        },
-      },
       sessions: session,
-      statusWatch: statusWatch,
+      id,
+      aniId,
     },
   };
 }
