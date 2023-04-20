@@ -23,7 +23,7 @@ const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
 );
 
-export default function Info({ sessions, id, aniId }) {
+export default function Info({ sessions, id, aniId, provider }) {
   const [epiData, setEpiData] = useState(null);
   const [data, setAniData] = useState(null);
   const [fallback, setEpiFallback] = useState(null);
@@ -31,6 +31,7 @@ export default function Info({ sessions, id, aniId }) {
   const [statusWatch, setStatusWatch] = useState("CURRENT");
   const [playingEpisode, setPlayingEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [playingTitle, setPlayingTitle] = useState(null);
 
   // console.log(epiData);
 
@@ -68,22 +69,40 @@ export default function Info({ sessions, id, aniId }) {
       let epiFallback = null;
 
       try {
-        const res = await fetch(
-          `https://api.moopa.my.id/meta/anilist/watch/${id}`
-        );
-        const epiData = await res.json();
-        setEpiData(epiData);
+        if (provider) {
+          const res = await fetch(
+            `https://api.consumet.org/meta/anilist/watch/${id}?provider=9anime`
+          );
+          const epiData = await res.json();
+          setEpiData(epiData);
+        } else {
+          const res = await fetch(
+            `https://api.moopa.my.id/meta/anilist/watch/${id}`
+          );
+          const epiData = await res.json();
+          setEpiData(epiData);
+        }
       } catch (error) {
         setTimeout(() => {
           window.location.reload();
         }, 3000);
       }
 
-      const res2 = await fetch(
-        `https://api.moopa.my.id/meta/anilist/info/${aniId}`
-      );
-      const aniData = await res2.json();
-      setAniData(aniData);
+      let aniData = null;
+
+      if (provider) {
+        const res = await fetch(
+          `https://api.consumet.org/meta/anilist/info/${aniId}?provider=9anime`
+        );
+        aniData = await res.json();
+        setAniData(aniData);
+      } else {
+        const res2 = await fetch(
+          `https://api.moopa.my.id/meta/anilist/info/${aniId}`
+        );
+        aniData = await res2.json();
+        setAniData(aniData);
+      }
 
       if (aniData.episodes.length === 0) {
         const res = await fetch(
@@ -117,6 +136,13 @@ export default function Info({ sessions, id, aniId }) {
       }
 
       setPlayingEpisode(playingEpisode);
+
+      const title = aniData.episodes
+        .filter((item) => item.id == id)
+        .find((item) => item.title !== null);
+      setPlayingTitle(
+        title?.title || aniData.title?.romaji || aniData.title?.english
+      );
 
       const res4 = await fetch(
         `https://api.aniskip.com/v2/skip-times/${aniData.malId}/${parseInt(
@@ -256,18 +282,12 @@ export default function Info({ sessions, id, aniId }) {
     console.log(formData);
   };
 
-  const playingTitle = data?.episodes
-    .filter((item) => item.id == id)
-    .map((item) => item.title);
-
-  // console.log(skip);
+  // console.log(playingTitle.title);
 
   return (
     <>
       <Head>
-        <title>
-          {fallback ? data.title.romaji || data.title.english : playingTitle}
-        </title>
+        <title>{playingTitle}</title>
       </Head>
 
       {/* <NotificationComponent /> */}
@@ -373,7 +393,7 @@ export default function Info({ sessions, id, aniId }) {
                   />
                 </div>
               ) : (
-                <div className="lg:h-[693px] h-[225px] xs:h-[281px] bg-image" />
+                <div className="lg:h-[693px] h-[225px] xs:h-[281px] bg-black" />
               )}
               <div>
                 {data ? (
@@ -387,7 +407,9 @@ export default function Info({ sessions, id, aniId }) {
                               href={`/anime/${data.id}`}
                               className="inline hover:underline"
                             >
-                              {item.title}
+                              {item.title ||
+                                data.title.romaji ||
+                                data.title.english}
                             </Link>
                           </div>
                           <h4 className="text-sm font-karla font-light">
@@ -530,60 +552,84 @@ export default function Info({ sessions, id, aniId }) {
               <div className="grid gap-5 lg:px-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
                 {data ? (
                   data.episodes.length > 0 ? (
-                    data.episodes.map((item) => {
-                      return (
-                        <Link
-                          href={`/anime/watch/${item.id}/${data.id}`}
-                          key={item.id}
-                          className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                            item.id == id
-                              ? "pointer-events-none ring-1 ring-action"
-                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                          }`}
-                        >
-                          <div className="w-[40%] h-full relative shrink-0">
-                            <Image
-                              src={item.image}
-                              alt="image"
-                              height={1000}
-                              width={1000}
-                              className={`object-cover rounded-lg h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
-                                item.id == id
-                                  ? "brightness-[30%]"
-                                  : "brightness-75"
-                              }`}
-                            />
-                            <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
-                              Episode {item.number}
-                            </span>
-                            {item.id == id && (
-                              <div className="absolute top-11 left-[105px] scale-[1.5]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                  className="w-5 h-5"
-                                >
-                                  <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          <div
-                            className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
-                              item.id == id ? "text-[#7a7a7a]" : ""
+                    data.episodes.some(
+                      (item) => item.title && item.description
+                    ) ? (
+                      data.episodes.map((item) => {
+                        return (
+                          <Link
+                            href={`/anime/watch/${item.id}/${data.id}${
+                              provider ? "/9anime" : ""
+                            }`}
+                            key={item.id}
+                            className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                              item.id == id
+                                ? "pointer-events-none ring-1 ring-action"
+                                : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                             }`}
                           >
-                            <h1 className="font-karla font-bold italic line-clamp-1">
-                              {item.title}
-                            </h1>
-                            <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
-                              {item.description}
-                            </p>
-                          </div>
-                        </Link>
-                      );
-                    })
+                            <div className="w-[40%] h-full relative shrink-0">
+                              <Image
+                                src={item.image}
+                                alt="image"
+                                height={1000}
+                                width={1000}
+                                className={`object-cover rounded-lg h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
+                                  item.id == id
+                                    ? "brightness-[30%]"
+                                    : "brightness-75"
+                                }`}
+                              />
+                              <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
+                                Episode {item.number}
+                              </span>
+                              {item.id == id && (
+                                <div className="absolute top-11 left-[105px] scale-[1.5]">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    className="w-5 h-5"
+                                  >
+                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div
+                              className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
+                                item.id == id ? "text-[#7a7a7a]" : ""
+                              }`}
+                            >
+                              <h1 className="font-karla font-bold italic line-clamp-1">
+                                {item.title}
+                              </h1>
+                              <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
+                                {item.description}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })
+                    ) : (
+                      data.episodes.map((item) => {
+                        return (
+                          <Link
+                            href={`/anime/watch/${item.id}/${data.id}${
+                              provider ? "/9anime" : ""
+                            }`}
+                            key={item.id}
+                            className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                              item.id == id
+                                ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
+                                : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                            }`}
+                          >
+                            Episode {item.number}
+                          </Link>
+                        );
+                      })
+                    )
                   ) : (
                     fallback &&
                     fallback.map((item) => {
@@ -633,12 +679,14 @@ export async function getServerSideProps(context) {
 
   const id = info[0];
   const aniId = info[1];
+  const provider = info[2] || null;
 
   return {
     props: {
       sessions: session,
       id,
       aniId,
+      provider,
     },
   };
 }

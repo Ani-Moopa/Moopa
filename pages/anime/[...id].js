@@ -17,16 +17,14 @@ export default function Himitsu({
   color,
   episodeList,
   episode1,
-  subIndo,
-  epIndo,
   sessions,
   progress,
   status,
   lastPlayed,
+  stall,
 }) {
   const [showText, setShowtext] = useState(false);
   const [load, setLoad] = useState(true);
-  const [Lang, setLang] = useState(true);
   const [showAll, setShowAll] = useState(false);
   const [time, setTime] = useState(0);
 
@@ -34,14 +32,6 @@ export default function Himitsu({
   const epi1 = episode1;
 
   const maxItems = 3;
-
-  function handleEnLang() {
-    setLang(true);
-  }
-
-  function handleIdLang() {
-    setLang(false);
-  }
 
   const nextAir = info.nextAiringEpisode;
   // console.log(time);
@@ -74,13 +64,6 @@ export default function Himitsu({
 
     setLoad(false);
   }, [color, sessions, info.id]);
-
-  let episodeIndo = null;
-  if (epIndo < 17) {
-    episodeIndo = episode.slice(0, epIndo);
-  } else {
-    episodeIndo = episode;
-  }
 
   return (
     <>
@@ -235,7 +218,7 @@ export default function Himitsu({
                           className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
-                          Sub | {subIndo === null ? "EN" : "EN/ID"}
+                          Sub | EN
                         </div>
                         {nextAir && (
                           <div
@@ -362,24 +345,25 @@ export default function Himitsu({
                     </h1>
                     <div className="flex items-center rounded-md">
                       <button
-                        onClick={handleEnLang}
+                        // onClick={handleEnLang}
                         className={
-                          Lang
-                            ? `w-14 p-1 rounded-l-md bg-secondary text-action shadow-action`
-                            : `w-14 p-1 rounded-l-md bg-[#17171b] text-[#404040]`
+                          // Lang?
+                          `w-14 p-1 rounded-l-md bg-secondary text-action shadow-action`
+                          // `w-14 p-1 rounded-l-md bg-[#17171b] text-[#404040]`
                         }
                       >
                         EN
                       </button>
                       <div className="w-[1px] bg-white h-4" />
                       <button
-                        onClick={handleIdLang}
+                        // onClick={handleIdLang}
                         className={
-                          subIndo === null
-                            ? `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040] pointer-events-none`
-                            : Lang
-                            ? `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040]`
-                            : `w-14 p-1 rounded-r-md bg-[#212121]`
+                          // subIndo === null
+                          //   ?
+                          `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040] pointer-events-none`
+                          // : Lang
+                          // ? `w-14 p-1 rounded-r-md bg-[#171717] text-[#404040]`
+                          // : `w-14 p-1 rounded-r-md bg-[#212121]`
                         }
                       >
                         ID
@@ -399,16 +383,13 @@ export default function Himitsu({
                   <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
                     {load ? (
                       <p>Loading...</p>
-                    ) : episode && Lang ? (
+                    ) : episode ? (
                       episode.map((episode, index) => {
-                        const item = lastPlayed?.find(
-                          (item) => item.id === episode.id
-                        );
                         return (
                           <div key={index} className="flex flex-col gap-3 px-2">
                             <Link
                               href={`/anime/watch/${episode.id}/${info.id}/${
-                                item ? `${item.time}` : ""
+                                stall ? `9anime` : ""
                               }`}
                               className={`text-start text-sm md:text-lg ${
                                 episode.number <= progress
@@ -433,46 +414,8 @@ export default function Himitsu({
                           </div>
                         );
                       })
-                    ) : subIndo === null ? (
-                      <p>No Episodes Available</p>
                     ) : (
-                      <>
-                        <div className="flex h-[640px] flex-col gap-5 overflow-y-hidden scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full hover:overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                          {episodeIndo.map((episode, index) => {
-                            return (
-                              <div key={index} className="flex flex-col gap-3">
-                                <Link
-                                  onClick={() =>
-                                    handleStore({
-                                      title:
-                                        info.title?.english ||
-                                        info.title.romaji ||
-                                        info.title.native,
-                                      description: info.description,
-                                      image: info.image,
-                                      id: info.id,
-                                    })
-                                  }
-                                  href={`/anime/watch?title=${encodeURIComponent(
-                                    info.title?.romaji || info.title?.english
-                                  )}&id=${subIndo}&idInt=${info.id}&epi=${
-                                    episode.number
-                                  }&epiTitle=${encodeURIComponent(
-                                    episode.title
-                                  )}&te=${epIndo}&sub=id`}
-                                  className="text-start text-xl"
-                                >
-                                  <p>Episode {episode.number}</p>
-                                  <p className="text-[14px] text-[#b1b1b1] italic">
-                                    "{episode.title}" (Sub Indonesia)
-                                  </p>
-                                </Link>
-                                <div className="h-[1px] bg-white" />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </>
+                      <p>No Episodes Available</p>
                     )}
                   </div>
                 </div>
@@ -532,59 +475,15 @@ export async function getServerSideProps(context) {
   }
 
   let episodeList = episodes;
+  let stall = false;
+
   if (episodes.length === 0) {
     const res = await fetch(
-      `https://api.moopa.my.id/anime/gogoanime/${
-        info.title.romaji || info.title.english
-      }`
+      `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
     );
     const data = await res.json();
-    const match = closestMatch(
-      info.title.romaji,
-      data.results.map((item) => item.title)
-    );
-    const anime = data.results.filter((item) => item.title === match);
-    if (anime.length !== 0) {
-      const infos = await fetch(
-        `https://api.moopa.my.id/anime/gogoanime/info/${anime[0].id}`
-      ).then((res) => res.json());
-      episodeList = infos.episodes;
-    }
-  }
-
-  const ress = await fetch(
-    `https://ani-api-eight.vercel.app/nanime/search?query=${
-      info.title.romaji || info.title?.english
-    }`
-  );
-
-  const yes = await ress.json();
-
-  // Clannad Fixer
-  function convertToClannad(text) {
-    const regex = /(?<!\w)CLANNAD(?!\w)/g;
-    return text.replace(regex, "Clannad");
-  }
-
-  const fixedTitle = convertToClannad(info.title.romaji);
-
-  let epis = null;
-  let slug = null;
-
-  if (!yes.error) {
-    // let anime = yes.list.filter((item) => item.title.includes(fixedTitle));
-    let list = yes.list.map((item) => item.title);
-    const match = closestMatch(fixedTitle, list);
-
-    const anime = yes.list.filter((item) => item.title === match);
-
-    slug = anime[0]?.slug;
-    const inf = await fetch(
-      `https://ani-api-eight.vercel.app/nanime/anime/${slug}`
-    );
-
-    const dataInf = await inf.json();
-    epis = dataInf.episode;
+    episodeList = data.episodes;
+    stall = true;
   }
 
   let progress = null;
@@ -707,12 +606,11 @@ export async function getServerSideProps(context) {
       color,
       episodeList,
       episode1: epi1,
-      subIndo: slug,
-      epIndo: epis,
       sessions: session,
       progress: progress || null,
       status: status,
       lastPlayed: lastPlayed || null,
+      stall,
     },
   };
 }

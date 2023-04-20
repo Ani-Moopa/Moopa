@@ -22,7 +22,16 @@ export default function VideoPlayer({
       try {
         const dataEpi = data?.sources;
         const referer = data?.headers.Referer;
-        let sumber = dataEpi?.find((source) => source.quality === "default");
+        let sumber = dataEpi?.find(
+          (source) =>
+            source.quality === "default" ||
+            source.quality === "1080p" ||
+            source.quality === "720p" ||
+            source.quality === "480p" ||
+            source.quality === "360p" ||
+            source.quality === "240p" ||
+            source.quality === "144p"
+        );
 
         const source = data.sources
           .map((items) => ({
