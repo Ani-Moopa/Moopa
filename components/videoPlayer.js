@@ -11,6 +11,7 @@ export default function VideoPlayer({
   stats,
   op,
   ed,
+  title,
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
@@ -70,6 +71,7 @@ export default function VideoPlayer({
           option={{
             url: `${url}`,
             quality: [source],
+            title: `${title}`,
             autoplay: true,
             screenshot: true,
           }}

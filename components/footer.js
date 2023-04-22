@@ -16,7 +16,7 @@ function Footer() {
             <h1 className="font-outfit text-[40px]">moopa</h1>
             <div>
               <p className="flex items-center gap-1 font-karla md:text-[0.81rem] text-[0.7rem] text-[#CCCCCC]">
-                &copy; {new Date().getFullYear()} moopa.my.id | Website Made by
+                &copy; {new Date().getFullYear()} moopa.live | Website Made by
                 Factiven
               </p>
               <p className="font-karla md:text-[0.8rem] text-[0.65rem] text-[#9c9c9c] w-[320px] md:w-[520px] italic">
@@ -63,16 +63,16 @@ function Footer() {
             </ul>
             <ul className="flex flex-col gap-y-[0.7rem]">
               <li className="cursor-pointer hover:text-action">
-                <a href="/search/anime">Movies</a>
+                <Link href="/search/anime">Movies</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <a href="/search/anime">TV Shows</a>
+                <Link href="/search/anime">TV Shows</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <a href="/dmca">DMCA</a>
+                <Link href="/dmca">DMCA</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <a href="/contact">Contact</a>
+                <Link href="/contact">Contact</Link>
               </li>
             </ul>
           </div>

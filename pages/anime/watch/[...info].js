@@ -390,6 +390,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                     stats={statusWatch}
                     op={skip.op}
                     ed={skip.ed}
+                    title={playingTitle}
                   />
                 </div>
               ) : (

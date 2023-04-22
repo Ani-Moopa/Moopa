@@ -67,9 +67,11 @@ function Navbar(props) {
               href={`/profile/${session?.user?.name}`}
               className="fixed md:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
             >
-              <img
+              <Image
                 src={session?.user.image.large}
                 alt="user avatar"
+                height={500}
+                width={500}
                 className="object-cover w-[60px] h-[60px] rounded-full"
               />
             </Link>
@@ -263,9 +265,11 @@ function Navbar(props) {
                 {session && (
                   <li className="flex items-center justify-center group ">
                     <button>
-                      <img
+                      <Image
                         src={session?.user.image.large}
                         alt="imagine"
+                        width={500}
+                        height={500}
                         className="object-cover h-10 w-10 rounded-full"
                       />
                     </button>
