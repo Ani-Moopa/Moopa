@@ -13,9 +13,9 @@ import { useAniList } from "../../lib/useAnilist";
 const genre = [
   "Action",
   "Adventure",
-  "Cars",
   "Comedy",
   "Drama",
+  "Ecchi",
   "Fantasy",
   "Horror",
   "Mahou Shoujo",
@@ -34,30 +34,30 @@ const genre = [
 const types = ["ANIME", "MANGA"];
 
 const sorts = [
-  "POPULARITY_DESC",
-  "POPULARITY",
-  "TRENDING_DESC",
-  "TRENDING",
-  "UPDATED_AT_DESC",
-  "UPDATED_AT",
-  "START_DATE_DESC",
-  "START_DATE",
-  "END_DATE_DESC",
-  "END_DATE",
-  "FAVOURITES_DESC",
-  "FAVOURITES",
-  "SCORE_DESC",
-  "SCORE",
-  "TITLE_ROMAJI_DESC",
-  "TITLE_ROMAJI",
-  "TITLE_ENGLISH_DESC",
-  "TITLE_ENGLISH",
-  "TITLE_NATIVE_DESC",
-  "TITLE_NATIVE",
-  "EPISODES_DESC",
-  "EPISODES",
-  "ID",
-  "ID_DESC",
+  { name: "Popularity Desc", value: "POPULARITY_DESC" },
+  { name: "Popularity", value: "POPULARITY" },
+  { name: "Trending Desc", value: "TRENDING_DESC" },
+  { name: "Trending", value: "TRENDING" },
+  { name: "Updated At Desc", value: "UPDATED_AT_DESC" },
+  { name: "Updated At", value: "UPDATED_AT" },
+  { name: "Start Date Desc", value: "START_DATE_DESC" },
+  { name: "Start Date", value: "START_DATE" },
+  { name: "End Date Desc", value: "END_DATE_DESC" },
+  { name: "End Date", value: "END_DATE" },
+  { name: "Favourites Desc", value: "FAVOURITES_DESC" },
+  { name: "Favourites", value: "FAVOURITES" },
+  { name: "Score Desc", value: "SCORE_DESC" },
+  { name: "Score", value: "SCORE" },
+  { name: "Title Romaji Desc", value: "TITLE_ROMAJI_DESC" },
+  { name: "Title Romaji", value: "TITLE_ROMAJI" },
+  { name: "Title English Desc", value: "TITLE_ENGLISH_DESC" },
+  { name: "Title English", value: "TITLE_ENGLISH" },
+  { name: "Title Native Desc", value: "TITLE_NATIVE_DESC" },
+  { name: "Title Native", value: "TITLE_NATIVE" },
+  { name: "Episodes Desc", value: "EPISODES_DESC" },
+  { name: "Episodes", value: "EPISODES" },
+  { name: "ID", value: "ID" },
+  { name: "ID Desc", value: "ID_DESC" },
 ];
 
 export default function Card() {
@@ -191,9 +191,9 @@ export default function Card() {
                 onChange={(e) => setSelectedSort(e.target.value)}
               >
                 <option value={["POPULARITY_DESC"]}>Sort By</option>
-                {sorts.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {sorts.map((sort) => (
+                  <option key={sort.value} value={sort.value}>
+                    {sort.name}
                   </option>
                 ))}
               </select>
@@ -298,9 +298,9 @@ export default function Card() {
                       onChange={(e) => setSelectedSort(e.target.value)}
                     >
                       <option value={["POPULARITY_DESC"]}>Sort By</option>
-                      {sorts.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
+                      {sorts.map((sort) => (
+                        <option key={sort.value} value={sort.value}>
+                          {sort.name}
                         </option>
                       ))}
                     </select>
