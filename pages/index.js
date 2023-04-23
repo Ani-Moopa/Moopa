@@ -70,7 +70,6 @@ export function Navigasi() {
                   )}
                   {sessions && (
                     <li className="text-center">
-                      {/* <div className="p-2"><img src={sessions?.user.image.large} alt="imagine" /></div> */}
                       <Link href={`/profile/${sessions?.user.name}`}>
                         My List
                       </Link>
@@ -100,12 +99,13 @@ export function Navigasi() {
 }
 
 export default function Home({ detail, populars, sessions }) {
-  const { media } = useAniList(sessions, { stats: "CURRENT" });
+  const { media: current } = useAniList(sessions, { stats: "CURRENT" });
+  const { media: plan } = useAniList(sessions, { stats: "PLANNING" });
 
   const [isVisible, setIsVisible] = useState(false);
-  const [plan, setPlan] = useState(null);
+  const [list, setList] = useState(null);
+  const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
-  // const [array, setArray] = useState(null);
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -136,32 +136,24 @@ export default function Home({ detail, populars, sessions }) {
     async function userData() {
       if (!sessions) return;
       const getMedia =
-        media.filter((item) => item.status === "CURRENT")[0] || null;
-      const plan = getMedia?.entries
+        current.filter((item) => item.status === "CURRENT")[0] || null;
+      const list = getMedia?.entries
         .map(({ media }) => media)
         .filter((media) => media);
 
-      const get = media.flatMap((item) => item.entries);
-      const newArray = [];
-
-      get.forEach((item) => {
-        if (!newArray.some((element) => element.id === item.id)) {
-          newArray.push(item);
-        }
-      });
-
-      // setArray(sessions.user?.recentWatch?.reverse());
-
-      const getlog = newArray
+      const planned = plan?.[0]?.entries
         .map(({ media }) => media)
         .filter((media) => media);
 
-      if (plan) {
-        setPlan(plan.reverse());
+      if (list) {
+        setList(list.reverse());
+      }
+      if (planned) {
+        setPlanned(planned.reverse());
       }
     }
     userData();
-  }, [sessions, media]);
+  }, [sessions, current, plan]);
 
   return (
     <>
@@ -426,7 +418,7 @@ export default function Home({ detail, populars, sessions }) {
             </div>
           </div>
         )}
-        {/* Mobile */}
+
         <div className="md:mt-16 mt-12 flex flex-col items-center">
           <motion.div
             className="w-screen flex-none lg:w-[87%]"
@@ -434,24 +426,24 @@ export default function Home({ detail, populars, sessions }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
-            {/* SECTION 1 */}
-            {/* {sessions && sessions?.user?.recentWatch && (
+            {sessions && list && (
               <motion.div // Add motion.div to each child component
-                key="recentlyWatched"
+                key="listAnime"
                 initial={{ y: 20, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true }}
               >
                 <Content
-                  ids="recentlyWatched"
-                  section="Recently Watched"
-                  data={array}
+                  ids="listAnime"
+                  section="Your Watch List"
+                  data={list}
                 />
               </motion.div>
-            )} */}
+            )}
 
-            {sessions && plan && (
+            {/* SECTION 2 */}
+            {sessions && planned && (
               <motion.div // Add motion.div to each child component
                 key="plannedAnime"
                 initial={{ y: 20, opacity: 0 }}
@@ -461,13 +453,13 @@ export default function Home({ detail, populars, sessions }) {
               >
                 <Content
                   ids="plannedAnime"
-                  section="Your Watch List"
-                  data={plan}
+                  section="Your Plan"
+                  data={planned}
                 />
               </motion.div>
             )}
 
-            {/* SECTION 2 */}
+            {/* SECTION 3 */}
             {detail && (
               <motion.div // Add motion.div to each child component
                 key="trendingAnime"
@@ -484,7 +476,7 @@ export default function Home({ detail, populars, sessions }) {
               </motion.div>
             )}
 
-            {/* SECTION 3 */}
+            {/* SECTION 4 */}
             {popular && (
               <motion.div // Add motion.div to each child component
                 key="popularAnime"
