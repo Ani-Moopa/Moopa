@@ -64,19 +64,22 @@ export default function Card() {
     hasil = null;
     tipe = "MANGA";
   }
-  // console.log(hasil);
+  // ;
 
   const [search, setQuery] = useState(hasil);
   const [type, setSelectedType] = useState(tipe);
   const [seasonYear, setSeasonYear] = useState();
   const [season, setSeason] = useState();
   const [genres, setSelectedGenre] = useState();
-  const [perPage, setPerPage] = useState(25);
+  const [perPage, setPerPage] = useState(10);
   const [sort, setSelectedSort] = useState(["POPULARITY_DESC"]);
 
   const [isVisible, setIsVisible] = useState(false);
 
   const inputRef = useRef(null);
+
+  const [page, setPage] = useState(1);
+  const [nextPage, setNextPage] = useState(true);
 
   async function advance() {
     setLoading(true);
@@ -86,16 +89,54 @@ export default function Card() {
       seasonYear,
       season,
       genres,
+      page,
       perPage,
       sort
     );
-    setData(data);
+    if (data.media.length === 0) {
+      setNextPage(false);
+    } else if (data !== null && page > 1) {
+      setData((prevData) => {
+        return [...(prevData ?? []), ...data.media];
+      });
+      setNextPage(data.pageInfo.hasNextPage);
+    } else {
+      setData(data.media);
+    }
+    setNextPage(data.pageInfo.hasNextPage);
     setLoading(false);
   }
 
   useEffect(() => {
+    setData(null);
+    setPage(1);
+    setNextPage(true);
     advance();
   }, [search, type, seasonYear, season, genres, perPage, sort]);
+
+  useEffect(() => {
+    advance();
+  }, [page]);
+
+  useEffect(() => {
+    function handleScroll() {
+      if (page > 10 || !nextPage) {
+        window.removeEventListener("scroll", handleScroll);
+        return;
+      }
+
+      if (
+        window.innerHeight + window.pageYOffset >=
+        document.body.offsetHeight - 0
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [page, nextPage]);
 
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
@@ -125,7 +166,7 @@ export default function Card() {
     router.push(`/search/${e.target.value.toLowerCase()}`);
   }
 
-  // console.log(genres);
+  // );
 
   return (
     <>
@@ -171,7 +212,10 @@ export default function Card() {
               <h1 className="font-bold pb-5 text-md pl-1 font-outfit">SORT</h1>
               <select
                 className="w-[297px] h-[46px] bg-secondary rounded-[10px] flex items-center text-center"
-                onChange={(e) => setSelectedSort(e.target.value)}
+                onChange={(e) => {
+                  setSelectedSort(e.target.value);
+                  setData(null);
+                }}
               >
                 <option value={["POPULARITY_DESC"]}>Sort By</option>
                 {sorts.map((sort) => (
@@ -242,11 +286,16 @@ export default function Card() {
                     </h1>
                     <select
                       className="w-[195px] lg:w-[297px] lg:h-[46px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      onChange={(e) => setSelectedGenre(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedGenre(
+                          e.target.value === "undefined"
+                            ? undefined
+                            : e.target.value
+                        )
+                      }
                     >
-                      <option value={["Action"]}>Select a Genre</option>
+                      <option value="undefined">Select a Genre</option>
                       {genre.map((option) => {
-                        // console.log(option);
                         return (
                           <option key={option} value={option}>
                             {option}
@@ -278,7 +327,9 @@ export default function Card() {
                     </h1>
                     <select
                       className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      onChange={(e) => setSelectedSort(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedSort(e.target.value);
+                      }}
                     >
                       <option value={["POPULARITY_DESC"]}>Sort By</option>
                       {sorts.map((sort) => (
@@ -292,77 +343,91 @@ export default function Card() {
               )}
             </AnimatePresence>
           </div>
-          <AnimatePresence>
-            <div
-              key="card-keys"
-              className="grid pt-3 lg:grid-cols-5 justify-items-center grid-cols-3 w-screen px-2 lg:w-auto lg:gap-10 gap-2 lg:gap-y-24 gap-y-12 overflow-hidden"
-            >
-              {loading ? (
-                <>
-                  <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
-                    {[1, 2, 4, 5, 6, 7, 8].map((item) => (
-                      <div
-                        key={item}
-                        className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
-                        style={{ scale: 0.98 }}
-                      >
-                        <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
-                        <Skeleton width={110} height={30} />
+          <div className="flex flex-col gap-14 items-center">
+            <AnimatePresence>
+              <div
+                key="card-keys"
+                className="grid pt-3 lg:grid-cols-5 justify-items-center grid-cols-3 w-screen px-2 lg:w-auto lg:gap-10 gap-2 lg:gap-y-24 gap-y-12 overflow-hidden"
+              >
+                {loading
+                  ? ""
+                  : !data?.length && (
+                      <div className="w-screen text-[#ff7f57] lg:col-start-3 col-start-2 items-center flex justify-center text-center font-bold font-karla lg:text-2xl">
+                        Oops!<br></br> Nothing's Found...
                       </div>
-                    ))}
-                  </SkeletonTheme>
-                </>
-              ) : data && data.media.length === 0 ? (
-                <div className="w-screen text-[#ff7f57] lg:col-start-3 col-start-2 items-center flex justify-center text-center font-bold font-karla lg:text-2xl">
-                  Oops!<br></br> Nothing's Found...
-                </div>
-              ) : (
-                data.media.map((anime) => {
-                  return (
-                    <m.div
-                      initial={{ scale: 0.9 }}
-                      animate={{ scale: 1, transition: { duration: 0.35 } }}
-                      className="w-[115px] xs:w-[140px] lg:w-[228px]"
-                      key={anime.id}
-                    >
-                      <Link
-                        href={
-                          anime.format === "MANGA" || anime.format === "NOVEL"
-                            ? `/manga/detail/id?aniId=${anime.id}&aniTitle=${anime.title.userPreferred}`
-                            : `/anime/${anime.id}`
-                        }
-                        className=""
+                    )}
+                {data &&
+                  data?.map((anime, index) => {
+                    return (
+                      <m.div
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1, transition: { duration: 0.35 } }}
+                        className="w-[115px] xs:w-[140px] lg:w-[228px]"
+                        key={index}
                       >
+                        <Link
+                          href={
+                            anime.format === "MANGA" || anime.format === "NOVEL"
+                              ? `/manga/detail/id?aniId=${anime.id}&aniTitle=${anime.title.userPreferred}`
+                              : `/anime/${anime.id}`
+                          }
+                          className=""
+                        >
+                          <div
+                            className=" bg-[#3B3C41] lg:h-[313px] xs:h-[215px] h-[175px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
+                            style={{
+                              backgroundImage: `url(${anime.coverImage.extraLarge})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }}
+                          />
+                        </Link>
+                        <Link href={`/anime/${anime.id}`}>
+                          <h1 className="font-outfit font-bold lg:text-[20px] pt-4 line-clamp-2">
+                            {anime.status === "RELEASING" ? (
+                              <span className="dots bg-green-500" />
+                            ) : anime.status === "NOT_YET_RELEASED" ? (
+                              <span className="dots bg-red-500" />
+                            ) : null}
+                            {anime.title.userPreferred}
+                          </h1>
+                        </Link>
+                        <h2 className="font-outfit lg:text-[15px] text-[11px] font-light pt-2 text-[#8B8B8B]">
+                          {anime.format || <p>-</p>} &#183;{" "}
+                          {anime.status || <p>-</p>} &#183;{" "}
+                          {anime.episodes || 0} Episodes
+                        </h2>
+                      </m.div>
+                    );
+                  })}
+
+                {loading && (
+                  <>
+                    <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
+                      {[1, 2, 4, 5, 6, 7, 8].map((item) => (
                         <div
-                          className=" bg-[#3B3C41] lg:h-[313px] xs:h-[215px] h-[175px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
-                          style={{
-                            backgroundImage: `url(${anime.coverImage.extraLarge})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                          }}
-                        />
-                      </Link>
-                      <Link href={`/anime/${anime.id}`}>
-                        <h1 className="font-outfit font-bold lg:text-[20px] pt-4 line-clamp-2">
-                          {anime.status === "RELEASING" ? (
-                            <span className="dots bg-green-500" />
-                          ) : anime.status === "NOT_YET_RELEASED" ? (
-                            <span className="dots bg-red-500" />
-                          ) : null}
-                          {anime.title.userPreferred}
-                        </h1>
-                      </Link>
-                      <h2 className="font-outfit lg:text-[15px] text-[11px] font-light pt-2 text-[#8B8B8B]">
-                        {anime.format || <p>-</p>} &#183;{" "}
-                        {anime.status || <p>-</p>} &#183; {anime.episodes || 0}{" "}
-                        Episodes
-                      </h2>
-                    </m.div>
-                  );
-                })
+                          key={item}
+                          className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
+                          style={{ scale: 0.98 }}
+                        >
+                          <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
+                          <Skeleton width={110} height={30} />
+                        </div>
+                      ))}
+                    </SkeletonTheme>
+                  </>
+                )}
+              </div>
+              {!loading && page > 10 && nextPage && (
+                <button
+                  onClick={() => setPage((p) => p + 1)}
+                  className="bg-secondary md:w-[30%] w-[80%] h-10 rounded-md"
+                >
+                  Load More
+                </button>
               )}
-            </div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </div>
         <Footer />
       </div>
