@@ -127,7 +127,7 @@ export default function Card() {
 
       if (
         window.innerHeight + window.pageYOffset >=
-        document.body.offsetHeight - 0
+        document.body.offsetHeight - 3
       ) {
         setPage((prevPage) => prevPage + 1);
       }
