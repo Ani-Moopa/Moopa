@@ -302,17 +302,6 @@ export default function Himitsu({
                             >
                               <div
                                 key={relation.id}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{
-                                  opacity: 0,
-                                  y: -50,
-                                  transition: { duration: 0.5 },
-                                }}
-                                transition={{
-                                  duration: 0.8,
-                                  delay: index * 0.1,
-                                }}
                                 className="w-full shrink h-[126px] bg-secondary flex rounded-md"
                               >
                                 <div className="w-[90px] bg-image rounded-l-md shrink-0">
