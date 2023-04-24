@@ -27,7 +27,7 @@ export default function Content({ ids, section, data }) {
   // console.log({ left: scrollLeft, right: scrollRight });
 
   const array = data;
-  let filteredData = array?.filter((item) => item.status !== "Unknown");
+  let filteredData = array?.filter((item) => item !== null);
   return (
     <div>
       <h1 className="px-5 font-karla text-[20px] font-bold">{section}</h1>

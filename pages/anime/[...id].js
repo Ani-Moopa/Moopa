@@ -1,6 +1,8 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
+import { HeartIcon } from "@heroicons/react/20/solid";
+
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -64,9 +66,76 @@ const query = `
           }
         `;
 
+const infoQuery = `query ($id: Int) {
+    Media(id: $id) {
+        id
+        type
+        title {
+            romaji
+            english
+            native
+        }
+        coverImage {
+            extraLarge
+            large
+            color
+        }
+        bannerImage
+        description
+        episodes
+        nextAiringEpisode {
+            episode
+            airingAt
+        }
+        averageScore
+        popularity
+        status
+        startDate {
+            year
+        }
+        duration
+        genres
+        relations {
+            edges {
+                relationType
+                node {
+                    id
+                type
+                status
+                title {
+                    romaji
+                    english
+                    userPreferred
+                }
+                coverImage {
+                    extraLarge
+                    large
+                    color
+                }
+                }
+            }
+        }
+        recommendations {
+                nodes {
+                    mediaRecommendation {
+                        id
+                        title {
+                            romaji
+                        }
+                        coverImage {
+                            extraLarge
+                            large
+                        }
+                    }
+            }
+        }
+    }
+}`;
+
 export default function Info() {
   const { data: session, status } = useSession();
   const [data, setData] = useState(null);
+  const [info, setInfo] = useState(null);
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(null);
@@ -79,11 +148,17 @@ export default function Info() {
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  // console.log(stall);
+  const rec = info?.recommendations?.nodes.map(
+    (data) => data.mediaRecommendation
+  );
+
+  // console.log(rec);
+  console.log(progress);
 
   useEffect(() => {
     const defaultState = {
       data: null,
+      info: null,
       episode: null,
       loading: true,
       statuses: null,
@@ -113,11 +188,30 @@ export default function Info() {
       if (id) {
         setLoading(false);
         try {
-          const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`
-          );
+          // const res = await fetch(
+          //   `https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`
+          // );
+
+          const [res, info] = await Promise.all([
+            fetch(`https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`),
+            fetch("https://graphql.anilist.co/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                query: infoQuery,
+                variables: {
+                  id: id?.[0],
+                },
+              }),
+            }),
+          ]);
           const data = await res.json();
-          if (data.episodes.length === 0) {
+          const infos = await info.json();
+          setInfo(infos.data.Media);
+
+          if (!data || data.episodes.length === 0) {
             const res = await fetch(
               `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
             );
@@ -218,111 +312,168 @@ export default function Info() {
   return (
     <>
       <Head>
-        <title>{data?.title?.romaji || data?.title?.english}</title>
+        <title>
+          {info
+            ? info?.title?.romaji || info?.title?.english
+            : "Retrieving Data..."}
+        </title>
       </Head>
       <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
         <Layout navTop="text-white bg-primary md:pt-0 md:px-0 bg-slate bg-opacity-40 z-50">
           <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
-            <div className="bg-image">
+            <div className="bg-image w-screen">
               <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
-              {data && (
+              {info ? (
                 <Image
-                  src={data?.cover}
+                  src={info?.bannerImage}
                   alt="banner anime"
                   height={1000}
                   width={1000}
-                  className="object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-75 z-0"
+                  className="object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-[70%] z-0"
                 />
+              ) : (
+                <div className="bg-image w-screen absolute top-0 left-0 h-[300px]" />
               )}
             </div>
-            <div className="lg:w-[70%] pt-[10rem] z-30 flex flex-col gap-10">
-              <div className="md:flex gap-5 w-full flex-nowrap">
+            <div className="lg:w-[70%] md:pt-[10rem] z-30 flex flex-col gap-10">
+              {/* Mobile */}
+
+              <div className="md:hidden w-screen px-5 flex flex-col">
+                <div className="h-[300px] flex flex-col gap-1 justify-center">
+                  <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
+                    {/* Yuru Camp△ SEASON 2 */}
+                    {info?.title?.romaji || info?.title?.english}
+                  </h1>
+                  <p
+                    className="line-clamp-2 text-sm font-light w-[56%]"
+                    dangerouslySetInnerHTML={{ __html: info?.description }}
+                  />
+                  <div className="font-light flex gap-2 py-2 flex-wrap font-outfit text-[10px] text-[#ffffff] w-[70%]">
+                    {info?.genres
+                      ?.slice(
+                        0,
+                        info?.genres?.length > 3 ? info?.genres?.length : 3
+                      )
+                      .map((item, index) => (
+                        <span key={index}>
+                          <span className="px-2 py-1 bg-secondary rounded-full">
+                            {item}
+                          </span>
+                          {/* {index !== info?.genres?.length - 1 && (
+                            <span className="w-[5px] h-[5px] ml-[6px] mb-[2px] inline-block rounded-full bg-white" />
+                          )} */}
+                        </span>
+                      ))}
+                  </div>
+                  {info && (
+                    <div className="flex gap-2 pt-2 text-center">
+                      <div className="bg-action px-10 rounded-sm font-karla font-bold">
+                        {statuses ? statuses : "Add to List"}
+                      </div>
+                      <div className="h-6 w-6">
+                        <HeartIcon />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="bg-secondary h-[100px]">
+                  <div className="flex-center gap-2 p-2">
+                    {/* <div className="bg-action px-10 rounded-sm font-karla">
+                      completed
+                    </div>
+                    <div className="h-6 w-6">
+                      <HeartIcon />
+                    </div> */}
+                  </div>
+                </div>
+              </div>
+
+              {/* PC */}
+              <div className="hidden md:flex gap-5 w-full flex-nowrap">
                 <div className="shrink-0 md:h-[250px] md:w-[180px] w-[115px] h-[164px] relative">
-                  {loading ? (
-                    data && (
-                      <>
-                        <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10" />
-                        <Image
-                          src={data.image}
-                          alt="poster anime"
-                          height={700}
-                          width={700}
-                          className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute"
-                        />
-                      </>
-                    )
+                  {info ? (
+                    <>
+                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10" />
+                      <Image
+                        src={
+                          info.coverImage.extraLarge || info.coverImage.large
+                        }
+                        alt="poster anime"
+                        height={700}
+                        width={700}
+                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute"
+                      />
+                    </>
                   ) : (
                     <Skeleton className="h-[250px] w-[180px]" />
                   )}
                 </div>
-                <div className="flex w-full flex-col gap-10 h-[250px]">
+
+                {/* PC */}
+                <div className="hidden md:flex w-full flex-col gap-5 px-3 h-[250px]">
                   <div className="flex flex-col gap-2">
                     <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
-                      {loading ? (
-                        data?.title?.romaji || data?.title?.english
+                      {info ? (
+                        info?.title?.romaji || info?.title?.english
                       ) : (
                         <Skeleton width={450} />
                       )}
                     </h1>
-                    {loading ? (
-                      data && (
-                        <div>
-                          <div className="flex gap-6">
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              {data?.totalEpisodes} Episodes
-                            </div>
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              {data?.releaseDate}
-                            </div>
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              {data?.rating}%
-                            </div>
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              {data?.type}
-                            </div>
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              {data?.status}
-                            </div>
-                            <div
-                              className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
-                              style={color}
-                            >
-                              Sub | EN
-                            </div>
-                            {data && data.nextAiringEpisode && (
-                              <div
-                                className={`dynamic-text text-black shadow-button rounded-md px-2 font-karla font-bold`}
-                                style={color}
-                              >
-                                Ep {data.nextAiringEpisode.episode}: {time}
-                              </div>
-                            )}
-                          </div>
+                    {info ? (
+                      <div className="flex gap-6">
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.episodes} Episodes
                         </div>
-                      )
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.startDate?.year}
+                        </div>
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.averageScore}%
+                        </div>
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.type}
+                        </div>
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.status}
+                        </div>
+                        <div
+                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          Sub | EN
+                        </div>
+                        {info && info.nextAiringEpisode && (
+                          <div
+                            className={`dynamic-text text-black shadow-button rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            Ep {info.nextAiringEpisode.episode}: {time}
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <Skeleton width={240} height={32} />
                     )}
                   </div>
-                  {loading ? (
+                  {info ? (
                     <p
-                      dangerouslySetInnerHTML={{ __html: data?.description }}
-                      className="overflow-y-scroll scrollbar-thin pr-2  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg h-[125px]"
+                      dangerouslySetInnerHTML={{ __html: info?.description }}
+                      className="overflow-y-scroll scrollbar-thin pr-2  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg h-[140px]"
                     />
                   ) : (
                     <Skeleton className="h-[110px]" />
@@ -333,12 +484,12 @@ export default function Info() {
 
               <div>
                 <div className="flex gap-5 items-center">
-                  {data && (
+                  {info && (
                     <div className="p-3 lg:p-0 text-[20px] md:text-2xl font-bold font-karla">
                       Relations
                     </div>
                   )}
-                  {data?.relations?.length > 3 && (
+                  {info?.relations?.edges?.length > 3 && (
                     <div
                       className="cursor-pointer"
                       onClick={() => setShowAll(!showAll)}
@@ -350,43 +501,46 @@ export default function Info() {
                 <div
                   className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 px-3 lg:px-4 pt-10 rounded-xl`}
                 >
-                  {loading
-                    ? data?.relations &&
-                      data?.relations
-                        .slice(0, showAll ? data?.relations.length : 3)
-                        .map((relation, index) => {
+                  {info?.relations?.edges
+                    ? info?.relations?.edges
+                        .slice(0, showAll ? info?.relations?.edges.length : 3)
+                        .map((r, index) => {
+                          const rel = r.node;
                           return (
                             <Link
-                              key={relation.id}
+                              key={rel.id}
                               href={
-                                relation.type === "TV" ||
-                                relation.type === "OVA" ||
-                                relation.type === "MOVIE" ||
-                                relation.type === "SPECIAL" ||
-                                relation.type === "ONA"
-                                  ? `/anime/${relation.id}`
+                                rel.type === "ANIME" ||
+                                rel.type === "OVA" ||
+                                rel.type === "MOVIE" ||
+                                rel.type === "SPECIAL" ||
+                                rel.type === "ONA"
+                                  ? `/anime/${rel.id}`
                                   : `/manga/detail/id?aniId=${
-                                      relation.id
+                                      rel.id
                                     }&aniTitle=${encodeURIComponent(
-                                      data?.title?.english ||
-                                        data?.title.romaji ||
-                                        data?.title.native
+                                      info?.title?.english ||
+                                        info?.title.romaji ||
+                                        info?.title.native
                                     )}`
                               }
                               className={`hover:scale-[1.02] hover:shadow-lg md:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
-                                relation.type === "MUSIC"
+                                rel.type === "MUSIC"
                                   ? "pointer-events-none"
                                   : ""
                               }`}
                             >
                               <div
-                                key={relation.id}
+                                key={rel.id}
                                 className="w-full shrink h-[126px] bg-secondary flex rounded-md"
                               >
                                 <div className="w-[90px] bg-image rounded-l-md shrink-0">
                                   <Image
-                                    src={relation.image}
-                                    alt={relation.id}
+                                    src={
+                                      rel.coverImage.extraLarge ||
+                                      rel.coverImage.large
+                                    }
+                                    alt={rel.id}
                                     height={500}
                                     width={500}
                                     className="object-cover h-full w-full shrink-0 rounded-l-md"
@@ -394,12 +548,13 @@ export default function Info() {
                                 </div>
                                 <div className="h-full grid px-3 items-center">
                                   <div className="text-action font-outfit font-bold">
-                                    {relation.relationType}
+                                    {r.relationType}
                                   </div>
                                   <div className="font-outfit font-thin line-clamp-2">
-                                    {relation.title.romaji}
+                                    {rel.title.userPreferred ||
+                                      rel.title.romaji}
                                   </div>
-                                  <div className={``}>{relation.type}</div>
+                                  <div className={``}>{rel.type}</div>
                                 </div>
                               </div>
                             </Link>
@@ -414,7 +569,7 @@ export default function Info() {
               </div>
               <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
                 <div className="flex items-center md:gap-10 gap-7">
-                  {data && (
+                  {info && (
                     <h1 className="text-[20px] md:text-2xl font-bold font-karla">
                       Episodes
                     </h1>
@@ -445,7 +600,7 @@ export default function Info() {
                                   stall ? `9anime` : ""
                                 }`}
                                 className={`text-start text-sm md:text-lg ${
-                                  episode.number <= progress
+                                  progress && episode.number <= progress
                                     ? "text-[#5f5f5f]"
                                     : "text-white"
                                 }`}
@@ -454,7 +609,7 @@ export default function Info() {
                                 {episode.title && (
                                   <p
                                     className={`text-xs md:text-sm ${
-                                      episode.number <= progress
+                                      progress && episode.number <= progress
                                         ? "text-[#5f5f5f]"
                                         : "text-[#b1b1b1]"
                                     } italic`}
@@ -473,16 +628,18 @@ export default function Info() {
                     </div>
                   )
                 ) : (
-                  <></>
+                  <div className="pb-10 w-full flex-center">
+                    Loading Episodes...
+                  </div>
                 )}
               </div>
             </div>
-            {data && (
+            {rec && (
               <div className="w-screen md:w-[80%]">
                 <Content
                   ids="recommendAnime"
                   section="Recommendations"
-                  data={data.recommendations}
+                  data={rec}
                 />
               </div>
             )}
