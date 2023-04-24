@@ -34,27 +34,9 @@ export default function MangaDetail({ data, manga, aniId, provider }) {
   const [selectOption, setSelectedOption] = useState(options[0]);
   const [recentWatch, setRecentWatch] = useState();
 
-  // const { user, error, loading } = useUser();
-
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>{error.message}</div>;
-
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
-    // async function firebase() {
-    //   const colRef = collection(db, "user");
-
-    //   const snapshots = await getDocs(colRef);
-
-    //   const docs = snapshots.docs.map((doc) => {
-    //     const data = doc.data();
-    //     data.id = doc.id;
-    //     return data;
-    //   });
-
-    //   // console.log(docs);
-    // }
     function getRecent() {
       const recentWatch = JSON.parse(localStorage.getItem("watchedManga"))?.map(
         (data) => data.id
@@ -62,7 +44,6 @@ export default function MangaDetail({ data, manga, aniId, provider }) {
       setRecentWatch(recentWatch);
     }
     getRecent();
-    // firebase();
   }, []);
 
   function handleLoad() {
@@ -78,40 +59,8 @@ export default function MangaDetail({ data, manga, aniId, provider }) {
   async function clickDeez(props) {
     localStorage.setItem("chapters", mangan);
     localStorage.setItem("currentChapterId", props);
-
-    // const colRef = collection(db, "user");
-    // const docRef = doc(colRef, user.sub);
-
-    // const docMangaRef = collection(docRef, "watchedManga");
-    // const watchedMangaRef = doc(docMangaRef, data.id);
-
-    // const watchedMangaSnap = await getDoc(watchedMangaRef);
-
-    // if (watchedMangaSnap.exists()) {
-    //   // Update existing chapter
-    //   await updateDoc(watchedMangaRef, {
-    //     chapter: arrayUnion({
-    //       id: props,
-    //       scrollPercentage: 0,
-    //       timeStamp: null,
-    //     }),
-    //   });
-    //   // console.log("Chapter updated successfully!");
-    // } else {
-    //   // Add new manga with chapter data
-    //   await setDoc(watchedMangaRef, {
-    //     id: data.id,
-    //     image: data.image,
-    //     rating: data.rating,
-    //     title: data.title?.romaji || data.title?.english,
-    //     chapter: [props],
-    //   });
-    //   // console.log("Manga added successfully with chapter data!");
-    // }
   }
 
-  // console.log(data.id);
-  // console.log(mangan);
   return (
     <>
       <Head>
@@ -268,7 +217,7 @@ export default function MangaDetail({ data, manga, aniId, provider }) {
 export const getServerSideProps = async (context) => {
   context.res.setHeader("Cache-Control", "public, max-age=3600");
   const { aniId, aniTitle } = context.query;
-  const prv = "mangapill";
+  const prv = "mangahere";
 
   try {
     const info = await axios.get(

@@ -97,7 +97,14 @@ export default function Test({ title, id, aniId, data, provider }) {
             // console.log(datas);
             setData(datas);
           } else {
-            setData(data);
+            const dat = data.map((item) => ({
+              img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+                item.img
+              )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
+              page: item.page,
+              title: item.title || null,
+            }));
+            setData(dat);
           }
         })
         .finally(() => {
@@ -143,7 +150,14 @@ export default function Test({ title, id, aniId, data, provider }) {
           // console.log(datas);
           setData(datas);
         } else {
-          setData(data);
+          const dat = data.map((item) => ({
+            img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+              item.img
+            )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
+            page: item.page,
+            title: item.title || null,
+          }));
+          setData(dat);
         }
       })
       .finally(() => {
@@ -219,7 +233,14 @@ export default function Test({ title, id, aniId, data, provider }) {
             // console.log(datas);
             setData(datas);
           } else {
-            setData(data);
+            const dat = data.map((item) => ({
+              img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+                item.img
+              )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
+              page: item.page,
+              title: item.title || null,
+            }));
+            setData(dat);
           }
         })
         .finally(() => {
@@ -261,7 +282,14 @@ export default function Test({ title, id, aniId, data, provider }) {
           // console.log(datas);
           setData(datas);
         } else {
-          setData(data);
+          const dat = data.map((item) => ({
+            img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+              item.img
+            )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
+            page: item.page,
+            title: item.title || null,
+          }));
+          setData(dat);
         }
       })
       .finally(() => {
@@ -411,12 +439,21 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const data = results.data;
+  const dat = data.map((item) => ({
+    img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+      item.img
+    )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
+    page: item.page,
+    title: item.title || null,
+  }));
+
   return {
     props: {
       aniId,
       id,
       title,
-      data: results.data,
+      data: dat,
       provider,
     },
   };
