@@ -579,7 +579,7 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const color = { backgroundColor: `${info.color}` };
+  const color = { backgroundColor: `${info.color || 'white'}` };
   const epi1 = episodes.filter((epi) => epi.number === 1);
   const title = info.title?.userPreferred || "No Title";
 
