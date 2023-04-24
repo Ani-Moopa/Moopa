@@ -24,7 +24,7 @@ export default function Content({ ids, providers }) {
   }
   useEffect(() => {
     fetchData();
-  }, [providers]);
+  }, [providers, fetchData]);
   useEffect(() => {
     // console.log("Data changed:", data);
   }, [data]);

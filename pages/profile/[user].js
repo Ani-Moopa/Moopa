@@ -16,7 +16,6 @@ export default function MyList({ media, sessions, user, time }) {
     }
     return media.filter((m) => m.name === status);
   };
-  // console.log(media);
   return (
     <>
       <Head>

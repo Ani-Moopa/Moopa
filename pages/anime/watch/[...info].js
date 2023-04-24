@@ -253,7 +253,7 @@ export default function Info({ sessions, id, aniId, provider }) {
       setLoading(true);
     };
     fetchData();
-  }, [id]);
+  }, [id, aniId, provider, sessions]);
 
   // console.log(fallback);
 
