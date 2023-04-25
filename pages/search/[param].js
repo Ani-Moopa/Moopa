@@ -403,7 +403,7 @@ export default function Card() {
 
                 {loading && (
                   <>
-                    <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
+                    <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
                       {[1, 2, 4, 5, 6, 7, 8].map((item) => (
                         <div
                           key={item}
