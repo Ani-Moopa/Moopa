@@ -157,9 +157,6 @@ export default function Info() {
     (data) => data.mediaRecommendation
   );
 
-  // console.log(rec);
-  // console.log(info);
-
   useEffect(() => {
     const defaultState = {
       data: null,
@@ -397,7 +394,7 @@ export default function Info() {
               </div>
 
               {/* PC */}
-              <div className="hidden md:flex gap-5 w-full flex-nowrap">
+              <div className="hidden md:flex gap-8 w-full flex-nowrap">
                 <div className="shrink-0 md:h-[250px] md:w-[180px] w-[115px] h-[164px] relative">
                   {info ? (
                     <>
@@ -418,7 +415,7 @@ export default function Info() {
                 </div>
 
                 {/* PC */}
-                <div className="hidden md:flex w-full flex-col gap-5 px-3 h-[250px]">
+                <div className="hidden md:flex w-full flex-col gap-5 h-[250px]">
                   <div className="flex flex-col gap-2">
                     <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
                       {info ? (
@@ -507,72 +504,76 @@ export default function Info() {
                   )}
                 </div>
                 <div
-                  className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 px-3 lg:px-4 pt-4 rounded-xl`}
+                  className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 lg:pb-5 px-3 lg:px-4 pt-4 rounded-xl`}
                 >
-                  {info?.relations?.edges
-                    ? info?.relations?.edges
-                        .slice(0, showAll ? info?.relations?.edges.length : 3)
-                        .map((r, index) => {
-                          const rel = r.node;
-                          return (
-                            <Link
+                  {info?.relations?.edges ? (
+                    info?.relations?.edges
+                      .slice(0, showAll ? info?.relations?.edges.length : 3)
+                      .map((r, index) => {
+                        const rel = r.node;
+                        return (
+                          <Link
+                            key={rel.id}
+                            href={
+                              rel.type === "ANIME" ||
+                              rel.type === "OVA" ||
+                              rel.type === "MOVIE" ||
+                              rel.type === "SPECIAL" ||
+                              rel.type === "ONA"
+                                ? `/anime/${rel.id}`
+                                : `/manga/detail/id?aniId=${
+                                    rel.id
+                                  }&aniTitle=${encodeURIComponent(
+                                    info?.title?.english ||
+                                      info?.title.romaji ||
+                                      info?.title.native
+                                  )}`
+                            }
+                            className={`hover:scale-[1.02] hover:shadow-lg md:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
+                              rel.type === "MUSIC" ? "pointer-events-none" : ""
+                            }`}
+                          >
+                            <div
                               key={rel.id}
-                              href={
-                                rel.type === "ANIME" ||
-                                rel.type === "OVA" ||
-                                rel.type === "MOVIE" ||
-                                rel.type === "SPECIAL" ||
-                                rel.type === "ONA"
-                                  ? `/anime/${rel.id}`
-                                  : `/manga/detail/id?aniId=${
-                                      rel.id
-                                    }&aniTitle=${encodeURIComponent(
-                                      info?.title?.english ||
-                                        info?.title.romaji ||
-                                        info?.title.native
-                                    )}`
-                              }
-                              className={`hover:scale-[1.02] hover:shadow-lg md:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
-                                rel.type === "MUSIC"
-                                  ? "pointer-events-none"
-                                  : ""
-                              }`}
+                              className="w-full shrink h-[126px] bg-secondary flex rounded-md"
                             >
-                              <div
-                                key={rel.id}
-                                className="w-full shrink h-[126px] bg-secondary flex rounded-md"
-                              >
-                                <div className="w-[90px] bg-image rounded-l-md shrink-0">
-                                  <Image
-                                    src={
-                                      rel.coverImage.extraLarge ||
-                                      rel.coverImage.large
-                                    }
-                                    alt={rel.id}
-                                    height={500}
-                                    width={500}
-                                    className="object-cover h-full w-full shrink-0 rounded-l-md"
-                                  />
-                                </div>
-                                <div className="h-full grid px-3 items-center">
-                                  <div className="text-action font-outfit font-bold">
-                                    {r.relationType}
-                                  </div>
-                                  <div className="font-outfit font-thin line-clamp-2">
-                                    {rel.title.userPreferred ||
-                                      rel.title.romaji}
-                                  </div>
-                                  <div className={``}>{rel.type}</div>
-                                </div>
+                              <div className="w-[90px] bg-image rounded-l-md shrink-0">
+                                <Image
+                                  src={
+                                    rel.coverImage.extraLarge ||
+                                    rel.coverImage.large
+                                  }
+                                  alt={rel.id}
+                                  height={500}
+                                  width={500}
+                                  className="object-cover h-full w-full shrink-0 rounded-l-md"
+                                />
                               </div>
-                            </Link>
-                          );
-                        })
-                    : [1, 2, 3].map((item) => (
-                        <div key={item} className="w-full">
+                              <div className="h-full grid px-3 items-center">
+                                <div className="text-action font-outfit font-bold">
+                                  {r.relationType}
+                                </div>
+                                <div className="font-outfit font-thin line-clamp-2">
+                                  {rel.title.userPreferred || rel.title.romaji}
+                                </div>
+                                <div className={``}>{rel.type}</div>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })
+                  ) : (
+                    <>
+                      {[1, 2, 3].map((item) => (
+                        <div key={item} className="w-full hidden md:block">
                           <Skeleton className="h-[126px]" />
                         </div>
                       ))}
+                      <div className="w-full md:hidden">
+                        <Skeleton className="h-[126px]" />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
@@ -612,8 +613,8 @@ export default function Info() {
                 {loading ? (
                   data && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                      {episode ? (
-                        episode.map((epi, index) => {
+                      {episode?.length !== 0 ? (
+                        episode?.map((epi, index) => {
                           return (
                             <div
                               key={index}
@@ -654,8 +655,13 @@ export default function Info() {
                     </div>
                   )
                 ) : (
-                  <div className="pb-10 w-full flex-center">
-                    Loading Episodes...
+                  <div className="flex justify-center">
+                    <div class="lds-ellipsis">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
                   </div>
                 )}
               </div>
