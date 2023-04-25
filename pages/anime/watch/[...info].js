@@ -373,7 +373,7 @@ export default function Info({ sessions, id, aniId, provider }) {
           </div>
         </div>
       </Modal> */}
-      <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
+      <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
         <div className="bg-primary">
           <Navigasi />
           <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">

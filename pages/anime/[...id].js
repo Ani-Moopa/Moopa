@@ -1,7 +1,12 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-import { HeartIcon } from "@heroicons/react/20/solid";
+import { ClockIcon, HeartIcon } from "@heroicons/react/20/solid";
+import {
+  TvIcon,
+  ArrowTrendingUpIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/24/outline";
 
 import Head from "next/head";
 import Image from "next/image";
@@ -153,7 +158,7 @@ export default function Info() {
   );
 
   // console.log(rec);
-  console.log(progress);
+  // console.log(info);
 
   useEffect(() => {
     const defaultState = {
@@ -188,10 +193,6 @@ export default function Info() {
       if (id) {
         setLoading(false);
         try {
-          // const res = await fetch(
-          //   `https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`
-          // );
-
           const [res, info] = await Promise.all([
             fetch(`https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`),
             fetch("https://graphql.anilist.co/", {
@@ -211,19 +212,27 @@ export default function Info() {
           const infos = await info.json();
           setInfo(infos.data.Media);
 
+          const textColor = setTxtColor(infos.data.Media.coverImage?.color);
+
           if (!data || data.episodes.length === 0) {
             const res = await fetch(
               `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
             );
             const datas = await res.json();
-            setColor({ backgroundColor: `${data?.color || "white"}` });
+            setColor({
+              backgroundColor: `${data?.color || "#ffff"}`,
+              color: textColor,
+            });
             setStall(true);
             setEpisode(datas.episodes);
           } else {
             setEpisode(data.episodes);
           }
 
-          setColor({ backgroundColor: `${data?.color || "white"}` });
+          setColor({
+            backgroundColor: `${data?.color || "#ffff"}`,
+            color: textColor,
+          });
 
           if (session?.user?.name) {
             const response = await fetch("https://graphql.anilist.co/", {
@@ -275,40 +284,19 @@ export default function Info() {
             );
           }
 
-          function getBrightness(color) {
-            const rgb = color.match(/\d+/g);
-            return (299 * rgb[0] + 587 * rgb[1] + 114 * rgb[2]) / 1000;
-          }
-
-          // set the text color based on the background color
-          function setTextColor(element) {
-            const backgroundColor = getComputedStyle(element).backgroundColor;
-            const brightness = getBrightness(backgroundColor);
-            if (brightness < 128) {
-              element.style.color = "#fff"; // white
-            } else {
-              element.style.color = "#000"; // black
-            }
-          }
-
-          const elements = document.querySelectorAll(".dynamic-text");
-          elements.forEach((element) => {
-            setTextColor(element);
-          });
-
           setData(data);
           setLoading(true);
         } catch (error) {
+          console.log(error);
           setTimeout(() => {
             window.location.reload();
           }, 1000);
         }
       }
-      // setLoading(true);
     }
     fetchData();
   }, [id, session?.user?.name]);
-  // console.log(episode);
+
   return (
     <>
       <Head>
@@ -318,14 +306,18 @@ export default function Info() {
             : "Retrieving Data..."}
         </title>
       </Head>
-      <SkeletonTheme baseColor="#3B3C41" highlightColor="#4D4E52">
+      <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
         <Layout navTop="text-white bg-primary md:pt-0 md:px-0 bg-slate bg-opacity-40 z-50">
           <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
             <div className="bg-image w-screen">
               <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
               {info ? (
                 <Image
-                  src={info?.bannerImage}
+                  src={
+                    info?.bannerImage ||
+                    info?.coverImage?.extraLarge ||
+                    info?.coverImage.large
+                  }
                   alt="banner anime"
                   height={1000}
                   width={1000}
@@ -335,30 +327,32 @@ export default function Info() {
                 <div className="bg-image w-screen absolute top-0 left-0 h-[300px]" />
               )}
             </div>
-            <div className="lg:w-[70%] md:pt-[10rem] z-30 flex flex-col gap-10">
+            <div className="lg:w-[70%] md:pt-[10rem] z-30 flex flex-col gap-5">
               {/* Mobile */}
 
-              <div className="md:hidden w-screen px-5 flex flex-col">
-                <div className="h-[300px] flex flex-col gap-1 justify-center">
+              <div className="md:hidden pt-5 w-screen px-5 flex flex-col">
+                <div className="h-[250px] flex flex-col gap-1 justify-center">
                   <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
                     {/* Yuru Camp△ SEASON 2 */}
                     {info?.title?.romaji || info?.title?.english}
                   </h1>
                   <p
-                    className="line-clamp-2 text-sm font-light w-[56%]"
+                    className="line-clamp-2 text-sm font-light antialiased w-[56%]"
                     dangerouslySetInnerHTML={{ __html: info?.description }}
                   />
-                  <div className="font-light flex gap-2 py-2 flex-wrap font-outfit text-[10px] text-[#ffffff] w-[70%]">
+                  <div className="font-light flex gap-1 py-1 flex-wrap font-outfit text-[10px] text-[#ffffff] w-[70%]">
                     {info?.genres
                       ?.slice(
                         0,
                         info?.genres?.length > 3 ? info?.genres?.length : 3
                       )
                       .map((item, index) => (
-                        <span key={index}>
-                          <span className="px-2 py-1 bg-secondary rounded-full">
-                            {item}
-                          </span>
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-secondary shadow-lg font-outfit font-light rounded-full"
+                          // style={color}
+                        >
+                          <span className="">{item}</span>
                           {/* {index !== info?.genres?.length - 1 && (
                             <span className="w-[5px] h-[5px] ml-[6px] mb-[2px] inline-block rounded-full bg-white" />
                           )} */}
@@ -366,24 +360,38 @@ export default function Info() {
                       ))}
                   </div>
                   {info && (
-                    <div className="flex gap-2 pt-2 text-center">
-                      <div className="bg-action px-10 rounded-sm font-karla font-bold">
-                        {statuses ? statuses : "Add to List"}
-                      </div>
-                      <div className="h-6 w-6">
-                        <HeartIcon />
+                    <div className="flex items-center gap-5 pt-3 text-center">
+                      <div className="flex items-center gap-2  text-center">
+                        <div className="bg-action px-10 rounded-sm font-karla font-bold">
+                          {statuses ? statuses : "Add to List"}
+                        </div>
+                        <div className="h-6 w-6">
+                          <HeartIcon />
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
-                <div className="bg-secondary h-[100px]">
-                  <div className="flex-center gap-2 p-2">
-                    {/* <div className="bg-action px-10 rounded-sm font-karla">
-                      completed
-                    </div>
-                    <div className="h-6 w-6">
-                      <HeartIcon />
-                    </div> */}
+                <div className="bg-secondary rounded-sm h-[30px]">
+                  <div className="flex items-center justify-center h-full gap-10 p-2">
+                    {info && info.status !== "NOT_YET_RELEASED" ? (
+                      <>
+                        <div className="flex-center gap-2">
+                          <TvIcon className="w-5 h-5 text-action" />
+                          <h4 className="font-karla">{info?.type}</h4>
+                        </div>
+                        <div className="flex-center gap-2">
+                          <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
+                          <h4>{info?.averageScore}%</h4>
+                        </div>
+                        <div className="flex-center gap-2">
+                          <RectangleStackIcon className="w-5 h-5 text-action" />
+                          <h1>{info?.episodes} Episodes</h1>
+                        </div>
+                      </>
+                    ) : (
+                      <div>{info && "Not Yet Released"}</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -422,44 +430,44 @@ export default function Info() {
                     {info ? (
                       <div className="flex gap-6">
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           {info?.episodes} Episodes
                         </div>
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           {info?.startDate?.year}
                         </div>
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           {info?.averageScore}%
                         </div>
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           {info?.type}
                         </div>
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           {info?.status}
                         </div>
                         <div
-                          className={`dynamic-text text-black rounded-md px-2 font-karla font-bold`}
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
                           Sub | EN
                         </div>
                         {info && info.nextAiringEpisode && (
                           <div
-                            className={`dynamic-text text-black shadow-button rounded-md px-2 font-karla font-bold`}
+                            className={`dynamic-text shadow-button rounded-md px-2 font-karla font-bold`}
                             style={color}
                           >
                             Ep {info.nextAiringEpisode.episode}: {time}
@@ -476,7 +484,7 @@ export default function Info() {
                       className="overflow-y-scroll scrollbar-thin pr-2  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg h-[140px]"
                     />
                   ) : (
-                    <Skeleton className="h-[110px]" />
+                    <Skeleton className="h-[130px]" />
                   )}
                   {/* <p>{data.description}</p> */}
                 </div>
@@ -499,7 +507,7 @@ export default function Info() {
                   )}
                 </div>
                 <div
-                  className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 px-3 lg:px-4 pt-10 rounded-xl`}
+                  className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 px-3 lg:px-4 pt-4 rounded-xl`}
                 >
                   {info?.relations?.edges
                     ? info?.relations?.edges
@@ -574,9 +582,25 @@ export default function Info() {
                       Episodes
                     </h1>
                   )}
+                  {info?.nextAiringEpisode && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-4">
+                        <h1>Next Ep :</h1>
+                        <div
+                          className="px-5 rounded-sm font-karla font-bold bg-white text-black"
+                          // style={color}
+                        >
+                          {time}
+                        </div>
+                      </div>
+                      <div className="h-6 w-6">
+                        <ClockIcon />
+                      </div>
+                    </div>
+                  )}
                   {statuses && (
                     <>
-                      <div className="font-karla relative group flex justify-center">
+                      <div className="hidden font-karla relative group md:flex justify-center">
                         {statuses}
                         <span className="absolute bottom-8  shadow-lg invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 font-karla font-light bg-secondary p-1 px-2 rounded-lg">
                           status
@@ -589,36 +613,38 @@ export default function Info() {
                   data && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
                       {episode ? (
-                        episode.map((episode, index) => {
+                        episode.map((epi, index) => {
                           return (
                             <div
                               key={index}
                               className="flex flex-col gap-3 px-2"
                             >
                               <Link
-                                href={`/anime/watch/${episode.id}/${data.id}/${
+                                href={`/anime/watch/${epi.id}/${data.id}/${
                                   stall ? `9anime` : ""
                                 }`}
                                 className={`text-start text-sm md:text-lg ${
-                                  progress && episode.number <= progress
+                                  progress && epi.number <= progress
                                     ? "text-[#5f5f5f]"
                                     : "text-white"
                                 }`}
                               >
-                                <p>Episode {episode.number}</p>
-                                {episode.title && (
+                                <p>Episode {epi.number}</p>
+                                {epi.title && (
                                   <p
                                     className={`text-xs md:text-sm ${
-                                      progress && episode.number <= progress
+                                      progress && epi.number <= progress
                                         ? "text-[#5f5f5f]"
                                         : "text-[#b1b1b1]"
                                     } italic`}
                                   >
-                                    "{episode.title}"
+                                    "{epi.title}"
                                   </p>
                                 )}
                               </Link>
-                              <div className="h-[1px] bg-white" />
+                              {index !== episode?.length - 1 && (
+                                <span className="h-[1px] bg-white" />
+                              )}
                             </div>
                           );
                         })
@@ -672,4 +698,20 @@ function convertSecondsToTime(sec) {
   }
 
   return time.trim();
+}
+
+function getBrightness(hexColor) {
+  if (!hexColor) {
+    return 200;
+  }
+  const rgb = hexColor
+    .match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
+    .slice(1)
+    .map((x) => parseInt(x, 16));
+  return (299 * rgb[0] + 587 * rgb[1] + 114 * rgb[2]) / 1000;
+}
+
+function setTxtColor(hexColor) {
+  const brightness = getBrightness(hexColor);
+  return brightness < 150 ? "#fff" : "#000";
 }
