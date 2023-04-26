@@ -8,7 +8,7 @@
 
 <div align="center">
 
-  ![GitHub forks](https://img.shields.io/github/forks/DevanAbinaya/moopa-v3?style=flat-square) ![GitHub](https://img.shields.io/github/license/DevanAbinaya/moopa-v3?style=flat-square) ![Website](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fmoopa.live) ![GitHub Repo stars](https://img.shields.io/github/stars/DevanAbinaya/moopa-v3?style=flat-square)
+  ![GitHub forks](https://img.shields.io/github/forks/DevanAbinaya/moopa-v3?style=flat-square) ![GitHub](https://img.shields.io/github/license/DevanAbinaya/moopa-v3?style=flat-square) ![Website](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fmoopa.live) ![GitHub Repo stars](https://img.shields.io/github/stars/DevanAbinaya/moopa-v3?style=flat-square) ![Discord](https://img.shields.io/discord/822413263148285973?style=flat-square)
 </div>
 
 <p align="center"><a href="https://moopa.live">Moopa</a> is an anime streaming website build with nextjs and tailwindcss with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
@@ -55,6 +55,29 @@
   - [x] Create a user profile page to see lists of anime watched
   - [ ] Ability to edit list inside detail page
 - [ ] Working on Manga pages
+
+## For Local Development
+
+1. Clone this repository using :
+```bash
+git clone https://github.com/DevanAbinaya/moopa-v3.git
+```
+2. Install package using npm :
+```bash
+npm install
+```
+3. Create ```.env``` file in the root folder and put this inside the file :
+```bash
+CLIENT_ID="get the id from here https://anilist.co/settings/developer"
+CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
+GRAPHQL_ENDPOINT=https://graphql.anilist.co
+NEXTAUTH_SECRET='type this in your bash terminal (openssl rand -base64 32) with no bracket and paste it here'
+NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
+```
+4. Start local server :
+```bash
+npm run dev
+```
 
 ## Credits
 
