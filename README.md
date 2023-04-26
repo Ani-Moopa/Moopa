@@ -105,4 +105,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Contact
 
-For any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com).
+Thank You for passing by!! If you have any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
+
+## Support This Project
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)
