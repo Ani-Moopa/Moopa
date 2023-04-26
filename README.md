@@ -1,28 +1,25 @@
 <div align="center">
 <a href="https://moopa.live">
-  <img src="https://user-images.githubusercontent.com/97084324/234460363-216b29d3-acba-4c29-a321-780de84c9ab0.png" alt="logo" width="200"/>
+  <img src="https://user-images.githubusercontent.com/97084324/234460363-216b29d3-acba-4c29-a321-780de84c9ab0.png" alt="logo" width="180"/>
 </a>
 </div>
 
-<h1 align="center">Moopa Anime Streaming Website</h1>
+<h1 align="center">
+  <a href="https://moopa.live">Moopa Anime Streaming Website</a>
+</h1>
 
 <p align="center">
 
+ <a href="https://github.com/DevanAbinaya/Ani-Moopa/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/DevanAbinaya/Ani-Moopa" alt="license"/>
+  </a>
   <a href="https://github.com/DevanAbinaya/Ani-Moopa/fork">
-    <img src="https://img.shields.io/github/forks/DevanAbinaya/Ani-Moopa?style=flat-square" alt="fork"/>
-  </a>
-  <a href="https://github.com/DevanAbinaya/Ani-Moopa/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/DevanAbinaya/Ani-Moopa?style=flat-square" alt="license"/>
-  </a>
-  <a href="https://moopa.live">
-    <img src="https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fmoopa.live" alt="website"/>
+    <img src="https://img.shields.io/github/forks/DevanAbinaya/Ani-Moopa?style=social" alt="fork"/>
   </a>
   <a href="https://github.com/DevanAbinaya/Ani-Moopa">
-    <img src="https://img.shields.io/github/stars/DevanAbinaya/Ani-Moopa?style=flat-square" alt="stars"/>
+    <img src="https://img.shields.io/github/stars/DevanAbinaya/Ani-Moopa?style=social" alt="stars"/>
   </a>
-  <a href="https://discord.gg/4xTGhr85BG">
-    <img src="https://img.shields.io/discord/822413263148285973?style=flat-square" alt="discord"/>
-  </a>
+  
 </p>
 
 <p align="center"><a href="https://moopa.live">Moopa</a> is an anime streaming website build with nextjs and tailwindcss with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
@@ -41,8 +38,7 @@
  
 <h5 align="center">Info page for PC/Mobile</h5>
 <p align="center">
-<img src="https://user-images.githubusercontent.com/97084324/234465043-abcec35c-7f20-47b3-bb67-ca34dd136687.png" width="712"/>
-<img src="https://user-images.githubusercontent.com/97084324/234465307-c81f29a5-b209-4234-abc3-5d18243bebf4.png" width="200"/>
+<img src="https://user-images.githubusercontent.com/97084324/234508708-082b8d64-1dea-4525-98a5-51a5a95e8db3.png"/>
 </p>
 
 <h5 align="center">Watch Page</h5>
