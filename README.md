@@ -8,17 +8,17 @@
 
 <p align="center">
 
-  <a href="https://github.com/DevanAbinaya/moopa-v3/fork">
-    <img src="https://img.shields.io/github/forks/DevanAbinaya/moopa?style=flat-square" alt="fork"/>
+  <a href="https://github.com/DevanAbinaya/Ani-Moopa/fork">
+    <img src="https://img.shields.io/github/forks/DevanAbinaya/Ani-Moopa?style=flat-square" alt="fork"/>
   </a>
-  <a href="https://github.com/DevanAbinaya/moopa-v3/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/DevanAbinaya/moopa?style=flat-square" alt="license"/>
+  <a href="https://github.com/DevanAbinaya/Ani-Moopa/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/DevanAbinaya/Ani-Moopa?style=flat-square" alt="license"/>
   </a>
   <a href="https://moopa.live">
     <img src="https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fmoopa.live" alt="website"/>
   </a>
-  <a href="https://github.com/DevanAbinaya/moopa-v3">
-    <img src="https://img.shields.io/github/stars/DevanAbinaya/moopa?style=flat-square" alt="stars"/>
+  <a href="https://github.com/DevanAbinaya/Ani-Moopa">
+    <img src="https://img.shields.io/github/stars/DevanAbinaya/Ani-Moopa?style=flat-square" alt="stars"/>
   </a>
   <a href="https://discord.gg/4xTGhr85BG">
     <img src="https://img.shields.io/discord/822413263148285973?style=flat-square" alt="discord"/>
@@ -74,7 +74,7 @@
 
 1. Clone this repository using :
 ```bash
-git clone https://github.com/DevanAbinaya/moopa-v3.git
+git clone https://github.com/DevanAbinaya/Ani-Moopa.git
 ```
 2. Install package using npm :
 ```bash
