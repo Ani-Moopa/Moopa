@@ -34,8 +34,8 @@
 <img src="https://user-images.githubusercontent.com/97084324/234463979-4b4fa1ba-34cb-4ae4-b4e1-59500b24ac6f.png"/>
 
 <h5 align="center">Profile Page</h5>
-<img src="https://user-images.githubusercontent.com/97084324/234464677-bea15269-891e-4b33-b6e4-85a3e2ea31f7.png"/>
- 
+<img src="https://user-images.githubusercontent.com/97084324/234556937-76ec236c-a077-4af5-a910-0cb85e900e38.gif"/>
+
 <h5 align="center">Info page for PC/Mobile</h5>
 <p align="center">
 <img src="https://user-images.githubusercontent.com/97084324/234508708-082b8d64-1dea-4525-98a5-51a5a95e8db3.png"/>
