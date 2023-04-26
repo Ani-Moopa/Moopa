@@ -9,16 +9,16 @@
 <p align="center">
 
   <a href="https://github.com/DevanAbinaya/moopa-v3/fork">
-    <img src="https://img.shields.io/github/forks/DevanAbinaya/moopa-v3?style=flat-square" alt="fork"/>
+    <img src="https://img.shields.io/github/forks/DevanAbinaya/moopa?style=flat-square" alt="fork"/>
   </a>
   <a href="https://github.com/DevanAbinaya/moopa-v3/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/github/license/DevanAbinaya/moopa-v3?style=flat-square" alt="license"/>
+    <img src="https://img.shields.io/github/license/DevanAbinaya/moopa?style=flat-square" alt="license"/>
   </a>
   <a href="https://moopa.live">
     <img src="https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Fmoopa.live" alt="website"/>
   </a>
   <a href="https://github.com/DevanAbinaya/moopa-v3">
-    <img src="https://img.shields.io/github/stars/DevanAbinaya/moopa-v3?style=flat-square" alt="stars"/>
+    <img src="https://img.shields.io/github/stars/DevanAbinaya/moopa?style=flat-square" alt="stars"/>
   </a>
   <a href="https://discord.gg/4xTGhr85BG">
     <img src="https://img.shields.io/discord/822413263148285973?style=flat-square" alt="discord"/>
