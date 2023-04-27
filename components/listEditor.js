@@ -7,12 +7,6 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
   const [status, setStatus] = useState(stats ?? "");
   const [progress, setProgress] = useState(prg ?? 0);
 
-  console.log(progress);
-
-  //   function success() {
-  //     window.location.reload();
-  //   }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
