@@ -15,8 +15,11 @@ import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import Link from "next/link";
 import Content from "../../components/hero/content";
+import Modal from "../../components/modal";
 
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import AniList from "../../components/media/aniList";
+import ListEditor from "../../components/listEditor";
 
 const query = `
           query ($username: String, $status: MediaListStatus) {
@@ -137,21 +140,34 @@ const infoQuery = `query ($id: Int) {
     }
 }`;
 
+const stats = [
+  "Watching",
+  "Plan to Watch",
+  "Completed",
+  "Dropped",
+  "Paused",
+  "Rewatching",
+];
+
 export default function Info() {
   const { data: session, status } = useSession();
   const [data, setData] = useState(null);
   const [info, setInfo] = useState(null);
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(null);
+  const [progress, setProgress] = useState(0);
   const [statuses, setStatuses] = useState(null);
   const [stall, setStall] = useState(false);
   const [color, setColor] = useState(null);
 
   const [showAll, setShowAll] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
+
+  const [aniStatus, setAniStatus] = useState(statuses);
+  const [aniProgress, setAniProgress] = useState(0);
 
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
@@ -262,18 +278,25 @@ export default function Info() {
 
             if (gut) {
               setProgress(gut?.progress);
+              setAniProgress(parseInt(gut?.progress));
               if (gut.status === "CURRENT") {
                 setStatuses("Watching");
+                setAniStatus("Watching");
               } else if (gut.status === "PLANNING") {
                 setStatuses("Planned to watch");
+                setAniStatus("Planned to watch");
               } else if (gut.status === "COMPLETED") {
                 setStatuses("Completed");
+                setAniStatus("Completed");
               } else if (gut.status === "DROPPED") {
                 setStatuses("Dropped");
+                setAniStatus("Dropped");
               } else if (gut.status === "PAUSED") {
                 setStatuses("Paused");
+                setAniStatus("Paused");
               } else if (gut.status === "REPEATING") {
                 setStatuses("Rewatching");
+                setAniStatus("Rewatching");
               }
             }
           }
@@ -297,6 +320,28 @@ export default function Info() {
     fetchData();
   }, [id, session?.user?.name]);
 
+  function handleOpen() {
+    setOpen(true);
+    document.body.style.overflow = "hidden";
+  }
+
+  function handleClose() {
+    setOpen(false);
+    document.body.style.overflow = "auto";
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const formData = { status: aniStatus, progress: aniProgress };
+    console.log(formData);
+  }
+
+  function handleProgress(e) {
+    setAniProgress(e.target.value);
+  }
+
+  // console.log(progress);
+
   return (
     <>
       <Head>
@@ -306,6 +351,37 @@ export default function Info() {
             : "Retrieving Data..."}
         </title>
       </Head>
+      <Modal open={open} onClose={() => handleClose()}>
+        <div className="bg-[#202020] rounded-lg text-center">
+          {!session && (
+            <div className="flex-center flex-col gap-5 px-10 py-5">
+              <h1 className="text-md font-extrabold font-karla">
+                Edit your list
+              </h1>
+              <button
+                className="flex items-center bg-[#3a3a3a] rounded-md text-white p-1"
+                onClick={() => signIn("AniListProvider")}
+              >
+                <h1 className="px-1 font-bold font-karla">
+                  Login with AniList
+                </h1>
+                <div className="scale-[60%] pb-[1px]">
+                  <AniList />
+                </div>
+              </button>
+            </div>
+          )}
+          {session && info && progress && (
+            <ListEditor
+              animeId={info?.id}
+              session={session}
+              stats={statuses}
+              prg={progress}
+              max={info?.episodes}
+            />
+          )}
+        </div>
+      </Modal>
       <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
         <Layout navTop="text-white bg-primary md:pt-0 md:px-0 bg-slate bg-opacity-40 z-50">
           <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
@@ -362,7 +438,10 @@ export default function Info() {
                   {info && (
                     <div className="flex items-center gap-5 pt-3 text-center">
                       <div className="flex items-center gap-2  text-center">
-                        <div className="bg-action px-10 rounded-sm font-karla font-bold">
+                        <div
+                          className="bg-action px-10 rounded-sm font-karla font-bold cursor-pointer"
+                          onClick={() => handleOpen()}
+                        >
                           {statuses ? statuses : "Add to List"}
                         </div>
                         <div className="h-6 w-6">
@@ -465,14 +544,6 @@ export default function Info() {
                         >
                           Sub | EN
                         </div>
-                        {info && info.nextAiringEpisode && (
-                          <div
-                            className={`dynamic-text shadow-button rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            Ep {info.nextAiringEpisode.episode}: {time}
-                          </div>
-                        )}
                       </div>
                     ) : (
                       <Skeleton width={240} height={32} />
