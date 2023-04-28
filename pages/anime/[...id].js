@@ -451,7 +451,11 @@ export default function Info() {
                           className="bg-action px-10 rounded-sm font-karla font-bold"
                           onClick={() => handleOpen()}
                         >
-                          {statuses ? statuses : "Add to List"}
+                          {loading
+                            ? statuses
+                              ? statuses
+                              : "Add to List"
+                            : "Loading..."}
                         </button>
                         <div className="h-6 w-6">
                           <HeartIcon />
@@ -504,7 +508,11 @@ export default function Info() {
                         className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
                         onClick={() => handleOpen()}
                       >
-                        {statuses ? statuses : "Add to List"}
+                        {loading
+                          ? statuses
+                            ? statuses
+                            : "Add to List"
+                          : "Loading..."}
                       </button>
                     </>
                   ) : (
