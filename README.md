@@ -70,19 +70,14 @@
 ## For Local Development
 
 1. Clone this repository using :
-
 ```bash
 git clone https://github.com/DevanAbinaya/Ani-Moopa.git
 ```
-
 2. Install package using npm :
-
 ```bash
 npm install
 ```
-
-3. Create `.env` file in the root folder and put this inside the file :
-
+3. Create ```.env``` file in the root folder and put this inside the file :
 ```bash
 CLIENT_ID="get the id from here https://anilist.co/settings/developer"
 CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
@@ -92,7 +87,6 @@ NEXTAUTH_URL="for development use http://localhost:3000/ and for production use 
 ```
 
 4. Start local server :
-
 ```bash
 npm run dev
 ```
@@ -112,5 +106,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Thank You for passing by!! If you have any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 
 ## Support This Project
-
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)
