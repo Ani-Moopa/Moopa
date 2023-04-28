@@ -10,8 +10,10 @@ const useAlert = () => {
     setTimeout(() => {
       setMessage("");
       setType("");
-      window.location.reload();
-    }, 5000);
+      if (type === "success") {
+        window.location.reload();
+      }
+    }, 3000);
   };
 
   return { message, type, showAlert };

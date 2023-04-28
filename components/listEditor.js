@@ -9,6 +9,7 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting", status, progress);
     try {
       const response = await fetch("https://graphql.anilist.co/", {
         method: "POST",
@@ -29,12 +30,16 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
           `,
           variables: {
             mediaId: animeId,
-            progress: progress ? parseInt(progress) : null,
+            progress: progress,
             status: status || null,
           },
         }),
       });
       const { data } = await response.json();
+      if (data.SaveMediaListEntry === null) {
+        showAlert("Something went wrong", "error");
+        return;
+      }
       console.log("Saved media list entry", data);
       //   success();
       showAlert("Media list entry saved", "success");
@@ -45,7 +50,7 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-secondary">
       {message && (
         <m.div
           initial={{ opacity: 0, y: 10 }}
@@ -71,7 +76,7 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
             id="status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="rounded-md px-2 py-1"
+            className="rounded-md px-2 py-1 bg-[#363642]"
           >
             <option value="">Select a status</option>
             <option value="CURRENT">Watching</option>
@@ -92,13 +97,13 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
             value={progress}
             max={max}
             onChange={(e) => setProgress(e.target.value)}
-            className="rounded-md px-2 py-1"
+            className="rounded-md px-2 py-1 bg-[#363642]"
             min="0"
           />
         </div>
         <button
           type="submit"
-          className="bg-[#3a3a3a] text-white rounded-md mt-2 py-1 px-4"
+          className="bg-[#363642] text-white rounded-md mt-2 py-1 px-4"
         >
           Save
         </button>

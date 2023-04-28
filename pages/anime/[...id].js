@@ -368,7 +368,7 @@ export default function Info() {
               </button>
             </div>
           )}
-          {session && info && progress && (
+          {session && loading && (
             <ListEditor
               animeId={info?.id}
               session={session}
