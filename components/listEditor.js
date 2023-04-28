@@ -9,7 +9,7 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting", status, progress);
+    console.log("Submitting", status?.name, progress);
     try {
       const response = await fetch("https://graphql.anilist.co/", {
         method: "POST",
@@ -81,11 +81,10 @@ const ListEditor = ({ animeId, session, stats, prg, max }) => {
             <select
               name="status"
               id="status"
-              value={status}
+              value={status?.value}
               onChange={(e) => setStatus(e.target.value)}
               className="rounded-sm px-2 py-1 bg-[#363642] w-[50%] sm:w-[150px] text-sm sm:text-base"
             >
-              <option value="">Select a status</option>
               <option value="CURRENT">Watching</option>
               <option value="COMPLETED">Completed</option>
               <option value="PAUSED">Paused</option>

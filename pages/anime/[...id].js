@@ -166,7 +166,6 @@ export default function Info() {
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  const [aniStatus, setAniStatus] = useState(statuses);
   const [aniProgress, setAniProgress] = useState(0);
   const [epiStatus, setEpiStatus] = useState("ok");
 
@@ -288,23 +287,17 @@ export default function Info() {
               setProgress(gut?.progress);
               setAniProgress(parseInt(gut?.progress));
               if (gut.status === "CURRENT") {
-                setStatuses("Watching");
-                setAniStatus("Watching");
+                setStatuses({ name: "Watching", value: "CURRENT" });
               } else if (gut.status === "PLANNING") {
-                setStatuses("Plan to watch");
-                setAniStatus("Plan to watch");
+                setStatuses({ name: "Plan to watch", value: "PLANNING" });
               } else if (gut.status === "COMPLETED") {
-                setStatuses("Completed");
-                setAniStatus("Completed");
+                setStatuses({ name: "Completed", value: "COMPLETED" });
               } else if (gut.status === "DROPPED") {
-                setStatuses("Dropped");
-                setAniStatus("Dropped");
+                setStatuses({ name: "Dropped", value: "DROPPED" });
               } else if (gut.status === "PAUSED") {
-                setStatuses("Paused");
-                setAniStatus("Paused");
+                setStatuses({ name: "Paused", value: "PAUSED" });
               } else if (gut.status === "REPEATING") {
-                setStatuses("Rewatching");
-                setAniStatus("Rewatching");
+                setStatuses({ name: "Rewatching", value: "REPEATING" });
               }
             }
           }
@@ -336,16 +329,6 @@ export default function Info() {
   function handleClose() {
     setOpen(false);
     document.body.style.overflow = "auto";
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const formData = { status: aniStatus, progress: aniProgress };
-    console.log(formData);
-  }
-
-  function handleProgress(e) {
-    setAniProgress(e.target.value);
   }
 
   // console.log(progress);
@@ -402,6 +385,7 @@ export default function Info() {
                     info?.coverImage?.extraLarge ||
                     info?.coverImage.large
                   }
+                  priority={true}
                   alt="banner anime"
                   height={1000}
                   width={1000}
@@ -453,7 +437,7 @@ export default function Info() {
                         >
                           {loading
                             ? statuses
-                              ? statuses
+                              ? statuses.name
                               : "Add to List"
                             : "Loading..."}
                         </button>
@@ -498,6 +482,7 @@ export default function Info() {
                         src={
                           info.coverImage.extraLarge || info.coverImage.large
                         }
+                        priority={true}
                         alt="poster anime"
                         height={700}
                         width={700}
@@ -510,7 +495,7 @@ export default function Info() {
                       >
                         {loading
                           ? statuses
-                            ? statuses
+                            ? statuses.name
                             : "Add to List"
                           : "Loading..."}
                       </button>
