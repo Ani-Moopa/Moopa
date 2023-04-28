@@ -24,8 +24,9 @@
 
 <p align="center"><a href="https://moopa.live">Moopa</a> is an anime streaming website build with nextjs and tailwindcss with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
 
-![image](https://user-images.githubusercontent.com/97084324/234473045-8c648633-1f85-4815-b784-75d32bbdc2a7.png)
-
+<p align="center">
+ <img src="https://user-images.githubusercontent.com/97084324/234832975-0804e6bd-8528-4f53-b0fb-7ccce5342f59.png" alt="main" width="900">
+</p>
 
 <details>
 <summary>More Screenshots</summary>
@@ -84,6 +85,7 @@ GRAPHQL_ENDPOINT=https://graphql.anilist.co
 NEXTAUTH_SECRET='type this in your bash terminal (openssl rand -base64 32) with no bracket and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 ```
+
 4. Start local server :
 ```bash
 npm run dev

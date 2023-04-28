@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.3",
-    "@consumet/extensions": "github:consumet/consumet.ts",
-    "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@next/font": "13.0.7",
     "artplayer": "latest",
