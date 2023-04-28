@@ -168,10 +168,13 @@ export default function Info() {
 
   const [aniStatus, setAniStatus] = useState(statuses);
   const [aniProgress, setAniProgress] = useState(0);
+  const [epiStatus, setEpiStatus] = useState("ok");
 
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
   );
+
+  // const [log, setLog] = useState(null);
 
   useEffect(() => {
     const defaultState = {
@@ -181,6 +184,8 @@ export default function Info() {
       loading: true,
       statuses: null,
       progress: null,
+      stall: false,
+      EpiStatus: "ok",
     };
 
     // Reset all state variables to their default values
@@ -224,6 +229,7 @@ export default function Info() {
           const data = await res.json();
           const infos = await info.json();
           setInfo(infos.data.Media);
+          // setLog(data);
 
           const textColor = setTxtColor(infos.data.Media.coverImage?.color);
 
@@ -232,12 +238,17 @@ export default function Info() {
               `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
             );
             const datas = await res.json();
+            if (res.status === 500) {
+              setEpisode(null);
+              setEpiStatus("error");
+            } else {
+              setEpisode(datas.episodes);
+            }
             setColor({
               backgroundColor: `${data?.color || "#ffff"}`,
               color: textColor,
             });
             setStall(true);
-            setEpisode(datas.episodes);
           } else {
             setEpisode(data.episodes);
           }
@@ -280,8 +291,8 @@ export default function Info() {
                 setStatuses("Watching");
                 setAniStatus("Watching");
               } else if (gut.status === "PLANNING") {
-                setStatuses("Planned to watch");
-                setAniStatus("Planned to watch");
+                setStatuses("Plan to watch");
+                setAniStatus("Plan to watch");
               } else if (gut.status === "COMPLETED") {
                 setStatuses("Completed");
                 setAniStatus("Completed");
@@ -435,12 +446,13 @@ export default function Info() {
                   {info && (
                     <div className="flex items-center gap-5 pt-3 text-center">
                       <div className="flex items-center gap-2  text-center">
-                        <div
-                          className="bg-action px-10 rounded-sm font-karla font-bold cursor-pointer"
+                        <button
+                          type="button"
+                          className="bg-action px-10 rounded-sm font-karla font-bold"
                           onClick={() => handleOpen()}
                         >
                           {statuses ? statuses : "Add to List"}
-                        </div>
+                        </button>
                         <div className="h-6 w-6">
                           <HeartIcon />
                         </div>
@@ -477,7 +489,7 @@ export default function Info() {
                 <div className="shrink-0 md:h-[250px] md:w-[180px] w-[115px] h-[164px] relative">
                   {info ? (
                     <>
-                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10" />
+                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
                       <Image
                         src={
                           info.coverImage.extraLarge || info.coverImage.large
@@ -485,8 +497,15 @@ export default function Info() {
                         alt="poster anime"
                         height={700}
                         width={700}
-                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute"
+                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
                       />
+                      <button
+                        type="button"
+                        className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
+                        onClick={() => handleOpen()}
+                      >
+                        {statuses ? statuses : "Add to List"}
+                      </button>
                     </>
                   ) : (
                     <Skeleton className="h-[250px] w-[180px]" />
@@ -554,7 +573,6 @@ export default function Info() {
                   ) : (
                     <Skeleton className="h-[130px]" />
                   )}
-                  {/* <p>{data.description}</p> */}
                 </div>
               </div>
 
@@ -670,58 +688,54 @@ export default function Info() {
                       </div>
                     </div>
                   )}
-                  {statuses && (
-                    <>
-                      <div className="hidden font-karla relative group md:flex justify-center">
-                        {statuses}
-                        <span className="absolute bottom-8  shadow-lg invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 font-karla font-light bg-secondary p-1 px-2 rounded-lg">
-                          status
-                        </span>
-                      </div>
-                    </>
-                  )}
                 </div>
                 {loading ? (
                   data && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                      {episode?.length !== 0 ? (
-                        episode?.map((epi, index) => {
-                          return (
-                            <div
-                              key={index}
-                              className="flex flex-col gap-3 px-2"
-                            >
-                              <Link
-                                href={`/anime/watch/${epi.id}/${data.id}/${
-                                  stall ? `9anime` : ""
-                                }`}
-                                className={`text-start text-sm md:text-lg ${
-                                  progress && epi.number <= progress
-                                    ? "text-[#5f5f5f]"
-                                    : "text-white"
-                                }`}
+                      {epiStatus === "ok" ? (
+                        episode?.length !== 0 ? (
+                          episode?.map((epi, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col gap-3 px-2"
                               >
-                                <p>Episode {epi.number}</p>
-                                {epi.title && (
-                                  <p
-                                    className={`text-xs md:text-sm ${
-                                      progress && epi.number <= progress
-                                        ? "text-[#5f5f5f]"
-                                        : "text-[#b1b1b1]"
-                                    } italic`}
-                                  >
-                                    "{epi.title}"
-                                  </p>
+                                <Link
+                                  href={`/anime/watch/${epi.id}/${data.id}/${
+                                    stall ? `9anime` : ""
+                                  }`}
+                                  className={`text-start text-sm md:text-lg ${
+                                    progress && epi.number <= progress
+                                      ? "text-[#5f5f5f]"
+                                      : "text-white"
+                                  }`}
+                                >
+                                  <p>Episode {epi.number}</p>
+                                  {epi.title && (
+                                    <p
+                                      className={`text-xs md:text-sm ${
+                                        progress && epi.number <= progress
+                                          ? "text-[#5f5f5f]"
+                                          : "text-[#b1b1b1]"
+                                      } italic`}
+                                    >
+                                      "{epi.title}"
+                                    </p>
+                                  )}
+                                </Link>
+                                {index !== episode?.length - 1 && (
+                                  <span className="h-[1px] bg-white" />
                                 )}
-                              </Link>
-                              {index !== episode?.length - 1 && (
-                                <span className="h-[1px] bg-white" />
-                              )}
-                            </div>
-                          );
-                        })
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p>No Episodes Available</p>
+                        )
                       ) : (
-                        <p>No Episodes Available</p>
+                        <p className="flex-center">
+                          Something went wrong, can't retrieve any episodes :/
+                        </p>
                       )}
                     </div>
                   )
