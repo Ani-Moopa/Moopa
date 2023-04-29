@@ -278,11 +278,9 @@ export default function Info() {
 
             const gat = prog.lists.map((item) => item.entries);
             const git = gat.map((item) =>
-              item.find((item) => item.media.id === parseInt(data?.id))
+              item.find((item) => item.mediaId === parseInt(id[0]))
             );
-            const gut = git?.find(
-              (item) => item?.media.id === parseInt(data?.id)
-            );
+            const gut = git?.find((item) => item?.mediaId === parseInt(id[0]));
 
             if (gut) {
               setProgress(gut?.progress);
@@ -367,6 +365,7 @@ export default function Info() {
               stats={statuses}
               prg={progress}
               max={info?.episodes}
+              image={info}
             />
           )}
         </div>
