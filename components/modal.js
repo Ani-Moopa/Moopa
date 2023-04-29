@@ -8,7 +8,7 @@ export default function Modal({ open, onClose, children }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`shadow rounded-xl p-6 transition-all ${
+        className={`shadow rounded-xl transition-all ${
           open ? "scale-100 opacity-100" : "scale-75 opacity-0"
         }`}
       >

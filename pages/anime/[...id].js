@@ -339,14 +339,14 @@ export default function Info() {
         </title>
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
-        <div className="bg-[#202020] rounded-lg text-center">
+        <div>
           {!session && (
             <div className="flex-center flex-col gap-5 px-10 py-5">
               <h1 className="text-md font-extrabold font-karla">
                 Edit your list
               </h1>
               <button
-                className="flex items-center bg-[#3a3a3a] rounded-md text-white p-1"
+                className="flex items-center bg-[#363642] rounded-md text-white p-1"
                 onClick={() => signIn("AniListProvider")}
               >
                 <h1 className="px-1 font-bold font-karla">
