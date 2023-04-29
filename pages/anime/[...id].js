@@ -140,15 +140,6 @@ const infoQuery = `query ($id: Int) {
     }
 }`;
 
-const stats = [
-  "Watching",
-  "Plan to Watch",
-  "Completed",
-  "Dropped",
-  "Paused",
-  "Rewatching",
-];
-
 export default function Info() {
   const { data: session, status } = useSession();
   const [data, setData] = useState(null);
@@ -166,8 +157,8 @@ export default function Info() {
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  const [aniProgress, setAniProgress] = useState(0);
   const [epiStatus, setEpiStatus] = useState("ok");
+  const [error, setError] = useState(null);
 
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
@@ -185,6 +176,7 @@ export default function Info() {
       progress: null,
       stall: false,
       EpiStatus: "ok",
+      error: null,
     };
 
     // Reset all state variables to their default values
@@ -227,12 +219,20 @@ export default function Info() {
           ]);
           const data = await res.json();
           const infos = await info.json();
+
+          if (res.status === 500) {
+            setEpisode(null);
+            setEpiStatus("error");
+            setError(data.message);
+          } else if (res.status === 404) {
+            window.location.href("/404");
+          }
           setInfo(infos.data.Media);
           // setLog(data);
 
           const textColor = setTxtColor(infos.data.Media.coverImage?.color);
 
-          if (!data || data.episodes.length === 0) {
+          if (!data || data?.episodes?.length === 0) {
             const res = await fetch(
               `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
             );
@@ -240,6 +240,7 @@ export default function Info() {
             if (res.status === 500) {
               setEpisode(null);
               setEpiStatus("error");
+              setError(datas.message);
             } else {
               setEpisode(datas.episodes);
             }
@@ -285,7 +286,6 @@ export default function Info() {
 
             if (gut) {
               setProgress(gut?.progress);
-              setAniProgress(parseInt(gut?.progress));
               if (gut.status === "CURRENT") {
                 setStatuses({ name: "Watching", value: "CURRENT" });
               } else if (gut.status === "PLANNING") {
@@ -330,8 +330,6 @@ export default function Info() {
     setOpen(false);
     document.body.style.overflow = "auto";
   }
-
-  // console.log(progress);
 
   return (
     <>
@@ -726,9 +724,19 @@ export default function Info() {
                           <p>No Episodes Available</p>
                         )
                       ) : (
-                        <p className="flex-center">
-                          Something went wrong, can't retrieve any episodes :/
-                        </p>
+                        // <p className="flex-center">
+                        //   Something went wrong, can't retrieve any episodes :/
+                        // </p>
+                        <div className="flex flex-col">
+                          <h1>{epiStatus} while retrieving data</h1>
+                          <pre
+                            className={`rounded-md overflow-hidden ${getLanguageClassName(
+                              "bash"
+                            )}`}
+                          >
+                            <code>{error}</code>
+                          </pre>
+                        </div>
                       )}
                     </div>
                   )
@@ -799,3 +807,17 @@ function setTxtColor(hexColor) {
   const brightness = getBrightness(hexColor);
   return brightness < 150 ? "#fff" : "#000";
 }
+
+const getLanguageClassName = (language) => {
+  switch (language) {
+    case "javascript":
+      return "language-javascript";
+    case "html":
+      return "language-html";
+    case "bash":
+      return "language-bash";
+    // add more languages here as needed
+    default:
+      return "";
+  }
+};
