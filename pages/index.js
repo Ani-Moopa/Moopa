@@ -1,6 +1,5 @@
 import { aniListData } from "../lib/AniList";
 import React, { useState, useEffect } from "react";
-import ReactHtmlParser from "kt-react-html-parser";
 import Head from "next/head";
 import Link from "next/link";
 import Footer from "../components/footer";
@@ -369,9 +368,10 @@ export default function Home({ detail, populars, sessions }) {
               <h1 className="w-[85%] font-outfit font-extrabold md:text-[34px] line-clamp-2">
                 {data.title.english || data.title.romaji || data.title.native}
               </h1>
-              <div className="font-roboto font-light md:text-[18px] line-clamp-5">
-                {ReactHtmlParser(data.description)}
-              </div>
+              <p
+                className="font-roboto font-light md:text-[18px] line-clamp-5"
+                dangerouslySetInnerHTML={{ __html: data?.description }}
+              />
 
               <div className="md:pt-5">
                 <Link

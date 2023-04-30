@@ -140,15 +140,6 @@ const infoQuery = `query ($id: Int) {
     }
 }`;
 
-const stats = [
-  "Watching",
-  "Plan to Watch",
-  "Completed",
-  "Dropped",
-  "Paused",
-  "Rewatching",
-];
-
 export default function Info() {
   const { data: session, status } = useSession();
   const [data, setData] = useState(null);
@@ -166,12 +157,15 @@ export default function Info() {
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  const [aniStatus, setAniStatus] = useState(statuses);
-  const [aniProgress, setAniProgress] = useState(0);
+  const [epiStatus, setEpiStatus] = useState("ok");
+  const [error, setError] = useState(null);
 
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
   );
+
+  // const [log, setLog] = useState(null);
+  // console.log(rec);
 
   useEffect(() => {
     const defaultState = {
@@ -181,10 +175,14 @@ export default function Info() {
       loading: true,
       statuses: null,
       progress: null,
+      stall: false,
+      EpiStatus: "ok",
+      error: null,
     };
 
     // Reset all state variables to their default values
     Object.keys(defaultState).forEach((key) => {
+      document.body.style.overflow = "auto";
       const value = defaultState[key];
       if (Array.isArray(value)) {
         value.length
@@ -223,21 +221,36 @@ export default function Info() {
           ]);
           const data = await res.json();
           const infos = await info.json();
+
+          if (res.status === 500) {
+            setEpisode(null);
+            setEpiStatus("error");
+            setError(data.message);
+          } else if (res.status === 404) {
+            window.location.href("/404");
+          }
           setInfo(infos.data.Media);
+          // setLog(data);
 
           const textColor = setTxtColor(infos.data.Media.coverImage?.color);
 
-          if (!data || data.episodes.length === 0) {
+          if (!data || data?.episodes?.length === 0) {
             const res = await fetch(
               `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
             );
             const datas = await res.json();
+            if (res.status === 500) {
+              setEpisode(null);
+              setEpiStatus("error");
+              setError(datas.message);
+            } else {
+              setEpisode(datas.episodes);
+            }
             setColor({
               backgroundColor: `${data?.color || "#ffff"}`,
               color: textColor,
             });
             setStall(true);
-            setEpisode(datas.episodes);
           } else {
             setEpisode(data.episodes);
           }
@@ -267,33 +280,24 @@ export default function Info() {
 
             const gat = prog.lists.map((item) => item.entries);
             const git = gat.map((item) =>
-              item.find((item) => item.media.id === parseInt(data?.id))
+              item.find((item) => item.mediaId === parseInt(id[0]))
             );
-            const gut = git?.find(
-              (item) => item?.media.id === parseInt(data?.id)
-            );
+            const gut = git?.find((item) => item?.mediaId === parseInt(id[0]));
 
             if (gut) {
               setProgress(gut?.progress);
-              setAniProgress(parseInt(gut?.progress));
               if (gut.status === "CURRENT") {
-                setStatuses("Watching");
-                setAniStatus("Watching");
+                setStatuses({ name: "Watching", value: "CURRENT" });
               } else if (gut.status === "PLANNING") {
-                setStatuses("Planned to watch");
-                setAniStatus("Planned to watch");
+                setStatuses({ name: "Plan to watch", value: "PLANNING" });
               } else if (gut.status === "COMPLETED") {
-                setStatuses("Completed");
-                setAniStatus("Completed");
+                setStatuses({ name: "Completed", value: "COMPLETED" });
               } else if (gut.status === "DROPPED") {
-                setStatuses("Dropped");
-                setAniStatus("Dropped");
+                setStatuses({ name: "Dropped", value: "DROPPED" });
               } else if (gut.status === "PAUSED") {
-                setStatuses("Paused");
-                setAniStatus("Paused");
+                setStatuses({ name: "Paused", value: "PAUSED" });
               } else if (gut.status === "REPEATING") {
-                setStatuses("Rewatching");
-                setAniStatus("Rewatching");
+                setStatuses({ name: "Rewatching", value: "REPEATING" });
               }
             }
           }
@@ -327,18 +331,6 @@ export default function Info() {
     document.body.style.overflow = "auto";
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const formData = { status: aniStatus, progress: aniProgress };
-    console.log(formData);
-  }
-
-  function handleProgress(e) {
-    setAniProgress(e.target.value);
-  }
-
-  // console.log(progress);
-
   return (
     <>
       <Head>
@@ -349,14 +341,14 @@ export default function Info() {
         </title>
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
-        <div className="bg-[#202020] rounded-lg text-center">
+        <div>
           {!session && (
-            <div className="flex-center flex-col gap-5 px-10 py-5">
+            <div className="flex-center flex-col gap-5 px-10 py-5 bg-secondary rounded-md">
               <h1 className="text-md font-extrabold font-karla">
                 Edit your list
               </h1>
               <button
-                className="flex items-center bg-[#3a3a3a] rounded-md text-white p-1"
+                className="flex items-center bg-[#363642] rounded-md text-white p-1"
                 onClick={() => signIn("AniListProvider")}
               >
                 <h1 className="px-1 font-bold font-karla">
@@ -368,13 +360,14 @@ export default function Info() {
               </button>
             </div>
           )}
-          {session && info && progress && (
+          {session && loading && info && (
             <ListEditor
               animeId={info?.id}
               session={session}
               stats={statuses}
               prg={progress}
               max={info?.episodes}
+              image={info}
             />
           )}
         </div>
@@ -391,6 +384,7 @@ export default function Info() {
                     info?.coverImage?.extraLarge ||
                     info?.coverImage.large
                   }
+                  priority={true}
                   alt="banner anime"
                   height={1000}
                   width={1000}
@@ -435,12 +429,17 @@ export default function Info() {
                   {info && (
                     <div className="flex items-center gap-5 pt-3 text-center">
                       <div className="flex items-center gap-2  text-center">
-                        <div
-                          className="bg-action px-10 rounded-sm font-karla font-bold cursor-pointer"
+                        <button
+                          type="button"
+                          className="bg-action px-10 rounded-sm font-karla font-bold"
                           onClick={() => handleOpen()}
                         >
-                          {statuses ? statuses : "Add to List"}
-                        </div>
+                          {loading
+                            ? statuses
+                              ? statuses.name
+                              : "Add to List"
+                            : "Loading..."}
+                        </button>
                         <div className="h-6 w-6">
                           <HeartIcon />
                         </div>
@@ -477,16 +476,28 @@ export default function Info() {
                 <div className="shrink-0 md:h-[250px] md:w-[180px] w-[115px] h-[164px] relative">
                   {info ? (
                     <>
-                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10" />
+                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
                       <Image
                         src={
                           info.coverImage.extraLarge || info.coverImage.large
                         }
+                        priority={true}
                         alt="poster anime"
                         height={700}
                         width={700}
-                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute"
+                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
                       />
+                      <button
+                        type="button"
+                        className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
+                        onClick={() => handleOpen()}
+                      >
+                        {loading
+                          ? statuses
+                            ? statuses.name
+                            : "Add to List"
+                          : "Loading..."}
+                      </button>
                     </>
                   ) : (
                     <Skeleton className="h-[250px] w-[180px]" />
@@ -505,36 +516,46 @@ export default function Info() {
                     </h1>
                     {info ? (
                       <div className="flex gap-6">
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.episodes} Episodes
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.startDate?.year}
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.averageScore}%
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.type}
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.status}
-                        </div>
+                        {info?.episodes && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.episodes} Episodes
+                          </div>
+                        )}
+                        {info?.startDate?.year && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.startDate?.year}
+                          </div>
+                        )}
+                        {info?.averageScore && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.averageScore}%
+                          </div>
+                        )}
+                        {info?.type && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.type}
+                          </div>
+                        )}
+                        {info?.status && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.status}
+                          </div>
+                        )}
                         <div
                           className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
@@ -554,7 +575,6 @@ export default function Info() {
                   ) : (
                     <Skeleton className="h-[130px]" />
                   )}
-                  {/* <p>{data.description}</p> */}
                 </div>
               </div>
 
@@ -670,58 +690,64 @@ export default function Info() {
                       </div>
                     </div>
                   )}
-                  {statuses && (
-                    <>
-                      <div className="hidden font-karla relative group md:flex justify-center">
-                        {statuses}
-                        <span className="absolute bottom-8  shadow-lg invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 font-karla font-light bg-secondary p-1 px-2 rounded-lg">
-                          status
-                        </span>
-                      </div>
-                    </>
-                  )}
                 </div>
                 {loading ? (
                   data && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                      {episode?.length !== 0 ? (
-                        episode?.map((epi, index) => {
-                          return (
-                            <div
-                              key={index}
-                              className="flex flex-col gap-3 px-2"
-                            >
-                              <Link
-                                href={`/anime/watch/${epi.id}/${data.id}/${
-                                  stall ? `9anime` : ""
-                                }`}
-                                className={`text-start text-sm md:text-lg ${
-                                  progress && epi.number <= progress
-                                    ? "text-[#5f5f5f]"
-                                    : "text-white"
-                                }`}
+                      {epiStatus === "ok" ? (
+                        episode?.length !== 0 ? (
+                          episode?.map((epi, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col gap-3 px-2"
                               >
-                                <p>Episode {epi.number}</p>
-                                {epi.title && (
-                                  <p
-                                    className={`text-xs md:text-sm ${
-                                      progress && epi.number <= progress
-                                        ? "text-[#5f5f5f]"
-                                        : "text-[#b1b1b1]"
-                                    } italic`}
-                                  >
-                                    "{epi.title}"
-                                  </p>
+                                <Link
+                                  href={`/anime/watch/${epi.id}/${data.id}/${
+                                    stall ? `9anime` : ""
+                                  }`}
+                                  className={`text-start text-sm md:text-lg ${
+                                    progress && epi.number <= progress
+                                      ? "text-[#5f5f5f]"
+                                      : "text-white"
+                                  }`}
+                                >
+                                  <p>Episode {epi.number}</p>
+                                  {epi.title && (
+                                    <p
+                                      className={`text-xs md:text-sm ${
+                                        progress && epi.number <= progress
+                                          ? "text-[#5f5f5f]"
+                                          : "text-[#b1b1b1]"
+                                      } italic`}
+                                    >
+                                      "{epi.title}"
+                                    </p>
+                                  )}
+                                </Link>
+                                {index !== episode?.length - 1 && (
+                                  <span className="h-[1px] bg-white" />
                                 )}
-                              </Link>
-                              {index !== episode?.length - 1 && (
-                                <span className="h-[1px] bg-white" />
-                              )}
-                            </div>
-                          );
-                        })
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p>No Episodes Available</p>
+                        )
                       ) : (
-                        <p>No Episodes Available</p>
+                        // <p className="flex-center">
+                        //   Something went wrong, can't retrieve any episodes :/
+                        // </p>
+                        <div className="flex flex-col">
+                          <h1>{epiStatus} while retrieving data</h1>
+                          <pre
+                            className={`rounded-md overflow-hidden ${getLanguageClassName(
+                              "bash"
+                            )}`}
+                          >
+                            <code>{error}</code>
+                          </pre>
+                        </div>
                       )}
                     </div>
                   )
@@ -737,7 +763,7 @@ export default function Info() {
                 )}
               </div>
             </div>
-            {rec && (
+            {info && rec?.length !== 0 && (
               <div className="w-screen md:w-[80%]">
                 <Content
                   ids="recommendAnime"
@@ -792,3 +818,17 @@ function setTxtColor(hexColor) {
   const brightness = getBrightness(hexColor);
   return brightness < 150 ? "#fff" : "#000";
 }
+
+const getLanguageClassName = (language) => {
+  switch (language) {
+    case "javascript":
+      return "language-javascript";
+    case "html":
+      return "language-html";
+    case "bash":
+      return "language-bash";
+    // add more languages here as needed
+    default:
+      return "";
+  }
+};

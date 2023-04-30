@@ -203,3 +203,49 @@ button {
     transform: translate(24px, 0);
   }
 }
+
+/* Add this CSS to your global styles or a component-specific CSS file */
+pre {
+  color: #f8f8f2;
+  font-family: "Fira Code", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 1rem;
+  margin: 1rem 0;
+  @apply bg-[#191c24];
+}
+
+pre code {
+  display: block;
+}
+
+.language-javascript {
+  color: #f8f8f2;
+}
+
+.language-html {
+  color: #e6db74;
+}
+
+.language-bash {
+  color: #89b482;
+}
+
+.hover-parent:hover .hover-child {
+  display: block;
+}
+
+.hover-child {
+  display: none;
+}
+
+.hover-child:hover {
+  display: none;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 1rem;
+  padding: 1rem;
+}

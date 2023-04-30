@@ -185,75 +185,79 @@ export default function MyList({ media, sessions, user, time }) {
 
         <div className="lg:w-[75%] grid gap-10 my-12 lg:pt-16">
           {media.length !== 0 ? (
-            filterMedia(listFilter).map((item, index) => (
-              <div key={index} className="flex flex-col gap-5 mx-3">
-                <h1 className="font-karla font-bold text-xl">{item.name}</h1>
-                <table className="bg-secondary rounded-lg">
-                  <thead>
-                    <tr>
-                      <th className="font-bold text-xs py-3 text-start pl-10 lg:w-[75%] w-[65%]">
-                        Title
-                      </th>
-                      <th className="font-bold text-xs py-3">Score</th>
-                      <th className="font-bold text-xs py-3">Progress</th>
-                    </tr>
-                  </thead>
-                  <tbody className="">
-                    {item.entries.map((item, index) => (
-                      <tr
-                        key={index + 1}
-                        className="hover:bg-orange-400 duration-150 ease-in-out group relative"
-                      >
-                        <td className="font-medium py-2 pl-2 rounded-l-lg">
-                          <div className="flex items-center gap-2">
-                            {item.media.status === "RELEASING" ? (
-                              <span className="dot group-hover:invisible bg-green-500 shrink-0" />
-                            ) : item.media.status === "NOT_YET_RELEASED" ? (
-                              <span className="dot group-hover:invisible bg-red-500 shrink-0" />
-                            ) : (
-                              <span className="dot group-hover:invisible shrink-0" />
-                            )}
-                            <Image
-                              src={item.media.coverImage.large}
-                              alt="Cover Image"
-                              width={500}
-                              height={500}
-                              className="object-cover rounded-md w-10 h-10 shrink-0"
-                            />
-                            <div className="absolute -top-10 -left-40 invisible lg:group-hover:visible">
-                              <Image
-                                src={item.media.coverImage.large}
-                                alt={item.media.id}
-                                width={1000}
-                                height={1000}
-                                className="object-cover h-[186px] w-[140px] shrink-0 rounded-md"
-                              />
-                            </div>
-                            <Link
-                              href={`/anime/${item.media.id}`}
-                              className="font-semibold font-karla pl-2 text-sm line-clamp-1"
-                              title={item.media.title.romaji}
-                            >
-                              {item.media.title.romaji}
-                            </Link>
-                          </div>
-                        </td>
-                        <td className="text-center text-xs text-txt">
-                          {item.score === 0 ? null : item.score}
-                        </td>
-                        <td className="text-center text-xs text-txt rounded-r-lg">
-                          {item.progress === item.media.episodes
-                            ? item.progress
-                            : item.media.episodes === null
-                            ? item.progress
-                            : `${item.progress}/${item.media.episodes}`}
-                        </td>
+            filterMedia(listFilter).map((item, index) => {
+              return (
+                <div key={index} className="flex flex-col gap-5 mx-3">
+                  <h1 className="font-karla font-bold text-xl">{item.name}</h1>
+                  <table className="bg-secondary rounded-lg">
+                    <thead>
+                      <tr>
+                        <th className="font-bold text-xs py-3 text-start pl-10 lg:w-[75%] w-[65%]">
+                          Title
+                        </th>
+                        <th className="font-bold text-xs py-3">Score</th>
+                        <th className="font-bold text-xs py-3">Progress</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))
+                    </thead>
+                    <tbody className="">
+                      {item.entries.map((item) => {
+                        return (
+                          <tr
+                            key={item.mediaId}
+                            className="hover:bg-orange-400 duration-150 ease-in-out group relative"
+                          >
+                            <td className="font-medium py-2 pl-2 rounded-l-lg">
+                              <div className="flex items-center gap-2">
+                                {item.media.status === "RELEASING" ? (
+                                  <span className="dot group-hover:invisible bg-green-500 shrink-0" />
+                                ) : item.media.status === "NOT_YET_RELEASED" ? (
+                                  <span className="dot group-hover:invisible bg-red-500 shrink-0" />
+                                ) : (
+                                  <span className="dot group-hover:invisible shrink-0" />
+                                )}
+                                <Image
+                                  src={item.media.coverImage.large}
+                                  alt="Cover Image"
+                                  width={500}
+                                  height={500}
+                                  className="object-cover rounded-md w-10 h-10 shrink-0"
+                                />
+                                <div className="absolute -top-10 -left-40 invisible lg:group-hover:visible">
+                                  <Image
+                                    src={item.media.coverImage.large}
+                                    alt={item.media.id}
+                                    width={1000}
+                                    height={1000}
+                                    className="object-cover h-[186px] w-[140px] shrink-0 rounded-md"
+                                  />
+                                </div>
+                                <Link
+                                  href={`/anime/${item.media.id}`}
+                                  className="font-semibold font-karla pl-2 text-sm line-clamp-1"
+                                  title={item.media.title.romaji}
+                                >
+                                  {item.media.title.romaji}
+                                </Link>
+                              </div>
+                            </td>
+                            <td className="text-center text-xs text-txt">
+                              {item.score === 0 ? null : item.score}
+                            </td>
+                            <td className="text-center text-xs text-txt rounded-r-lg">
+                              {item.progress === item.media.episodes
+                                ? item.progress
+                                : item.media.episodes === null
+                                ? item.progress
+                                : `${item.progress}/${item.media.episodes}`}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })
           ) : (
             <div className="w-screen lg:w-full flex-center flex-col gap-5">
               {user.name === sessions?.user.name ? (

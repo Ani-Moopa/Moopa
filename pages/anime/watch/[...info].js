@@ -32,8 +32,7 @@ export default function Info({ sessions, id, aniId, provider }) {
   const [playingEpisode, setPlayingEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [playingTitle, setPlayingTitle] = useState(null);
-
-  // console.log(epiData);
+  const [poster, setPoster] = useState(null);
 
   useEffect(() => {
     const defaultState = {
@@ -136,6 +135,11 @@ export default function Info({ sessions, id, aniId, provider }) {
       }
 
       setPlayingEpisode(playingEpisode);
+
+      const playing = aniData.episodes.filter((item) => item.id == id);
+      // .map((item) => item.);
+
+      setPoster(playing);
 
       const title = aniData.episodes
         .filter((item) => item.id == id)
@@ -255,11 +259,7 @@ export default function Info({ sessions, id, aniId, provider }) {
     fetchData();
   }, [id, aniId, provider, sessions]);
 
-  // console.log(fallback);
-
   const { Notification: NotificationComponent } = useNotification();
-
-  // console.log();
 
   const [open, setOpen] = useState(false);
   const [aniStatus, setAniStatus] = useState("");
@@ -282,97 +282,12 @@ export default function Info({ sessions, id, aniId, provider }) {
     console.log(formData);
   };
 
-  // console.log(playingTitle.title);
-
   return (
     <>
       <Head>
         <title>{playingTitle}</title>
       </Head>
 
-      {/* <NotificationComponent /> */}
-
-      {/* <Modal open={open} onClose={() => setOpen(false)}>
-        <div className="bg-[#202020] rounded-lg text-center">
-          <div className="p-5 grid gap-2 justify-center place-items-center">
-            <h1 className="text-md font-extrabold font-karla">
-              Save this Anime to Your List
-            </h1>
-            {!sessions && (
-              <button
-                className="flex items-center bg-[#3a3a3a] mt-4 rounded-md text-white p-1"
-                onClick={() => signIn("AniListProvider")}
-              >
-                <h1 className="px-1 font-bold font-karla">
-                  Login with AniList
-                </h1>
-                <div className="scale-[60%] pb-[1px]">
-                  <AniList />
-                </div>
-              </button>
-            )}
-            {sessions && (
-              <>
-                <form
-                  onSubmit={handleSubmit}
-                  className="grid grid-cols-2 gap-5 max-w-sm mx-auto mt-5 items-center"
-                >
-                  <div className="mb-4">
-                    <label
-                      htmlFor="option"
-                      className="block font-bold mb-2 text-sm"
-                    >
-                      Select an option
-                    </label>
-                    <select
-                      id="option"
-                      value={aniStatus}
-                      onChange={handleStatus}
-                      className="form-select block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300"
-                    >
-                      {aniStatus === "" && (
-                        <option value="" hidden>
-                          Select an option
-                        </option>
-                      )}
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="number"
-                      className="block text-sm font-bold mb-2"
-                    >
-                      Episode Progress
-                    </label>
-                    <input
-                      id="number"
-                      type="number"
-                      step="1"
-                      min="0"
-                      max={data.totalEpisodes}
-                      className="form-input block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300"
-                      value={aniProgress}
-                      onChange={handleProgress}
-                    />
-                  </div>
-                  <div className="col-start-2 row-start-2 w-full justify-items-end text-center">
-                    <button
-                      type="submit"
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => setOpen(false)}
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              </>
-            )}
-          </div>
-        </div>
-      </Modal> */}
       <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
         <div className="bg-primary">
           <Navigasi />
@@ -391,6 +306,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                     op={skip.op}
                     ed={skip.ed}
                     title={playingTitle}
+                    poster={poster[0]?.image}
                   />
                 </div>
               ) : (
