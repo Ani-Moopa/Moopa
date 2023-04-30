@@ -52,7 +52,7 @@ export default function Content({ ids, section, data }) {
               >
                 <Link
                   href={`/anime/${anime.id}`}
-                  className="hover:scale-105 group relative duration-300 ease-in-out"
+                  className="hover:scale-105 group relative duration-300 ease-in-out hover-parent"
                 >
                   {/* <div className="fixed top-0 z-40 bg-black invisible group-hover:visible">
                     {anime.title.romaji || anime.title.english}
@@ -75,7 +75,7 @@ export default function Content({ ids, section, data }) {
                       anime.coverImage?.large ||
                       "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
                     }
-                    className="z-20 h-[192px] w-[135px] object-cover lg:h-[265px] lg:w-[185px] rounded-md"
+                    className="z-20 h-[192px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover  rounded-md"
                   />
                 </Link>
               </div>

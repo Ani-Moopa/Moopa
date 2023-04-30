@@ -9,6 +9,7 @@ import Head from "next/head";
 import Footer from "../../components/footer";
 
 import { useAniList } from "../../lib/useAnilist";
+import Image from "next/image";
 
 const genre = [
   "Action",
@@ -53,6 +54,8 @@ export default function Card() {
 
   let hasil = null;
   let tipe = "ANIME";
+  let s = undefined;
+  let y = NaN;
 
   const query = router.query;
   if (query.param !== "anime" && query.param !== "manga") {
@@ -60,19 +63,42 @@ export default function Card() {
   } else if (query.param === "anime") {
     hasil = null;
     tipe = "ANIME";
+    if (
+      query.season !== "WINTER" &&
+      query.season !== "SPRING" &&
+      query.season !== "SUMMER" &&
+      query.season !== "FALL"
+    ) {
+      s = undefined;
+      y = NaN;
+    } else {
+      s = query.season;
+      y = parseInt(query.seasonYear);
+    }
   } else if (query.param === "manga") {
     hasil = null;
     tipe = "MANGA";
+    if (
+      query.season !== "WINTER" &&
+      query.season !== "SPRING" &&
+      query.season !== "SUMMER" &&
+      query.season !== "FALL"
+    ) {
+      s = undefined;
+      y = NaN;
+    } else {
+      s = query.season;
+      y = parseInt(query.seasonYear);
+    }
   }
-  // ;
+
+  // console.log(tags);
 
   const [search, setQuery] = useState(hasil);
   const [type, setSelectedType] = useState(tipe);
-  const [seasonYear, setSeasonYear] = useState();
-  const [season, setSeason] = useState();
   const [genres, setSelectedGenre] = useState();
-  const [perPage, setPerPage] = useState(10);
-  const [sort, setSelectedSort] = useState(["POPULARITY_DESC"]);
+  const [sort, setSelectedSort] = useState();
+  // console.log(data);
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -83,16 +109,15 @@ export default function Card() {
 
   async function advance() {
     setLoading(true);
-    const data = await aniAdvanceSearch(
-      search,
-      type,
-      seasonYear,
-      season,
-      genres,
-      page,
-      perPage,
-      sort
-    );
+    const data = await aniAdvanceSearch({
+      search: search,
+      type: type,
+      genres: genres,
+      page: page,
+      sort: sort,
+      season: s,
+      seasonYear: y,
+    });
     if (data.media.length === 0) {
       setNextPage(false);
     } else if (data !== null && page > 1) {
@@ -112,7 +137,7 @@ export default function Card() {
     setPage(1);
     setNextPage(true);
     advance();
-  }, [search, type, seasonYear, season, genres, perPage, sort]);
+  }, [search, type, genres, sort, s, y]);
 
   useEffect(() => {
     advance();
@@ -183,7 +208,7 @@ export default function Card() {
                 TITLE
               </h1>
               <input
-                className="lg:w-[297px] lg:h-[46px] h-[35px] w-[230px] xs:w-[280px] bg-secondary rounded-[10px] font-karla font-light text-[#ffffff89] text-center"
+                className="lg:w-[297px] lg:h-[46px] h-[35px] xxs:w-[230px] xs:w-[280px] bg-secondary rounded-[10px] font-karla font-light text-[#ffffff89] text-center"
                 placeholder="search here..."
                 type="text"
                 onKeyDown={handleKeyDown}
@@ -347,7 +372,7 @@ export default function Card() {
             <AnimatePresence>
               <div
                 key="card-keys"
-                className="grid pt-3 lg:grid-cols-5 justify-items-center grid-cols-3 w-screen px-2 lg:w-auto lg:gap-10 gap-2 lg:gap-y-24 gap-y-12 overflow-hidden"
+                className="grid pt-3 lg:grid-cols-6 justify-items-center grid-cols-2 xxs:grid-cols-3 w-screen px-2 lg:w-auto lg:gap-10 gap-2 lg:gap-y-24 gap-y-12 overflow-hidden"
               >
                 {loading
                   ? ""
@@ -362,7 +387,7 @@ export default function Card() {
                       <m.div
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1, transition: { duration: 0.35 } }}
-                        className="w-[115px] xs:w-[140px] lg:w-[228px]"
+                        className="w-[146px] xxs:w-[115px] xs:w-[135px] md:w-[185px]"
                         key={index}
                       >
                         <Link
@@ -373,17 +398,16 @@ export default function Card() {
                           }
                           className=""
                         >
-                          <div
-                            className=" bg-[#3B3C41] lg:h-[313px] xs:h-[215px] h-[175px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
-                            style={{
-                              backgroundImage: `url(${anime.coverImage.extraLarge})`,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                            }}
+                          <Image
+                            className="object-cover bg-[#3B3C41] w-[146px] h-[208px] xxs:w-[115px] xxs:h-[163px] xs:w-[135px] xs:h-[192px] md:w-[185px] md:h-[265px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
+                            src={anime.coverImage.extraLarge}
+                            alt={anime.title.userPreferred}
+                            width={500}
+                            height={500}
                           />
                         </Link>
                         <Link href={`/anime/${anime.id}`}>
-                          <h1 className="font-outfit font-bold lg:text-[20px] pt-4 line-clamp-2">
+                          <h1 className="font-outfit font-bold md:text-base text-[15px] pt-4 line-clamp-2">
                             {anime.status === "RELEASING" ? (
                               <span className="dots bg-green-500" />
                             ) : anime.status === "NOT_YET_RELEASED" ? (
@@ -407,10 +431,10 @@ export default function Card() {
                       {[1, 2, 4, 5, 6, 7, 8].map((item) => (
                         <div
                           key={item}
-                          className="flex flex-col w-[115px] xs:w-[140px] lg:w-[228px] gap-5"
+                          className="flex flex-col w-[135px] lg:w-[185px] gap-5"
                           style={{ scale: 0.98 }}
                         >
-                          <Skeleton className="lg:h-[313px] xs:h-[215px] h-[175px]" />
+                          <Skeleton className="h-[192px] w-[135px] lg:h-[265px] lg:w-[185px]" />
                           <Skeleton width={110} height={30} />
                         </div>
                       ))}

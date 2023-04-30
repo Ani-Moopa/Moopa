@@ -230,3 +230,22 @@ pre code {
 .language-bash {
   color: #89b482;
 }
+
+.hover-parent:hover .hover-child {
+  display: block;
+}
+
+.hover-child {
+  display: none;
+}
+
+.hover-child:hover {
+  display: none;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 1rem;
+  padding: 1rem;
+}

@@ -165,6 +165,7 @@ export default function Info() {
   );
 
   // const [log, setLog] = useState(null);
+  // console.log(rec);
 
   useEffect(() => {
     const defaultState = {
@@ -181,6 +182,7 @@ export default function Info() {
 
     // Reset all state variables to their default values
     Object.keys(defaultState).forEach((key) => {
+      document.body.style.overflow = "auto";
       const value = defaultState[key];
       if (Array.isArray(value)) {
         value.length
@@ -341,7 +343,7 @@ export default function Info() {
       <Modal open={open} onClose={() => handleClose()}>
         <div>
           {!session && (
-            <div className="flex-center flex-col gap-5 px-10 py-5">
+            <div className="flex-center flex-col gap-5 px-10 py-5 bg-secondary rounded-md">
               <h1 className="text-md font-extrabold font-karla">
                 Edit your list
               </h1>
@@ -358,7 +360,7 @@ export default function Info() {
               </button>
             </div>
           )}
-          {session && loading && (
+          {session && loading && info && (
             <ListEditor
               animeId={info?.id}
               session={session}
@@ -514,36 +516,46 @@ export default function Info() {
                     </h1>
                     {info ? (
                       <div className="flex gap-6">
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.episodes} Episodes
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.startDate?.year}
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.averageScore}%
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.type}
-                        </div>
-                        <div
-                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                          style={color}
-                        >
-                          {info?.status}
-                        </div>
+                        {info?.episodes && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.episodes} Episodes
+                          </div>
+                        )}
+                        {info?.startDate?.year && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.startDate?.year}
+                          </div>
+                        )}
+                        {info?.averageScore && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.averageScore}%
+                          </div>
+                        )}
+                        {info?.type && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.type}
+                          </div>
+                        )}
+                        {info?.status && (
+                          <div
+                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                            style={color}
+                          >
+                            {info?.status}
+                          </div>
+                        )}
                         <div
                           className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
@@ -751,7 +763,7 @@ export default function Info() {
                 )}
               </div>
             </div>
-            {rec && (
+            {info && rec?.length !== 0 && (
               <div className="w-screen md:w-[80%]">
                 <Content
                   ids="recommendAnime"

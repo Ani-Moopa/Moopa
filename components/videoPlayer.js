@@ -12,6 +12,7 @@ export default function VideoPlayer({
   op,
   ed,
   title,
+  poster,
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
@@ -61,8 +62,6 @@ export default function VideoPlayer({
     compiler();
   }, [data]);
 
-  // console.log(source);
-
   return (
     <>
       {url ? (
@@ -74,8 +73,13 @@ export default function VideoPlayer({
             title: `${title}`,
             autoplay: true,
             screenshot: true,
+            poster: poster ? poster : "",
           }}
-          style={{ width: "100%", height: "100%", margin: "0 auto 0" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            margin: "0 auto 0",
+          }}
           getInstance={(art) => {
             art.on("ready", () => {
               const seek = art.storage.get(id);

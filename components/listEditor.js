@@ -81,7 +81,11 @@ const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
                 className="object-cover w-[120px] h-[180px] rounded-l-sm hidden md:block"
               />
               <Image
-                src={image.bannerImage}
+                src={
+                  image.bannerImage ||
+                  image.coverImage.extraLarge ||
+                  image.coverImage.large
+                }
                 alt="image"
                 height={500}
                 width={500}
