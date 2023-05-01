@@ -88,8 +88,8 @@ npm install
 ```bash
 CLIENT_ID="get the id from here https://anilist.co/settings/developer"
 CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
-GRAPHQL_ENDPOINT=https://graphql.anilist.co
-NEXTAUTH_SECRET='type this in your bash terminal (openssl rand -base64 32) with no bracket and paste it here'
+GRAPHQL_ENDPOINT="https://graphql.anilist.co"
+NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 ```
 
@@ -116,7 +116,7 @@ If you have any questions or feedback, please reach out to us at [factiven.org@g
 
 ## Support This Project
 
-[Star this project](https://github.com/DevanAbinaya/Ani-Moopa)
+✨ [Star this project](https://github.com/DevanAbinaya/Ani-Moopa)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)  
 <a href="https://trakteer.id/factiven" target="_blank"><img id="wse-buttons-preview" src="https://cdn.trakteer.id/images/embed/trbtn-red-5.png" height="36" style="border: 0px; height: 36px;" alt="Trakteer Saya"></a>
