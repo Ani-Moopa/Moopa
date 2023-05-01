@@ -98,9 +98,16 @@ export default function VideoPlayer({
 
             art.on("video:timeupdate", () => {
               if (!session) return;
+              const mediaSession = navigator.mediaSession;
               const currentTime = art.currentTime;
               const duration = art.duration;
               const percentage = currentTime / duration;
+
+              mediaSession.setPositionState({
+                duration: art.duration,
+                playbackRate: art.playbackRate,
+                position: art.currentTime,
+              });
 
               // console.log(percentage);
 

@@ -8,11 +8,8 @@ import dynamic from "next/dynamic";
 
 import { useNotification } from "../../../lib/useNotify";
 
-import { signIn } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../api/auth/[...nextauth]";
-
-import AniList from "../../../components/media/aniList";
 
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -259,28 +256,25 @@ export default function Info({ sessions, id, aniId, provider }) {
     fetchData();
   }, [id, aniId, provider, sessions]);
 
-  const { Notification: NotificationComponent } = useNotification();
+  useEffect(() => {
+    const mediaSession = navigator.mediaSession;
+    if (!mediaSession) return;
 
-  const [open, setOpen] = useState(false);
-  const [aniStatus, setAniStatus] = useState("");
-  const [aniProgress, setAniProgress] = useState(parseInt(playingEpisode));
+    const artwork =
+      poster && poster.length > 0
+        ? [{ src: poster[0].image, type: "image/jpeg" }]
+        : undefined;
 
-  const handleStatus = (e) => {
-    setAniStatus(e.target.value);
-  };
-
-  const handleProgress = (e) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value) && value >= 0 && value <= data.totalEpisodes) {
-      setAniProgress(value);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = { status: aniStatus, progress: aniProgress };
-    console.log(formData);
-  };
+    mediaSession.metadata = new MediaMetadata({
+      title: playingTitle,
+      artist: `Moopa ${
+        playingTitle === data?.title?.romaji
+          ? "- Episode " + playingEpisode
+          : `- ${data?.title?.romaji || data?.title?.english}`
+      }`,
+      artwork,
+    });
+  }, [poster, playingTitle, playingEpisode, data]);
 
   return (
     <>

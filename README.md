@@ -22,10 +22,8 @@
   
 </p>
 
-<p align="center"><a href="https://moopa.live">Moopa</a> is an anime streaming website build with nextjs and tailwindcss with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
-
 <p align="center">
- <img src="https://user-images.githubusercontent.com/97084324/234832975-0804e6bd-8528-4f53-b0fb-7ccce5342f59.png" alt="main" width="900">
+ <img src="https://user-images.githubusercontent.com/97084324/234832975-0804e6bd-8528-4f53-b0fb-7ccce5342f59.png" alt="main">
 </p>
 
 <details>
@@ -47,6 +45,10 @@
  
 </details>
 
+## Introduction
+
+<p><a href="https://moopa.live">Moopa</a> is an anime streaming website build with nextjs and tailwindcss with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
+
 ## Features
 
 - Free ad-supported streaming service
@@ -61,32 +63,38 @@
 - [x] Connect to consumet API to fetch episodes data
 - [x] Implement skip op/ed button on supported anime
 - [x] Create README file
-- [ ] Integrate Anilist API for anime tracking
+- [x] Integrate Anilist API for anime tracking
   - [x] Ability to auto track anime after watching >= 90% through the video
   - [x] Create a user profile page to see lists of anime watched
-  - [ ] Ability to edit list inside detail page
+  - [x] Ability to edit list inside detail page
 - [ ] Working on Manga pages
 
 ## For Local Development
 
 1. Clone this repository using :
+
 ```bash
 git clone https://github.com/DevanAbinaya/Ani-Moopa.git
 ```
+
 2. Install package using npm :
+
 ```bash
 npm install
 ```
-3. Create ```.env``` file in the root folder and put this inside the file :
+
+3. Create `.env` file in the root folder and put this inside the file :
+
 ```bash
 CLIENT_ID="get the id from here https://anilist.co/settings/developer"
 CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
-GRAPHQL_ENDPOINT=https://graphql.anilist.co
-NEXTAUTH_SECRET='type this in your bash terminal (openssl rand -base64 32) with no bracket and paste it here'
+GRAPHQL_ENDPOINT="https://graphql.anilist.co"
+NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 ```
 
 4. Start local server :
+
 ```bash
 npm run dev
 ```
@@ -103,7 +111,12 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Contact
 
-Thank You for passing by!! If you have any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
+Thank You for passing by!!
+If you have any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 
 ## Support This Project
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)
+
+✨ [Star this project](https://github.com/DevanAbinaya/Ani-Moopa)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)  
+<a href="https://trakteer.id/factiven" target="_blank"><img id="wse-buttons-preview" src="https://cdn.trakteer.id/images/embed/trbtn-red-5.png" height="36" style="border: 0px; height: 36px;" alt="Trakteer Saya"></a>
