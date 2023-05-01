@@ -38,19 +38,22 @@ export default function VideoPlayer({
         const source = data.sources
           .map((items) => ({
             html: items.quality,
-            url: `https://cors.moopa.my.id/?url=${encodeURIComponent(
-              items.url
-            )}&referer=${encodeURIComponent(referer)}`,
+            url: `https://cors.moopa.my.id/${items.url}`,
           }))
+          //   url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
+          //     items.url
+          //   )}&referer=${encodeURIComponent(referer)}`,
+          // }))
           .sort((a, b) => {
             if (a.html === "default") return -1;
             if (b.html === "default") return 1;
             return 0;
           });
 
-        const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
-          sumber.url
-        )}&referer=${encodeURIComponent(referer)}`;
+        const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
+        // const defUrl = `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
+        //   sumber.url
+        // )}&referer=${encodeURIComponent(referer)}`;
 
         setUrl(defUrl);
         setSource(source);
