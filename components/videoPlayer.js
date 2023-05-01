@@ -38,7 +38,7 @@ export default function VideoPlayer({
         const source = data.sources
           .map((items) => ({
             html: items.quality,
-            url: `https://worker-cors-anywhere.moopa.workers.dev/${items.url}`,
+            url: `https://cors.moopa.my.id/${items.url}`,
           }))
           //   url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
           //     items.url
@@ -50,7 +50,7 @@ export default function VideoPlayer({
             return 0;
           });
 
-        const defUrl = `https://worker-cors-anywhere.moopa.workers.dev/${sumber.url}`;
+        const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
         // const defUrl = `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
         //   sumber.url
         // )}&referer=${encodeURIComponent(referer)}`;
