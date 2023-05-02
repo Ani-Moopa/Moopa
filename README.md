@@ -118,7 +118,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Thank You for passing by!!
 If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 <br>
-or you can DM me on Discord `CritenDust#3704`/`Factiven#9110`. (just contact me on one of these account)
+or you can DM me on Discord ```CritenDust#3704```/```Factiven#9110```. (just contact me on one of these account)
 
 ## Support This Project
 
