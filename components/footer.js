@@ -22,7 +22,7 @@ function Footer() {
                 &copy; {new Date().getFullYear()} moopa.live | Website Made by
                 Factiven
               </p>
-              <p className="font-karla md:text-[0.8rem] text-[0.65rem] text-[#9c9c9c] w-[320px] md:w-[520px] italic">
+              <p className="font-karla md:text-[0.8rem] text-[0.65rem] text-[#9c9c9c]  md:w-[520px] italic">
                 This site does not store any files on our server, we only linked
                 to the media which is hosted on 3rd party services.
               </p>

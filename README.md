@@ -69,6 +69,10 @@
   - [x] Ability to edit list inside detail page
 - [ ] Working on Manga pages
 
+## Bug Report
+
+If you encounter any issues or bug on the site please head to [issues](https://github.com/DevanAbinaya/Ani-Moopa/issues) and create a bug report there.
+
 ## For Local Development
 
 1. Clone this repository using :
@@ -112,7 +116,9 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Contact
 
 Thank You for passing by!!
-If you have any questions or feedback, please reach out to us at [factiven.org@gmail.com](mailto:factiven.org@gmail.com), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
+If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
+<br>
+or you can DM me on Discord `CritenDust#3704`/`Factiven#9110`. (just contact me on one of these account)
 
 ## Support This Project
 

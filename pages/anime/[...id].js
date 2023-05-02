@@ -447,21 +447,25 @@ export default function Info() {
                     </div>
                   )}
                 </div>
-                <div className="bg-secondary rounded-sm h-[30px]">
-                  <div className="flex items-center justify-center h-full gap-10 p-2">
+                <div className="bg-secondary rounded-sm xs:h-[30px]">
+                  <div className="grid grid-cols-3 place-content-center xs:flex  items-center justify-center h-full xs:gap-10 p-2 text-sm">
                     {info && info.status !== "NOT_YET_RELEASED" ? (
                       <>
-                        <div className="flex-center gap-2">
+                        <div className="flex-center flex-col xs:flex-row gap-2">
                           <TvIcon className="w-5 h-5 text-action" />
                           <h4 className="font-karla">{info?.type}</h4>
                         </div>
-                        <div className="flex-center gap-2">
+                        <div className="flex-center flex-col xs:flex-row gap-2">
                           <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
                           <h4>{info?.averageScore}%</h4>
                         </div>
-                        <div className="flex-center gap-2">
+                        <div className="flex-center flex-col xs:flex-row gap-2">
                           <RectangleStackIcon className="w-5 h-5 text-action" />
-                          <h1>{info?.episodes} Episodes</h1>
+                          {info?.episodes ? (
+                            <h1>{info?.episodes} Episodes</h1>
+                          ) : (
+                            <h1>TBA</h1>
+                          )}
                         </div>
                       </>
                     ) : (
@@ -676,8 +680,8 @@ export default function Info() {
                   )}
                   {info?.nextAiringEpisode && (
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-4">
-                        <h1>Next Ep :</h1>
+                      <div className="flex items-center gap-4 text-[10px] xxs:text-sm md:text-base">
+                        <h1>Next :</h1>
                         <div
                           className="px-5 rounded-sm font-karla font-bold bg-white text-black"
                           // style={color}
@@ -741,7 +745,7 @@ export default function Info() {
                         <div className="flex flex-col">
                           <h1>{epiStatus} while retrieving data</h1>
                           <pre
-                            className={`rounded-md overflow-hidden ${getLanguageClassName(
+                            className={`rounded-md ${getLanguageClassName(
                               "bash"
                             )}`}
                           >
