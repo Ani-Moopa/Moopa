@@ -34,15 +34,15 @@ export function Navigasi() {
     <>
       {/* NAVBAR PC */}
       <div className="flex items-center justify-center">
-        <div className="flex w-full items-center justify-between px-5 md:mx-[94px]">
-          <div className="flex items-center md:gap-16 md:pt-7">
+        <div className="flex w-full items-center justify-between px-5 lg:mx-[94px]">
+          <div className="flex items-center lg:gap-16 lg:pt-7">
             <Link
               href="/"
               className=" font-outfit text-[40px] font-bold text-[#FF7F57]"
             >
               moopa
             </Link>
-            <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] md:flex">
+            <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
               <li>
                 <Link href="/search/anime">AniList Index</Link>
               </li>
@@ -78,7 +78,7 @@ export function Navigasi() {
               )}
             </ul>
           </div>
-          <div className="relative flex scale-75 items-center mb-7 md:mb-0">
+          <div className="relative flex scale-75 items-center mb-7 lg:mb-0">
             <div className="search-box ">
               <input
                 className="search-text"
@@ -180,7 +180,7 @@ export default function Home({ detail, populars, sessions }) {
         {!isVisible && (
           <button
             onClick={handleShowClick}
-            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#17171f] shadow-lg md:hidden"
+            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#17171f] shadow-lg lg:hidden"
             id="bars"
           >
             <svg
@@ -204,7 +204,7 @@ export default function Home({ detail, populars, sessions }) {
         {isVisible && sessions && (
           <Link
             href={`/profile/${sessions?.user.name}`}
-            className="fixed md:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
+            className="fixed lg:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
           >
             <img
               src={sessions?.user.image.large}
@@ -214,7 +214,7 @@ export default function Home({ detail, populars, sessions }) {
           </Link>
         )}
         {isVisible && (
-          <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg md:hidden">
+          <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg lg:hidden">
             <div className="grid grid-cols-4 place-items-center gap-6">
               <button className="group flex flex-col items-center">
                 <Link href="/" className="">
@@ -363,17 +363,17 @@ export default function Home({ detail, populars, sessions }) {
         <Navigasi />
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
-          <div className="relative grid grid-rows-2 items-center md:flex md:h-[467px] md:w-[80%] md:justify-between">
-            <div className="row-start-2 flex h-full flex-col gap-7 md:w-[55%] md:justify-center">
-              <h1 className="w-[85%] font-outfit font-extrabold md:text-[34px] line-clamp-2">
+          <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
+            <div className="row-start-2 flex h-full flex-col gap-7 lg:w-[55%] lg:justify-center">
+              <h1 className="w-[85%] font-outfit font-extrabold lg:text-[34px] line-clamp-2">
                 {data.title.english || data.title.romaji || data.title.native}
               </h1>
               <p
-                className="font-roboto font-light md:text-[18px] line-clamp-5"
+                className="font-roboto font-light lg:text-[18px] line-clamp-5"
                 dangerouslySetInnerHTML={{ __html: data?.description }}
               />
 
-              <div className="md:pt-5">
+              <div className="lg:pt-5">
                 <Link
                   href={`/anime/${data.id}`}
                   legacyBehavior
@@ -386,8 +386,8 @@ export default function Home({ detail, populars, sessions }) {
               </div>
             </div>
             <div className="z-10 row-start-1 flex justify-center ">
-              <div className="relative  md:h-[467px] md:w-[322px] md:scale-100">
-                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent md:h-[467px] md:w-[322px]" />
+              <div className="relative  lg:h-[467px] lg:w-[322px] lg:scale-100">
+                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent lg:h-[467px] lg:w-[322px]" />
 
                 <Image
                   draggable={false}
@@ -396,19 +396,19 @@ export default function Home({ detail, populars, sessions }) {
                   width={460}
                   height={662}
                   priority
-                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay md:h-[467px] md:w-[322px]"
+                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay lg:h-[467px] lg:w-[322px]"
                 />
               </div>
             </div>
           </div>
         </div>
         {sessions && (
-          <div className="flex items-center mx-3 md:mx-0 mt-10 md:mt-0">
-            <div className="md:text-4xl md:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
-              {greeting},<h1 className="md:hidden">{sessions?.user.name}</h1>
+          <div className="flex items-center mx-3 lg:mx-0 mt-10 lg:mt-0">
+            <div className="lg:text-4xl lg:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
+              {greeting},<h1 className="lg:hidden">{sessions?.user.name}</h1>
               <button
                 onClick={() => signOut()}
-                className="hidden text-center relative md:flex justify-center group"
+                className="hidden text-center relative lg:flex justify-center group"
               >
                 {sessions?.user.name}
                 <span className="absolute text-sm z-50 w-20 text-center bottom-11 text-white shadow-lg opacity-0 bg-secondary p-1 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all">
@@ -419,7 +419,7 @@ export default function Home({ detail, populars, sessions }) {
           </div>
         )}
 
-        <div className="md:mt-16 mt-12 flex flex-col items-center">
+        <div className="lg:mt-16 mt-12 flex flex-col items-center">
           <motion.div
             className="w-screen flex-none lg:w-[87%]"
             initial={{ opacity: 0 }}

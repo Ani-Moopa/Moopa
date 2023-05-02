@@ -3,12 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (max-width: 768px) {
-  svg {
-    height: 90%;
-  }
-}
-
 * {
   -webkit-tap-highlight-color: transparent;
 }

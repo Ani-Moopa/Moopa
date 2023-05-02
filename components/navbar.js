@@ -29,8 +29,8 @@ function Navbar(props) {
 
   return (
     <header className={`${props.className}`}>
-      <div className="flex h-16 w-auto items-center justify-between px-5 md:mx-auto md:w-[80%] md:px-0 text-[#dbdcdd]">
-        <div className="pb-2 font-outfit text-4xl font-semibold md:block text-white">
+      <div className="flex h-16 w-auto items-center justify-between px-5 lg:mx-auto lg:w-[80%] lg:px-0 text-[#dbdcdd]">
+        <div className="pb-2 font-outfit text-4xl font-semibold lg:block text-white">
           <Link href="/">moopa</Link>
         </div>
 
@@ -38,7 +38,7 @@ function Navbar(props) {
         {!isVisible && (
           <button
             onClick={handleShowClick}
-            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#17171f] shadow-lg md:hidden"
+            className="fixed bottom-[30px] right-[20px] z-[100] flex h-[51px] w-[50px] cursor-pointer items-center justify-center rounded-[8px] bg-[#17171f] shadow-lg lg:hidden"
             id="bars"
           >
             <svg
@@ -65,7 +65,7 @@ function Navbar(props) {
           {isVisible && session && (
             <Link
               href={`/profile/${session?.user?.name}`}
-              className="fixed md:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
+              className="fixed lg:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
             >
               <Image
                 src={session?.user.image.large}
@@ -77,7 +77,7 @@ function Navbar(props) {
             </Link>
           )}
           {isVisible && (
-            <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg md:hidden">
+            <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg lg:hidden">
               <div className="grid grid-cols-4 place-items-center gap-6">
                 <button className="group flex flex-col items-center">
                   <Link href="/" className="">
@@ -222,8 +222,8 @@ function Navbar(props) {
           )}
         </div>
 
-        <nav className="left-0 top-[-100%] hidden w-auto items-center gap-10 px-5 md:flex">
-          <ul className="hidden gap-10 font-roboto text-md md:flex items-center relative">
+        <nav className="left-0 top-[-100%] hidden w-auto items-center gap-10 px-5 lg:flex">
+          <ul className="hidden gap-10 font-roboto text-md lg:flex items-center relative">
             <li>
               <Link
                 href="/"

@@ -387,7 +387,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                         {data ? data.studios : <Skeleton width={80} />}
                       </div>
                       <div className="hidden xxs:grid col-start-2 place-content-end relative">
-                        <div className="" onClick={() => setOpen(true)}>
+                        <div>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -456,7 +456,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col w-screen lg:w-[33%] ">
+            <div className="flex flex-col w-screen lg:w-[35%] ">
               <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">
                 Up Next
               </h1>
@@ -495,7 +495,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                                 Episode {item.number}
                               </span>
                               {item.id == id && (
-                                <div className="absolute top-11 left-[105px] scale-[1.5]">
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20"
