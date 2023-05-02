@@ -52,11 +52,8 @@ export default function Content({ ids, section, data }) {
               >
                 <Link
                   href={`/anime/${anime.id}`}
-                  className="hover:scale-105 group relative duration-300 ease-in-out hover-parent"
+                  className="hover:scale-105 group relative duration-300 ease-in-out"
                 >
-                  {/* <div className="fixed top-0 z-40 bg-black invisible group-hover:visible">
-                    {anime.title.romaji || anime.title.english}
-                  </div> */}
                   <Image
                     draggable={false}
                     src={

@@ -86,9 +86,9 @@ export function Navigasi() {
                 placeholder="Search Anime"
                 onKeyDown={handleKeyDown}
               />
-              <a href="#" className="search-btn">
+              <div className="search-btn">
                 <i className="fas fa-search"></i>
-              </a>
+              </div>
             </div>
           </div>
         </div>

@@ -69,6 +69,10 @@
   - [x] Ability to edit list inside detail page
 - [ ] Working on Manga pages
 
+## Bug Report
+
+If you encounter any issues or bug on the site please head to [issues](https://github.com/DevanAbinaya/Ani-Moopa/issues) and create a bug report there.
+
 ## For Local Development
 
 1. Clone this repository using :

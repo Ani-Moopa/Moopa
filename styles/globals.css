@@ -213,6 +213,8 @@ pre {
   padding: 1rem;
   margin: 1rem 0;
   @apply bg-[#191c24];
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 pre code {
@@ -229,23 +231,4 @@ pre code {
 
 .language-bash {
   color: #89b482;
-}
-
-.hover-parent:hover .hover-child {
-  display: block;
-}
-
-.hover-child {
-  display: none;
-}
-
-.hover-child:hover {
-  display: none;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 1rem;
-  padding: 1rem;
 }

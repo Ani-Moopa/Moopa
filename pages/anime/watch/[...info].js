@@ -288,7 +288,7 @@ export default function Info({ sessions, id, aniId, provider }) {
           <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
             <div className="w-screen lg:w-[67%]">
               {loading ? (
-                <div className="h-auto aspect-video z-20">
+                <div className="aspect-video z-20">
                   <VideoPlayer
                     key={id}
                     data={epiData}
@@ -304,7 +304,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                   />
                 </div>
               ) : (
-                <div className="lg:h-[693px] h-[225px] xs:h-[281px] bg-black" />
+                <div className="aspect-video bg-black" />
               )}
               <div>
                 {data ? (
@@ -386,7 +386,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                       <div className="row-start-2">
                         {data ? data.studios : <Skeleton width={80} />}
                       </div>
-                      <div className="grid col-start-2 place-content-end relative">
+                      <div className="hidden xxs:grid col-start-2 place-content-end relative">
                         <div className="" onClick={() => setOpen(true)}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
