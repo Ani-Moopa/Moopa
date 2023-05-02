@@ -43,18 +43,18 @@ function Layout(props) {
       >
         {/* PC/Tablet */}
         <Navbar
-          className={`absolute z-50 hidden w-full duration-500 md:fixed md:top-0 md:block md:transition-all ${
+          className={`absolute z-50 hidden w-full duration-500 lg:fixed lg:top-0 lg:block lg:transition-all ${
             isAtTop
               ? `px-2 pt-2 transition-all duration-1000 ${props.navTop}`
               : isScrollingDown
-              ? "md:h-16 md:translate-y-[-100%] md:shadow-sm md:bg-[#0c0d10] "
-              : "md:h-16 md:translate-y-0 md:shadow-sm md:bg-[#0c0d10]"
+              ? "lg:h-16 lg:translate-y-[-100%] lg:shadow-sm lg:bg-[#0c0d10] "
+              : "lg:h-16 lg:translate-y-0 lg:shadow-sm lg:bg-[#0c0d10]"
           }`}
         />
 
         {/* Mobile */}
         <Navbar
-          className={`absolute z-50 w-full duration-300 md:fixed md:top-0 md:hidden md:transition-all`}
+          className={`absolute z-50 w-full duration-300 lg:fixed lg:top-0 lg:hidden lg:transition-all`}
         />
         <div className="grid items-center justify-center">{props.children}</div>
         <Footer />

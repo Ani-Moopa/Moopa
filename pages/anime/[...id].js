@@ -373,7 +373,7 @@ export default function Info() {
         </div>
       </Modal>
       <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
-        <Layout navTop="text-white bg-primary md:pt-0 md:px-0 bg-slate bg-opacity-40 z-50">
+        <Layout navTop="text-white bg-primary lg:pt-0 lg:px-0 bg-slate bg-opacity-40 z-50">
           <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
             <div className="bg-image w-screen">
               <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
@@ -394,10 +394,10 @@ export default function Info() {
                 <div className="bg-image w-screen absolute top-0 left-0 h-[300px]" />
               )}
             </div>
-            <div className="lg:w-[70%] md:pt-[10rem] z-30 flex flex-col gap-5">
+            <div className="lg:w-[90%] xl:w-[75%] lg:pt-[10rem] z-30 flex flex-col gap-5">
               {/* Mobile */}
 
-              <div className="md:hidden pt-5 w-screen px-5 flex flex-col">
+              <div className="lg:hidden pt-5 w-screen px-5 flex flex-col">
                 <div className="h-[250px] flex flex-col gap-1 justify-center">
                   <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
                     {/* Yuru Camp△ SEASON 2 */}
@@ -448,18 +448,18 @@ export default function Info() {
                   )}
                 </div>
                 <div className="bg-secondary rounded-sm xs:h-[30px]">
-                  <div className="grid grid-cols-3 place-content-center xs:flex  items-center justify-center h-full xs:gap-10 p-2 text-sm">
+                  <div className="grid grid-cols-3 place-content-center xxs:flex  items-center justify-center h-full xxs:gap-10 p-2 text-sm">
                     {info && info.status !== "NOT_YET_RELEASED" ? (
                       <>
-                        <div className="flex-center flex-col xs:flex-row gap-2">
+                        <div className="flex-center flex-col xxs:flex-row gap-2">
                           <TvIcon className="w-5 h-5 text-action" />
                           <h4 className="font-karla">{info?.type}</h4>
                         </div>
-                        <div className="flex-center flex-col xs:flex-row gap-2">
+                        <div className="flex-center flex-col xxs:flex-row gap-2">
                           <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
                           <h4>{info?.averageScore}%</h4>
                         </div>
-                        <div className="flex-center flex-col xs:flex-row gap-2">
+                        <div className="flex-center flex-col xxs:flex-row gap-2">
                           <RectangleStackIcon className="w-5 h-5 text-action" />
                           {info?.episodes ? (
                             <h1>{info?.episodes} Episodes</h1>
@@ -476,11 +476,11 @@ export default function Info() {
               </div>
 
               {/* PC */}
-              <div className="hidden md:flex gap-8 w-full flex-nowrap">
-                <div className="shrink-0 md:h-[250px] md:w-[180px] w-[115px] h-[164px] relative">
+              <div className="hidden lg:flex gap-8 w-full flex-nowrap">
+                <div className="shrink-0 lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] relative">
                   {info ? (
                     <>
-                      <div className="bg-image md:h-[250px] md:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
+                      <div className="bg-image lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
                       <Image
                         src={
                           info.coverImage.extraLarge || info.coverImage.large
@@ -489,7 +489,7 @@ export default function Info() {
                         alt="poster anime"
                         height={700}
                         width={700}
-                        className="object-cover md:h-[250px] md:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
+                        className="object-cover lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
                       />
                       <button
                         type="button"
@@ -509,7 +509,7 @@ export default function Info() {
                 </div>
 
                 {/* PC */}
-                <div className="hidden md:flex w-full flex-col gap-5 h-[250px]">
+                <div className="hidden lg:flex w-full flex-col gap-5 h-[250px]">
                   <div className="flex flex-col gap-2">
                     <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
                       {info ? (
@@ -585,7 +585,7 @@ export default function Info() {
               <div>
                 <div className="flex gap-5 items-center">
                   {info && (
-                    <div className="p-3 lg:p-0 text-[20px] md:text-2xl font-bold font-karla">
+                    <div className="p-3 lg:p-0 text-[20px] lg:text-2xl font-bold font-karla">
                       Relations
                     </div>
                   )}
@@ -624,7 +624,7 @@ export default function Info() {
                                       info?.title.native
                                   )}`
                             }
-                            className={`hover:scale-[1.02] hover:shadow-lg md:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
+                            className={`hover:scale-[1.02] hover:shadow-lg lg:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
                               rel.type === "MUSIC" ? "pointer-events-none" : ""
                             }`}
                           >
@@ -660,11 +660,11 @@ export default function Info() {
                   ) : (
                     <>
                       {[1, 2, 3].map((item) => (
-                        <div key={item} className="w-full hidden md:block">
+                        <div key={item} className="w-full hidden lg:block">
                           <Skeleton className="h-[126px]" />
                         </div>
                       ))}
-                      <div className="w-full md:hidden">
+                      <div className="w-full lg:hidden">
                         <Skeleton className="h-[126px]" />
                       </div>
                     </>
@@ -672,15 +672,15 @@ export default function Info() {
                 </div>
               </div>
               <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
-                <div className="flex items-center md:gap-10 gap-7">
+                <div className="flex items-center lg:gap-10 gap-7">
                   {info && (
-                    <h1 className="text-[20px] md:text-2xl font-bold font-karla">
+                    <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
                       Episodes
                     </h1>
                   )}
                   {info?.nextAiringEpisode && (
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-4 text-[10px] xxs:text-sm md:text-base">
+                      <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
                         <h1>Next :</h1>
                         <div
                           className="px-5 rounded-sm font-karla font-bold bg-white text-black"
@@ -710,7 +710,7 @@ export default function Info() {
                                   href={`/anime/watch/${epi.id}/${data.id}/${
                                     stall ? `9anime` : ""
                                   }`}
-                                  className={`text-start text-sm md:text-lg ${
+                                  className={`text-start text-sm lg:text-lg ${
                                     progress && epi.number <= progress
                                       ? "text-[#5f5f5f]"
                                       : "text-white"
@@ -719,7 +719,7 @@ export default function Info() {
                                   <p>Episode {epi.number}</p>
                                   {epi.title && (
                                     <p
-                                      className={`text-xs md:text-sm ${
+                                      className={`text-xs lg:text-sm ${
                                         progress && epi.number <= progress
                                           ? "text-[#5f5f5f]"
                                           : "text-[#b1b1b1]"
@@ -768,7 +768,7 @@ export default function Info() {
               </div>
             </div>
             {info && rec?.length !== 0 && (
-              <div className="w-screen md:w-[80%]">
+              <div className="w-screen lg:w-[90%] xl:w-[85%]">
                 <Content
                   ids="recommendAnime"
                   section="Recommendations"

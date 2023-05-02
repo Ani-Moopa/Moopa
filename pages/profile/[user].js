@@ -22,7 +22,7 @@ export default function MyList({ media, sessions, user, time }) {
         <title>My Lists</title>
       </Head>
       <Navbar />
-      <div className="w-screen lg:flex justify-between lg:px-32 py-5 relative">
+      <div className="w-screen lg:flex justify-between lg:px-10 xl:px-32 py-5 relative">
         <div className="lg:w-[30%] h-full mt-12 lg:mr-10 grid gap-5 mx-3 lg:mx-0 antialiased">
           <div className="flex items-center gap-5">
             <Image
@@ -47,7 +47,7 @@ export default function MyList({ media, sessions, user, time }) {
             <h1 className="font-karla font-bold text-2xl pt-7">{user.name}</h1>
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex gap-5 text-sm font-karla">
+            <div className="flex gap-2 text-sm font-karla">
               Created At :
               <UnixTimeConverter unixTime={user.createdAt} />
             </div>
