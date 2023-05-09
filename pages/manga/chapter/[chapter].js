@@ -98,7 +98,7 @@ export default function Test({ title, id, aniId, data, provider }) {
             setData(datas);
           } else {
             const dat = data.map((item) => ({
-              img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+              img: `https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                 item.img
               )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
               page: item.page,
@@ -151,7 +151,7 @@ export default function Test({ title, id, aniId, data, provider }) {
           setData(datas);
         } else {
           const dat = data.map((item) => ({
-            img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+            img: `https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
               item.img
             )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
             page: item.page,
@@ -234,7 +234,7 @@ export default function Test({ title, id, aniId, data, provider }) {
             setData(datas);
           } else {
             const dat = data.map((item) => ({
-              img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+              img: `https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                 item.img
               )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
               page: item.page,
@@ -283,7 +283,7 @@ export default function Test({ title, id, aniId, data, provider }) {
           setData(datas);
         } else {
           const dat = data.map((item) => ({
-            img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+            img: `https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
               item.img
             )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
             page: item.page,
@@ -441,7 +441,7 @@ export async function getServerSideProps(context) {
 
   const data = results.data;
   const dat = data.map((item) => ({
-    img: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+    img: `https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
       item.img
     )}&referer=${encodeURIComponent(item.headerForImage.Referer)}`,
     page: item.page,

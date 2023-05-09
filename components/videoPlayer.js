@@ -35,25 +35,13 @@ export default function VideoPlayer({
             source.quality === "144p"
         );
 
-        const source = data.sources
-          .map((items) => ({
-            html: items.quality,
-            url: `https://cors.moopa.my.id/${items.url}`,
-          }))
-          //   url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
-          //     items.url
-          //   )}&referer=${encodeURIComponent(referer)}`,
-          // }))
-          .sort((a, b) => {
-            if (a.html === "default") return -1;
-            if (b.html === "default") return 1;
-            return 0;
-          });
+        const source = data.sources.map((items) => ({
+          default: items.quality === "default" ? true : false,
+          html: items.quality === "default" ? "auto" : items.quality,
+          url: `https://cors.moopa.my.id/${items.url}`,
+        }));
 
         const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
-        // const defUrl = `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(
-        //   sumber.url
-        // )}&referer=${encodeURIComponent(referer)}`;
 
         setUrl(defUrl);
         setSource(source);
@@ -131,26 +119,21 @@ export default function VideoPlayer({
                 currentTime <= op.interval.endTime
               ) {
                 // Add the layer if it's not already added
-                if (!art.layers.op) {
-                  art.layers.add({
+                if (!art.controls["op"]) {
+                  // Remove the other control if it's already added
+                  if (art.controls["ed"]) {
+                    art.controls.remove("ed");
+                  }
+
+                  // Add the control
+                  art.controls.add({
                     name: "op",
-                    html: `<button class="skip-button">Skip Opening</button>`,
-                    tooltip: "Skip",
-                    style: {
-                      position: "absolute",
-                      bottom: "68px",
-                      right: "58px",
-                    },
+                    position: "top",
+                    html: '<button class="skip-button">Skip Opening</button>',
                     click: function (...args) {
                       art.seek = op.interval.endTime;
                     },
                   });
-                }
-                // Show the layer
-                art.layers.show = true;
-                art.layers.op.style.display = "block";
-                if (art.layers.ed) {
-                  art.layers.ed.style.display = "none";
                 }
               } else if (
                 ed &&
@@ -158,33 +141,29 @@ export default function VideoPlayer({
                 currentTime <= ed.interval.endTime
               ) {
                 // Add the layer if it's not already added
-                if (!art.layers.ed) {
-                  art.layers.add({
+                if (!art.controls["ed"]) {
+                  // Remove the other control if it's already added
+                  if (art.controls["op"]) {
+                    art.controls.remove("op");
+                  }
+
+                  // Add the control
+                  art.controls.add({
                     name: "ed",
-                    html: `<button class="skip-button">Skip Ending</button>`,
-                    tooltip: "Skip",
-                    style: {
-                      position: "absolute",
-                      bottom: "68px",
-                      right: "58px",
-                    },
+                    position: "top",
+                    html: '<button class="skip-button">Skip Ending</button>',
                     click: function (...args) {
                       art.seek = ed.interval.endTime;
                     },
                   });
                 }
-                // Show the layer
-                art.layers.show = true;
-                art.layers.ed.style.display = "block";
-                if (art.layers.op) {
-                  art.layers.op.style.display = "none";
-                }
               } else {
-                if (art.layers.op) {
-                  art.layers.op.style.display = "none";
+                // Remove the controls if they're added
+                if (art.controls["op"]) {
+                  art.controls.remove("op");
                 }
-                if (art.layers.ed) {
-                  art.layers.ed.style.display = "none";
+                if (art.controls["ed"]) {
+                  art.controls.remove("ed");
                 }
               }
             });

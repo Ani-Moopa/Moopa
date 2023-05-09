@@ -3,10 +3,7 @@ import Link from "next/link";
 import { closestMatch } from "closest-match";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import Modal from "../../../components/modal";
 import dynamic from "next/dynamic";
-
-import { useNotification } from "../../../lib/useNotify";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../api/auth/[...nextauth]";
@@ -262,7 +259,7 @@ export default function Info({ sessions, id, aniId, provider }) {
 
     const artwork =
       poster && poster.length > 0
-        ? [{ src: poster[0].image, type: "image/jpeg" }]
+        ? [{ src: poster[0].image, sizes: "512x512", type: "image/jpeg" }]
         : undefined;
 
     mediaSession.metadata = new MediaMetadata({
@@ -460,7 +457,7 @@ export default function Info({ sessions, id, aniId, provider }) {
               <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">
                 Up Next
               </h1>
-              <div className="grid gap-5 lg:px-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
+              <div className="flex flex-col gap-5 lg:pl-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
                 {data ? (
                   data.episodes.length > 0 ? (
                     data.episodes.some(

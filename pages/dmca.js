@@ -91,8 +91,14 @@ export default function DMCA() {
                 downloading/uploading of movies. We only post links that are
                 available on the internet. If you believe that any content on
                 our website infringes upon your intellectual property rights and
-                you hold the copyright for that content, please report it to
-                factiven@gmail.com and the content will be immediately removed.
+                you hold the copyright for that content, please report it to{" "}
+                <a
+                  href="mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject"
+                  className="font-semibold"
+                >
+                  contact@moopa.live
+                </a>{" "}
+                and the content will be immediately removed.
               </p>
             </div>
           </div>
