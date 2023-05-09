@@ -139,7 +139,7 @@ button {
 }
 
 .skip-button {
-  @apply bg-white xs:w-28 xs:h-9 w-24 h-7 -right-8 -bottom-7 rounded-md font-karla shadow-xl hover:bg-[#f1f1f1] text-black md:static absolute xs:-right-6 xs:-bottom-5 xs:text-[15px] text-xs md:text-sm;
+  @apply bg-white xs:w-28 xs:h-9 w-24 h-7 -top-12 right-[2%] rounded-md font-karla shadow-xl hover:bg-[#f1f1f1] text-black absolute xs:text-[15px] text-xs md:text-sm;
 }
 
 .lds-ellipsis {
