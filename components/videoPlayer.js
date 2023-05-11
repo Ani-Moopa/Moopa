@@ -23,7 +23,8 @@ export default function VideoPlayer({
     async function compiler() {
       try {
         const dataEpi = data?.sources;
-        const referer = data?.headers.Referer;
+        const referer = data?.headers?.Referer;
+
         let sumber = dataEpi?.find(
           (source) =>
             source.quality === "default" ||
@@ -37,11 +38,17 @@ export default function VideoPlayer({
 
         const source = data.sources.map((items) => ({
           default: items.quality === "default" ? true : false,
-          html: items.quality === "default" ? "auto" : items.quality,
-          url: `https://cors.moopa.my.id/${items.url}`,
+          html: items.quality === "default" ? "adaptive" : items.quality,
+          // url: `https://cors.moopa.my.id/${items.url}`,
+          url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
+            referer ? `&referer=${encodeURIComponent(referer)}` : ""
+          }`,
         }));
 
-        const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
+        // const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
+        const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
+          sumber.url
+        )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
 
         setUrl(defUrl);
         setSource(source);
