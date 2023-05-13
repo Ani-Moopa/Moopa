@@ -56,8 +56,13 @@ export default function Card() {
   let tipe = "ANIME";
   let s = undefined;
   let y = NaN;
+  let gr = undefined;
 
   const query = router.query;
+  gr = query.genres;
+
+  console.log(gr);
+
   if (query.param !== "anime" && query.param !== "manga") {
     hasil = query.param;
   } else if (query.param === "anime") {
@@ -96,9 +101,8 @@ export default function Card() {
 
   const [search, setQuery] = useState(hasil);
   const [type, setSelectedType] = useState(tipe);
-  const [genres, setSelectedGenre] = useState();
+  // const [genres, setSelectedGenre] = useState();
   const [sort, setSelectedSort] = useState();
-  // console.log(data);
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -112,7 +116,7 @@ export default function Card() {
     const data = await aniAdvanceSearch({
       search: search,
       type: type,
-      genres: genres,
+      genres: gr,
       page: page,
       sort: sort,
       season: s,
@@ -137,7 +141,7 @@ export default function Card() {
     setPage(1);
     setNextPage(true);
     advance();
-  }, [search, type, genres, sort, s, y]);
+  }, [search, type, sort, s, y, gr]);
 
   useEffect(() => {
     advance();
@@ -180,6 +184,7 @@ export default function Card() {
     inputRef.current.value = "";
     setSelectedGenre(null);
     setSelectedSort(["POPULARITY_DESC"]);
+    router.push(`/search/${tipe.toLocaleLowerCase()}`);
   }
 
   function handleVisible() {
@@ -315,13 +320,18 @@ export default function Card() {
                     </h1>
                     <select
                       className="w-[195px] xl:w-[297px] xl:h-[46px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      onChange={(e) =>
-                        setSelectedGenre(
-                          e.target.value === "undefined"
-                            ? undefined
-                            : e.target.value
-                        )
-                      }
+                      onChange={(e) => {
+                        // setSelectedGenre(
+                        //   e.target.value === "undefined"
+                        //     ? undefined
+                        //     : e.target.value
+                        // );
+                        router.push(
+                          `/search/${tipe.toLocaleLowerCase()}/?genres=${
+                            e.target.value
+                          }`
+                        );
+                      }}
                     >
                       <option value="undefined">Select a Genre</option>
                       {genre.map((option) => {

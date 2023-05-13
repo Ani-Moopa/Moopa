@@ -13,6 +13,8 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useAniList } from "../lib/useAnilist";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]";
+import SearchBar from "../components/searchBar";
+import Genres from "../components/hero/genres";
 
 export function Navigasi() {
   const { data: sessions, status } = useSession();
@@ -38,7 +40,7 @@ export function Navigasi() {
           <div className="flex items-center lg:gap-16 lg:pt-7">
             <Link
               href="/"
-              className=" font-outfit text-[40px] font-bold text-[#FF7F57]"
+              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#FF7F57]"
             >
               moopa
             </Link>
@@ -78,7 +80,7 @@ export function Navigasi() {
               )}
             </ul>
           </div>
-          <div className="relative flex scale-75 items-center mb-7 lg:mb-0">
+          <div className="relative flex lg:scale-75 scale-[65%] items-center mb-7 lg:mb-0">
             <div className="search-box ">
               <input
                 className="search-text"
@@ -97,6 +99,24 @@ export function Navigasi() {
   );
 }
 
+const cards = [
+  {
+    id: 1,
+    title: "Card 1",
+    content: "This is some additional content for Card 1",
+  },
+  {
+    id: 2,
+    title: "Card 2",
+    content: "This is some additional content for Card 2",
+  },
+  {
+    id: 3,
+    title: "Card 3",
+    content: "This is some additional content for Card 3",
+  },
+];
+
 export default function Home({ detail, populars, sessions }) {
   const { media: current } = useAniList(sessions, { stats: "CURRENT" });
   const { media: plan } = useAniList(sessions, { stats: "PLANNING" });
@@ -105,8 +125,14 @@ export default function Home({ detail, populars, sessions }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [selectedCard, setSelectedCard] = useState(null);
+
   const popular = populars?.data;
   const data = detail.data[0];
+
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+  };
 
   const handleShowClick = () => {
     setIsVisible(true);
@@ -361,6 +387,7 @@ export default function Home({ detail, populars, sessions }) {
 
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
+        <SearchBar />
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
@@ -402,8 +429,13 @@ export default function Home({ detail, populars, sessions }) {
             </div>
           </div>
         </div>
+        {!sessions && (
+          <h1 className="font-bold font-karla px-5 text-[35px] bg-[#191a1f] mt-2">
+            Hello!
+          </h1>
+        )}
         {sessions && (
-          <div className="flex items-center mx-3 lg:mx-0 mt-10 lg:mt-0">
+          <div className="flex items-center px-4 lg:bg-none lg:mx-0 mt-4 lg:mt-0 ">
             <div className="lg:text-4xl lg:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
               {greeting},<h1 className="lg:hidden">{sessions?.user.name}</h1>
               <button
@@ -419,7 +451,7 @@ export default function Home({ detail, populars, sessions }) {
           </div>
         )}
 
-        <div className="lg:mt-16 mt-12 flex flex-col items-center">
+        <div className="lg:mt-16 mt-5 flex flex-col items-center">
           <motion.div
             className="w-screen flex-none lg:w-[87%]"
             initial={{ opacity: 0 }}
@@ -492,6 +524,16 @@ export default function Home({ detail, populars, sessions }) {
                 />
               </motion.div>
             )}
+
+            <motion.div // Add motion.div to each child component
+              key="Genres"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <Genres />
+            </motion.div>
           </motion.div>
         </div>
       </div>
