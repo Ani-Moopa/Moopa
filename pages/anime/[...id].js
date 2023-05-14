@@ -140,8 +140,8 @@ const infoQuery = `query ($id: Int) {
     }
 }`;
 
-export default function Info() {
-  const { data: session, status } = useSession();
+export default function Info({ titles, img, desc }) {
+  const { data: session } = useSession();
   const [data, setData] = useState(null);
   const [info, setInfo] = useState(null);
   const [episode, setEpisode] = useState(null);
@@ -165,7 +165,7 @@ export default function Info() {
   );
 
   // const [log, setLog] = useState(null);
-  // console.log(rec);
+  // console.log(ids);
 
   useEffect(() => {
     const defaultState = {
@@ -340,22 +340,12 @@ export default function Info() {
             : "Retrieving Data..."}
         </title>
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content={`Moopa - ${info?.title?.romaji || info?.title?.english}`}
-        />
+        <meta name="twitter:title" content={`Moopa - ${titles}`} />
         <meta
           name="twitter:description"
-          content={`${info?.description?.slice(0, 180)}...`}
+          content={`${desc?.slice(0, 180)}...`}
         />
-        <meta
-          name="twitter:image"
-          content={
-            info?.bannerImage ||
-            info?.coverImage?.extraLarge ||
-            info?.coverImage.large
-          }
-        />
+        <meta name="twitter:image" content={img} />
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
         <div>
@@ -800,6 +790,35 @@ export default function Info() {
       </SkeletonTheme>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { id } = context.query;
+
+  const res = await fetch("https://graphql.anilist.co/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: infoQuery,
+      variables: {
+        id: id?.[0],
+      },
+    }),
+  });
+
+  const json = await res.json();
+  const data = json?.data?.Media;
+
+  return {
+    props: {
+      titles:
+        data?.title?.romaji || data?.title?.english || data?.title?.native,
+      img: data?.coverImage?.extraLarge,
+      desc: data?.description,
+    },
+  };
 }
 
 function convertSecondsToTime(sec) {
