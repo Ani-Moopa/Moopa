@@ -339,6 +339,23 @@ export default function Info() {
             ? info?.title?.romaji || info?.title?.english
             : "Retrieving Data..."}
         </title>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`Moopa - ${info?.title?.romaji || info?.title?.english}`}
+        />
+        <meta
+          name="twitter:description"
+          content={`${info?.description?.slice(0, 180)}...`}
+        />
+        <meta
+          name="twitter:image"
+          content={
+            info?.bannerImage ||
+            info?.coverImage?.extraLarge ||
+            info?.coverImage.large
+          }
+        />
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
         <div>

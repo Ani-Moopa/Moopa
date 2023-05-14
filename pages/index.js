@@ -99,24 +99,6 @@ export function Navigasi() {
   );
 }
 
-const cards = [
-  {
-    id: 1,
-    title: "Card 1",
-    content: "This is some additional content for Card 1",
-  },
-  {
-    id: 2,
-    title: "Card 2",
-    content: "This is some additional content for Card 2",
-  },
-  {
-    id: 3,
-    title: "Card 3",
-    content: "This is some additional content for Card 3",
-  },
-];
-
 export default function Home({ detail, populars, sessions }) {
   const { media: current } = useAniList(sessions, { stats: "CURRENT" });
   const { media: plan } = useAniList(sessions, { stats: "PLANNING" });
@@ -125,14 +107,9 @@ export default function Home({ detail, populars, sessions }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
-  const [selectedCard, setSelectedCard] = useState(null);
 
   const popular = populars?.data;
   const data = detail.data[0];
-
-  const handleCardClick = (card) => {
-    setSelectedCard(card);
-  };
 
   const handleShowClick = () => {
     setIsVisible(true);
