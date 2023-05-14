@@ -140,16 +140,16 @@ const infoQuery = `query ($id: Int) {
     }
 }`;
 
-export default function Info({ titles, img, desc }) {
+export default function Info({ info, color }) {
   const { data: session } = useSession();
   const [data, setData] = useState(null);
-  const [info, setInfo] = useState(null);
+  // const [infos, setInfo] = useState(null);
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statuses, setStatuses] = useState(null);
   const [stall, setStall] = useState(false);
-  const [color, setColor] = useState(null);
+  // const [color, setColor] = useState(null);
 
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState(false);
@@ -170,7 +170,7 @@ export default function Info({ titles, img, desc }) {
   useEffect(() => {
     const defaultState = {
       data: null,
-      info: null,
+      // info: null,
       episode: null,
       loading: true,
       statuses: null,
@@ -204,23 +204,23 @@ export default function Info({ titles, img, desc }) {
       if (id) {
         setLoading(false);
         try {
-          const [res, info] = await Promise.all([
+          const [res] = await Promise.all([
             fetch(`https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`),
-            fetch("https://graphql.anilist.co/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                query: infoQuery,
-                variables: {
-                  id: id?.[0],
-                },
-              }),
-            }),
+            // fetch("https://graphql.anilist.co/", {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            //   body: JSON.stringify({
+            //     query: infoQuery,
+            //     variables: {
+            //       id: id?.[0],
+            //     },
+            //   }),
+            // }),
           ]);
           const data = await res.json();
-          const infos = await info.json();
+          // const infos = await info.json();
 
           if (res.status === 500) {
             setEpisode(null);
@@ -229,10 +229,10 @@ export default function Info({ titles, img, desc }) {
           } else if (res.status === 404) {
             window.location.href("/404");
           }
-          setInfo(infos.data.Media);
+          // setInfo(infos.data.Media);
           // setLog(data);
 
-          const textColor = setTxtColor(infos.data.Media.coverImage?.color);
+          // const textColor = setTxtColor(infos.data.Media.coverImage?.color);
 
           if (!data || data?.episodes?.length === 0) {
             const res = await fetch(
@@ -246,19 +246,19 @@ export default function Info({ titles, img, desc }) {
             } else {
               setEpisode(datas.episodes);
             }
-            setColor({
-              backgroundColor: `${data?.color || "#ffff"}`,
-              color: textColor,
-            });
+            // setColor({
+            //   backgroundColor: `${data?.color || "#ffff"}`,
+            //   color: textColor,
+            // });
             setStall(true);
           } else {
             setEpisode(data.episodes);
           }
 
-          setColor({
-            backgroundColor: `${data?.color || "#ffff"}`,
-            color: textColor,
-          });
+          // setColor({
+          //   backgroundColor: `${data?.color || "#ffff"}`,
+          //   color: textColor,
+          // });
 
           if (session?.user?.name) {
             const response = await fetch("https://graphql.anilist.co/", {
@@ -340,12 +340,18 @@ export default function Info({ titles, img, desc }) {
             : "Retrieving Data..."}
         </title>
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Moopa - ${titles}`} />
+        <meta
+          name="twitter:title"
+          content={`Moopa - ${info.title.romaji || info.title.english}`}
+        />
         <meta
           name="twitter:description"
-          content={`${desc?.slice(0, 180)}...`}
+          content={`${info.description?.slice(0, 180)}...`}
         />
-        <meta name="twitter:image" content={img} />
+        <meta
+          name="twitter:image"
+          content={info.bannerImage || info.coverImage.extraLarge}
+        />
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
         <div>
@@ -811,12 +817,17 @@ export async function getServerSideProps(context) {
   const json = await res.json();
   const data = json?.data?.Media;
 
+  const textColor = setTxtColor(data.coverImage?.color);
+
+  const color = {
+    backgroundColor: `${data?.coverImage?.color || "#ffff"}`,
+    color: textColor,
+  };
+
   return {
     props: {
-      titles:
-        data?.title?.romaji || data?.title?.english || data?.title?.native,
-      img: data?.coverImage?.extraLarge,
-      desc: data?.description,
+      info: data,
+      color: color,
     },
   };
 }
