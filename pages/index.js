@@ -406,11 +406,11 @@ export default function Home({ detail, populars, sessions }) {
             </div>
           </div>
         </div>
-        {!sessions && (
-          <h1 className="font-bold font-karla px-5 text-[35px] bg-[#191a1f] mt-2">
-            Hello!
+        {/* {!sessions && (
+          <h1 className="font-bold font-karla mx-5 text-[32px] mt-2 lg:mx-24 xl:mx-36">
+            {greeting}!
           </h1>
-        )}
+        )} */}
         {sessions && (
           <div className="flex items-center px-4 lg:bg-none lg:mx-0 mt-4 lg:mt-0 ">
             <div className="lg:text-4xl lg:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">

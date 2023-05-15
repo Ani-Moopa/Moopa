@@ -182,7 +182,7 @@ export default function Card() {
   function trash() {
     setQuery(null);
     inputRef.current.value = "";
-    setSelectedGenre(null);
+    // setSelectedGenre(null);
     setSelectedSort(["POPULARITY_DESC"]);
     router.push(`/search/${tipe.toLocaleLowerCase()}`);
   }
@@ -207,7 +207,7 @@ export default function Card() {
       <div className="bg-primary">
         <Navbar />
         <div className="min-h-screen mt-10 mb-14 text-white items-center gap-5 xl:gap-0 flex flex-col">
-          <div className="w-screen px-10 xl:w-[80%] xl:h-[10rem] flex text-center xl:items-end xl:pb-16 justify-center lg:gap-7 xl:gap-10 gap-3 font-karla font-light">
+          <div className="w-screen px-10 xl:w-[80%] xl:h-[10rem] flex text-center xl:items-end xl:pb-10 justify-center lg:gap-7 xl:gap-10 gap-3 font-karla font-light">
             <div className="text-start">
               <h1 className="font-bold xl:pb-5 pb-3 hidden lg:block text-md pl-1 font-outfit">
                 TITLE
@@ -304,6 +304,7 @@ export default function Card() {
               </div>
             </div>
           </div>
+
           <div className="w-screen xl:w-[64%] flex xl:justify-end xl:pl-0">
             <AnimatePresence>
               {isVisible && (
@@ -314,7 +315,7 @@ export default function Card() {
                   exit={{ opacity: 0, y: -10 }}
                   className="xl:pb-16"
                 >
-                  <div className="text-start items-center xl:items-start flex w-screen xl:w-auto px-8 xl:px-0 flex-row justify-between xl:flex-col pb-5 ">
+                  <div className="text-start items-center xl:items-start flex w-screen xl:w-auto px-8 xl:px-0 flex-row justify-between xl:flex-col pb-5 lg:pb-0 ">
                     <h1 className="font-bold xl:pb-5 text-md pl-1 font-outfit">
                       GENRE
                     </h1>
@@ -382,6 +383,13 @@ export default function Card() {
               )}
             </AnimatePresence>
           </div>
+          {gr && (
+            <div className="lg:w-[70%] px-5 lg:px-4 w-screen lg:mb-6">
+              <h1 className="font-bold text-[25px] font-karla">
+                Searching for : {gr}
+              </h1>
+            </div>
+          )}
           <div className="flex flex-col gap-14 items-center">
             <AnimatePresence>
               <div

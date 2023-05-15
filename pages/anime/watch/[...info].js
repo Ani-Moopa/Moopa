@@ -12,6 +12,8 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { Navigasi } from "../..";
+import { ChevronDownIcon, ForwardIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/router";
 
 const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
@@ -27,6 +29,9 @@ export default function Info({ sessions, id, aniId, provider }) {
   const [loading, setLoading] = useState(false);
   const [playingTitle, setPlayingTitle] = useState(null);
   const [poster, setPoster] = useState(null);
+
+  const [fullTitle, setFullTitle] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const defaultState = {
@@ -276,7 +281,7 @@ export default function Info({ sessions, id, aniId, provider }) {
   return (
     <>
       <Head>
-        <title>{playingTitle}</title>
+        <title>{playingTitle || "Loading..."}</title>
       </Head>
 
       <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
@@ -309,20 +314,78 @@ export default function Info({ sessions, id, aniId, provider }) {
                     data.episodes
                       .filter((items) => items.id == id)
                       .map((item) => (
-                        <div key={item.id} className="p-3 grid gap-2">
-                          <div className="text-xl font-outfit font-semibold line-clamp-2">
-                            <Link
-                              href={`/anime/${data.id}`}
-                              className="inline hover:underline"
-                            >
-                              {item.title ||
-                                data.title.romaji ||
-                                data.title.english}
-                            </Link>
+                        <div className="flex justify-between">
+                          <div key={item.id} className="p-3 grid gap-2 w-[60%]">
+                            <div className="text-xl font-outfit font-semibold line-clamp-1">
+                              <Link
+                                href={`/anime/${data.id}`}
+                                className="inline hover:underline"
+                              >
+                                {item.title ||
+                                  data.title.romaji ||
+                                  data.title.english}
+                              </Link>
+                            </div>
+                            <h4 className="text-sm font-karla font-light">
+                              Episode {item.number}
+                            </h4>
                           </div>
-                          <h4 className="text-sm font-karla font-light">
-                            Episode {item.number}
-                          </h4>
+                          <div className="w-[50%] flex gap-4 items-center justify-end px-4">
+                            <div className="relative">
+                              <select
+                                className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
+                                value={item.number}
+                                onChange={(e) => {
+                                  const selectedEpisode = data.episodes.find(
+                                    (episode) =>
+                                      episode.number ===
+                                      parseInt(e.target.value)
+                                  );
+                                  router.push(
+                                    `/anime/watch/${selectedEpisode.id}/${data.id}`
+                                  );
+                                }}
+                              >
+                                {data.episodes.map((episode) => (
+                                  <option
+                                    key={episode.number}
+                                    value={episode.number}
+                                  >
+                                    Episode {episode.number}
+                                  </option>
+                                ))}
+                              </select>
+                              <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                            </div>
+                            <button
+                              className={`${
+                                item.number === data.episodes.length
+                                  ? "pointer-events-none"
+                                  : ""
+                              } relative group`}
+                              onClick={() => {
+                                const currentEpisodeIndex =
+                                  data.episodes.findIndex(
+                                    (episode) => episode.number === item.number
+                                  );
+                                if (
+                                  currentEpisodeIndex !== -1 &&
+                                  currentEpisodeIndex < data.episodes.length - 1
+                                ) {
+                                  const nextEpisode =
+                                    data.episodes[currentEpisodeIndex + 1];
+                                  router.push(
+                                    `/anime/watch/${nextEpisode.id}/${data.id}`
+                                  );
+                                }
+                              }}
+                            >
+                              <span className="absolute z-[9999] -left-11 -top-14 p-2 shadow-xl rounded-md transform transition-all whitespace-nowrap bg-secondary lg:group-hover:block group-hover:opacity-1 hidden font-karla font-bold">
+                                Next Episode
+                              </span>
+                              <ForwardIcon className="w-6 h-6" />
+                            </button>
+                          </div>
                         </div>
                       ))
                   ) : (
