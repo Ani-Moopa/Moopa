@@ -107,6 +107,9 @@ export default function Home({ detail, populars, sessions }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [onGoing, setOnGoing] = useState(null);
+
+  const [prog, setProg] = useState(null);
 
   const popular = populars?.data;
   const data = detail.data[0];
@@ -143,9 +146,18 @@ export default function Home({ detail, populars, sessions }) {
         .map(({ media }) => media)
         .filter((media) => media);
 
+      const prog = getMedia?.entries.filter(
+        (item) => item.media.nextAiringEpisode !== null
+      );
+
+      setProg(prog);
+
       const planned = plan?.[0]?.entries
         .map(({ media }) => media)
         .filter((media) => media);
+
+      const onGoing = list?.filter((item) => item.nextAiringEpisode !== null);
+      setOnGoing(onGoing);
 
       if (list) {
         setList(list.reverse());
@@ -156,6 +168,8 @@ export default function Home({ detail, populars, sessions }) {
     }
     userData();
   }, [sessions, current, plan]);
+
+  // console.log(log);
 
   return (
     <>
@@ -412,8 +426,8 @@ export default function Home({ detail, populars, sessions }) {
           </h1>
         )} */}
         {sessions && (
-          <div className="flex items-center px-4 lg:bg-none lg:mx-0 mt-4 lg:mt-0 ">
-            <div className="lg:text-4xl lg:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
+          <div className="flex items-center justify-center lg:bg-none mt-4 lg:mt-0 w-screen">
+            <div className="lg:w-[85%] w-screen px-5 lg:px-0 lg:text-4xl flex items-center gap-3 text-2xl font-bold font-karla">
               {greeting},<h1 className="lg:hidden">{sessions?.user.name}</h1>
               <button
                 onClick={() => signOut()}
@@ -435,6 +449,23 @@ export default function Home({ detail, populars, sessions }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
+            {sessions && onGoing && (
+              <motion.div // Add motion.div to each child component
+                key="onGoing"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="onGoing"
+                  section="On-Going Anime"
+                  data={onGoing}
+                  og={prog}
+                />
+              </motion.div>
+            )}
+
             {sessions && list && (
               <motion.div // Add motion.div to each child component
                 key="listAnime"

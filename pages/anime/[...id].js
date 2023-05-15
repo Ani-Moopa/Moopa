@@ -756,13 +756,15 @@ export default function Info({ info, color }) {
                         //   Something went wrong, can't retrieve any episodes :/
                         // </p>
                         <div className="flex flex-col">
-                          <h1>{epiStatus} while retrieving data</h1>
+                          {/* <h1>{epiStatus} while retrieving data</h1> */}
                           <pre
                             className={`rounded-md ${getLanguageClassName(
                               "bash"
                             )}`}
                           >
-                            <code>{error}</code>
+                            <code>
+                              Something went wrong while retrieving data :/
+                            </code>
                           </pre>
                         </div>
                       )}

@@ -61,8 +61,6 @@ export default function Card() {
   const query = router.query;
   gr = query.genres;
 
-  console.log(gr);
-
   if (query.param !== "anime" && query.param !== "manga") {
     hasil = query.param;
   } else if (query.param === "anime") {
@@ -386,7 +384,7 @@ export default function Card() {
           {gr && (
             <div className="lg:w-[70%] px-5 lg:px-4 w-screen lg:mb-6">
               <h1 className="font-bold text-[25px] font-karla">
-                Searching for : {gr}
+                Looking for : {gr}
               </h1>
             </div>
           )}

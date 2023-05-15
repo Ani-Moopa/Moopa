@@ -333,7 +333,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                           <div className="w-[50%] flex gap-4 items-center justify-end px-4">
                             <div className="relative">
                               <select
-                                className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
+                                className="flex items-center gap-5 rounded-[3px] bg-secondary py-[0.8px] lg:px-8 px-3 lg:pr-12 pr-8 font-karla appearance-none cursor-pointer"
                                 value={item.number}
                                 onChange={(e) => {
                                   const selectedEpisode = data.episodes.find(

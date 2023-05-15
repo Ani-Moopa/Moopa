@@ -8,8 +8,9 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 
-export default function Content({ ids, section, data }) {
+export default function Content({ ids, section, data, og }) {
   const [startX, setStartX] = useState(null);
   const [scrollLefts, setScrollLefts] = useState(null);
   const containerRef = useRef(null);
@@ -65,6 +66,8 @@ export default function Content({ ids, section, data }) {
   const slicedData =
     filteredData?.length > 15 ? filteredData?.slice(0, 15) : filteredData;
 
+  // console.log(og);
+
   return (
     <div>
       <div className="flex items-center justify-between lg:justify-normal lg:gap-3 px-5">
@@ -93,6 +96,10 @@ export default function Content({ ids, section, data }) {
           ref={containerRef}
         >
           {slicedData?.map((anime) => {
+            const progress = og?.find((i) => i.mediaId === anime.id);
+
+            // // const message = checkProgress(progress);
+            // console.log(progress);
             return (
               <div
                 key={anime.id}
@@ -102,6 +109,33 @@ export default function Content({ ids, section, data }) {
                   href={`/anime/${anime.id}`}
                   className="hover:scale-105 hover:shadow-lg group relative duration-300 ease-out"
                 >
+                  {ids === "onGoing" && (
+                    <div className="h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
+                      <div className="flex flex-col items-center h-full justify-end text-center pb-5">
+                        <h1 className="line-clamp-1 w-[70%] text-[10px]">
+                          {anime.title.romaji || anime.title.english}
+                        </h1>
+                        {checkProgress(progress) && (
+                          <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
+                        )}
+                        {checkProgress(progress) && (
+                          <div className="group-hover:visible invisible absolute top-0 bg-black bg-opacity-20 w-full h-full z-20 text-center">
+                            <h1 className="text-[12px] lg:text-sm pt-28 lg:pt-44 font-bold opacity-100">
+                              {checkProgress(progress)}
+                            </h1>
+                          </div>
+                        )}
+                        <div className="flex gap-1 text-[13px] lg:text-base">
+                          <h1>Episode {anime.nextAiringEpisode.episode} in</h1>
+                          <h1 className="font-bold">
+                            {convertSecondsToTime(
+                              anime?.nextAiringEpisode?.timeUntilAiring
+                            )}
+                          </h1>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <Image
                     draggable={false}
                     src={
@@ -147,4 +181,38 @@ export default function Content({ ids, section, data }) {
       </div>
     </div>
   );
+}
+
+function convertSecondsToTime(sec) {
+  let days = Math.floor(sec / (3600 * 24));
+  let hours = Math.floor((sec % (3600 * 24)) / 3600);
+  let minutes = Math.floor((sec % 3600) / 60);
+
+  let time = "";
+
+  if (days > 0) {
+    time += `${days}d `;
+    time += `${hours}h`;
+  } else {
+    time += `${hours}h `;
+    time += `${minutes}m`;
+  }
+
+  return time.trim();
+}
+
+function checkProgress(entry) {
+  const { progress, media } = entry;
+  const { episodes, nextAiringEpisode } = media;
+
+  if (nextAiringEpisode !== null) {
+    const { episode } = nextAiringEpisode;
+
+    if (episode - progress > 1) {
+      const missedEpisodes = episode - progress - 1;
+      return `${missedEpisodes} episode${missedEpisodes > 1 ? "s" : ""} behind`;
+    }
+  }
+
+  return;
 }
