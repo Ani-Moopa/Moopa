@@ -313,8 +313,8 @@ export default function Info({ sessions, id, aniId, provider }) {
                   data.episodes.length > 0 ? (
                     data.episodes
                       .filter((items) => items.id == id)
-                      .map((item) => (
-                        <div className="flex justify-between">
+                      .map((item, index) => (
+                        <div className="flex justify-between" key={index}>
                           <div key={item.id} className="p-3 grid gap-2 w-[60%]">
                             <div className="text-xl font-outfit font-semibold line-clamp-1">
                               <Link
