@@ -350,7 +350,9 @@ export default function Info({ info, color }) {
         />
         <meta
           name="twitter:image"
-          content={info.bannerImage || info.coverImage.extraLarge}
+          content={`*.moopa.live/api/og?title=${
+            info.title.romaji || info.title.english
+          }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
       </Head>
       <Modal open={open} onClose={() => handleClose()}>
