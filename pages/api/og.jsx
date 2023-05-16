@@ -76,7 +76,7 @@ export default async function handler(request) {
             moopa
           </span>
           <h1
-            tw="font-inter text-[70px]"
+            className="font-inter text-[70px]"
             style={{
               width: "60%",
             }}
