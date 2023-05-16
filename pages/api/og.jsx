@@ -59,15 +59,15 @@ export default async function handler(request) {
             alignItems: "center",
             color: "white",
             position: "relative",
-            backgroundImage: `linear-gradient(to right, rgba(0,0,0,1) 15%, rgba(0,0,0,0))`,
+            backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0))`,
           }}
         >
           <span
             style={{
               display: "flex",
               position: "absolute",
-              top: 20,
-              left: 30,
+              top: 10,
+              left: 25,
               fontSize: "40",
               color: "#FF7F57",
               fontFamily: "Outfit",
