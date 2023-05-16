@@ -13,6 +13,8 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useAniList } from "../lib/useAnilist";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]";
+import SearchBar from "../components/searchBar";
+import Genres from "../components/hero/genres";
 
 export function Navigasi() {
   const { data: sessions, status } = useSession();
@@ -38,7 +40,7 @@ export function Navigasi() {
           <div className="flex items-center lg:gap-16 lg:pt-7">
             <Link
               href="/"
-              className=" font-outfit text-[40px] font-bold text-[#FF7F57]"
+              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#FF7F57]"
             >
               moopa
             </Link>
@@ -78,7 +80,7 @@ export function Navigasi() {
               )}
             </ul>
           </div>
-          <div className="relative flex scale-75 items-center mb-7 lg:mb-0">
+          <div className="relative flex lg:scale-75 scale-[65%] items-center mb-7 lg:mb-0">
             <div className="search-box ">
               <input
                 className="search-text"
@@ -105,6 +107,10 @@ export default function Home({ detail, populars, sessions }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [onGoing, setOnGoing] = useState(null);
+
+  const [prog, setProg] = useState(null);
+
   const popular = populars?.data;
   const data = detail.data[0];
 
@@ -140,9 +146,18 @@ export default function Home({ detail, populars, sessions }) {
         .map(({ media }) => media)
         .filter((media) => media);
 
+      const prog = getMedia?.entries.filter(
+        (item) => item.media.nextAiringEpisode !== null
+      );
+
+      setProg(prog);
+
       const planned = plan?.[0]?.entries
         .map(({ media }) => media)
         .filter((media) => media);
+
+      const onGoing = list?.filter((item) => item.nextAiringEpisode !== null);
+      setOnGoing(onGoing);
 
       if (list) {
         setList(list.reverse());
@@ -153,6 +168,8 @@ export default function Home({ detail, populars, sessions }) {
     }
     userData();
   }, [sessions, current, plan]);
+
+  // console.log(log);
 
   return (
     <>
@@ -361,6 +378,7 @@ export default function Home({ detail, populars, sessions }) {
 
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
+        <SearchBar />
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
@@ -402,9 +420,14 @@ export default function Home({ detail, populars, sessions }) {
             </div>
           </div>
         </div>
+        {/* {!sessions && (
+          <h1 className="font-bold font-karla mx-5 text-[32px] mt-2 lg:mx-24 xl:mx-36">
+            {greeting}!
+          </h1>
+        )} */}
         {sessions && (
-          <div className="flex items-center mx-3 lg:mx-0 mt-10 lg:mt-0">
-            <div className="lg:text-4xl lg:mx-32 flex items-center gap-3 text-2xl font-bold font-karla">
+          <div className="flex items-center justify-center lg:bg-none mt-4 lg:mt-0 w-screen">
+            <div className="lg:w-[85%] w-screen px-5 lg:px-0 lg:text-4xl flex items-center gap-3 text-2xl font-bold font-karla">
               {greeting},<h1 className="lg:hidden">{sessions?.user.name}</h1>
               <button
                 onClick={() => signOut()}
@@ -419,13 +442,30 @@ export default function Home({ detail, populars, sessions }) {
           </div>
         )}
 
-        <div className="lg:mt-16 mt-12 flex flex-col items-center">
+        <div className="lg:mt-16 mt-5 flex flex-col items-center">
           <motion.div
             className="w-screen flex-none lg:w-[87%]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
+            {sessions && onGoing && (
+              <motion.div // Add motion.div to each child component
+                key="onGoing"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="onGoing"
+                  section="On-Going Anime"
+                  data={onGoing}
+                  og={prog}
+                />
+              </motion.div>
+            )}
+
             {sessions && list && (
               <motion.div // Add motion.div to each child component
                 key="listAnime"
@@ -492,6 +532,16 @@ export default function Home({ detail, populars, sessions }) {
                 />
               </motion.div>
             )}
+
+            <motion.div // Add motion.div to each child component
+              key="Genres"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <Genres />
+            </motion.div>
           </motion.div>
         </div>
       </div>

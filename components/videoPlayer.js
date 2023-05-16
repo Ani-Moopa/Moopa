@@ -16,7 +16,6 @@ export default function VideoPlayer({
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { markProgress } = useAniList(session);
 
   useEffect(() => {
@@ -52,7 +51,6 @@ export default function VideoPlayer({
 
         setUrl(defUrl);
         setSource(source);
-        setLoading(false);
       } catch (error) {
         console.error(error);
       }
