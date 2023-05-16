@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { MdChevronRight } from "react-icons/md";
 import {
@@ -16,6 +16,14 @@ export default function Content({ ids, section, data, og }) {
   const containerRef = useRef(null);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    const click = localStorage.getItem("clicked");
+    if (click) {
+      setClicked(JSON.parse(click));
+    }
+  }, []);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -61,12 +69,31 @@ export default function Content({ ids, section, data, og }) {
     setScrollRight(scrollRight);
   };
 
+  function handleAlert(e) {
+    if (localStorage.getItem("clicked")) {
+      const existingDataString = localStorage.getItem("clicked");
+      const existingData = JSON.parse(existingDataString);
+
+      existingData[e] = true;
+
+      const updatedDataString = JSON.stringify(existingData);
+
+      localStorage.setItem("clicked", updatedDataString);
+    } else {
+      const newData = {
+        [e]: true,
+      };
+
+      const newDataString = JSON.stringify(newData);
+
+      localStorage.setItem("clicked", newDataString);
+    }
+  }
+
   const array = data;
   let filteredData = array?.filter((item) => item !== null);
   const slicedData =
     filteredData?.length > 15 ? filteredData?.slice(0, 15) : filteredData;
-
-  // console.log(og);
 
   return (
     <div>
@@ -86,8 +113,6 @@ export default function Content({ ids, section, data, og }) {
         <div
           id={ids}
           className="scroll flex h-full w-full items-center select-none overflow-x-scroll whitespace-nowrap overflow-y-hidden scrollbar-hide lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 scroll-smooth"
-          // {...events}
-          // ref={ref}
           onScroll={handleScroll}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
@@ -97,9 +122,6 @@ export default function Content({ ids, section, data, og }) {
         >
           {slicedData?.map((anime) => {
             const progress = og?.find((i) => i.mediaId === anime.id);
-
-            // // const message = checkProgress(progress);
-            // console.log(progress);
             return (
               <div
                 key={anime.id}
@@ -115,11 +137,15 @@ export default function Content({ ids, section, data, og }) {
                         <h1 className="line-clamp-1 w-[70%] text-[10px]">
                           {anime.title.romaji || anime.title.english}
                         </h1>
+                        {checkProgress(progress) &&
+                          !clicked?.hasOwnProperty(anime.id) && (
+                            <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
+                          )}
                         {checkProgress(progress) && (
-                          <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
-                        )}
-                        {checkProgress(progress) && (
-                          <div className="group-hover:visible invisible absolute top-0 bg-black bg-opacity-20 w-full h-full z-20 text-center">
+                          <div
+                            onClick={() => handleAlert(anime.id)}
+                            className="group-hover:visible invisible absolute top-0 bg-black bg-opacity-20 w-full h-full z-20 text-center"
+                          >
                             <h1 className="text-[12px] lg:text-sm pt-28 lg:pt-44 font-bold opacity-100">
                               {checkProgress(progress)}
                             </h1>
