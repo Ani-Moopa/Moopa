@@ -149,6 +149,8 @@ export default function Info({ info, color }) {
   const [progress, setProgress] = useState(0);
   const [statuses, setStatuses] = useState(null);
   const [stall, setStall] = useState(false);
+  const [domainUrl, setDomainUrl] = useState("");
+
   // const [color, setColor] = useState(null);
 
   const [showAll, setShowAll] = useState(false);
@@ -168,6 +170,11 @@ export default function Info({ info, color }) {
   // console.log(ids);
 
   useEffect(() => {
+    const { protocol, host } = window.location;
+    const url = `${protocol}//${host}`;
+
+    setDomainUrl(url);
+
     const defaultState = {
       data: null,
       // info: null,
@@ -350,7 +357,7 @@ export default function Info({ info, color }) {
         />
         <meta
           name="twitter:image"
-          content={`*.moopa.live/api/og?title=${
+          content={`${domainUrl}/api/og?title=${
             info.title.romaji || info.title.english
           }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
