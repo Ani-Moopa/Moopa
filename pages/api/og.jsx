@@ -55,11 +55,12 @@ export default async function handler(request) {
             display: "flex",
             width: "100%",
             // justifyContent: "center",
-            paddingLeft: 50,
+            paddingLeft: 100,
             alignItems: "center",
             color: "white",
             position: "relative",
-            backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.8) 35%, rgba(0,0,0,0))`,
+            backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.93), rgba(0,0,0,0.8) , rgba(0,0,0,0.2))`,
+            filter: "brightness(20%)",
           }}
         >
           <span
@@ -71,15 +72,17 @@ export default async function handler(request) {
               fontSize: "40",
               color: "#FF7F57",
               fontFamily: "Outfit",
+              filter: "brightness(100%)",
             }}
           >
             moopa
           </span>
           <h1
-            // className="font-inter text-[70px]"
+            // className="font-inter text-[70px] brightness-50"
             style={{
-              width: "60%",
+              width: "70%",
               fontSize: "70px",
+              filter: "brightness(100%)",
             }}
           >
             {title}

@@ -151,7 +151,7 @@ export default function Info({ info, color }) {
   const [stall, setStall] = useState(false);
   const [domainUrl, setDomainUrl] = useState("");
 
-  // const [color, setColor] = useState(null);
+  // console.log(info);
 
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState(false);
@@ -165,9 +165,6 @@ export default function Info({ info, color }) {
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
   );
-
-  // const [log, setLog] = useState(null);
-  // console.log(ids);
 
   useEffect(() => {
     const { protocol, host } = window.location;
@@ -828,7 +825,13 @@ export async function getServerSideProps(context) {
   const json = await res.json();
   const data = json?.data?.Media;
 
-  const textColor = setTxtColor(data.coverImage?.color);
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const textColor = setTxtColor(data?.coverImage?.color);
 
   const color = {
     backgroundColor: `${data?.coverImage?.color || "#ffff"}`,
