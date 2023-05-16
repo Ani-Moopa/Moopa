@@ -1,5 +1,4 @@
 import { ImageResponse } from "@vercel/og";
-// import { NextRequest } from "next/server";
 
 export const config = {
   runtime: "edge",
@@ -42,10 +41,6 @@ export default async function handler(request) {
           width: "100%",
           height: "100%",
           backgroundImage: `url(${image})`,
-          //   paddingTop: 50,
-          //   flexDirection: "column",
-          //   justifyContent: "center",
-          //   alignItems: "center",
         }}
         className="relative w-[1900px] h-[400px] text-[10px]"
       >
@@ -54,7 +49,6 @@ export default async function handler(request) {
           style={{
             display: "flex",
             width: "100%",
-            // justifyContent: "center",
             paddingLeft: 100,
             alignItems: "center",
             color: "white",
@@ -78,7 +72,6 @@ export default async function handler(request) {
             moopa
           </span>
           <h1
-            // className="font-inter text-[70px] brightness-50"
             style={{
               width: "70%",
               fontSize: "70px",
@@ -88,15 +81,6 @@ export default async function handler(request) {
             {title}
           </h1>
         </div>
-        {/* {image && (
-          <img
-            src={image}
-            width={1900}
-            height={400}
-            tw="object-cover z-10 absolute"
-          />
-        )} */}
-        {/* <p className="">github.com/{username}</p> */}
       </div>
     ),
     {
