@@ -20,6 +20,7 @@ import Modal from "../../components/modal";
 import { signIn, useSession } from "next-auth/react";
 import AniList from "../../components/media/aniList";
 import ListEditor from "../../components/listEditor";
+import { closestMatch } from "closest-match";
 
 const query = `
           query ($username: String, $status: MediaListStatus) {
@@ -143,7 +144,6 @@ const infoQuery = `query ($id: Int) {
 export default function Info({ info, color }) {
   const { data: session } = useSession();
   const [data, setData] = useState(null);
-  // const [infos, setInfo] = useState(null);
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -151,7 +151,8 @@ export default function Info({ info, color }) {
   const [stall, setStall] = useState(false);
   const [domainUrl, setDomainUrl] = useState("");
 
-  // console.log(info);
+  // const [log, setLog] = useState();
+  // console.log(log);
 
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState(false);
@@ -240,10 +241,28 @@ export default function Info({ info, color }) {
 
           if (!data || data?.episodes?.length === 0) {
             const res = await fetch(
-              `https://api.consumet.org/meta/anilist/info/${id[0]}?provider=9anime`
+              `https://api.moopa.my.id/anime/gogoanime/${info.title.romaji}`
             );
             const datas = await res.json();
-            if (res.status === 500) {
+
+            if (datas) {
+              const release = datas.results.map((i) => i.releaseDate);
+              const match = closestMatch(info.startDate.year, release);
+              const filter = datas.results.find((i) => i.releaseDate === match);
+
+              // const found = filter.find((i) => i.title === info.title.romaji);
+
+              // setLog(found);
+
+              if (filter) {
+                const res = await fetch(
+                  `https://api.moopa.my.id/anime/gogoanime/info/${filter.id}`
+                );
+                const dataA = await res.json();
+                setEpisode(dataA.episodes);
+                // setLog(dataA);
+              }
+            } else if (res.status === 500) {
               setEpisode(null);
               setEpiStatus("error");
               setError(datas.message);
@@ -254,7 +273,6 @@ export default function Info({ info, color }) {
             //   backgroundColor: `${data?.color || "#ffff"}`,
             //   color: textColor,
             // });
-            setStall(true);
           } else {
             setEpisode(data.episodes);
           }
@@ -323,7 +341,7 @@ export default function Info({ info, color }) {
       }
     }
     fetchData();
-  }, [id, session?.user?.name]);
+  }, [id, session?.user?.name, info]);
 
   function handleOpen() {
     setOpen(true);
@@ -718,7 +736,7 @@ export default function Info({ info, color }) {
                   data && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
                       {epiStatus === "ok" ? (
-                        episode?.length !== 0 ? (
+                        episode?.length !== 0 && episode ? (
                           episode?.map((epi, index) => {
                             return (
                               <div
@@ -726,7 +744,7 @@ export default function Info({ info, color }) {
                                 className="flex flex-col gap-3 px-2"
                               >
                                 <Link
-                                  href={`/anime/watch/${epi.id}/${data.id}/${
+                                  href={`/anime/watch/${epi.id}/${info.id}/${
                                     stall ? `9anime` : ""
                                   }`}
                                   className={`text-start text-sm lg:text-lg ${
