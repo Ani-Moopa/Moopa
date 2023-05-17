@@ -151,9 +151,6 @@ export default function Info({ info, color }) {
   const [stall, setStall] = useState(false);
   const [domainUrl, setDomainUrl] = useState("");
 
-  // const [log, setLog] = useState();
-  // console.log(log);
-
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState(false);
 
