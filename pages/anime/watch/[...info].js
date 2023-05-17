@@ -108,14 +108,13 @@ export default function Info({ sessions, id, aniId, provider }) {
           }`
         );
         const data = await res.json();
-        const match = closestMatch(
-          aniData.title.romaji,
-          data.results.map((item) => item.title)
-        );
-        const anime = data.results.filter((item) => item.title === match);
+        const release = data.results.map((i) => i.releaseDate);
+
+        const match = closestMatch(aniData.startDate.year, release);
+        const anime = data.results.find((i) => i.releaseDate === match);
         if (anime.length !== 0) {
           const infos = await fetch(
-            `https://api.moopa.my.id/anime/gogoanime/info/${anime[0].id}`
+            `https://api.moopa.my.id/anime/gogoanime/info/${anime.id}`
           ).then((res) => res.json());
           epiFallback = infos.episodes;
         }
@@ -126,7 +125,7 @@ export default function Info({ sessions, id, aniId, provider }) {
         .filter((item) => item.id == id)
         .map((item) => item.number);
 
-      if (playingEpisode == 0) {
+      if (aniData.episodes.length === 0) {
         playingEpisode = epiFallback
           .filter((item) => item.id == id)
           .map((item) => item.number);
@@ -393,18 +392,77 @@ export default function Info({ sessions, id, aniId, provider }) {
                         fallback
                           .filter((item) => item.id == id)
                           .map((item) => (
-                            <div key={item.id} className="p-3 grid gap-2">
-                              <div className="text-xl font-outfit font-semibold line-clamp-2">
-                                <Link
-                                  href={`/anime/${data.id}`}
-                                  className="inline hover:underline"
-                                >
-                                  {data.title.romaji || data.title.english}
-                                </Link>
+                            <div key={item.id} className="flex justify-between">
+                              <div className="p-3 grid gap-2 w-[60%]">
+                                <div className="text-xl font-outfit font-semibold line-clamp-2">
+                                  <Link
+                                    href={`/anime/${data.id}`}
+                                    className="inline hover:underline"
+                                  >
+                                    {data.title.romaji || data.title.english}
+                                  </Link>
+                                </div>
+                                <h4 className="text-sm font-karla font-light">
+                                  Episode {item.number}
+                                </h4>
                               </div>
-                              <h4 className="text-sm font-karla font-light">
-                                Episode {item.number}
-                              </h4>
+                              <div className="w-[50%] flex gap-4 items-center justify-end px-4">
+                                <div className="relative">
+                                  <select
+                                    className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
+                                    value={item.number}
+                                    onChange={(e) => {
+                                      const selectedEpisode = fallback.find(
+                                        (episode) =>
+                                          episode.number ===
+                                          parseInt(e.target.value)
+                                      );
+                                      router.push(
+                                        `/anime/watch/${selectedEpisode.id}/${data.id}`
+                                      );
+                                    }}
+                                  >
+                                    {fallback.map((episode) => (
+                                      <option
+                                        key={episode.number}
+                                        value={episode.number}
+                                      >
+                                        Episode {episode.number}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                                </div>
+                                <button
+                                  className={`${
+                                    item.number === fallback.length
+                                      ? "pointer-events-none"
+                                      : ""
+                                  } relative group`}
+                                  onClick={() => {
+                                    const currentEpisodeIndex =
+                                      fallback.findIndex(
+                                        (episode) =>
+                                          episode.number === item.number
+                                      );
+                                    if (
+                                      currentEpisodeIndex !== -1 &&
+                                      currentEpisodeIndex < fallback.length - 1
+                                    ) {
+                                      const nextEpisode =
+                                        fallback[currentEpisodeIndex + 1];
+                                      router.push(
+                                        `/anime/watch/${nextEpisode.id}/${data.id}`
+                                      );
+                                    }
+                                  }}
+                                >
+                                  <span className="absolute z-[9999] -left-11 -top-14 p-2 shadow-xl rounded-md transform transition-all whitespace-nowrap bg-secondary lg:group-hover:block group-hover:opacity-1 hidden font-karla font-bold">
+                                    Next Episode
+                                  </span>
+                                  <ForwardIcon className="w-6 h-6" />
+                                </button>
+                              </div>
                             </div>
                           ))}
                     </>
