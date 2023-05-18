@@ -239,10 +239,10 @@ export default function Info({ info, color }) {
           // const textColor = setTxtColor(infos.data.Media.coverImage?.color);
 
           if (!data || data?.episodes?.length === 0) {
-            const res = await fetch(
-              `https://api.moopa.my.id/anime/gogoanime/${info.title.romaji}`
-            );
-            const datas = await res.json();
+            // const res = await fetch(
+            //   `https://api.moopa.my.id/anime/gogoanime/${info.title.romaji}`
+            // );
+            // const datas = await res.json();
 
             // if (datas) {
             //   const release = datas.results.map((i) => i.releaseDate);
@@ -262,13 +262,13 @@ export default function Info({ info, color }) {
             //     // setLog(dataA);
             //   }
             // }
-            if (res.status === 500) {
-              setEpisode(null);
-              setEpiStatus("error");
-              setError(datas.message);
-            } else {
-              setEpisode([]);
-            }
+            // if (res.status === 500) {
+            //   setEpisode(null);
+            //   setEpiStatus("error");
+            //   setError(datas.message);
+            // } else {
+            setEpisode([]);
+            // }
             // setColor({
             //   backgroundColor: `${data?.color || "#ffff"}`,
             //   color: textColor,

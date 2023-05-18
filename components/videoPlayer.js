@@ -2,6 +2,21 @@ import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/useAnilist";
 
+const fontSize = [
+  {
+    html: "Small",
+    size: "16px",
+  },
+  {
+    html: "Medium",
+    size: "36px",
+  },
+  {
+    html: "Large",
+    size: "56px",
+  },
+];
+
 export default function VideoPlayer({
   data,
   id,
@@ -20,26 +35,51 @@ export default function VideoPlayer({
   const [defSub, setDefSub] = useState();
   const { markProgress } = useAniList(session);
 
+  const [resolution, setResolution] = useState("auto");
+  const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
+  const [defSize, setDefSize] = useState();
+
   useEffect(() => {
+    const resol = localStorage.getItem("quality");
+    const sub = JSON.parse(localStorage.getItem("subSize"));
+    if (resol) {
+      setResolution(resol);
+    }
+
+    const size = fontSize.map((i) => {
+      const isDefault = !sub ? i.html === "Small" : i.html === sub?.html;
+      return {
+        ...(isDefault && { default: true }),
+        html: i.html,
+        size: i.size,
+      };
+    });
+
+    const defSize = size?.find((i) => i?.default === true);
+    setDefSize(defSize);
+    setSubSize(size);
+
     async function compiler() {
       try {
-        const dataEpi = data?.sources;
-        const referer = data?.headers?.Referer;
+        // const dataEpi = data?.sources;
+        // const referer = data?.headers?.Referer;
 
-        let sumber = dataEpi?.find(
-          (source) =>
-            source.quality === "default" ||
-            source.quality === "1080p" ||
-            source.quality === "720p" ||
-            source.quality === "480p" ||
-            source.quality === "360p" ||
-            source.quality === "240p" ||
-            source.quality === "144p"
-        );
+        // let sumber = dataEpi?.find(
+        //   (source) =>
+        //     source.quality === "default" ||
+        //     source.quality === "1080p" ||
+        //     source.quality === "720p" ||
+        //     source.quality === "480p" ||
+        //     source.quality === "360p" ||
+        //     source.quality === "240p" ||
+        //     source.quality === "144p"
+        // );
 
         const source = data.sources.map((items) => {
           const isDefault =
-            items.quality === "default" || items.quality === "auto";
+            resolution === "auto"
+              ? items.quality === "default" || items.quality === "auto"
+              : items.quality === resolution;
           return {
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
@@ -50,7 +90,9 @@ export default function VideoPlayer({
           // }`,
         });
 
-        const defUrl = `https://lerioproxy.herokuapp.com/${sumber.url}`;
+        const defSource = source?.find((i) => i?.default === true);
+
+        const defUrl = defSource?.url;
         // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
         //   sumber.url
         // )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
@@ -66,8 +108,8 @@ export default function VideoPlayer({
             };
           });
 
-        const defSub = data?.subtitles.filter((i) => i.lang === "English");
-        setDefSub(defSub);
+        const defSub = data?.subtitles.find((i) => i.lang === "English");
+        setDefSub(defSub?.url);
 
         // console.log(subtitle);
         setSubtitle(subtitle);
@@ -79,7 +121,7 @@ export default function VideoPlayer({
       }
     }
     compiler();
-  }, [data]);
+  }, [data, resolution]);
 
   return (
     <>
@@ -89,20 +131,24 @@ export default function VideoPlayer({
           option={{
             url: `${url}`,
             title: `${title}`,
-            // autoplay: true,
+            autoplay: true,
             subtitle: {
-              url: defSub ? defSub[0].url : "",
+              url: `${defSub}`,
               type: "vtt",
               encoding: "utf-8",
               name: "English",
+              escape: false,
               style: {
                 color: "#FFFF",
+                fontSize: `${defSize?.size}`,
               },
             },
             screenshot: true,
             poster: poster ? poster : "",
           }}
+          res={resolution}
           quality={source}
+          subSize={subSize}
           subtitles={subtitle}
           style={{
             width: "100%",
@@ -116,13 +162,9 @@ export default function VideoPlayer({
               const duration = art.duration;
               const percentage = seekTime / duration;
 
-              // if (defSub) {
-              //   art.subtitle.url = defSub[0].url;
-              //   art.subtitle.style({
-              //     color: "white",
-              //     // fontSize: "40px",
-              //   });
-              // }
+              if (subSize) {
+                art.subtitle.style.fontSize = subSize?.size;
+              }
 
               if (percentage >= 0.9) {
                 // use >= instead of >
