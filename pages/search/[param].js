@@ -10,6 +10,7 @@ import Footer from "../../components/footer";
 
 import { useAniList } from "../../lib/useAnilist";
 import Image from "next/image";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const genre = [
   "Action",
@@ -224,17 +225,20 @@ export default function Card() {
               <h1 className="font-bold xl:pb-5 pb-3 text-md pl-1 font-outfit">
                 TYPE
               </h1>
-              <select
-                className="xl:w-[297px] xl:h-[46px] lg:h-[35px] lg:w-[230px] bg-secondary rounded-[10px]  justify-between flex items-center text-center"
-                value={type}
-                onChange={(e) => handleTipe(e)}
-              >
-                {types.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  className="xl:w-[297px] xl:h-[46px] lg:h-[35px] lg:w-[230px] bg-secondary rounded-[10px] justify-between flex items-center text-center appearance-none"
+                  value={type}
+                  onChange={(e) => handleTipe(e)}
+                >
+                  {types.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+              </div>
             </div>
 
             {/* SORT */}
@@ -242,20 +246,23 @@ export default function Card() {
               <h1 className="font-bold xl:pb-5 lg:pb-3 text-md pl-1 font-outfit">
                 SORT
               </h1>
-              <select
-                className="xl:w-[297px] xl:h-[46px] lg:h-[35px] lg:w-[230px] bg-secondary rounded-[10px] flex items-center text-center"
-                onChange={(e) => {
-                  setSelectedSort(e.target.value);
-                  setData(null);
-                }}
-              >
-                <option value={["POPULARITY_DESC"]}>Sort By</option>
-                {sorts.map((sort) => (
-                  <option key={sort.value} value={sort.value}>
-                    {sort.name}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  className="xl:w-[297px] xl:h-[46px] lg:h-[35px] lg:w-[230px] bg-secondary rounded-[10px] flex items-center text-center appearance-none"
+                  onChange={(e) => {
+                    setSelectedSort(e.target.value);
+                    setData(null);
+                  }}
+                >
+                  <option value={["POPULARITY_DESC"]}>Sort By</option>
+                  {sorts.map((sort) => (
+                    <option key={sort.value} value={sort.value}>
+                      {sort.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+              </div>
             </div>
 
             {/* OPTIONS */}
@@ -317,65 +324,74 @@ export default function Card() {
                     <h1 className="font-bold xl:pb-5 text-md pl-1 font-outfit">
                       GENRE
                     </h1>
-                    <select
-                      className="w-[195px] xl:w-[297px] xl:h-[46px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      onChange={(e) => {
-                        // setSelectedGenre(
-                        //   e.target.value === "undefined"
-                        //     ? undefined
-                        //     : e.target.value
-                        // );
-                        router.push(
-                          `/search/${tipe.toLocaleLowerCase()}/?genres=${
-                            e.target.value
-                          }`
-                        );
-                      }}
-                    >
-                      <option value="undefined">Select a Genre</option>
-                      {genre.map((option) => {
-                        return (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        );
-                      })}
-                    </select>
+                    <div className="relative">
+                      <select
+                        className="w-[195px] xl:w-[297px] xl:h-[46px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300 appearance-none"
+                        onChange={(e) => {
+                          // setSelectedGenre(
+                          //   e.target.value === "undefined"
+                          //     ? undefined
+                          //     : e.target.value
+                          // );
+                          router.push(
+                            `/search/${tipe.toLocaleLowerCase()}/?genres=${
+                              e.target.value
+                            }`
+                          );
+                        }}
+                      >
+                        <option value="undefined">Select a Genre</option>
+                        {genre.map((option) => {
+                          return (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
                   </div>
                   <div className="xl:hidden text-start items-center xl:items-start flex w-screen xl:w-auto px-8 xl:px-0 flex-row justify-between xl:flex-col pb-5 ">
                     <h1 className="font-bold xl:pb-5 text-md pl-1 font-outfit">
                       TYPE
                     </h1>
-                    <select
-                      className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      value={type}
-                      onChange={(e) => setSelectedType(e.target.value)}
-                    >
-                      {types.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <select
+                        className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300 appearance-none"
+                        value={type}
+                        onChange={(e) => setSelectedType(e.target.value)}
+                      >
+                        {types.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
                   </div>
 
                   <div className="xl:hidden text-start items-center xl:items-start flex w-screen xl:w-auto px-8 xl:px-0 flex-row justify-between xl:flex-col ">
                     <h1 className="font-bold xl:pb-5 text-md pl-1 font-outfit">
                       SORT
                     </h1>
-                    <select
-                      className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300"
-                      onChange={(e) => {
-                        setSelectedSort(e.target.value);
-                      }}
-                    >
-                      <option value={["POPULARITY_DESC"]}>Sort By</option>
-                      {sorts.map((sort) => (
-                        <option key={sort.value} value={sort.value}>
-                          {sort.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <select
+                        className="w-[195px] h-[35px] bg-secondary rounded-[10px] flex items-center text-center cursor-pointer hover:bg-[#272b35] transition-all duration-300 appearance-none"
+                        onChange={(e) => {
+                          setSelectedSort(e.target.value);
+                        }}
+                      >
+                        <option value={["POPULARITY_DESC"]}>Sort By</option>
+                        {sorts.map((sort) => (
+                          <option key={sort.value} value={sort.value}>
+                            {sort.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
                   </div>
                 </m.div>
               )}
