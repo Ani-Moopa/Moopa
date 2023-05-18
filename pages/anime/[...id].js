@@ -207,7 +207,9 @@ export default function Info({ info, color }) {
         setLoading(false);
         try {
           const [res] = await Promise.all([
-            fetch(`https://api.moopa.my.id/meta/anilist/info/${id?.[0]}`),
+            fetch(
+              `https://api.moopa.my.id/meta/anilist/info/${id?.[0]}?provider=zoro`
+            ),
             // fetch("https://graphql.anilist.co/", {
             //   method: "POST",
             //   headers: {
@@ -242,29 +244,30 @@ export default function Info({ info, color }) {
             );
             const datas = await res.json();
 
-            if (datas) {
-              const release = datas.results.map((i) => i.releaseDate);
-              const match = closestMatch(info.startDate.year, release);
-              const filter = datas.results.find((i) => i.releaseDate === match);
+            // if (datas) {
+            //   const release = datas.results.map((i) => i.releaseDate);
+            //   const match = closestMatch(info.startDate.year, release);
+            //   const filter = datas.results.find((i) => i.releaseDate === match);
 
-              // const found = filter.find((i) => i.title === info.title.romaji);
+            //   // const found = filter.find((i) => i.title === info.title.romaji);
 
-              // setLog(found);
+            //   // setLog(found);
 
-              if (filter) {
-                const res = await fetch(
-                  `https://api.moopa.my.id/anime/gogoanime/info/${filter.id}`
-                );
-                const dataA = await res.json();
-                setEpisode(dataA.episodes);
-                // setLog(dataA);
-              }
-            } else if (res.status === 500) {
+            //   if (filter) {
+            //     const res = await fetch(
+            //       `https://api.moopa.my.id/anime/gogoanime/info/${filter.id}`
+            //     );
+            //     const dataA = await res.json();
+            //     setEpisode(dataA.episodes);
+            //     // setLog(dataA);
+            //   }
+            // }
+            if (res.status === 500) {
               setEpisode(null);
               setEpiStatus("error");
               setError(datas.message);
             } else {
-              setEpisode(datas.episodes);
+              setEpisode([]);
             }
             // setColor({
             //   backgroundColor: `${data?.color || "#ffff"}`,

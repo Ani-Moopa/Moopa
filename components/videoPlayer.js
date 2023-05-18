@@ -16,6 +16,8 @@ export default function VideoPlayer({
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
+  const [subtitle, setSubtitle] = useState();
+  const [defSub, setDefSub] = useState();
   const { markProgress } = useAniList(session);
 
   useEffect(() => {
@@ -35,19 +37,40 @@ export default function VideoPlayer({
             source.quality === "144p"
         );
 
-        const source = data.sources.map((items) => ({
-          default: items.quality === "default" ? true : false,
-          html: items.quality === "default" ? "adaptive" : items.quality,
-          // url: `https://cors.moopa.my.id/${items.url}`,
-          url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
-            referer ? `&referer=${encodeURIComponent(referer)}` : ""
-          }`,
-        }));
+        const source = data.sources.map((items) => {
+          const isDefault =
+            items.quality === "default" || items.quality === "auto";
+          return {
+            ...(isDefault && { default: true }),
+            html: items.quality === "default" ? "adaptive" : items.quality,
+            url: `https://lerioproxy.herokuapp.com/${items.url}`,
+          };
+          // url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
+          //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
+          // }`,
+        });
 
-        // const defUrl = `https://cors.moopa.my.id/${sumber.url}`;
-        const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
-          sumber.url
-        )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
+        const defUrl = `https://lerioproxy.herokuapp.com/${sumber.url}`;
+        // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
+        //   sumber.url
+        // )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
+
+        const subtitle = data?.subtitles
+          .filter((subtitle) => subtitle.lang !== "Thumbnails")
+          .map((subtitle) => {
+            const isEnglish = subtitle.lang === "English";
+            return {
+              ...(isEnglish && { default: true }),
+              url: subtitle.url,
+              html: `${subtitle.lang}`,
+            };
+          });
+
+        const defSub = data?.subtitles.filter((i) => i.lang === "English");
+        setDefSub(defSub);
+
+        // console.log(subtitle);
+        setSubtitle(subtitle);
 
         setUrl(defUrl);
         setSource(source);
@@ -65,12 +88,22 @@ export default function VideoPlayer({
           key={url}
           option={{
             url: `${url}`,
-            quality: [source],
             title: `${title}`,
-            autoplay: true,
+            // autoplay: true,
+            subtitle: {
+              url: defSub ? defSub[0].url : "",
+              type: "vtt",
+              encoding: "utf-8",
+              name: "English",
+              style: {
+                color: "#FFFF",
+              },
+            },
             screenshot: true,
             poster: poster ? poster : "",
           }}
+          quality={source}
+          subtitles={subtitle}
           style={{
             width: "100%",
             height: "100%",
@@ -82,6 +115,14 @@ export default function VideoPlayer({
               const seekTime = seek?.time || 0;
               const duration = art.duration;
               const percentage = seekTime / duration;
+
+              // if (defSub) {
+              //   art.subtitle.url = defSub[0].url;
+              //   art.subtitle.style({
+              //     color: "white",
+              //     // fontSize: "40px",
+              //   });
+              // }
 
               if (percentage >= 0.9) {
                 // use >= instead of >

@@ -32,6 +32,8 @@ export default function Info({ sessions, id, aniId, provider }) {
 
   const router = useRouter();
 
+  // console.log(epiData);
+
   useEffect(() => {
     const defaultState = {
       epiData: null,
@@ -74,7 +76,7 @@ export default function Info({ sessions, id, aniId, provider }) {
           setEpiData(epiData);
         } else {
           const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/watch/${id}`
+            `https://api.moopa.my.id/meta/anilist/watch/${id}?provider=zoro`
           );
           const epiData = await res.json();
           setEpiData(epiData);
@@ -95,7 +97,7 @@ export default function Info({ sessions, id, aniId, provider }) {
         setAniData(aniData);
       } else {
         const res2 = await fetch(
-          `https://api.moopa.my.id/meta/anilist/info/${aniId}`
+          `https://api.moopa.my.id/meta/anilist/info/${aniId}?provider=zoro`
         );
         aniData = await res2.json();
         setAniData(aniData);
