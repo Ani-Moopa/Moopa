@@ -28,6 +28,7 @@ export default function VideoPlayer({
   ed,
   title,
   poster,
+  proxy,
 }) {
   const [url, setUrl] = useState();
   const [source, setSource] = useState([]);
@@ -38,6 +39,9 @@ export default function VideoPlayer({
   const [resolution, setResolution] = useState("auto");
   const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
   const [defSize, setDefSize] = useState();
+  // const [thumbnails, setThumbnails] = useState();
+
+  // console.log(thumbnails);
 
   useEffect(() => {
     const resol = localStorage.getItem("quality");
@@ -83,7 +87,7 @@ export default function VideoPlayer({
           return {
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
-            url: `https://lerioproxy.herokuapp.com/${items.url}`,
+            url: `${proxy}${items.url}`,
           };
           // url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
           //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
@@ -109,6 +113,9 @@ export default function VideoPlayer({
           });
 
         const defSub = data?.subtitles.find((i) => i.lang === "English");
+        // const thumb = data?.subtitles.find((i) => i.lang === "Thumbnails");
+
+        // setThumbnails(thumb?.url);
         setDefSub(defSub?.url);
 
         // console.log(subtitle);

@@ -15,11 +15,13 @@ import { Navigasi } from "../..";
 import { ChevronDownIcon, ForwardIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 
+import dotenv from "dotenv";
+
 const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
 );
 
-export default function Info({ sessions, id, aniId, provider }) {
+export default function Info({ sessions, id, aniId, provider, proxy }) {
   const [epiData, setEpiData] = useState(null);
   const [data, setAniData] = useState(null);
   const [fallback, setEpiFallback] = useState(null);
@@ -31,8 +33,6 @@ export default function Info({ sessions, id, aniId, provider }) {
   const [poster, setPoster] = useState(null);
 
   const router = useRouter();
-
-  // console.log(epiData);
 
   useEffect(() => {
     const defaultState = {
@@ -303,6 +303,7 @@ export default function Info({ sessions, id, aniId, provider }) {
                     ed={skip.ed}
                     title={playingTitle}
                     poster={poster[0]?.image}
+                    proxy={proxy}
                   />
                 </div>
               ) : (
@@ -698,7 +699,11 @@ export default function Info({ sessions, id, aniId, provider }) {
 }
 
 export async function getServerSideProps(context) {
+  dotenv.config();
+
   const session = await getServerSession(context.req, context.res, authOptions);
+
+  const proxy = process.env.PROXY_URI;
 
   const { info } = context.query;
   if (!info) {
@@ -717,6 +722,7 @@ export async function getServerSideProps(context) {
       id,
       aniId,
       provider,
+      proxy,
     },
   };
 }
