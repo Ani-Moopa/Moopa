@@ -95,9 +95,16 @@ CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
 GRAPHQL_ENDPOINT="https://graphql.anilist.co"
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
+PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there."
 ```
 
-4. Start local server :
+4. Add this endpoint as Redirect Url on AniList Developer :
+
+```bash
+https://{your-website-url}/api/auth/callback/AniListProvider
+```
+
+5. Start local server :
 
 ```bash
 npm run dev

@@ -18,6 +18,8 @@ import Genres from "../components/hero/genres";
 
 export function Navigasi() {
   const { data: sessions, status } = useSession();
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [season, setSeason] = useState(getCurrentSeason());
 
   const router = useRouter();
 
@@ -46,7 +48,11 @@ export function Navigasi() {
             </Link>
             <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
               <li>
-                <Link href="/search/anime">AniList Index</Link>
+                <Link
+                  href={`/search/anime?season=${season}&seasonYear=${year}`}
+                >
+                  This Season
+                </Link>
               </li>
               <li>
                 <Link href="/search/manga">Manga</Link>
@@ -571,4 +577,30 @@ export async function getServerSideProps(context) {
       sessions: session,
     },
   };
+}
+
+function getCurrentSeason() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // getMonth() returns 0-based index
+
+  switch (month) {
+    case 12:
+    case 1:
+    case 2:
+      return "WINTER";
+    case 3:
+    case 4:
+    case 5:
+      return "SPRING";
+    case 6:
+    case 7:
+    case 8:
+      return "SUMMER";
+    case 9:
+    case 10:
+    case 11:
+      return "FALL";
+    default:
+      return "UNKNOWN SEASON";
+  }
 }
