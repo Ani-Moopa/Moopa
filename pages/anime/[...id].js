@@ -20,7 +20,6 @@ import Modal from "../../components/modal";
 import { signIn, useSession } from "next-auth/react";
 import AniList from "../../components/media/aniList";
 import ListEditor from "../../components/listEditor";
-import { closestMatch } from "closest-match";
 
 const query = `
           query ($username: String, $status: MediaListStatus) {
@@ -143,12 +142,10 @@ const infoQuery = `query ($id: Int) {
 
 export default function Info({ info, color }) {
   const { data: session } = useSession();
-  const [data, setData] = useState(null);
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statuses, setStatuses] = useState(null);
-  const [stall, setStall] = useState(false);
   const [domainUrl, setDomainUrl] = useState("");
 
   const [showAll, setShowAll] = useState(false);
@@ -157,9 +154,6 @@ export default function Info({ info, color }) {
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  const [epiStatus, setEpiStatus] = useState("ok");
-  const [error, setError] = useState(null);
-
   const rec = info?.recommendations?.nodes.map(
     (data) => data.mediaRecommendation
   );
@@ -167,120 +161,25 @@ export default function Info({ info, color }) {
   useEffect(() => {
     const { protocol, host } = window.location;
     const url = `${protocol}//${host}`;
-
     setDomainUrl(url);
 
-    const defaultState = {
-      data: null,
-      // info: null,
-      episode: null,
-      loading: true,
-      statuses: null,
-      progress: null,
-      stall: false,
-      EpiStatus: "ok",
-      error: null,
-    };
-
-    // Reset all state variables to their default values
-    Object.keys(defaultState).forEach((key) => {
-      document.body.style.overflow = "auto";
-      const value = defaultState[key];
-      if (Array.isArray(value)) {
-        value.length
-          ? eval(
-              `set${
-                key.charAt(0).toUpperCase() + key.slice(1)
-              }(${JSON.stringify(value)})`
-            )
-          : eval(`set${key.charAt(0).toUpperCase() + key.slice(1)}([])`);
-      } else {
-        eval(
-          `set${key.charAt(0).toUpperCase() + key.slice(1)}(${JSON.stringify(
-            value
-          )})`
-        );
-      }
-    });
     async function fetchData() {
+      setLoading(true);
       if (id) {
-        setLoading(false);
         try {
-          const [res] = await Promise.all([
-            fetch(
-              `https://api.moopa.my.id/meta/anilist/info/${id?.[0]}?provider=zoro`
-            ),
-            // fetch("https://graphql.anilist.co/", {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //   },
-            //   body: JSON.stringify({
-            //     query: infoQuery,
-            //     variables: {
-            //       id: id?.[0],
-            //     },
-            //   }),
-            // }),
-          ]);
+          setEpisode(null)
+          const res = await fetch(`https://api.moopa.my.id/meta/anilist/info/${info.id}`)
           const data = await res.json();
-          // const infos = await info.json();
 
           if (res.status === 500) {
-            setEpisode(null);
-            setEpiStatus("error");
-            setError(data.message);
+            setEpisode([]);
           } else if (res.status === 404) {
             window.location.href("/404");
-          }
-          // setInfo(infos.data.Media);
-          // setLog(data);
-
-          // const textColor = setTxtColor(infos.data.Media.coverImage?.color);
-
-          if (!data || data?.episodes?.length === 0) {
-            // const res = await fetch(
-            //   `https://api.moopa.my.id/anime/gogoanime/${info.title.romaji}`
-            // );
-            // const datas = await res.json();
-
-            // if (datas) {
-            //   const release = datas.results.map((i) => i.releaseDate);
-            //   const match = closestMatch(info.startDate.year, release);
-            //   const filter = datas.results.find((i) => i.releaseDate === match);
-
-            //   // const found = filter.find((i) => i.title === info.title.romaji);
-
-            //   // setLog(found);
-
-            //   if (filter) {
-            //     const res = await fetch(
-            //       `https://api.moopa.my.id/anime/gogoanime/info/${filter.id}`
-            //     );
-            //     const dataA = await res.json();
-            //     setEpisode(dataA.episodes);
-            //     // setLog(dataA);
-            //   }
-            // }
-            // if (res.status === 500) {
-            //   setEpisode(null);
-            //   setEpiStatus("error");
-            //   setError(datas.message);
-            // } else {
+          } else if (!data || data?.episodes?.length === 0) {
             setEpisode([]);
-            // }
-            // setColor({
-            //   backgroundColor: `${data?.color || "#ffff"}`,
-            //   color: textColor,
-            // });
           } else {
-            setEpisode(data.episodes);
+            setEpisode(data.episodes?.reverse());
           }
-
-          // setColor({
-          //   backgroundColor: `${data?.color || "#ffff"}`,
-          //   color: textColor,
-          // });
 
           if (session?.user?.name) {
             const response = await fetch("https://graphql.anilist.co/", {
@@ -330,8 +229,7 @@ export default function Info({ info, color }) {
             );
           }
 
-          setData(data);
-          setLoading(true);
+          setLoading(false);
         } catch (error) {
           console.log(error);
           setTimeout(() => {
@@ -397,7 +295,7 @@ export default function Info({ info, color }) {
               </button>
             </div>
           )}
-          {session && loading && info && (
+          {session && info && (
             <ListEditor
               animeId={info?.id}
               session={session}
@@ -437,7 +335,6 @@ export default function Info({ info, color }) {
               <div className="lg:hidden pt-5 w-screen px-5 flex flex-col">
                 <div className="h-[250px] flex flex-col gap-1 justify-center">
                   <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
-                    {/* Yuru Camp△ SEASON 2 */}
                     {info?.title?.romaji || info?.title?.english}
                   </h1>
                   <p
@@ -454,12 +351,8 @@ export default function Info({ info, color }) {
                         <span
                           key={index}
                           className="px-2 py-1 bg-secondary shadow-lg font-outfit font-light rounded-full"
-                          // style={color}
                         >
                           <span className="">{item}</span>
-                          {/* {index !== info?.genres?.length - 1 && (
-                            <span className="w-[5px] h-[5px] ml-[6px] mb-[2px] inline-block rounded-full bg-white" />
-                          )} */}
                         </span>
                       ))}
                   </div>
@@ -471,7 +364,7 @@ export default function Info({ info, color }) {
                           className="bg-action px-10 rounded-sm font-karla font-bold"
                           onClick={() => handleOpen()}
                         >
-                          {loading
+                          {!loading
                             ? statuses
                               ? statuses.name
                               : "Add to List"
@@ -533,7 +426,7 @@ export default function Info({ info, color }) {
                         className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
                         onClick={() => handleOpen()}
                       >
-                        {loading
+                        {!loading
                           ? statuses
                             ? statuses.name
                             : "Add to List"
@@ -621,7 +514,7 @@ export default function Info({ info, color }) {
 
               <div>
                 <div className="flex gap-5 items-center">
-                  {info && (
+                  {info?.relations?.edges?.length > 0 && (
                     <div className="p-3 lg:p-0 text-[20px] lg:text-2xl font-bold font-karla">
                       Relations
                     </div>
@@ -721,7 +614,6 @@ export default function Info({ info, color }) {
                         <h1>Next :</h1>
                         <div
                           className="px-5 rounded-sm font-karla font-bold bg-white text-black"
-                          // style={color}
                         >
                           {time}
                         </div>
@@ -732,10 +624,10 @@ export default function Info({ info, color }) {
                     </div>
                   )}
                 </div>
-                {loading ? (
-                  data && (
+                {!loading ? (
+                  episode && (
                     <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                      {epiStatus === "ok" ? (
+                      {
                         episode?.length !== 0 && episode ? (
                           episode?.map((epi, index) => {
                             return (
@@ -744,9 +636,7 @@ export default function Info({ info, color }) {
                                 className="flex flex-col gap-3 px-2"
                               >
                                 <Link
-                                  href={`/anime/watch/${epi.id}/${info.id}/${
-                                    stall ? `9anime` : ""
-                                  }`}
+                                  href={`/anime/watch/${epi.id}/${info.id}`}
                                   className={`text-start text-sm lg:text-lg ${
                                     progress && epi.number <= progress
                                       ? "text-[#5f5f5f]"
@@ -775,23 +665,7 @@ export default function Info({ info, color }) {
                         ) : (
                           <p>No Episodes Available</p>
                         )
-                      ) : (
-                        // <p className="flex-center">
-                        //   Something went wrong, can't retrieve any episodes :/
-                        // </p>
-                        <div className="flex flex-col">
-                          {/* <h1>{epiStatus} while retrieving data</h1> */}
-                          <pre
-                            className={`rounded-md ${getLanguageClassName(
-                              "bash"
-                            )}`}
-                          >
-                            <code>
-                              Something went wrong while retrieving data :/
-                            </code>
-                          </pre>
-                        </div>
-                      )}
+                        }
                     </div>
                   )
                 ) : (
@@ -815,8 +689,6 @@ export default function Info({ info, color }) {
                 />
               </div>
             )}
-            <div></div>
-            <div></div>
           </div>
         </Layout>
       </SkeletonTheme>
@@ -901,17 +773,3 @@ function setTxtColor(hexColor) {
   const brightness = getBrightness(hexColor);
   return brightness < 150 ? "#fff" : "#000";
 }
-
-const getLanguageClassName = (language) => {
-  switch (language) {
-    case "javascript":
-      return "language-javascript";
-    case "html":
-      return "language-html";
-    case "bash":
-      return "language-bash";
-    // add more languages here as needed
-    default:
-      return "";
-  }
-};

@@ -2,21 +2,6 @@ import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/useAnilist";
 
-const fontSize = [
-  {
-    html: "Small",
-    size: "16px",
-  },
-  {
-    html: "Medium",
-    size: "36px",
-  },
-  {
-    html: "Large",
-    size: "56px",
-  },
-];
-
 export default function VideoPlayer({
   data,
   id,
@@ -30,55 +15,21 @@ export default function VideoPlayer({
   poster,
   proxy,
 }) {
-  const [url, setUrl] = useState();
+  const [url, setUrl] = useState('');
   const [source, setSource] = useState([]);
-  const [subtitle, setSubtitle] = useState();
-  const [defSub, setDefSub] = useState();
   const { markProgress } = useAniList(session);
 
   const [resolution, setResolution] = useState("auto");
-  const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
-  const [defSize, setDefSize] = useState();
-  // const [thumbnails, setThumbnails] = useState();
-
-  // console.log(thumbnails);
 
   useEffect(() => {
     const resol = localStorage.getItem("quality");
-    const sub = JSON.parse(localStorage.getItem("subSize"));
     if (resol) {
       setResolution(resol);
     }
 
-    const size = fontSize.map((i) => {
-      const isDefault = !sub ? i.html === "Small" : i.html === sub?.html;
-      return {
-        ...(isDefault && { default: true }),
-        html: i.html,
-        size: i.size,
-      };
-    });
-
-    const defSize = size?.find((i) => i?.default === true);
-    setDefSize(defSize);
-    setSubSize(size);
-
     async function compiler() {
       try {
-        // const dataEpi = data?.sources;
-        // const referer = data?.headers?.Referer;
-
-        // let sumber = dataEpi?.find(
-        //   (source) =>
-        //     source.quality === "default" ||
-        //     source.quality === "1080p" ||
-        //     source.quality === "720p" ||
-        //     source.quality === "480p" ||
-        //     source.quality === "360p" ||
-        //     source.quality === "240p" ||
-        //     source.quality === "144p"
-        // );
-
+        const referer = data?.headers?.Referer
         const source = data.sources.map((items) => {
           const isDefault =
             resolution === "auto"
@@ -87,41 +38,26 @@ export default function VideoPlayer({
           return {
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
-            url: `${proxy}${items.url}`,
+            // url: `${proxy}${items.url}`,
+            url: `https://cors.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
+            referer ? `&referer=${encodeURIComponent(referer)}` : ""
+          }`,
           };
-          // url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
+          // url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
           //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
           // }`,
         });
 
         const defSource = source?.find((i) => i?.default === true);
 
-        const defUrl = defSource?.url;
+        if (defSource) {
+          setUrl(defSource.url);
+        }
+
         // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
         //   sumber.url
         // )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
 
-        const subtitle = data?.subtitles
-          .filter((subtitle) => subtitle.lang !== "Thumbnails")
-          .map((subtitle) => {
-            const isEnglish = subtitle.lang === "English";
-            return {
-              ...(isEnglish && { default: true }),
-              url: subtitle.url,
-              html: `${subtitle.lang}`,
-            };
-          });
-
-        const defSub = data?.subtitles.find((i) => i.lang === "English");
-        // const thumb = data?.subtitles.find((i) => i.lang === "Thumbnails");
-
-        // setThumbnails(thumb?.url);
-        setDefSub(defSub?.url);
-
-        // console.log(subtitle);
-        setSubtitle(subtitle);
-
-        setUrl(defUrl);
         setSource(source);
       } catch (error) {
         console.error(error);
@@ -139,24 +75,11 @@ export default function VideoPlayer({
             url: `${url}`,
             title: `${title}`,
             autoplay: true,
-            subtitle: {
-              url: `${defSub}`,
-              type: "vtt",
-              encoding: "utf-8",
-              name: "English",
-              escape: false,
-              style: {
-                color: "#FFFF",
-                fontSize: `${defSize?.size}`,
-              },
-            },
             screenshot: true,
             poster: poster ? poster : "",
           }}
           res={resolution}
           quality={source}
-          subSize={subSize}
-          subtitles={subtitle}
           style={{
             width: "100%",
             height: "100%",
@@ -169,12 +92,7 @@ export default function VideoPlayer({
               const duration = art.duration;
               const percentage = seekTime / duration;
 
-              if (subSize) {
-                art.subtitle.style.fontSize = subSize?.size;
-              }
-
               if (percentage >= 0.9) {
-                // use >= instead of >
                 art.currentTime = 0;
                 console.log("Video started from the beginning");
               } else {
@@ -194,8 +112,6 @@ export default function VideoPlayer({
                 playbackRate: art.playbackRate,
                 position: art.currentTime,
               });
-
-              // console.log(percentage);
 
               if (percentage >= 0.9) {
                 // use >= instead of >

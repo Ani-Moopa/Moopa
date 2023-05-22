@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { closestMatch } from "closest-match";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
@@ -24,13 +23,14 @@ const VideoPlayer = dynamic(() =>
 export default function Info({ sessions, id, aniId, provider, proxy }) {
   const [epiData, setEpiData] = useState(null);
   const [data, setAniData] = useState(null);
-  const [fallback, setEpiFallback] = useState(null);
   const [skip, setSkip] = useState({ op: null, ed: null });
   const [statusWatch, setStatusWatch] = useState("CURRENT");
   const [playingEpisode, setPlayingEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [playingTitle, setPlayingTitle] = useState(null);
   const [poster, setPoster] = useState(null);
+
+  const [episodes, setEpisodes] = useState([]);
 
   const router = useRouter();
 
@@ -64,8 +64,6 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
     });
 
     const fetchData = async () => {
-      // setLoading(true);
-      let epiFallback = null;
 
       try {
         if (provider) {
@@ -76,7 +74,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
           setEpiData(epiData);
         } else {
           const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/watch/${id}?provider=zoro`
+            `https://api.moopa.my.id/meta/anilist/watch/${id}`
           );
           const epiData = await res.json();
           setEpiData(epiData);
@@ -97,46 +95,20 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
         setAniData(aniData);
       } else {
         const res2 = await fetch(
-          `https://api.moopa.my.id/meta/anilist/info/${aniId}?provider=zoro`
+          `https://api.moopa.my.id/meta/anilist/info/${aniId}`
         );
         aniData = await res2.json();
+        setEpisodes(aniData.episodes?.reverse());
         setAniData(aniData);
-      }
-
-      if (aniData.episodes.length === 0) {
-        const res = await fetch(
-          `https://api.moopa.my.id/anime/gogoanime/${
-            aniData.title.romaji || aniData.title.english
-          }`
-        );
-        const data = await res.json();
-        const release = data.results.map((i) => i.releaseDate);
-
-        const match = closestMatch(aniData.startDate.year, release);
-        const anime = data.results.find((i) => i.releaseDate === match);
-        if (anime.length !== 0) {
-          const infos = await fetch(
-            `https://api.moopa.my.id/anime/gogoanime/info/${anime.id}`
-          ).then((res) => res.json());
-          epiFallback = infos.episodes;
-        }
-        setEpiFallback(epiFallback);
       }
 
       let playingEpisode = aniData.episodes
         .filter((item) => item.id == id)
         .map((item) => item.number);
 
-      if (aniData.episodes.length === 0) {
-        playingEpisode = epiFallback
-          .filter((item) => item.id == id)
-          .map((item) => item.number);
-      }
-
       setPlayingEpisode(playingEpisode);
 
       const playing = aniData.episodes.filter((item) => item.id == id);
-      // .map((item) => item.);
 
       setPoster(playing);
 
@@ -290,7 +262,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
           <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
             <div className="w-screen lg:w-[67%]">
               {loading ? (
-                <div className="aspect-video z-20">
+                <div className="aspect-video z-20 bg-black">
                   <VideoPlayer
                     key={id}
                     data={epiData}
@@ -310,8 +282,8 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                 <div className="aspect-video bg-black" />
               )}
               <div>
-                {data ? (
-                  data.episodes.length > 0 ? (
+                {
+                  data && data?.episodes.length > 0 ? (
                     data.episodes
                       .filter((items) => items.id == id)
                       .map((item, index) => (
@@ -389,87 +361,6 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                           </div>
                         </div>
                       ))
-                  ) : (
-                    <>
-                      {fallback &&
-                        fallback
-                          .filter((item) => item.id == id)
-                          .map((item) => (
-                            <div key={item.id} className="flex justify-between">
-                              <div className="p-3 grid gap-2 w-[60%]">
-                                <div className="text-xl font-outfit font-semibold line-clamp-2">
-                                  <Link
-                                    href={`/anime/${data.id}`}
-                                    className="inline hover:underline"
-                                  >
-                                    {data.title.romaji || data.title.english}
-                                  </Link>
-                                </div>
-                                <h4 className="text-sm font-karla font-light">
-                                  Episode {item.number}
-                                </h4>
-                              </div>
-                              <div className="w-[50%] flex gap-4 items-center justify-end px-4">
-                                <div className="relative">
-                                  <select
-                                    className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
-                                    value={item.number}
-                                    onChange={(e) => {
-                                      const selectedEpisode = fallback.find(
-                                        (episode) =>
-                                          episode.number ===
-                                          parseInt(e.target.value)
-                                      );
-                                      router.push(
-                                        `/anime/watch/${selectedEpisode.id}/${data.id}`
-                                      );
-                                    }}
-                                  >
-                                    {fallback.map((episode) => (
-                                      <option
-                                        key={episode.number}
-                                        value={episode.number}
-                                      >
-                                        Episode {episode.number}
-                                      </option>
-                                    ))}
-                                  </select>
-                                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
-                                </div>
-                                <button
-                                  className={`${
-                                    item.number === fallback.length
-                                      ? "pointer-events-none"
-                                      : ""
-                                  } relative group`}
-                                  onClick={() => {
-                                    const currentEpisodeIndex =
-                                      fallback.findIndex(
-                                        (episode) =>
-                                          episode.number === item.number
-                                      );
-                                    if (
-                                      currentEpisodeIndex !== -1 &&
-                                      currentEpisodeIndex < fallback.length - 1
-                                    ) {
-                                      const nextEpisode =
-                                        fallback[currentEpisodeIndex + 1];
-                                      router.push(
-                                        `/anime/watch/${nextEpisode.id}/${data.id}`
-                                      );
-                                    }
-                                  }}
-                                >
-                                  <span className="absolute z-[9999] -left-11 -top-14 p-2 shadow-xl rounded-md transform transition-all whitespace-nowrap bg-secondary lg:group-hover:block group-hover:opacity-1 hidden font-karla font-bold">
-                                    Next Episode
-                                  </span>
-                                  <ForwardIcon className="w-6 h-6" />
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                    </>
-                  )
                 ) : (
                   <div className="p-3 grid gap-2">
                     <div className="text-xl font-outfit font-semibold line-clamp-2">
@@ -492,6 +383,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                         alt="Anime Cover"
                         width={1000}
                         height={1000}
+                        priority
                         className="object-cover aspect-[9/13] h-[240px] rounded-md"
                       />
                     ) : (
@@ -581,12 +473,12 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                 Up Next
               </h1>
               <div className="flex flex-col gap-5 lg:pl-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
-                {data ? (
-                  data.episodes.length > 0 ? (
+                {
+                  data && data?.episodes.length > 0 ? (
                     data.episodes.some(
                       (item) => item.title && item.description
                     ) ? (
-                      data.episodes.map((item) => {
+                      episodes.map((item) => {
                         return (
                           <Link
                             href={`/anime/watch/${item.id}/${data.id}${
@@ -599,18 +491,20 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                                 : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                             }`}
                           >
-                            <div className="w-[40%] h-full relative shrink-0">
-                              <Image
-                                src={item.image}
-                                alt="image"
-                                height={1000}
-                                width={1000}
-                                className={`object-cover rounded-lg h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
-                                  item.id == id
-                                    ? "brightness-[30%]"
-                                    : "brightness-75"
-                                }`}
-                              />
+                            <div className="w-[40%] h-[110px] relative ">
+                              <div className="">
+                                <Image
+                                  src={item.image}
+                                  alt="Anime Cover"
+                                  width={1000}
+                                  height={1000}
+                                  className={`object-cover rounded-lg w-[240px] h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
+                                    item.id == id
+                                      ? "brightness-[30%]"
+                                      : "brightness-75"
+                                  }`}
+                                />
+                              </div>
                               <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
                                 Episode {item.number}
                               </span>
@@ -661,24 +555,6 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                         );
                       })
                     )
-                  ) : (
-                    fallback &&
-                    fallback.map((item) => {
-                      return (
-                        <Link
-                          href={`/anime/watch/${item.id}/${data.id}`}
-                          key={item.id}
-                          className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                            item.id == id
-                              ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
-                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                          }`}
-                        >
-                          Episode {item.number}
-                        </Link>
-                      );
-                    })
-                  )
                 ) : (
                   <>
                     {[1].map((item) => (
