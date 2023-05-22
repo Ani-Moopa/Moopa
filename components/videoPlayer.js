@@ -39,7 +39,7 @@ export default function VideoPlayer({
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
             // url: `${proxy}${items.url}`,
-            url: `https://cors.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
+            url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
             referer ? `&referer=${encodeURIComponent(referer)}` : ""
           }`,
           };
