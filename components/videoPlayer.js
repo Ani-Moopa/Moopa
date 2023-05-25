@@ -15,7 +15,7 @@ export default function VideoPlayer({
   poster,
   proxy,
 }) {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [source, setSource] = useState([]);
   const { markProgress } = useAniList(session);
 
@@ -29,7 +29,7 @@ export default function VideoPlayer({
 
     async function compiler() {
       try {
-        const referer = data?.headers?.Referer
+        const referer = data?.headers?.Referer;
         const source = data.sources.map((items) => {
           const isDefault =
             resolution === "auto"
@@ -39,9 +39,9 @@ export default function VideoPlayer({
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
             // url: `${proxy}${items.url}`,
-            url: `https://cors.moopa.my.id/?url=${encodeURIComponent(items.url)}${
-            referer ? `&referer=${encodeURIComponent(referer)}` : ""
-          }`,
+            url: `https://cors.moopa.my.id/?url=${encodeURIComponent(
+              items.url
+            )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`,
           };
           // url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
           //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
@@ -87,6 +87,7 @@ export default function VideoPlayer({
           }}
           getInstance={(art) => {
             art.on("ready", () => {
+              // console.log(art.storage.settings);
               const seek = art.storage.get(id);
               const seekTime = seek?.time || 0;
               const duration = art.duration;
@@ -121,8 +122,13 @@ export default function VideoPlayer({
               }
             });
 
-            art.on("video:timeupdate", function () {
+            art.on("video:timeupdate", () => {
               var currentTime = art.currentTime;
+              // console.log(art.currentTime);
+              art.storage.set(id, {
+                time: art.currentTime,
+                duration: art.duration,
+              });
 
               if (
                 op &&
@@ -179,9 +185,12 @@ export default function VideoPlayer({
               }
             });
 
-            art.on("destroy", async () => {
-              art.storage.set(id, { time: art.currentTime });
-            });
+            // art.on("destroy", async () => {
+            //   art.storage.set(id, {
+            //     time: art.currentTime,
+            //     duration: art.duration,
+            //   });
+            // });
           }}
         />
       ) : (

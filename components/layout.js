@@ -9,11 +9,8 @@ function Layout(props) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const bodyHeight = document.body.offsetHeight;
-      const windowHeight = window.innerHeight;
-      const scrollPercent = (scrollY / (bodyHeight - windowHeight)) * 100;
 
-      if (scrollPercent <= 20) {
+      if (scrollY <= 200) {
         setIsAtTop(true);
         setIsScrollingDown(false);
       } else if (scrollY > lastScrollY) {

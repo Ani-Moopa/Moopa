@@ -77,5 +77,6 @@ module.exports = {
       nocompatible: true,
     }),
     require("tailwind-scrollbar-hide"),
+    require("@shrutibalasa/tailwind-grid-auto-fit"),
   ],
 };

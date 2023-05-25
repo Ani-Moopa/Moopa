@@ -21,124 +21,11 @@ import { signIn, useSession } from "next-auth/react";
 import AniList from "../../components/media/aniList";
 import ListEditor from "../../components/listEditor";
 
-const query = `
-          query ($username: String, $status: MediaListStatus) {
-            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
-              user {
-                id
-                name
-                about (asHtml: true)
-                createdAt
-                avatar {
-                    large
-                }
-                statistics {
-                  anime {
-                      count
-                      episodesWatched
-                      meanScore
-                      minutesWatched
-                  }
-              }
-                bannerImage
-                mediaListOptions {
-                  animeList {
-                      sectionOrder
-                  }
-                }
-              }
-              lists {
-                status
-                name
-                entries {
-                  id
-                  mediaId
-                  status
-                  progress
-                  score
-                  media {
-                    id
-                    status
-                    title {
-                      english
-                      romaji
-                    }
-                    episodes
-                    coverImage {
-                      large
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `;
+import { GET_MEDIA_USER } from "../../queries";
+import { GET_MEDIA_INFO } from "../../queries";
 
-const infoQuery = `query ($id: Int) {
-    Media(id: $id) {
-        id
-        type
-        title {
-            romaji
-            english
-            native
-        }
-        coverImage {
-            extraLarge
-            large
-            color
-        }
-        bannerImage
-        description
-        episodes
-        nextAiringEpisode {
-            episode
-            airingAt
-        }
-        averageScore
-        popularity
-        status
-        startDate {
-            year
-        }
-        duration
-        genres
-        relations {
-            edges {
-                relationType
-                node {
-                    id
-                type
-                status
-                title {
-                    romaji
-                    english
-                    userPreferred
-                }
-                coverImage {
-                    extraLarge
-                    large
-                    color
-                }
-                }
-            }
-        }
-        recommendations {
-                nodes {
-                    mediaRecommendation {
-                        id
-                        title {
-                            romaji
-                        }
-                        coverImage {
-                            extraLarge
-                            large
-                        }
-                    }
-            }
-        }
-    }
-}`;
+// import { aniInfo } from "../../components/devComp/data";
+// console.log(GET_MEDIA_USER);
 
 export default function Info({ info, color }) {
   const { data: session } = useSession();
@@ -147,99 +34,119 @@ export default function Info({ info, color }) {
   const [progress, setProgress] = useState(0);
   const [statuses, setStatuses] = useState(null);
   const [domainUrl, setDomainUrl] = useState("");
-
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState(false);
-
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
 
-  const rec = info?.recommendations?.nodes.map(
+  const [epiView, setEpiView] = useState("3");
+
+  const [artStorage, setArtStorage] = useState(null);
+
+  const rec = info?.recommendations?.nodes?.map(
     (data) => data.mediaRecommendation
   );
 
   useEffect(() => {
-    const { protocol, host } = window.location;
-    const url = `${protocol}//${host}`;
-    setDomainUrl(url);
-
+    handleClose();
     async function fetchData() {
       setLoading(true);
       if (id) {
         try {
-          setEpisode(null)
-          const res = await fetch(`https://api.moopa.my.id/meta/anilist/info/${info.id}`)
-          const data = await res.json();
+          const { protocol, host } = window.location;
+          const url = `${protocol}//${host}`;
 
-          if (res.status === 500) {
-            setEpisode([]);
-          } else if (res.status === 404) {
-            window.location.href("/404");
-          } else if (!data || data?.episodes?.length === 0) {
+          const view = localStorage.getItem("epiView");
+
+          setDomainUrl(url);
+
+          setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
+
+          setEpisode(null);
+          setProgress(0);
+          setStatuses(null);
+
+          const res = await fetch(
+            `https://api.moopa.my.id/meta/anilist/info/${info.id}`
+          );
+          // const res = true;
+          if (res.status === 500 || res.status === 404) {
+            // if (res === false) {
             setEpisode([]);
           } else {
-            setEpisode(data.episodes?.reverse());
-          }
+            const data = await res.json();
+            // const data = aniInfo;
+            if (!data || data?.episodes?.length === 0) {
+              setEpisode([]);
+            } else {
+              if (data.episodes?.some((i) => i.title === null)) {
+                setEpiView("3");
+              } else if (view) {
+                setEpiView(view);
+              } else {
+                setEpiView("3");
+              }
+              setEpisode(data?.episodes.reverse());
+            }
 
-          if (session?.user?.name) {
-            const response = await fetch("https://graphql.anilist.co/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                query: query,
-                variables: {
-                  username: session?.user?.name,
+            if (session?.user?.name) {
+              const response = await fetch("https://graphql.anilist.co/", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
                 },
-              }),
-            });
+                body: JSON.stringify({
+                  query: GET_MEDIA_USER,
+                  variables: {
+                    username: session?.user?.name,
+                  },
+                }),
+              });
 
-            const dat = await response.json();
+              const responseData = await response.json();
 
-            const prog = dat.data.MediaListCollection;
+              const prog = responseData?.data?.MediaListCollection;
 
-            const gat = prog.lists.map((item) => item.entries);
-            const git = gat.map((item) =>
-              item.find((item) => item.mediaId === parseInt(id[0]))
-            );
-            const gut = git?.find((item) => item?.mediaId === parseInt(id[0]));
+              if (prog && prog.lists.length > 0) {
+                const gut = prog.lists
+                  .flatMap((item) => item.entries)
+                  .find((item) => item.mediaId === parseInt(id[0]));
 
-            if (gut) {
-              setProgress(gut?.progress);
-              if (gut.status === "CURRENT") {
-                setStatuses({ name: "Watching", value: "CURRENT" });
-              } else if (gut.status === "PLANNING") {
-                setStatuses({ name: "Plan to watch", value: "PLANNING" });
-              } else if (gut.status === "COMPLETED") {
-                setStatuses({ name: "Completed", value: "COMPLETED" });
-              } else if (gut.status === "DROPPED") {
-                setStatuses({ name: "Dropped", value: "DROPPED" });
-              } else if (gut.status === "PAUSED") {
-                setStatuses({ name: "Paused", value: "PAUSED" });
-              } else if (gut.status === "REPEATING") {
-                setStatuses({ name: "Rewatching", value: "REPEATING" });
+                if (gut) {
+                  setProgress(gut.progress);
+                  const statusMapping = {
+                    CURRENT: { name: "Watching", value: "CURRENT" },
+                    PLANNING: { name: "Plan to watch", value: "PLANNING" },
+                    COMPLETED: { name: "Completed", value: "COMPLETED" },
+                    DROPPED: { name: "Dropped", value: "DROPPED" },
+                    PAUSED: { name: "Paused", value: "PAUSED" },
+                    REPEATING: { name: "Rewatching", value: "REPEATING" },
+                  };
+                  setStatuses(statusMapping[gut.status]);
+                }
               }
             }
-          }
 
-          if (data.nextAiringEpisode) {
-            setTime(
-              convertSecondsToTime(data.nextAiringEpisode.timeUntilAiring)
-            );
+            if (data.nextAiringEpisode) {
+              setTime(
+                convertSecondsToTime(data.nextAiringEpisode.timeUntilAiring)
+              );
+            }
           }
-
-          setLoading(false);
         } catch (error) {
-          console.log(error);
+          console.error(error);
           setTimeout(() => {
             window.location.reload();
           }, 1000);
+        } finally {
+          setLoading(false);
         }
       }
     }
     fetchData();
-  }, [id, session?.user?.name, info]);
+  }, [id, info, session?.user?.name]);
+
+  // console.log();
 
   function handleOpen() {
     setOpen(true);
@@ -601,71 +508,294 @@ export default function Info({ info, color }) {
                   )}
                 </div>
               </div>
-              <div className="z-20 flex flex-col gap-10 p-3 lg:p-0">
-                <div className="flex items-center lg:gap-10 gap-7">
-                  {info && (
-                    <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
-                      Episodes
-                    </h1>
-                  )}
-                  {info?.nextAiringEpisode && (
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
-                        <h1>Next :</h1>
-                        <div
-                          className="px-5 rounded-sm font-karla font-bold bg-white text-black"
-                        >
-                          {time}
+              <div className="flex flex-col gap-5 lg:gap-10 p-3 lg:p-0">
+                <div className="flex sm:flex-row flex-col gap-5 md:gap-0 justify-between ">
+                  <div className="flex items-center lg:gap-10 gap-7">
+                    {info && (
+                      <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
+                        Episodes
+                      </h1>
+                    )}
+                    {info?.nextAiringEpisode && (
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
+                          <h1>Next :</h1>
+                          <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
+                            {time}
+                          </div>
+                        </div>
+                        <div className="h-6 w-6">
+                          <ClockIcon />
                         </div>
                       </div>
-                      <div className="h-6 w-6">
-                        <ClockIcon />
-                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-3 rounded-sm items-center p-2">
+                    <div
+                      className={
+                        episode?.length > 0
+                          ? episode?.some((item) => item?.title === null)
+                            ? "pointer-events-none"
+                            : "cursor-pointer"
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("1");
+                        localStorage.setItem("epiView", "1");
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="31"
+                        height="20"
+                        fill="none"
+                        viewBox="0 0 31 20"
+                      >
+                        <rect
+                          width="31"
+                          height="20"
+                          className={`${
+                            episode?.length > 0
+                              ? episode?.some((item) => item?.title === null)
+                                ? "fill-[#1c1c22]"
+                                : epiView === "1"
+                                ? "fill-action"
+                                : "fill-[#3A3A44]"
+                              : "fill-[#1c1c22]"
+                          }`}
+                          rx="3"
+                        ></rect>
+                      </svg>
                     </div>
-                  )}
+                    <div
+                      className={
+                        episode?.length > 0
+                          ? episode?.some((item) => item?.title === null)
+                            ? "pointer-events-none"
+                            : "cursor-pointer"
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("2");
+                        localStorage.setItem("epiView", "2");
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="33"
+                        height="20"
+                        fill="none"
+                        className={`${
+                          episode?.length > 0
+                            ? episode?.some((item) => item?.title === null)
+                              ? "fill-[#1c1c22]"
+                              : epiView === "2"
+                              ? "fill-action"
+                              : "fill-[#3A3A44]"
+                            : "fill-[#1c1c22]"
+                        }`}
+                        viewBox="0 0 33 20"
+                      >
+                        <rect width="33" height="7" y="1" rx="3"></rect>
+                        <rect width="33" height="7" y="12" rx="3"></rect>
+                      </svg>
+                    </div>
+                    <div
+                      className={
+                        episode?.length > 0
+                          ? `cursor-pointer`
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("3");
+                        localStorage.setItem("epiView", "3");
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="33"
+                        height="20"
+                        fill="none"
+                        className={`${
+                          episode?.length > 0
+                            ? epiView === "3"
+                              ? "fill-action"
+                              : "fill-[#3A3A44]"
+                            : "fill-[#1c1c22]"
+                        }`}
+                        viewBox="0 0 33 20"
+                      >
+                        <rect width="29" height="4" x="2" y="2" rx="2"></rect>
+                        <rect width="29" height="4" x="2" y="8" rx="2"></rect>
+                        <rect width="16" height="4" x="2" y="14" rx="2"></rect>
+                      </svg>
+                    </div>
+                  </div>
                 </div>
                 {!loading ? (
                   episode && (
-                    <div className="flex h-[640px] flex-col gap-5 scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37]">
-                      {
-                        episode?.length !== 0 && episode ? (
-                          episode?.map((epi, index) => {
-                            return (
-                              <div
-                                key={index}
-                                className="flex flex-col gap-3 px-2"
-                              >
+                    <div
+                      className={`${
+                        epiView === "3" &&
+                        "scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] h-[640px]"
+                      }`}
+                    >
+                      {episode?.length !== 0 && episode ? (
+                        <div
+                          className={`grid ${
+                            epiView === "1"
+                              ? "grid-auto-fit gap-5 lg:gap-8"
+                              : "flex flex-col gap-5"
+                          }  pb-5 ${
+                            epiView === "3" ? "" : "place-items-center"
+                          }`}
+                        >
+                          {epiView === "1"
+                            ? episode?.map((epi, index) => {
+                                const time = artStorage?.[epi?.id]?.time;
+                                const duration =
+                                  artStorage?.[epi?.id]?.duration;
+                                let prog = (time / duration) * 100;
+                                if (prog > 90) prog = 100;
+                                return (
+                                  <Link
+                                    key={index}
+                                    href={`/anime/watch/${epi.id}/${info.id}`}
+                                    className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
+                                  >
+                                    <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
+                                      Episode {epi?.number}
+                                    </span>
+                                    <span
+                                      className={`absolute bottom-7 left-0 h-1 bg-red-600`}
+                                      style={{
+                                        width:
+                                          progress &&
+                                          artStorage &&
+                                          epi?.number <= progress
+                                            ? "100%"
+                                            : artStorage?.[epi?.id]
+                                            ? `${prog}%`
+                                            : "0%",
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 bg-black z-30 opacity-20" />
+                                    <Image
+                                      src={epi?.image}
+                                      alt="epi image"
+                                      width={500}
+                                      height={500}
+                                      className="object-cover w-full h-[150px] sm:h-[100px] z-20"
+                                    />
+                                  </Link>
+                                );
+                              })
+                            : ""}
+                          {epiView === "2" &&
+                            episode?.map((epi, index) => {
+                              const time = artStorage?.[epi?.id]?.time;
+                              const duration = artStorage?.[epi?.id]?.duration;
+                              let prog = (time / duration) * 100;
+                              if (prog > 90) prog = 100;
+                              return (
                                 <Link
+                                  key={index}
                                   href={`/anime/watch/${epi.id}/${info.id}`}
-                                  className={`text-start text-sm lg:text-lg ${
-                                    progress && epi.number <= progress
-                                      ? "text-[#5f5f5f]"
-                                      : "text-white"
-                                  }`}
+                                  className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                                 >
-                                  <p>Episode {epi.number}</p>
-                                  {epi.title && (
-                                    <p
-                                      className={`text-xs lg:text-sm ${
-                                        progress && epi.number <= progress
-                                          ? "text-[#5f5f5f]"
-                                          : "text-[#b1b1b1]"
-                                      } italic`}
-                                    >
-                                      "{epi.title}"
-                                    </p>
-                                  )}
+                                  <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
+                                    <div className="relative">
+                                      <Image
+                                        src={epi?.image}
+                                        alt="Anime Cover"
+                                        width={1000}
+                                        height={1000}
+                                        className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
+                                      />
+                                      <span
+                                        className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                                        style={{
+                                          width:
+                                            progress &&
+                                            artStorage &&
+                                            epi?.number <= progress
+                                              ? "100%"
+                                              : artStorage?.[epi?.id]
+                                              ? `${prog}%`
+                                              : "0",
+                                        }}
+                                      />
+                                      <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
+                                        Episode {epi?.number}
+                                      </span>
+                                      <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 20 20"
+                                          fill="currentColor"
+                                          className="w-5 h-5 invisible group-hover:visible"
+                                        >
+                                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-5 ${
+                                      epi?.id == id ? "text-[#7a7a7a]" : ""
+                                    }`}
+                                  >
+                                    <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
+                                      {epi?.title}
+                                    </h1>
+                                    {epi?.description && (
+                                      <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
+                                        {epi?.description}
+                                      </p>
+                                    )}
+                                  </div>
                                 </Link>
-                                {index !== episode?.length - 1 && (
-                                  <span className="h-[1px] bg-white" />
-                                )}
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <p>No Episodes Available</p>
-                        )
-                        }
+                              );
+                            })}
+                          {epiView === "3" &&
+                            episode?.map((epi, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex flex-col gap-3 px-2"
+                                >
+                                  <Link
+                                    href={`/anime/watch/${epi.id}/${info.id}`}
+                                    className={`text-start text-sm lg:text-lg ${
+                                      progress && epi.number <= progress
+                                        ? "text-[#5f5f5f]"
+                                        : "text-white"
+                                    }`}
+                                  >
+                                    <p>Episode {epi.number}</p>
+                                    {epi.title && (
+                                      <p
+                                        className={`text-xs lg:text-sm ${
+                                          progress && epi.number <= progress
+                                            ? "text-[#5f5f5f]"
+                                            : "text-[#b1b1b1]"
+                                        } italic`}
+                                      >
+                                        "{epi.title}"
+                                      </p>
+                                    )}
+                                  </Link>
+                                  {index !== episode?.length - 1 && (
+                                    <span className="h-[1px] bg-white" />
+                                  )}
+                                </div>
+                              );
+                            })}
+                        </div>
+                      ) : (
+                        <p>No Episodes Available</p>
+                      )}
                     </div>
                   )
                 ) : (
@@ -705,7 +835,7 @@ export async function getServerSideProps(context) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      query: infoQuery,
+      query: GET_MEDIA_INFO,
       variables: {
         id: id?.[0],
       },
