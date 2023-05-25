@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+/pages/test.js
+/components/devComp
 
 # next.js
 /.next/
@@ -29,6 +31,7 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+.vs
 
 # vercel
 .vercel
@@ -40,5 +43,3 @@ yarn-error.log*
 **/public/sw.js.map
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
-
-.vs

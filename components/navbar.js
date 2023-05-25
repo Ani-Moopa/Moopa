@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -8,12 +7,6 @@ function Navbar(props) {
   const { data: session, status } = useSession();
   const [isVisible, setIsVisible] = useState(false);
   const [fade, setFade] = useState(false);
-  const { systemTheme, theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleShowClick = () => {
     setIsVisible(true);

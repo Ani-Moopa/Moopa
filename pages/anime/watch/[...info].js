@@ -14,7 +14,10 @@ import { Navigasi } from "../..";
 import { ChevronDownIcon, ForwardIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 
+import { GET_MEDIA_USER } from "../../../queries";
+
 import dotenv from "dotenv";
+import Footer from "../../../components/footer";
 
 const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
@@ -29,8 +32,10 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
   const [loading, setLoading] = useState(false);
   const [playingTitle, setPlayingTitle] = useState(null);
   const [poster, setPoster] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   const [episodes, setEpisodes] = useState([]);
+  const [artStorage, setArtStorage] = useState(null);
 
   const router = useRouter();
 
@@ -64,7 +69,6 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
     });
 
     const fetchData = async () => {
-
       try {
         if (provider) {
           const res = await fetch(
@@ -86,6 +90,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
       }
 
       let aniData = null;
+      setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
 
       if (provider) {
         const res = await fetch(
@@ -138,58 +143,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            query: `
-          query ($username: String, $status: MediaListStatus) {
-            MediaListCollection(userName: $username, type: ANIME, status: $status, sort: SCORE_DESC) {
-              user {
-                id
-                name
-                about (asHtml: true)
-                createdAt
-                avatar {
-                    large
-                }
-                statistics {
-                  anime {
-                      count
-                      episodesWatched
-                      meanScore
-                      minutesWatched
-                  }
-              }
-                bannerImage
-                mediaListOptions {
-                  animeList {
-                      sectionOrder
-                  }
-                }
-              }
-              lists {
-                status
-                name
-                entries {
-                  id
-                  mediaId
-                  status
-                  progress
-                  score
-                  media {
-                    id
-                    status
-                    title {
-                      english
-                      romaji
-                    }
-                    episodes
-                    coverImage {
-                      large
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
+            query: GET_MEDIA_USER,
             variables: {
               username: sessions?.user.name,
             },
@@ -205,6 +159,10 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
           item?.find((item) => item.media.id === parseInt(aniId))
         );
         const gut = git?.find((item) => item?.media.id === parseInt(aniId));
+
+        if (gut) {
+          setProgress(gut.progress);
+        }
 
         if (gut?.status === "COMPLETED") {
           setStatusWatch("REPEATING");
@@ -282,85 +240,83 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                 <div className="aspect-video bg-black" />
               )}
               <div>
-                {
-                  data && data?.episodes.length > 0 ? (
-                    data.episodes
-                      .filter((items) => items.id == id)
-                      .map((item, index) => (
-                        <div className="flex justify-between" key={index}>
-                          <div key={item.id} className="p-3 grid gap-2 w-[60%]">
-                            <div className="text-xl font-outfit font-semibold line-clamp-1">
-                              <Link
-                                href={`/anime/${data.id}`}
-                                className="inline hover:underline"
-                              >
-                                {item.title ||
-                                  data.title.romaji ||
-                                  data.title.english}
-                              </Link>
-                            </div>
-                            <h4 className="text-sm font-karla font-light">
-                              Episode {item.number}
-                            </h4>
+                {data && data?.episodes.length > 0 ? (
+                  data.episodes
+                    .filter((items) => items.id == id)
+                    .map((item, index) => (
+                      <div className="flex justify-between" key={index}>
+                        <div key={item.id} className="p-3 grid gap-2 w-[60%]">
+                          <div className="text-xl font-outfit font-semibold line-clamp-1">
+                            <Link
+                              href={`/anime/${data.id}`}
+                              className="inline hover:underline"
+                            >
+                              {item.title ||
+                                data.title.romaji ||
+                                data.title.english}
+                            </Link>
                           </div>
-                          <div className="w-[50%] flex gap-4 items-center justify-end px-4">
-                            <div className="relative">
-                              <select
-                                className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
-                                value={item.number}
-                                onChange={(e) => {
-                                  const selectedEpisode = data.episodes.find(
-                                    (episode) =>
-                                      episode.number ===
-                                      parseInt(e.target.value)
-                                  );
-                                  router.push(
-                                    `/anime/watch/${selectedEpisode.id}/${data.id}`
-                                  );
-                                }}
-                              >
-                                {data.episodes.map((episode) => (
-                                  <option
-                                    key={episode.number}
-                                    value={episode.number}
-                                  >
-                                    Episode {episode.number}
-                                  </option>
-                                ))}
-                              </select>
-                              <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
-                            </div>
-                            <button
-                              className={`${
-                                item.number === data.episodes.length
-                                  ? "pointer-events-none"
-                                  : ""
-                              } relative group`}
-                              onClick={() => {
-                                const currentEpisodeIndex =
-                                  data.episodes.findIndex(
-                                    (episode) => episode.number === item.number
-                                  );
-                                if (
-                                  currentEpisodeIndex !== -1 &&
-                                  currentEpisodeIndex < data.episodes.length - 1
-                                ) {
-                                  const nextEpisode =
-                                    data.episodes[currentEpisodeIndex + 1];
-                                  router.push(
-                                    `/anime/watch/${nextEpisode.id}/${data.id}`
-                                  );
-                                }
+                          <h4 className="text-sm font-karla font-light">
+                            Episode {item.number}
+                          </h4>
+                        </div>
+                        <div className="w-[50%] flex gap-4 items-center justify-end px-4">
+                          <div className="relative">
+                            <select
+                              className="flex items-center gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer"
+                              value={item.number}
+                              onChange={(e) => {
+                                const selectedEpisode = data.episodes.find(
+                                  (episode) =>
+                                    episode.number === parseInt(e.target.value)
+                                );
+                                router.push(
+                                  `/anime/watch/${selectedEpisode.id}/${data.id}`
+                                );
                               }}
                             >
-                              <span className="absolute z-[9999] -left-11 -top-14 p-2 shadow-xl rounded-md transform transition-all whitespace-nowrap bg-secondary lg:group-hover:block group-hover:opacity-1 hidden font-karla font-bold">
-                                Next Episode
-                              </span>
-                              <ForwardIcon className="w-6 h-6" />
-                            </button>
+                              {data.episodes.map((episode) => (
+                                <option
+                                  key={episode.number}
+                                  value={episode.number}
+                                >
+                                  Episode {episode.number}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                           </div>
+                          <button
+                            className={`${
+                              item.number === data.episodes.length
+                                ? "pointer-events-none"
+                                : ""
+                            } relative group`}
+                            onClick={() => {
+                              const currentEpisodeIndex =
+                                data.episodes.findIndex(
+                                  (episode) => episode.number === item.number
+                                );
+                              if (
+                                currentEpisodeIndex !== -1 &&
+                                currentEpisodeIndex < data.episodes.length - 1
+                              ) {
+                                const nextEpisode =
+                                  data.episodes[currentEpisodeIndex + 1];
+                                router.push(
+                                  `/anime/watch/${nextEpisode.id}/${data.id}`
+                                );
+                              }
+                            }}
+                          >
+                            <span className="absolute z-[9999] -left-11 -top-14 p-2 shadow-xl rounded-md transform transition-all whitespace-nowrap bg-secondary lg:group-hover:block group-hover:opacity-1 hidden font-karla font-bold">
+                              Next Episode
+                            </span>
+                            <ForwardIcon className="w-6 h-6" />
+                          </button>
                         </div>
-                      ))
+                      </div>
+                    ))
                 ) : (
                   <div className="p-3 grid gap-2">
                     <div className="text-xl font-outfit font-semibold line-clamp-2">
@@ -473,38 +429,53 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                 Up Next
               </h1>
               <div className="flex flex-col gap-5 lg:pl-5 px-2 py-2 scrollbar-thin scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
-                {
-                  data && data?.episodes.length > 0 ? (
-                    data.episodes.some(
-                      (item) => item.title && item.description
-                    ) ? (
-                      episodes.map((item) => {
-                        return (
-                          <Link
-                            href={`/anime/watch/${item.id}/${data.id}${
-                              provider ? "/9anime" : ""
-                            }`}
-                            key={item.id}
-                            className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                              item.id == id
-                                ? "pointer-events-none ring-1 ring-action"
-                                : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                            }`}
-                          >
-                            <div className="w-[40%] h-[110px] relative ">
-                              <div className="">
-                                <Image
-                                  src={item.image}
-                                  alt="Anime Cover"
-                                  width={1000}
-                                  height={1000}
-                                  className={`object-cover rounded-lg w-[240px] h-[110px] shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)] ${
-                                    item.id == id
-                                      ? "brightness-[30%]"
-                                      : "brightness-75"
-                                  }`}
-                                />
-                              </div>
+                {data && data?.episodes.length > 0 ? (
+                  data.episodes.some(
+                    (item) => item.title && item.description
+                  ) ? (
+                    episodes.map((item) => {
+                      const time = artStorage?.[item.id]?.time;
+                      const duration = artStorage?.[item.id]?.duration;
+                      let prog = (time / duration) * 100;
+                      if (prog > 90) prog = 100;
+                      return (
+                        <Link
+                          href={`/anime/watch/${item.id}/${data.id}${
+                            provider ? "/9anime" : ""
+                          }`}
+                          key={item.id}
+                          className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                            item.id == id
+                              ? "pointer-events-none ring-1 ring-action"
+                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                          }`}
+                        >
+                          <div className="w-[43%] lg:w-[40%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
+                            <div className="relative">
+                              <Image
+                                src={item.image}
+                                alt="Anime Cover"
+                                width={1000}
+                                height={1000}
+                                className={`object-cover z-30 rounded-lg h-[110px]  ${
+                                  item.id == id
+                                    ? "brightness-[30%]"
+                                    : "brightness-75"
+                                }`}
+                              />
+                              <span
+                                className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                                style={{
+                                  width:
+                                    progress &&
+                                    artStorage &&
+                                    item?.number <= progress
+                                      ? "100%"
+                                      : artStorage?.[item?.id]
+                                      ? `${prog}%`
+                                      : "0",
+                                }}
+                              />
                               <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
                                 Episode {item.number}
                               </span>
@@ -521,40 +492,41 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                                 </div>
                               )}
                             </div>
-                            <div
-                              className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
-                                item.id == id ? "text-[#7a7a7a]" : ""
-                              }`}
-                            >
-                              <h1 className="font-karla font-bold italic line-clamp-1">
-                                {item.title}
-                              </h1>
-                              <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
-                                {item.description}
-                              </p>
-                            </div>
-                          </Link>
-                        );
-                      })
-                    ) : (
-                      data.episodes.map((item) => {
-                        return (
-                          <Link
-                            href={`/anime/watch/${item.id}/${data.id}${
-                              provider ? "/9anime" : ""
-                            }`}
-                            key={item.id}
-                            className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
-                              item.id == id
-                                ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
-                                : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                          </div>
+                          <div
+                            className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
+                              item.id == id ? "text-[#7a7a7a]" : ""
                             }`}
                           >
-                            Episode {item.number}
-                          </Link>
-                        );
-                      })
-                    )
+                            <h1 className="font-karla font-bold italic line-clamp-1">
+                              {item.title}
+                            </h1>
+                            <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
+                              {item.description}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    data.episodes.map((item) => {
+                      return (
+                        <Link
+                          href={`/anime/watch/${item.id}/${data.id}${
+                            provider ? "/9anime" : ""
+                          }`}
+                          key={item.id}
+                          className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                            item.id == id
+                              ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
+                              : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                          }`}
+                        >
+                          Episode {item.number}
+                        </Link>
+                      );
+                    })
+                  )
                 ) : (
                   <>
                     {[1].map((item) => (
@@ -568,6 +540,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       </SkeletonTheme>
     </>
