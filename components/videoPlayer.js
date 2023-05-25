@@ -48,6 +48,12 @@ export default function VideoPlayer({
           // }`,
         });
 
+        const defSource = source?.find((i) => i?.default === true);
+
+        if (defSource) {
+          setUrl(defSource.url);
+        }
+
         // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
         //   sumber.url
         // )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
