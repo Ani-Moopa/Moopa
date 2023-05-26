@@ -125,7 +125,10 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Thank You for passing by!!
 If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 <br>
-or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account)
+or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account) 
+ 
+ 
+[![Discord Banner](https://discordapp.com/api/guilds/822413263148285973/widget.png?style=banner2)](https://discord.gg/v5fjSdKwr2)
 
 ## Support This Project
 
