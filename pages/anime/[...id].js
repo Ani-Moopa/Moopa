@@ -1,7 +1,11 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-import { ClockIcon, HeartIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronDownIcon,
+  ClockIcon,
+  HeartIcon,
+} from "@heroicons/react/20/solid";
 import {
   TvIcon,
   ArrowTrendingUpIcon,
@@ -35,6 +39,7 @@ export default function Info({ info, color }) {
   const [statuses, setStatuses] = useState(null);
   const [domainUrl, setDomainUrl] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [time, setTime] = useState(0);
   const { id } = useRouter().query;
@@ -47,6 +52,20 @@ export default function Info({ info, color }) {
     (data) => data.mediaRecommendation
   );
 
+  const [provider, setProvider] = useState();
+  const [prvValue, setPrvValue] = useState("gogoanime");
+  // const [err, setErr] = useState('');
+
+  function handleProvider(e) {
+    setEpisode(
+      Array.isArray(provider[e.target.value])
+        ? provider[e.target.value]?.reverse()
+        : provider[e.target.value]
+    );
+    setPrvValue(e.target.value);
+    localStorage.setItem("provider", e.target.value);
+  }
+
   useEffect(() => {
     handleClose();
     async function fetchData() {
@@ -54,9 +73,16 @@ export default function Info({ info, color }) {
       if (id) {
         try {
           const { protocol, host } = window.location;
+          const prv = localStorage.getItem("provider");
           const url = `${protocol}//${host}`;
 
           const view = localStorage.getItem("epiView");
+
+          if (prv) {
+            setPrvValue(prv);
+          } else {
+            setPrvValue("gogoanime");
+          }
 
           setDomainUrl(url);
 
@@ -66,71 +92,136 @@ export default function Info({ info, color }) {
           setProgress(0);
           setStatuses(null);
 
-          const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/info/${info.id}`
-          );
-          // const res = true;
-          if (res.status === 500 || res.status === 404) {
-            // if (res === false) {
-            setEpisode([]);
-          } else {
-            const data = await res.json();
-            // const data = aniInfo;
-            if (!data || data?.episodes?.length === 0) {
+          let reloadCount = 0;
+
+          try {
+            const fetchPromises = [
+              fetch(
+                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=enime`
+              ),
+              fetch(
+                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=zoro`
+              ),
+              fetch(
+                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=gogoanime`
+              ),
+            ];
+
+            const results = await Promise.allSettled(fetchPromises);
+            const successfulResponses = [];
+            let errorCount = 0;
+
+            results.forEach((result) => {
+              if (result.status === "fulfilled") {
+                successfulResponses.push(result.value);
+              } else {
+                errorCount++;
+              }
+            });
+
+            if (errorCount === fetchPromises.length) {
+              // All fetch requests failed, handle the error here
               setEpisode([]);
             } else {
-              if (data.episodes?.some((i) => i.title === null)) {
-                setEpiView("3");
-              } else if (view) {
-                setEpiView(view);
+              // Process the successfulResponses here
+              const responsesData = await Promise.all(
+                successfulResponses.map((response) => response.json())
+              );
+              const [enime, zoro, gogoanime] = responsesData;
+
+              const prov = {
+                enime: enime?.episodes || enime,
+                zoro: zoro?.episodes || zoro,
+                gogoanime: gogoanime?.episodes || gogoanime,
+              };
+
+              const infProv = {
+                enime: enime,
+                zoro: zoro,
+                gogoanime: gogoanime,
+              };
+
+              if (prv) {
+                setEpisode(
+                  Array.isArray(prov[prv]) ? prov[prv]?.reverse() : prov[prv]
+                );
               } else {
-                setEpiView("3");
+                setEpisode(
+                  Array.isArray(prov["gogoanime"])
+                    ? prov["gogoanime"]?.reverse()
+                    : prov["gogoanime"]
+                );
               }
-              setEpisode(data?.episodes.reverse());
-            }
 
-            if (session?.user?.name) {
-              const response = await fetch("https://graphql.anilist.co/", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  query: GET_MEDIA_USER,
-                  variables: {
-                    username: session?.user?.name,
-                  },
-                }),
-              });
-
-              const responseData = await response.json();
-
-              const prog = responseData?.data?.MediaListCollection;
-
-              if (prog && prog.lists.length > 0) {
-                const gut = prog.lists
-                  .flatMap((item) => item.entries)
-                  .find((item) => item.mediaId === parseInt(id[0]));
-
-                if (gut) {
-                  setProgress(gut.progress);
-                  const statusMapping = {
-                    CURRENT: { name: "Watching", value: "CURRENT" },
-                    PLANNING: { name: "Plan to watch", value: "PLANNING" },
-                    COMPLETED: { name: "Completed", value: "COMPLETED" },
-                    DROPPED: { name: "Dropped", value: "DROPPED" },
-                    PAUSED: { name: "Paused", value: "PAUSED" },
-                    REPEATING: { name: "Rewatching", value: "REPEATING" },
-                  };
-                  setStatuses(statusMapping[gut.status]);
+              const data = infProv[prv] || infProv["gogoanime"];
+              // const data = aniInfo;
+              if (!data || data?.episodes?.length === 0) {
+                setEpisode([]);
+              } else {
+                if (data.episodes?.some((i) => i.title === null)) {
+                  setEpiView("3");
+                } else if (view) {
+                  setEpiView(view);
+                } else {
+                  setEpiView("3");
                 }
               }
-            }
 
-            if (data.nextAiringEpisode) {
-              setTime(
-                convertSecondsToTime(data.nextAiringEpisode.timeUntilAiring)
-              );
+              if (session?.user?.name) {
+                const response = await fetch("https://graphql.anilist.co/", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    query: GET_MEDIA_USER,
+                    variables: {
+                      username: session?.user?.name,
+                    },
+                  }),
+                });
+
+                const responseData = await response.json();
+
+                const prog = responseData?.data?.MediaListCollection;
+
+                if (prog && prog.lists.length > 0) {
+                  const gut = prog.lists
+                    .flatMap((item) => item.entries)
+                    .find((item) => item.mediaId === parseInt(id[0]));
+
+                  if (gut) {
+                    setProgress(gut.progress);
+                    const statusMapping = {
+                      CURRENT: { name: "Watching", value: "CURRENT" },
+                      PLANNING: { name: "Plan to watch", value: "PLANNING" },
+                      COMPLETED: { name: "Completed", value: "COMPLETED" },
+                      DROPPED: { name: "Dropped", value: "DROPPED" },
+                      PAUSED: { name: "Paused", value: "PAUSED" },
+                      REPEATING: { name: "Rewatching", value: "REPEATING" },
+                    };
+                    setStatuses(statusMapping[gut.status]);
+                  }
+                }
+              }
+
+              if (data.nextAiringEpisode) {
+                setTime(
+                  convertSecondsToTime(data.nextAiringEpisode.timeUntilAiring)
+                );
+              }
+
+              setProvider(prov);
+            }
+          } catch (error) {
+            console.error(error);
+            if (reloadCount < 2) {
+              reloadCount++;
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              setEpisode([]);
             }
           }
         } catch (error) {
@@ -509,211 +600,211 @@ export default function Info({ info, color }) {
                 </div>
               </div>
               <div className="flex flex-col gap-5 lg:gap-10 p-3 lg:p-0">
-                <div className="flex sm:flex-row flex-col gap-5 md:gap-0 justify-between ">
-                  <div className="flex items-center lg:gap-10 gap-7">
-                    {info && (
-                      <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
-                        Episodes
-                      </h1>
-                    )}
-                    {info?.nextAiringEpisode && (
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
-                          <h1>Next :</h1>
-                          <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
-                            {time}
+                <div className="flex lg:flex-row flex-col gap-5 lg:gap-0 justify-between ">
+                  <div className="flex justify-between">
+                    <div className="flex items-center lg:gap-10 sm:gap-7 gap-3">
+                      {info && (
+                        <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
+                          Episodes
+                        </h1>
+                      )}
+                      {info?.nextAiringEpisode && (
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
+                            <h1>Next :</h1>
+                            <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
+                              {time}
+                            </div>
+                          </div>
+                          <div className="h-6 w-6">
+                            <ClockIcon />
                           </div>
                         </div>
-                        <div className="h-6 w-6">
-                          <ClockIcon />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-3 rounded-sm items-center p-2">
+                      )}
+                    </div>
                     <div
-                      className={
-                        episode?.length > 0
-                          ? episode?.some((item) => item?.title === null)
-                            ? "pointer-events-none"
-                            : "cursor-pointer"
-                          : "pointer-events-none"
-                      }
-                      onClick={() => {
-                        setEpiView("1");
-                        localStorage.setItem("epiView", "1");
-                      }}
+                      className="lg:hidden bg-secondary p-1 rounded-md cursor-pointer"
+                      onClick={() => setVisible(!visible)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="31"
-                        height="20"
                         fill="none"
-                        viewBox="0 0 31 20"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
                       >
-                        <rect
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div
+                    className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
+                      visible ? "" : "hidden"
+                    }`}
+                  >
+                    <div className="relative">
+                      <select
+                        onChange={handleProvider}
+                        value={prvValue}
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none"
+                      >
+                        <option value="gogoanime">Gogoanime</option>
+                        <option value="zoro">Zoro</option>
+                        <option value="enime">Enime</option>
+                      </select>
+                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
+                    <div className="flex gap-3 rounded-sm items-center p-2">
+                      <div
+                        className={
+                          episode?.length > 0
+                            ? episode?.some((item) => item?.title === null)
+                              ? "pointer-events-none"
+                              : "cursor-pointer"
+                            : "pointer-events-none"
+                        }
+                        onClick={() => {
+                          setEpiView("1");
+                          localStorage.setItem("epiView", "1");
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
                           width="31"
                           height="20"
+                          fill="none"
+                          viewBox="0 0 31 20"
+                        >
+                          <rect
+                            width="31"
+                            height="20"
+                            className={`${
+                              episode?.length > 0
+                                ? episode?.some((item) => item?.title === null)
+                                  ? "fill-[#1c1c22]"
+                                  : epiView === "1"
+                                  ? "fill-action"
+                                  : "fill-[#3A3A44]"
+                                : "fill-[#1c1c22]"
+                            }`}
+                            rx="3"
+                          ></rect>
+                        </svg>
+                      </div>
+                      <div
+                        className={
+                          episode?.length > 0
+                            ? episode?.some((item) => item?.title === null)
+                              ? "pointer-events-none"
+                              : "cursor-pointer"
+                            : "pointer-events-none"
+                        }
+                        onClick={() => {
+                          setEpiView("2");
+                          localStorage.setItem("epiView", "2");
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="33"
+                          height="20"
+                          fill="none"
                           className={`${
                             episode?.length > 0
                               ? episode?.some((item) => item?.title === null)
                                 ? "fill-[#1c1c22]"
-                                : epiView === "1"
+                                : epiView === "2"
                                 ? "fill-action"
                                 : "fill-[#3A3A44]"
                               : "fill-[#1c1c22]"
                           }`}
-                          rx="3"
-                        ></rect>
-                      </svg>
-                    </div>
-                    <div
-                      className={
-                        episode?.length > 0
-                          ? episode?.some((item) => item?.title === null)
-                            ? "pointer-events-none"
-                            : "cursor-pointer"
-                          : "pointer-events-none"
-                      }
-                      onClick={() => {
-                        setEpiView("2");
-                        localStorage.setItem("epiView", "2");
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="33"
-                        height="20"
-                        fill="none"
-                        className={`${
+                          viewBox="0 0 33 20"
+                        >
+                          <rect width="33" height="7" y="1" rx="3"></rect>
+                          <rect width="33" height="7" y="12" rx="3"></rect>
+                        </svg>
+                      </div>
+                      <div
+                        className={
                           episode?.length > 0
-                            ? episode?.some((item) => item?.title === null)
-                              ? "fill-[#1c1c22]"
-                              : epiView === "2"
-                              ? "fill-action"
-                              : "fill-[#3A3A44]"
-                            : "fill-[#1c1c22]"
-                        }`}
-                        viewBox="0 0 33 20"
+                            ? `cursor-pointer`
+                            : "pointer-events-none"
+                        }
+                        onClick={() => {
+                          setEpiView("3");
+                          localStorage.setItem("epiView", "3");
+                        }}
                       >
-                        <rect width="33" height="7" y="1" rx="3"></rect>
-                        <rect width="33" height="7" y="12" rx="3"></rect>
-                      </svg>
-                    </div>
-                    <div
-                      className={
-                        episode?.length > 0
-                          ? `cursor-pointer`
-                          : "pointer-events-none"
-                      }
-                      onClick={() => {
-                        setEpiView("3");
-                        localStorage.setItem("epiView", "3");
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="33"
-                        height="20"
-                        fill="none"
-                        className={`${
-                          episode?.length > 0
-                            ? epiView === "3"
-                              ? "fill-action"
-                              : "fill-[#3A3A44]"
-                            : "fill-[#1c1c22]"
-                        }`}
-                        viewBox="0 0 33 20"
-                      >
-                        <rect width="29" height="4" x="2" y="2" rx="2"></rect>
-                        <rect width="29" height="4" x="2" y="8" rx="2"></rect>
-                        <rect width="16" height="4" x="2" y="14" rx="2"></rect>
-                      </svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="33"
+                          height="20"
+                          fill="none"
+                          className={`${
+                            episode?.length > 0
+                              ? epiView === "3"
+                                ? "fill-action"
+                                : "fill-[#3A3A44]"
+                              : "fill-[#1c1c22]"
+                          }`}
+                          viewBox="0 0 33 20"
+                        >
+                          <rect width="29" height="4" x="2" y="2" rx="2"></rect>
+                          <rect width="29" height="4" x="2" y="8" rx="2"></rect>
+                          <rect
+                            width="16"
+                            height="4"
+                            x="2"
+                            y="14"
+                            rx="2"
+                          ></rect>
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </div>
                 {!loading ? (
-                  episode && (
-                    <div
-                      className={`${
-                        epiView === "3" &&
-                        "scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] h-[640px]"
-                      }`}
-                    >
-                      {episode?.length !== 0 && episode ? (
-                        <div
-                          className={`grid ${
-                            epiView === "1"
-                              ? "grid-auto-fit gap-5 lg:gap-8"
-                              : "flex flex-col gap-5"
-                          }  pb-5 ${
-                            epiView === "3" ? "" : "place-items-center"
-                          }`}
-                        >
-                          {epiView === "1"
-                            ? episode?.map((epi, index) => {
-                                const time = artStorage?.[epi?.id]?.time;
-                                const duration =
-                                  artStorage?.[epi?.id]?.duration;
-                                let prog = (time / duration) * 100;
-                                if (prog > 90) prog = 100;
-                                return (
-                                  <Link
-                                    key={index}
-                                    href={`/anime/watch/${epi.id}/${info.id}`}
-                                    className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
-                                  >
-                                    <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
-                                      Episode {epi?.number}
-                                    </span>
-                                    <span
-                                      className={`absolute bottom-7 left-0 h-1 bg-red-600`}
-                                      style={{
-                                        width:
-                                          progress &&
-                                          artStorage &&
-                                          epi?.number <= progress
-                                            ? "100%"
-                                            : artStorage?.[epi?.id]
-                                            ? `${prog}%`
-                                            : "0%",
-                                      }}
-                                    />
-                                    <div className="absolute inset-0 bg-black z-30 opacity-20" />
-                                    <Image
-                                      src={epi?.image}
-                                      alt="epi image"
-                                      width={500}
-                                      height={500}
-                                      className="object-cover w-full h-[150px] sm:h-[100px] z-20"
-                                    />
-                                  </Link>
-                                );
-                              })
-                            : ""}
-                          {epiView === "2" &&
-                            episode?.map((epi, index) => {
-                              const time = artStorage?.[epi?.id]?.time;
-                              const duration = artStorage?.[epi?.id]?.duration;
-                              let prog = (time / duration) * 100;
-                              if (prog > 90) prog = 100;
-                              return (
-                                <Link
-                                  key={index}
-                                  href={`/anime/watch/${epi.id}/${info.id}`}
-                                  className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
-                                >
-                                  <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
-                                    <div className="relative">
-                                      <Image
-                                        src={epi?.image}
-                                        alt="Anime Cover"
-                                        width={1000}
-                                        height={1000}
-                                        className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
-                                      />
+                  Array.isArray(episode) ? (
+                    episode && (
+                      <div
+                        className={`${
+                          epiView === "3" &&
+                          "scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] h-[640px]"
+                        }`}
+                      >
+                        {episode?.length !== 0 && episode ? (
+                          <div
+                            className={`grid ${
+                              epiView === "1"
+                                ? "grid-auto-fit gap-5 lg:gap-8"
+                                : "flex flex-col gap-5"
+                            }  pb-5 pt-2 lg:pt-0 ${
+                              epiView === "3" ? "" : "place-items-center"
+                            }`}
+                          >
+                            {epiView === "1"
+                              ? episode?.map((epi, index) => {
+                                  const time = artStorage?.[epi?.id]?.time;
+                                  const duration =
+                                    artStorage?.[epi?.id]?.duration;
+                                  let prog = (time / duration) * 100;
+                                  if (prog > 90) prog = 100;
+                                  return (
+                                    <Link
+                                      key={index}
+                                      href={`/anime/watch/${epi.id}/${info.id}/${prvValue}`}
+                                      className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
+                                    >
+                                      <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
+                                        Episode {epi?.number}
+                                      </span>
                                       <span
-                                        className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                                        className={`absolute bottom-7 left-0 h-1 bg-red-600`}
                                         style={{
                                           width:
                                             progress &&
@@ -722,80 +813,138 @@ export default function Info({ info, color }) {
                                               ? "100%"
                                               : artStorage?.[epi?.id]
                                               ? `${prog}%`
-                                              : "0",
+                                              : "0%",
                                         }}
                                       />
-                                      <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
-                                        Episode {epi?.number}
-                                      </span>
-                                      <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 20 20"
-                                          fill="currentColor"
-                                          className="w-5 h-5 invisible group-hover:visible"
-                                        >
-                                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                        </svg>
+                                      <div className="absolute inset-0 bg-black z-30 opacity-20" />
+                                      <Image
+                                        src={epi?.image}
+                                        alt="epi image"
+                                        width={500}
+                                        height={500}
+                                        className="object-cover w-full h-[150px] sm:h-[100px] z-20"
+                                      />
+                                    </Link>
+                                  );
+                                })
+                              : ""}
+                            {epiView === "2" &&
+                              episode?.map((epi, index) => {
+                                const time = artStorage?.[epi?.id]?.time;
+                                const duration =
+                                  artStorage?.[epi?.id]?.duration;
+                                let prog = (time / duration) * 100;
+                                if (prog > 90) prog = 100;
+                                return (
+                                  <Link
+                                    key={index}
+                                    href={`/anime/watch/${epi.id}/${info.id}/${prvValue}`}
+                                    className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                                  >
+                                    <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
+                                      <div className="relative">
+                                        <Image
+                                          src={epi?.image}
+                                          alt="Anime Cover"
+                                          width={1000}
+                                          height={1000}
+                                          className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
+                                        />
+                                        <span
+                                          className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                                          style={{
+                                            width:
+                                              progress &&
+                                              artStorage &&
+                                              epi?.number <= progress
+                                                ? "100%"
+                                                : artStorage?.[epi?.id]
+                                                ? `${prog}%`
+                                                : "0",
+                                          }}
+                                        />
+                                        <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
+                                          Episode {epi?.number}
+                                        </span>
+                                        <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                            className="w-5 h-5 invisible group-hover:visible"
+                                          >
+                                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                          </svg>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
 
+                                    <div
+                                      className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-5 ${
+                                        epi?.id == id ? "text-[#7a7a7a]" : ""
+                                      }`}
+                                    >
+                                      <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
+                                        {epi?.title}
+                                      </h1>
+                                      {epi?.description && (
+                                        <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
+                                          {epi?.description}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            {epiView === "3" &&
+                              episode?.map((epi, index) => {
+                                return (
                                   <div
-                                    className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-5 ${
-                                      epi?.id == id ? "text-[#7a7a7a]" : ""
-                                    }`}
+                                    key={index}
+                                    className="flex flex-col gap-3 px-2"
                                   >
-                                    <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-                                      {epi?.title}
-                                    </h1>
-                                    {epi?.description && (
-                                      <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
-                                        {epi?.description}
-                                      </p>
+                                    <Link
+                                      href={`/anime/watch/${epi.id}/${info.id}/${prvValue}`}
+                                      className={`text-start text-sm lg:text-lg ${
+                                        progress && epi.number <= progress
+                                          ? "text-[#5f5f5f]"
+                                          : "text-white"
+                                      }`}
+                                    >
+                                      <p>Episode {epi.number}</p>
+                                      {epi.title && (
+                                        <p
+                                          className={`text-xs lg:text-sm ${
+                                            progress && epi.number <= progress
+                                              ? "text-[#5f5f5f]"
+                                              : "text-[#b1b1b1]"
+                                          } italic`}
+                                        >
+                                          "{epi.title}"
+                                        </p>
+                                      )}
+                                    </Link>
+                                    {index !== episode?.length - 1 && (
+                                      <span className="h-[1px] bg-white" />
                                     )}
                                   </div>
-                                </Link>
-                              );
-                            })}
-                          {epiView === "3" &&
-                            episode?.map((epi, index) => {
-                              return (
-                                <div
-                                  key={index}
-                                  className="flex flex-col gap-3 px-2"
-                                >
-                                  <Link
-                                    href={`/anime/watch/${epi.id}/${info.id}`}
-                                    className={`text-start text-sm lg:text-lg ${
-                                      progress && epi.number <= progress
-                                        ? "text-[#5f5f5f]"
-                                        : "text-white"
-                                    }`}
-                                  >
-                                    <p>Episode {epi.number}</p>
-                                    {epi.title && (
-                                      <p
-                                        className={`text-xs lg:text-sm ${
-                                          progress && epi.number <= progress
-                                            ? "text-[#5f5f5f]"
-                                            : "text-[#b1b1b1]"
-                                        } italic`}
-                                      >
-                                        "{epi.title}"
-                                      </p>
-                                    )}
-                                  </Link>
-                                  {index !== episode?.length - 1 && (
-                                    <span className="h-[1px] bg-white" />
-                                  )}
-                                </div>
-                              );
-                            })}
-                        </div>
-                      ) : (
-                        <p>No Episodes Available</p>
-                      )}
+                                );
+                              })}
+                          </div>
+                        ) : (
+                          <p>No Episodes Available</p>
+                        )}
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex flex-col">
+                      <pre
+                        className={`rounded-md overflow-hidden ${getLanguageClassName(
+                          "bash"
+                        )}`}
+                      >
+                        <code>{episode?.message}</code>
+                      </pre>
                     </div>
                   )
                 ) : (
@@ -903,3 +1052,17 @@ function setTxtColor(hexColor) {
   const brightness = getBrightness(hexColor);
   return brightness < 150 ? "#fff" : "#000";
 }
+
+const getLanguageClassName = (language) => {
+  switch (language) {
+    case "javascript":
+      return "language-javascript";
+    case "html":
+      return "language-html";
+    case "bash":
+      return "language-bash";
+    // add more languages here as needed
+    default:
+      return "";
+  }
+};

@@ -2,6 +2,21 @@ import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/useAnilist";
 
+const fontSize = [
+  {
+    html: "Small",
+    size: "16px",
+  },
+  {
+    html: "Medium",
+    size: "36px",
+  },
+  {
+    html: "Large",
+    size: "56px",
+  },
+];
+
 export default function VideoPlayer({
   data,
   id,
@@ -14,17 +29,38 @@ export default function VideoPlayer({
   title,
   poster,
   proxy,
+  provider,
 }) {
   const [url, setUrl] = useState("");
   const [source, setSource] = useState([]);
   const { markProgress } = useAniList(session);
 
   const [resolution, setResolution] = useState("auto");
+  const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
+  const [defSize, setDefSize] = useState();
+  const [subtitle, setSubtitle] = useState();
+  const [defSub, setDefSub] = useState();
 
   useEffect(() => {
     const resol = localStorage.getItem("quality");
+    const sub = JSON.parse(localStorage.getItem("subSize"));
     if (resol) {
       setResolution(resol);
+    }
+
+    if (provider === "zoro") {
+      const size = fontSize.map((i) => {
+        const isDefault = !sub ? i.html === "Small" : i.html === sub?.html;
+        return {
+          ...(isDefault && { default: true }),
+          html: i.html,
+          size: i.size,
+        };
+      });
+
+      const defSize = size?.find((i) => i?.default === true);
+      setDefSize(defSize);
+      setSubSize(size);
     }
 
     async function compiler() {
@@ -39,9 +75,12 @@ export default function VideoPlayer({
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
             // url: `${proxy}${items.url}`,
-            url: `https://cors.moopa.my.id/?url=${encodeURIComponent(
-              items.url
-            )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`,
+            url:
+              provider === "gogoanime"
+                ? `https://cors.moopa.my.id/?url=${encodeURIComponent(
+                    items.url
+                  )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`
+                : `${proxy}${items.url}`,
           };
           // url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
           //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
@@ -52,6 +91,28 @@ export default function VideoPlayer({
 
         if (defSource) {
           setUrl(defSource.url);
+        }
+
+        if (provider === "zoro") {
+          const subtitle = data?.subtitles
+            .filter((subtitle) => subtitle.lang !== "Thumbnails")
+            .map((subtitle) => {
+              const isEnglish = subtitle.lang === "English";
+              return {
+                ...(isEnglish && { default: true }),
+                url: subtitle.url,
+                html: `${subtitle.lang}`,
+              };
+            });
+
+          const defSub = data?.subtitles.find((i) => i.lang === "English");
+          // const thumb = data?.subtitles.find((i) => i.lang === "Thumbnails");
+
+          // setThumbnails(thumb?.url);
+          setDefSub(defSub?.url);
+
+          // console.log(subtitle);
+          setSubtitle(subtitle);
         }
 
         // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
@@ -77,9 +138,26 @@ export default function VideoPlayer({
             autoplay: true,
             screenshot: true,
             poster: poster ? poster : "",
+            ...(provider === "zoro" && {
+              subtitle: {
+                url: `${defSub}`,
+                // type: "vtt",
+                encoding: "utf-8",
+                default: true,
+                name: "English",
+                escape: false,
+                style: {
+                  color: "#FFFF",
+                  fontSize: `${defSize?.size}`,
+                },
+              },
+            }),
           }}
           res={resolution}
           quality={source}
+          subSize={subSize}
+          subtitles={subtitle}
+          provider={provider}
           style={{
             width: "100%",
             height: "100%",
@@ -92,6 +170,10 @@ export default function VideoPlayer({
               const seekTime = seek?.time || 0;
               const duration = art.duration;
               const percentage = seekTime / duration;
+
+              if (subSize) {
+                art.subtitle.style.fontSize = subSize?.size;
+              }
 
               if (percentage >= 0.9) {
                 art.currentTime = 0;

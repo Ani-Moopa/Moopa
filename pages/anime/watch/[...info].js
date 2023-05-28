@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 import { GET_MEDIA_USER } from "../../../queries";
 
 import dotenv from "dotenv";
-import Footer from "../../../components/footer";
 
 const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
@@ -38,6 +37,8 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
   const [artStorage, setArtStorage] = useState(null);
 
   const router = useRouter();
+
+  // console.log(data);
 
   useEffect(() => {
     const defaultState = {
@@ -72,7 +73,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
       try {
         if (provider) {
           const res = await fetch(
-            `https://api.consumet.org/meta/anilist/watch/${id}?provider=9anime`
+            `https://api.moopa.my.id/meta/anilist/watch/${id}?provider=${provider}`
           );
           const epiData = await res.json();
           setEpiData(epiData);
@@ -94,9 +95,10 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
 
       if (provider) {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/info/${aniId}?provider=9anime`
+          `https://api.moopa.my.id/meta/anilist/info/${aniId}?provider=${provider}`
         );
         aniData = await res.json();
+        setEpisodes(aniData.episodes?.reverse());
         setAniData(aniData);
       } else {
         const res2 = await fetch(
@@ -220,22 +222,32 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
           <div className="min-h-screen mt-3 md:mt-0 flex flex-col lg:gap-0 gap-5 lg:flex-row lg:py-10 lg:px-10 justify-start w-screen">
             <div className="w-screen lg:w-[67%]">
               {loading ? (
-                <div className="aspect-video z-20 bg-black">
-                  <VideoPlayer
-                    key={id}
-                    data={epiData}
-                    id={id}
-                    progress={parseInt(playingEpisode)}
-                    session={sessions}
-                    aniId={parseInt(data?.id)}
-                    stats={statusWatch}
-                    op={skip.op}
-                    ed={skip.ed}
-                    title={playingTitle}
-                    poster={poster[0]?.image}
-                    proxy={proxy}
-                  />
-                </div>
+                Array.isArray(epiData?.sources) ? (
+                  <div className="aspect-video z-20 bg-black">
+                    <VideoPlayer
+                      key={id}
+                      data={epiData}
+                      id={id}
+                      progress={parseInt(playingEpisode)}
+                      session={sessions}
+                      aniId={parseInt(data?.id)}
+                      stats={statusWatch}
+                      op={skip.op}
+                      ed={skip.ed}
+                      title={playingTitle}
+                      poster={poster[0]?.image}
+                      proxy={proxy}
+                      provider={provider}
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-black flex-center select-none">
+                    <p className="lg:p-0 p-5 text-center">
+                      Whoops! Something went wrong. Please reload the page or
+                      try other sources. {`:(`}
+                    </p>
+                  </div>
+                )
               ) : (
                 <div className="aspect-video bg-black" />
               )}
@@ -441,7 +453,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                       return (
                         <Link
                           href={`/anime/watch/${item.id}/${data.id}${
-                            provider ? "/9anime" : ""
+                            provider ? `/${provider}` : ""
                           }`}
                           key={item.id}
                           className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
@@ -476,7 +488,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
                                       : "0",
                                 }}
                               />
-                              <span className="absolute bottom-2 left-2 font-karla font-light text-sm">
+                              <span className="absolute bottom-2 left-2 font-karla font-bold text-sm">
                                 Episode {item.number}
                               </span>
                               {item.id == id && (
@@ -540,7 +552,6 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </SkeletonTheme>
     </>
