@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { GET_MEDIA_USER } from "../../../queries";
 
 import dotenv from "dotenv";
+import Footer from "../../../components/footer";
 
 const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
@@ -552,6 +553,7 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       </SkeletonTheme>
     </>

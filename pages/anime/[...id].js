@@ -65,7 +65,7 @@ export default function Info({ info, color }) {
     setPrvValue(e.target.value);
     localStorage.setItem("provider", e.target.value);
   }
-
+  
   useEffect(() => {
     handleClose();
     async function fetchData() {

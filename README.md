@@ -47,7 +47,7 @@
 
 ## Introduction
 
-<p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by <a href="https://github.com/consumet">Consumet API</a> build with <a href="https://github.com/vercel/next.js/">NextJs</a> and <a href="https://github.com/tailwindlabs/tailwindcss">tailiwindcss</a> with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
+<p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by <a href="https://github.com/consumet">Consumet API</a> build with <a href="https://github.com/vercel/next.js/">NextJs</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a> with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
 
 ## Features
 
@@ -125,7 +125,10 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Thank You for passing by!!
 If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 <br>
-or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account)
+or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account) 
+ 
+ 
+[![Discord Banner](https://discordapp.com/api/guilds/822413263148285973/widget.png?style=banner2)](https://discord.gg/v5fjSdKwr2)
 
 ## Support This Project
 
