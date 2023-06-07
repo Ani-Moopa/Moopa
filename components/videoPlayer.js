@@ -1,6 +1,7 @@
 import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/useAnilist";
+import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 
 const fontSize = [
   {
@@ -68,7 +69,9 @@ export default function VideoPlayer({
         const referer = data?.headers?.Referer;
         const source = data.sources.map((items) => {
           const isDefault =
-            resolution === "auto"
+            provider !== "gogoanime"
+              ? items.quality === "default" || items.quality === "auto"
+              : resolution === "auto"
               ? items.quality === "default" || items.quality === "auto"
               : items.quality === resolution;
           return {
@@ -129,7 +132,7 @@ export default function VideoPlayer({
 
   return (
     <>
-      {url ? (
+      {url && (
         <Player
           key={url}
           option={{
@@ -137,7 +140,28 @@ export default function VideoPlayer({
             title: `${title}`,
             autoplay: true,
             screenshot: true,
+            moreVideoAttr: {
+              crossOrigin: "anonymous",
+            },
             poster: poster ? poster : "",
+            ...(provider === "zoro" && {
+              plugins: [
+                artplayerPluginHlsQuality({
+                  // Show quality in control
+                  // control: true,
+
+                  // Show quality in setting
+                  setting: true,
+
+                  // Get the resolution text from level
+                  getResolution: (level) => level.height + "P",
+
+                  // I18n
+                  title: "Quality",
+                  auto: "Auto",
+                }),
+              ],
+            }),
             ...(provider === "zoro" && {
               subtitle: {
                 url: `${defSub}`,
@@ -275,8 +299,6 @@ export default function VideoPlayer({
             // });
           }}
         />
-      ) : (
-        ""
       )}
     </>
   );
