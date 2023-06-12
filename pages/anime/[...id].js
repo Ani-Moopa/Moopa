@@ -32,6 +32,26 @@ import { GET_MEDIA_INFO } from "../../queries";
 // console.log(GET_MEDIA_USER);
 
 export default function Info({ info, color }) {
+
+  // Episodes Pagination
+  const  [firstEpisodeIndex,setFirstEpisodeIndex ] = useState(0);
+  const  [lastEpisodeIndex,setLastEpisodeIndex ] = useState();
+
+  function onEpisodeIndexChange(e) {
+    if(e.target.value==="All"){
+      setFirstEpisodeIndex(0);
+      setLastEpisodeIndex();
+      return;
+    }
+    setFirstEpisodeIndex(e.target.value.split(" to ")[0]-1);
+    setLastEpisodeIndex(e.target.value.split(" to ")[1]);
+  }
+  useEffect(() => {
+    setFirstEpisodeIndex(0);
+    setLastEpisodeIndex();
+  }, [info]);
+  
+ 
   const { data: session } = useSession();
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -642,6 +662,25 @@ export default function Info({ info, color }) {
                       </svg>
                     </div>
                   </div>
+                  { episode?.length>50 && episode[0]?.number===1 && (
+                  <div className="relative flex gap-2 items-center">
+                    <p className=" font-semibold">Episodes</p>
+                      <select onChange={onEpisodeIndexChange}
+                        className="rounded-md px-2 pr-7 py-1 focus:outline-none focus:ring-2 focus:ring-action focus:border-action appearance-none"
+                      >
+                        <option value="All">All</option>
+                      {       
+                          [...Array(Math.ceil(episode?.length / 50))].map((_, index) => {
+                          const start = index * 50 + 1;
+                          const end = Math.min(start + 50 - 1, episode?.length);
+                          const optionLabel = `${start} to ${end}`;
+                          return <option value={optionLabel}>{optionLabel}</option>;
+                        })
+                      }
+                      </select>
+                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>)
+                  }
                   <div
                     className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
                       visible ? "" : "hidden"
@@ -788,7 +827,7 @@ export default function Info({ info, color }) {
                             }`}
                           >
                             {epiView === "1"
-                              ? episode?.map((epi, index) => {
+                              ? episode.slice(firstEpisodeIndex,lastEpisodeIndex)?.map((epi, index) => {
                                   const time = artStorage?.[epi?.id]?.time;
                                   const duration =
                                     artStorage?.[epi?.id]?.duration;
@@ -829,7 +868,7 @@ export default function Info({ info, color }) {
                                 })
                               : ""}
                             {epiView === "2" &&
-                              episode?.map((epi, index) => {
+                              episode.slice(firstEpisodeIndex,lastEpisodeIndex).map((epi, index) => {
                                 const time = artStorage?.[epi?.id]?.time;
                                 const duration =
                                   artStorage?.[epi?.id]?.duration;
@@ -897,7 +936,7 @@ export default function Info({ info, color }) {
                                 );
                               })}
                             {epiView === "3" &&
-                              episode?.map((epi, index) => {
+                              episode.slice(firstEpisodeIndex,lastEpisodeIndex).map((epi, index) => {
                                 return (
                                   <div
                                     key={index}
