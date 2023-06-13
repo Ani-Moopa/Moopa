@@ -144,7 +144,7 @@ export default function VideoPlayer({
               crossOrigin: "anonymous",
             },
             poster: poster ? poster : "",
-            ...(provider === "zoro" && {
+            ...(provider !== "gogoanime" && {
               plugins: [
                 artplayerPluginHlsQuality({
                   // Show quality in control
@@ -173,8 +173,12 @@ export default function VideoPlayer({
                 style: {
                   color: "#FFFF",
                   fontSize: `${defSize?.size}`,
-                  fontFamily: localStorage.getItem("font")? localStorage.getItem("font") : "Arial",
-                  textShadow: localStorage.getItem("subShadow")? JSON.parse(localStorage.getItem("subShadow")).value : "0px 0px 10px #000000",
+                  fontFamily: localStorage.getItem("font")
+                    ? localStorage.getItem("font")
+                    : "Arial",
+                  textShadow: localStorage.getItem("subShadow")
+                    ? JSON.parse(localStorage.getItem("subShadow")).value
+                    : "0px 0px 10px #000000",
                 },
               },
             }),
