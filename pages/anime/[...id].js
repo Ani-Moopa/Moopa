@@ -32,6 +32,23 @@ import { GET_MEDIA_INFO } from "../../queries";
 // console.log(GET_MEDIA_USER);
 
 export default function Info({ info, color }) {
+
+  // Episodes dropdown
+  const  [firstEpisodeIndex,setFirstEpisodeIndex ] = useState(0);
+  const  [lastEpisodeIndex,setLastEpisodeIndex ] = useState();
+  const  [selectedRange,setSelectedRange ] = useState("All");
+  function onEpisodeIndexChange(e) {
+    if(e.target.value==="All"){
+      setFirstEpisodeIndex(0);
+      setLastEpisodeIndex();
+      setSelectedRange("All");
+      return;
+    }
+    setFirstEpisodeIndex(e.target.value.split("-")[0]-1);
+    setLastEpisodeIndex(e.target.value.split("-")[1]);
+    setSelectedRange(e.target.value);
+  }
+ 
   const { data: session } = useSession();
   const [episode, setEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -65,6 +82,14 @@ export default function Info({ info, color }) {
     setPrvValue(e.target.value);
     localStorage.setItem("provider", e.target.value);
   }
+
+   //for episodes dropdown
+  useEffect(() => {
+    setFirstEpisodeIndex(0);
+    setLastEpisodeIndex();
+    setSelectedRange("All");
+  }, [info,prvValue]);
+  
   
   useEffect(() => {
     handleClose();
@@ -647,17 +672,45 @@ export default function Info({ info, color }) {
                       visible ? "" : "hidden"
                     }`}
                   >
-                    <div className="relative">
+                    <div className="flex items-end gap-3">
+                    <div className="relative flex gap-2 items-center">
+                      <p className="hidden md:block">Provider</p>
                       <select
                         onChange={handleProvider}
                         value={prvValue}
-                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none"
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
                       >
                         <option value="gogoanime">Gogoanime</option>
                         <option value="zoro">Zoro</option>
                         <option value="enime">Enime</option>
                       </select>
                       <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
+                    { episode?.length>50 &&  (
+                  <div className="relative flex gap-2 items-center">
+                    <p className="hidden md:block">Episodes</p>
+                      <select onChange={onEpisodeIndexChange} value={selectedRange}
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded-lg"
+                      >
+                        <option value="All">All</option>
+                      {       
+                          [...Array(Math.ceil(episode?.length / 50))].map((_, index) => {
+                          const start = index * 50 + 1;
+                          const end = Math.min(start + 50 - 1, episode?.length);
+                          const optionLabel = `${start} to ${end}`;
+                          if(episode[0]?.number!==1){
+                            var valueLabel=`${episode.length-end+1}-${episode.length-start+1}`;
+                          }
+                          else{
+                            var valueLabel=`${start}-${end}`;
+                          }
+                          return <option value={valueLabel}>{optionLabel}</option>;
+                        })
+                      }
+                      </select>
+                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>)
+                  }
                     </div>
                     <div className="flex gap-3 rounded-sm items-center p-2">
                       <div
@@ -788,7 +841,7 @@ export default function Info({ info, color }) {
                             }`}
                           >
                             {epiView === "1"
-                              ? episode?.map((epi, index) => {
+                              ? episode.slice(firstEpisodeIndex,lastEpisodeIndex)?.map((epi, index) => {
                                   const time = artStorage?.[epi?.id]?.time;
                                   const duration =
                                     artStorage?.[epi?.id]?.duration;
@@ -829,7 +882,7 @@ export default function Info({ info, color }) {
                                 })
                               : ""}
                             {epiView === "2" &&
-                              episode?.map((epi, index) => {
+                              episode.slice(firstEpisodeIndex,lastEpisodeIndex).map((epi, index) => {
                                 const time = artStorage?.[epi?.id]?.time;
                                 const duration =
                                   artStorage?.[epi?.id]?.duration;
@@ -897,7 +950,7 @@ export default function Info({ info, color }) {
                                 );
                               })}
                             {epiView === "3" &&
-                              episode?.map((epi, index) => {
+                              episode.slice(firstEpisodeIndex,lastEpisodeIndex).map((epi, index) => {
                                 return (
                                   <div
                                     key={index}
