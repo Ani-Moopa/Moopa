@@ -33,24 +33,21 @@ import { GET_MEDIA_INFO } from "../../queries";
 
 export default function Info({ info, color }) {
 
-  // Episodes Pagination
+  // Episodes dropdown
   const  [firstEpisodeIndex,setFirstEpisodeIndex ] = useState(0);
   const  [lastEpisodeIndex,setLastEpisodeIndex ] = useState();
-
+  const  [selectedRange,setSelectedRange ] = useState("All");
   function onEpisodeIndexChange(e) {
     if(e.target.value==="All"){
       setFirstEpisodeIndex(0);
       setLastEpisodeIndex();
+      setSelectedRange("All");
       return;
     }
     setFirstEpisodeIndex(e.target.value.split(" to ")[0]-1);
     setLastEpisodeIndex(e.target.value.split(" to ")[1]);
+    setSelectedRange(e.target.value);
   }
-  useEffect(() => {
-    setFirstEpisodeIndex(0);
-    setLastEpisodeIndex();
-  }, [info]);
-  
  
   const { data: session } = useSession();
   const [episode, setEpisode] = useState(null);
@@ -85,6 +82,14 @@ export default function Info({ info, color }) {
     setPrvValue(e.target.value);
     localStorage.setItem("provider", e.target.value);
   }
+
+   //for episodes dropdown
+  useEffect(() => {
+    setFirstEpisodeIndex(0);
+    setLastEpisodeIndex();
+    setSelectedRange("All");
+  }, [info,prvValue]);
+  
   
   useEffect(() => {
     handleClose();
@@ -662,11 +667,30 @@ export default function Info({ info, color }) {
                       </svg>
                     </div>
                   </div>
-                  { episode?.length>50 && episode[0]?.number===1 && (
+                  <div
+                    className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
+                      visible ? "" : "hidden"
+                    }`}
+                  >
+                    <div className=" flex items-end gap-3">
+                    <div className="relative flex gap-2 items-center">
+                      <p className=" ">Provider</p>
+                      <select
+                        onChange={handleProvider}
+                        value={prvValue}
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
+                      >
+                        <option value="gogoanime">Gogoanime</option>
+                        <option value="zoro">Zoro</option>
+                        <option value="enime">Enime</option>
+                      </select>
+                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
+                    { episode?.length>50 &&  (
                   <div className="relative flex gap-2 items-center">
-                    <p className=" font-semibold">Episodes</p>
-                      <select onChange={onEpisodeIndexChange}
-                        className="rounded-md px-2 pr-7 py-1 focus:outline-none focus:ring-2 focus:ring-action focus:border-action appearance-none"
+                    <p className=" ">Episodes</p>
+                      <select onChange={onEpisodeIndexChange} value={selectedRange}
+                        className="overflow-y-scroll scrollbar-thin bg-secondary  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg rounded-md px-3 pr-8 py-1 focus:outline-none focus:ring-1 focus:ring-action appearance-none"
                       >
                         <option value="All">All</option>
                       {       
@@ -674,29 +698,19 @@ export default function Info({ info, color }) {
                           const start = index * 50 + 1;
                           const end = Math.min(start + 50 - 1, episode?.length);
                           const optionLabel = `${start} to ${end}`;
-                          return <option value={optionLabel}>{optionLabel}</option>;
+                          if(episode[0]?.number!==1){
+                            var valueLabel=`${episode.length-end+1} to ${episode.length-start+1}`;
+                          }
+                          else{
+                            var valueLabel=optionLabel;
+                          }
+                          return <option value={valueLabel}>{optionLabel}</option>;
                         })
                       }
                       </select>
                       <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                     </div>)
                   }
-                  <div
-                    className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
-                      visible ? "" : "hidden"
-                    }`}
-                  >
-                    <div className="relative">
-                      <select
-                        onChange={handleProvider}
-                        value={prvValue}
-                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none"
-                      >
-                        <option value="gogoanime">Gogoanime</option>
-                        <option value="zoro">Zoro</option>
-                        <option value="enime">Enime</option>
-                      </select>
-                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                     </div>
                     <div className="flex gap-3 rounded-sm items-center p-2">
                       <div
