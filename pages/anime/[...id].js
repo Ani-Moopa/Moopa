@@ -44,8 +44,8 @@ export default function Info({ info, color }) {
       setSelectedRange("All");
       return;
     }
-    setFirstEpisodeIndex(e.target.value.split(" to ")[0]-1);
-    setLastEpisodeIndex(e.target.value.split(" to ")[1]);
+    setFirstEpisodeIndex(e.target.value.split("-")[0]-1);
+    setLastEpisodeIndex(e.target.value.split("-")[1]);
     setSelectedRange(e.target.value);
   }
  
@@ -672,9 +672,9 @@ export default function Info({ info, color }) {
                       visible ? "" : "hidden"
                     }`}
                   >
-                    <div className=" flex items-end gap-3">
+                    <div className="flex items-end gap-3">
                     <div className="relative flex gap-2 items-center">
-                      <p className=" ">Provider</p>
+                      <p className="hidden md:block">Provider</p>
                       <select
                         onChange={handleProvider}
                         value={prvValue}
@@ -688,9 +688,9 @@ export default function Info({ info, color }) {
                     </div>
                     { episode?.length>50 &&  (
                   <div className="relative flex gap-2 items-center">
-                    <p className=" ">Episodes</p>
+                    <p className="hidden md:block">Episodes</p>
                       <select onChange={onEpisodeIndexChange} value={selectedRange}
-                        className="overflow-y-scroll scrollbar-thin bg-secondary  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg rounded-md px-3 pr-8 py-1 focus:outline-none focus:ring-1 focus:ring-action appearance-none"
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded-lg"
                       >
                         <option value="All">All</option>
                       {       
@@ -699,10 +699,10 @@ export default function Info({ info, color }) {
                           const end = Math.min(start + 50 - 1, episode?.length);
                           const optionLabel = `${start} to ${end}`;
                           if(episode[0]?.number!==1){
-                            var valueLabel=`${episode.length-end+1} to ${episode.length-start+1}`;
+                            var valueLabel=`${episode.length-end+1}-${episode.length-start+1}`;
                           }
                           else{
-                            var valueLabel=optionLabel;
+                            var valueLabel=`${start}-${end}`;
                           }
                           return <option value={valueLabel}>{optionLabel}</option>;
                         })
