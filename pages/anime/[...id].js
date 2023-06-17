@@ -31,7 +31,7 @@ import { GET_MEDIA_INFO } from "../../queries";
 // import { aniInfo } from "../../components/devComp/data";
 // console.log(GET_MEDIA_USER);
 
-export default function Info({ info, color }) {
+export default function Info({ info, color, api }) {
   // Episodes dropdown
   const [firstEpisodeIndex, setFirstEpisodeIndex] = useState(0);
   const [lastEpisodeIndex, setLastEpisodeIndex] = useState();
@@ -70,6 +70,8 @@ export default function Info({ info, color }) {
 
   const [provider, setProvider] = useState();
   const [prvValue, setPrvValue] = useState("gogoanime");
+
+  const [availableProviders, setAvailableProviders] = useState([]);
   // const [err, setErr] = useState('');
 
   function handleProvider(e) {
@@ -119,15 +121,9 @@ export default function Info({ info, color }) {
 
           try {
             const fetchPromises = [
-              fetch(
-                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=enime`
-              ),
-              fetch(
-                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=zoro`
-              ),
-              fetch(
-                `https://api.moopa.my.id/meta/anilist/info/${info.id}?provider=gogoanime`
-              ),
+              fetch(`${api}/meta/anilist/info/${info.id}?provider=enime`),
+              fetch(`${api}/meta/anilist/info/${info.id}?provider=zoro`),
+              fetch(`${api}/meta/anilist/info/${info.id}?provider=gogoanime`),
             ];
 
             const results = await Promise.allSettled(fetchPromises);
@@ -157,6 +153,17 @@ export default function Info({ info, color }) {
                 zoro: zoro?.episodes || zoro,
                 gogoanime: gogoanime?.episodes || gogoanime,
               };
+
+              const aPrv = [
+                { name: "enime", available: enime?.episodes ? true : false },
+                { name: "zoro", available: zoro?.episodes ? true : false },
+                {
+                  name: "gogoanime",
+                  available: gogoanime?.episodes ? true : false,
+                },
+              ];
+
+              setAvailableProviders(aPrv);
 
               const infProv = {
                 enime: enime,
@@ -260,7 +267,7 @@ export default function Info({ info, color }) {
     fetchData();
   }, [id, info, session?.user?.name]);
 
-  // console.log();
+  console.log(availableProviders);
 
   function handleOpen() {
     setOpen(true);
@@ -678,9 +685,15 @@ export default function Info({ info, color }) {
                           value={prvValue}
                           className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
                         >
-                          <option value="gogoanime">Gogoanime</option>
-                          <option value="zoro">Zoro</option>
-                          <option value="enime">Enime</option>
+                          {availableProviders
+                            ?.filter((p) => p.available === true)
+                            .map((p) => {
+                              return (
+                                <option key={p.name} value={p.name}>
+                                  {p.name}
+                                </option>
+                              );
+                            })}
                         </select>
                         <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                       </div>
@@ -1044,6 +1057,7 @@ export default function Info({ info, color }) {
 
 export async function getServerSideProps(context) {
   const { id } = context.query;
+  const API_URI = process.env.API_URI;
 
   const res = await fetch("https://graphql.anilist.co/", {
     method: "POST",
@@ -1078,6 +1092,7 @@ export async function getServerSideProps(context) {
     props: {
       info: data,
       color: color,
+      api: API_URI,
     },
   };
 }

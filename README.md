@@ -96,6 +96,7 @@ GRAPHQL_ENDPOINT="https://graphql.anilist.co"
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there."
+API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org you can deploy it using the one click setup there. very easy"
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :
@@ -114,7 +115,7 @@ npm run dev
 
 - [Consumet API](https://github.com/consumet/api.consumet.org)
 - [AniList API](https://github.com/AniList/ApiV2-GraphQL-Docs)
-- [miru](https://github.com/ThaUnknown/miru/blob/master/README.md?plain=1) for inspiring me making this site
+- [miru](https://github.com/ThaUnknown/miru/) for inspiring me making this site
 
 ## License
 
@@ -125,9 +126,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 Thank You for passing by!!
 If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 <br>
-or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account) 
- 
- 
+or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account)
+
 [![Discord Banner](https://discordapp.com/api/guilds/822413263148285973/widget.png?style=banner2)](https://discord.gg/v5fjSdKwr2)
 
 ## Support This Project

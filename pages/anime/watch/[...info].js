@@ -22,7 +22,7 @@ const VideoPlayer = dynamic(() =>
   import("../../../components/videoPlayer", { ssr: false })
 );
 
-export default function Info({ sessions, id, aniId, provider, proxy }) {
+export default function Info({ sessions, id, aniId, provider, proxy, api }) {
   const [epiData, setEpiData] = useState(null);
   const [data, setAniData] = useState(null);
   const [skip, setSkip] = useState({ op: null, ed: null });
@@ -73,14 +73,12 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
       try {
         if (provider) {
           const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/watch/${id}?provider=${provider}`
+            `${api}/meta/anilist/watch/${id}?provider=${provider}`
           );
           const epiData = await res.json();
           setEpiData(epiData);
         } else {
-          const res = await fetch(
-            `https://api.moopa.my.id/meta/anilist/watch/${id}`
-          );
+          const res = await fetch(`${api}/meta/anilist/watch/${id}`);
           const epiData = await res.json();
           setEpiData(epiData);
         }
@@ -95,15 +93,13 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
 
       if (provider) {
         const res = await fetch(
-          `https://api.moopa.my.id/meta/anilist/info/${aniId}?provider=${provider}`
+          `${api}/meta/anilist/info/${aniId}?provider=${provider}`
         );
         aniData = await res.json();
         setEpisodes(aniData.episodes?.reverse());
         setAniData(aniData);
       } else {
-        const res2 = await fetch(
-          `https://api.moopa.my.id/meta/anilist/info/${aniId}`
-        );
+        const res2 = await fetch(`${api}/meta/anilist/info/${aniId}`);
         aniData = await res2.json();
         setEpisodes(aniData.episodes?.reverse());
         setAniData(aniData);
@@ -561,6 +557,8 @@ export default function Info({ sessions, id, aniId, provider, proxy }) {
 export async function getServerSideProps(context) {
   dotenv.config();
 
+  const API_URI = process.env.API_URI;
+
   const session = await getServerSession(context.req, context.res, authOptions);
 
   const proxy = process.env.PROXY_URI;
@@ -583,6 +581,7 @@ export async function getServerSideProps(context) {
       aniId,
       provider,
       proxy,
+      api: API_URI,
     },
   };
 }
