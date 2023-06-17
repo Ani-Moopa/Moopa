@@ -267,8 +267,6 @@ export default function Info({ info, color, api }) {
     fetchData();
   }, [id, info, session?.user?.name]);
 
-  console.log(availableProviders);
-
   function handleOpen() {
     setOpen(true);
     document.body.style.overflow = "hidden";
