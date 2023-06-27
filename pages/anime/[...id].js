@@ -555,7 +555,7 @@ export default function Info({ info, color, api }) {
                   )}
                 </div>
                 <div
-                  className={`w-screen lg:w-full grid lg:grid-cols-3 justify-items-center gap-7 lg:pt-7 lg:pb-5 px-3 lg:px-4 pt-4 rounded-xl`}
+                  className={`w-screen lg:w-full flex gap-5 overflow-x-scroll snap-x scroll-px-5 scrollbar-none lg:grid lg:grid-cols-3 justify-items-center lg:pt-7 lg:pb-5 px-3 lg:px-4 pt-4 rounded-xl`}
                 >
                   {info?.relations?.edges ? (
                     info?.relations?.edges
@@ -580,13 +580,13 @@ export default function Info({ info, color, api }) {
                                       info?.title.native
                                   )}`
                             }
-                            className={`hover:scale-[1.02] hover:shadow-lg lg:px-0 px-4 scale-100 transition-transform duration-200 ease-out w-full ${
+                            className={`lg:hover:scale-[1.02] snap-start hover:shadow-lg scale-100 transition-transform duration-200 ease-out w-full ${
                               rel.type === "MUSIC" ? "pointer-events-none" : ""
                             }`}
                           >
                             <div
                               key={rel.id}
-                              className="w-full shrink h-[126px] bg-secondary flex rounded-md"
+                              className="w-[400px] lg:w-full h-[126px] bg-secondary flex rounded-md"
                             >
                               <div className="w-[90px] bg-image rounded-l-md shrink-0">
                                 <Image
