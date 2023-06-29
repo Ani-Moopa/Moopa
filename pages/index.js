@@ -455,7 +455,7 @@ export default function Home({ detail, populars, sessions }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
-            {sessions && onGoing.length > 0 && (
+            {sessions && onGoing?.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="onGoing"
                 initial={{ y: 20, opacity: 0 }}
@@ -472,7 +472,7 @@ export default function Home({ detail, populars, sessions }) {
               </motion.div>
             )}
 
-            {sessions && list.length > 0 && (
+            {sessions && list?.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="listAnime"
                 initial={{ y: 20, opacity: 0 }}
@@ -489,7 +489,7 @@ export default function Home({ detail, populars, sessions }) {
             )}
 
             {/* SECTION 2 */}
-            {sessions && planned.length > 0 && (
+            {sessions && planned?.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="plannedAnime"
                 initial={{ y: 20, opacity: 0 }}
