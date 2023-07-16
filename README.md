@@ -70,7 +70,7 @@
   - [x] Ability to auto track anime after watching >= 90% through the video
   - [x] Create a user profile page to see lists of anime watched
   - [x] Ability to edit list inside detail page
-- [ ] Working on Manga pages
+- [X] Working on Manga pages
 
 ## Bug Report
 
