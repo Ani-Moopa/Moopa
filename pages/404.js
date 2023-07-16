@@ -2,8 +2,26 @@ import Head from "next/head";
 import Footer from "../components/footer";
 import Navbar from "../components/navbar";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { parseCookies } from "nookies";
 
 export default function Custom404() {
+  const [lang, setLang] = useState("en");
+  const [cookie, setCookies] = useState(null);
+
+  useEffect(() => {
+    let lang = null;
+    if (!cookie) {
+      const cookie = parseCookies();
+      lang = cookie.lang || null;
+      setCookies(cookie);
+    }
+    if (lang === "en" || lang === null) {
+      setLang("en");
+    } else if (lang === "id") {
+      setLang("id");
+    }
+  }, []);
   return (
     <>
       <Head>
@@ -13,7 +31,7 @@ export default function Custom404() {
         <link rel="icon" href="/c.svg" />
       </Head>
       <Navbar className="bg-[#0c0d10]" />
-      <div className="min-h-screen flex flex-col items-center justify-center ">
+      <div className="min-h-screen w-screen flex flex-col items-center justify-center ">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -88,7 +106,7 @@ export default function Custom404() {
         <p className="text-base sm:text-lg xl:text-xl text-gray-300 mb-6 text-center">
           The page you're looking for doesn't seem to exist.
         </p>
-        <Link href="/">
+        <Link href={`/${lang}/`}>
           <div className="bg-[#fa7d56] xl:text-xl text-white font-bold py-2 px-4 rounded hover:bg-[#fb6f44]">
             Go back home
           </div>

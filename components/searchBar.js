@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion as m, AnimatePresence } from "framer-motion";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useAniList } from "../lib/useAnilist";
+import { useAniList } from "../lib/anilist/useAnilist";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,6 +15,8 @@ const SearchBar = () => {
   const { aniAdvanceSearch } = useAniList();
   const [data, setData] = useState(null);
   const [query, setQuery] = useState("");
+
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     if (isOpen) {
@@ -58,10 +60,19 @@ const SearchBar = () => {
     }
   }, [query]);
 
+  useEffect(() => {
+    const lang = localStorage.getItem("lang") || "id";
+    if (lang === "en" || lang === null) {
+      setLang("en");
+    } else if (lang === "id") {
+      setLang("id");
+    }
+  }, []);
+
   function handleSubmit(e) {
     e.preventDefault();
     if (data?.media.length) {
-      router.push(`/anime/${data?.media[0].id}`);
+      router.push(`${lang}/anime/${data?.media[0].id}`);
     }
   }
 
@@ -92,7 +103,7 @@ const SearchBar = () => {
               {data?.media.map((i) => (
                 <Link
                   key={i.id}
-                  href={i.type === "ANIME" ? `/anime/${i.id}` : `/`}
+                  href={i.type === "ANIME" ? `${lang}/anime/${i.id}` : `/`}
                   className="flex hover:bg-[#3e3e3e] rounded-md"
                 >
                   <Image
@@ -131,7 +142,7 @@ const SearchBar = () => {
             {query && (
               <button className="flex items-center gap-2 justify-center">
                 <MagnifyingGlassIcon className="h-5 w-5" />
-                <Link href={`/search/${query}`}>More Results...</Link>
+                <Link href={`${lang}/search/${query}`}>More Results...</Link>
               </button>
             )}
           </div>

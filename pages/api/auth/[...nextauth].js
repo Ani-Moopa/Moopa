@@ -1,6 +1,24 @@
 import NextAuth from "next-auth";
 import { GET_CURRENT_USER } from "../../../queries";
-import { client } from "../../../lib/apolloClient";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: "no-cache",
+    errorPolicy: "ignore",
+  },
+  query: {
+    fetchPolicy: "no-cache",
+    errorPolicy: "all",
+  },
+};
+
+const client = new ApolloClient({
+  uri: "https://graphql.anilist.co",
+  cache: new InMemoryCache(),
+  defaultOptions: defaultOptions,
+});
+
 // import clientPromise from "../../../lib/mongodb";
 // import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 

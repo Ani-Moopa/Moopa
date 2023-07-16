@@ -19,6 +19,7 @@ query ($id: Int) {
         nextAiringEpisode {
             episode
             airingAt
+            timeUntilAiring
         }
         averageScore
         popularity

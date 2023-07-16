@@ -1,10 +1,8 @@
 import { useState } from "react";
-import useAlert from "./useAlert";
-import { AnimatePresence, motion as m } from "framer-motion";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
-  const { message, type, showAlert } = useAlert();
   const [status, setStatus] = useState(stats ?? "");
   const [progress, setProgress] = useState(prg ?? 0);
 
@@ -38,14 +36,41 @@ const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
       });
       const { data } = await response.json();
       if (data.SaveMediaListEntry === null) {
-        showAlert("Something went wrong", "error");
+        toast.error("Something went wrong", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
         return;
       }
       console.log("Saved media list entry", data);
-      //   success();
-      showAlert("Media list entry saved", "success");
+      toast.success("Media list entry saved", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+      // showAlert("Media list entry saved", "success");
     } catch (error) {
-      showAlert("Something went wrong", "error");
+      toast.error("Something went wrong", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
       console.error(error);
     }
   };
@@ -55,20 +80,6 @@ const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
       <div className="absolute font-karla font-bold -top-8 rounded-sm px-2 py-1 text-sm">
         List Editor
       </div>
-      <AnimatePresence>
-        {message && (
-          <m.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
-            className={`${
-              type === "success" ? "bg-green-500" : "bg-red-500"
-            } text-white px-4 py-1 mb-2 rounded-md text-sm sm:text-base`}
-          >
-            {message}
-          </m.div>
-        )}
-      </AnimatePresence>
       <div className="relative bg-secondary rounded-sm w-screen md:w-auto">
         <div className="md:flex">
           {image && (

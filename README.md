@@ -43,6 +43,9 @@
 <h5 align="center">Watch Page</h5>
 <img src="https://user-images.githubusercontent.com/97084324/234466915-c2107ee5-5cfe-4cf5-9da4-9ad02aaf066a.png"/>
  
+<h5 align="center">Read Page</h5>
+<img src="https://github.com/DevanAbinaya/Ani-Moopa/assets/97084324/ccd2ee11-4ee3-411c-b634-d48c84f1a9e2"/>
+
 </details>
 
 ## Introduction
@@ -95,14 +98,15 @@ CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
 GRAPHQL_ENDPOINT="https://graphql.anilist.co"
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
-PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there."
-API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org you can deploy it using the one click setup there. very easy"
+PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there. Skip this if you only use gogoanime as a source"
+API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
+API_KEY="this API key is for manga page. get the key from https://anify.tv/discord"
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :
 
 ```bash
-https://{your-website-url}/api/auth/callback/AniListProvider
+https://your-website-url/api/auth/callback/AniListProvider
 ```
 
 5. Start local server :
@@ -113,8 +117,9 @@ npm run dev
 
 ## Credits
 
-- [Consumet API](https://github.com/consumet/api.consumet.org)
-- [AniList API](https://github.com/AniList/ApiV2-GraphQL-Docs)
+- [Consumet API](https://github.com/consumet/api.consumet.org) for anime sources
+- [AniList API](https://github.com/AniList/ApiV2-GraphQL-Docs) for anime details source
+- [Anify API](https://anify.tv/discord) for manga sources
 - [miru](https://github.com/ThaUnknown/miru/) for inspiring me making this site
 
 ## License

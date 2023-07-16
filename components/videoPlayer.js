@@ -1,6 +1,6 @@
 import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
-import { useAniList } from "../lib/useAnilist";
+import { useAniList } from "../lib/anilist/useAnilist";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 
 const fontSize = [

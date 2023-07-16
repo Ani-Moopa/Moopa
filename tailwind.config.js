@@ -10,8 +10,9 @@ module.exports = {
   darkMode: "class",
   theme: {
     screens: {
-      xs: "425px",
       xxs: "375px",
+      xs: "425px",
+
       ...defaultTheme.screens,
     },
     extend: {
@@ -77,6 +78,5 @@ module.exports = {
       nocompatible: true,
     }),
     require("tailwind-scrollbar-hide"),
-    require("@shrutibalasa/tailwind-grid-auto-fit"),
   ],
 };

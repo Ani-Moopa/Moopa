@@ -32,6 +32,7 @@ yarn-error.log*
 .env
 .env*.local
 .vs
+service-account.json
 
 # vercel
 .vercel
