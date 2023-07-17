@@ -132,7 +132,7 @@ export default function Schedule({ data, scheduleData, time }) {
             </div>
           </div>
         </div>
-        {scheduleData.length > 0 && (
+        {scheduleData && (
           <div className="w-full bg-tersier rounded-b overflow-hidden">
             <div
               ref={scrollRef}

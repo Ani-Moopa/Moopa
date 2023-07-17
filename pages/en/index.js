@@ -557,12 +557,12 @@ export async function getServerSideProps(context) {
   const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
 
   const apikey = process.env.API_KEY;
-  
-  let schedules = [];
+
+  let schedules;
   if (apikey) {
     const res = await fetch(`https://api.anify.tv/schedule?apikey=${apikey}`);
     if (res.error) {
-      schedules = [];
+      schedules = null;
     } else {
       schedules = await res.json();
     }
@@ -577,7 +577,7 @@ export async function getServerSideProps(context) {
       populars: popularDetail.props,
       sessions: session,
       upComing,
-      schedules,
+      schedules: schedules || null,
     },
   };
 }

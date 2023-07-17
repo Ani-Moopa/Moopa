@@ -29,6 +29,7 @@ import { GET_MEDIA_USER } from "../../../queries";
 import { GET_MEDIA_INFO } from "../../../queries";
 
 import { ToastContainer } from "react-toastify";
+import { convertSecondsToTime } from "../../../utils/getTimes";
 
 // import { aniInfo } from "../../components/devComp/data";
 // console.log(GET_MEDIA_USER);
@@ -1107,28 +1108,6 @@ export async function getServerSideProps(context) {
       api: API_URI,
     },
   };
-}
-
-function convertSecondsToTime(sec) {
-  let days = Math.floor(sec / (3600 * 24));
-  let hours = Math.floor((sec % (3600 * 24)) / 3600);
-  let minutes = Math.floor((sec % 3600) / 60);
-
-  let time = "";
-
-  if (days > 0) {
-    time += `${days}d `;
-  }
-
-  if (hours > 0) {
-    time += `${hours}h `;
-  }
-
-  if (minutes > 0) {
-    time += `${minutes}m `;
-  }
-
-  return time.trim();
 }
 
 function getBrightness(hexColor) {
