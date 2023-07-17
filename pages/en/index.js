@@ -188,7 +188,7 @@ export default function Home({
       <div className={`transition-all duration-150 subpixel-antialiased z-50`}>
         {isVisible && sessions && (
           <Link
-            href={`/profile/${sessions?.user.name}`}
+            href={`/en/profile/${sessions?.user.name}`}
             className="fixed lg:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
           >
             <img
