@@ -251,6 +251,11 @@ export async function getServerSideProps(context) {
   );
 
   const data = await res.json();
+  if (data.error) {
+    return {
+      notFound: true
+    }
+  }
 
   return {
     props: {

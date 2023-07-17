@@ -159,7 +159,13 @@ export async function getServerSideProps(context) {
       `https://api.anify.tv/chapters/${id}?apikey=${key}`
     );
     const data2 = await res2.json();
-    chapter = data2;
+    if (data2.error) {
+      return {
+        notFound: true
+      }
+    } else {
+      chapter = data2; 
+    }
   }
 
   return {

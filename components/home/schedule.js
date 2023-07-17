@@ -18,16 +18,20 @@ export default function Schedule({ data, scheduleData, time }) {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    const index = Object.keys(scheduleData).indexOf(activeSection + "Schedule");
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.clientWidth * index;
+    if (scheduleData) {
+      const index = Object?.keys(scheduleData).indexOf(
+        activeSection + "Schedule"
+      );
+      if (scrollRef.current) {
+        scrollRef.current.scrollLeft = scrollRef.current.clientWidth * index;
+      }
     }
   }, [activeSection, scheduleData]);
 
   const handleScroll = (e) => {
     const { scrollLeft, clientWidth } = e.target;
     const index = Math.floor(scrollLeft / clientWidth);
-    let day = Object.keys(scheduleData)[index];
+    let day = Object?.keys(scheduleData)[index];
     day = day.replace("Schedule", "");
     setActiveSection(day);
   };
@@ -128,88 +132,90 @@ export default function Schedule({ data, scheduleData, time }) {
             </div>
           </div>
         </div>
-        <div className="w-full bg-tersier rounded-b overflow-hidden">
-          <div
-            ref={scrollRef}
-            className="flex overflow-x-scroll snap snap-x snap-proximity  scrollbar-hide"
-            onScroll={handleScroll}
-          >
-            {Object.entries(scheduleData).map(([section, data], index) => {
-              const uniqueArray = data.reduce((accumulator, current) => {
-                if (!accumulator.find((item) => item.id === current.id)) {
-                  accumulator.push(current);
-                }
-                return accumulator;
-              }, []);
+        {scheduleData.length > 0 && (
+          <div className="w-full bg-tersier rounded-b overflow-hidden">
+            <div
+              ref={scrollRef}
+              className="flex overflow-x-scroll snap snap-x snap-proximity  scrollbar-hide"
+              onScroll={handleScroll}
+            >
+              {Object.entries(scheduleData).map(([section, data], index) => {
+                const uniqueArray = data.reduce((accumulator, current) => {
+                  if (!accumulator.find((item) => item.id === current.id)) {
+                    accumulator.push(current);
+                  }
+                  return accumulator;
+                }, []);
 
-              return (
-                <div
-                  key={index}
-                  className="snap-start flex-shrink-0 h-[240px] overflow-y-scroll scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded w-full"
-                  style={{ scrollbarGutter: "stable" }}
-                >
-                  <div className="flex flex-col gap-2 px-2 pt-2">
-                    {uniqueArray.map((i, index) => {
-                      const currentTime = Date.now();
-                      const hasAired = i.airingAt < currentTime;
+                return (
+                  <div
+                    key={index}
+                    className="snap-start flex-shrink-0 h-[240px] overflow-y-scroll scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded w-full"
+                    style={{ scrollbarGutter: "stable" }}
+                  >
+                    <div className="flex flex-col gap-2 px-2 pt-2">
+                      {uniqueArray.map((i, index) => {
+                        const currentTime = Date.now();
+                        const hasAired = i.airingAt < currentTime;
 
-                      return (
-                        <Link
-                          key={`${i.id}-${index}`}
-                          href={`/en/anime/${i.id}`}
-                          className={`${
-                            hasAired ? "opacity-40" : ""
-                          } h-full w-full flex items-center p-2 flex-shrink-0 hover:bg-secondary cursor-pointer`}
-                        >
-                          <div className="shrink-0">
-                            <Image
-                              src={i.coverImage}
-                              alt="coverSchedule"
-                              width={300}
-                              height={300}
-                              className="w-10 h-10 object-cover rounded"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between w-full">
-                            <div className="font-karla px-2">
-                              <h1 className="font-semibold text-sm line-clamp-1">
-                                {i.title.romaji}
-                              </h1>
-                              <p className="font-semibold text-xs text-gray-400">
-                                {convertUnixToTime(i.airingAt)} - Episode{" "}
-                                {i.airingEpisode}
-                              </p>
+                        return (
+                          <Link
+                            key={`${i.id}-${index}`}
+                            href={`/en/anime/${i.id}`}
+                            className={`${
+                              hasAired ? "opacity-40" : ""
+                            } h-full w-full flex items-center p-2 flex-shrink-0 hover:bg-secondary cursor-pointer`}
+                          >
+                            <div className="shrink-0">
+                              <Image
+                                src={i.coverImage}
+                                alt="coverSchedule"
+                                width={300}
+                                height={300}
+                                className="w-10 h-10 object-cover rounded"
+                              />
                             </div>
-                            <div>
-                              <PlayIcon className="w-6 h-6 text-gray-300" />
+                            <div className="flex items-center justify-between w-full">
+                              <div className="font-karla px-2">
+                                <h1 className="font-semibold text-sm line-clamp-1">
+                                  {i.title.romaji}
+                                </h1>
+                                <p className="font-semibold text-xs text-gray-400">
+                                  {convertUnixToTime(i.airingAt)} - Episode{" "}
+                                  {i.airingEpisode}
+                                </p>
+                              </div>
+                              <div>
+                                <PlayIcon className="w-6 h-6 text-gray-300" />
+                              </div>
                             </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+            <div className="flex items-center bg-tersier justify-between font-karla p-2 border-t border-secondary/40">
+              <button
+                type="button"
+                className="bg-secondary px-2 py-1 rounded"
+                onClick={scrollLeft}
+              >
+                <BackwardIcon className="w-5 h-5" />
+              </button>
+              <div className="font-bold uppercase">{activeSection}</div>
+              <button
+                type="button"
+                className="bg-secondary px-2 py-1 rounded"
+                onClick={scrollRight}
+              >
+                <ForwardIcon className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center bg-tersier justify-between font-karla p-2 border-t border-secondary/40">
-            <button
-              type="button"
-              className="bg-secondary px-2 py-1 rounded"
-              onClick={scrollLeft}
-            >
-              <BackwardIcon className="w-5 h-5" />
-            </button>
-            <div className="font-bold uppercase">{activeSection}</div>
-            <button
-              type="button"
-              className="bg-secondary px-2 py-1 rounded"
-              onClick={scrollRight}
-            >
-              <ForwardIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

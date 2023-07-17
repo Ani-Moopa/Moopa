@@ -44,7 +44,6 @@ export default function Home({
   const { media: release } = useAniList(sessions);
 
   const [anime, setAnime] = useState([]);
-  let scheduleData = null;
 
   const update = () => {
     setAnime((prevAnime) => prevAnime.slice(1));
@@ -487,7 +486,7 @@ export default function Home({
             )}
 
             {/* Schedule */}
-            {anime.length > 0 && schedules && (
+            {anime.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="schedule"
                 initial={{ y: 20, opacity: 0 }}
@@ -558,8 +557,16 @@ export async function getServerSideProps(context) {
   const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
 
   const apikey = process.env.API_KEY;
-  const res = await fetch(`https://api.anify.tv/schedule?apikey=${apikey}`);
-  const schedules = await res.json();
+  
+  let schedules = [];
+  if (apikey) {
+    const res = await fetch(`https://api.anify.tv/schedule?apikey=${apikey}`);
+    if (res.error) {
+      schedules = [];
+    } else {
+      schedules = await res.json();
+    }
+  }
 
   const upComing = await getUpcomingAnime();
 
