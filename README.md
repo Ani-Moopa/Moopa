@@ -100,7 +100,7 @@ NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) wi
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there. Skip this if you only use gogoanime as a source"
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
-API_KEY="this API key is for manga page. get the key from https://anify.tv/discord"
+API_KEY="this API key is for manga page. get the key from https://anify.tv/discord (key doesn't contain any special character in it)"
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :
