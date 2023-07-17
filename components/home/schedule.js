@@ -1,4 +1,3 @@
-import { Textfit } from "react-textfit";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { convertUnixToTime } from "../../utils/getTimes";
@@ -67,10 +66,7 @@ export default function Schedule({ data, scheduleData, time }) {
         <div className="overflow-hidden w-full h-[96px] lg:h-[10rem] rounded relative">
           <div className="absolute flex flex-col justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-[#0c0c0c] to-transparent w-full h-full">
             <h1 className="text-xs lg:text-lg">Coming Up Next!</h1>
-            <Textfit
-              mode="single"
-              min={16}
-              max={40}
+            <div
               className="w-1/2 lg:w-2/5 hidden lg:block font-medium font-karla leading-[2.9rem] text-white line-clamp-1"
             >
               <Link
@@ -79,7 +75,7 @@ export default function Schedule({ data, scheduleData, time }) {
               >
                 {data.title.romaji || data.title.english || data.title.native}
               </Link>
-            </Textfit>
+            </div>
             <h1 className="w-1/2 lg:hidden font-medium font-karla leading-9 text-white line-clamp-1">
               {data.title.romaji || data.title.english || data.title.native}
             </h1>
