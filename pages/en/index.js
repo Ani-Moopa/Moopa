@@ -18,30 +18,25 @@ import Schedule from "../../components/home/schedule";
 import getUpcomingAnime from "../../lib/anilist/getUpcomingAnime";
 import { useCountdown } from "../../lib/useCountdownSeconds";
 
-import dotenv from "dotenv";
 import Navigasi from "../../components/home/staticNav";
 
 // Filter schedules for each day
-const filterByCountryOfOrigin = (schedule, country) => {
-  const filteredSchedule = {};
-  for (const day in schedule) {
-    filteredSchedule[day] = schedule[day].filter(
-      (anime) => anime.countryOfOrigin === country
-    );
-  }
-  return filteredSchedule;
-};
+// const filterByCountryOfOrigin = (schedule, country) => {
+//   const filteredSchedule = {};
+//   for (const day in schedule) {
+//     filteredSchedule[day] = schedule[day].filter(
+//       (anime) => anime.countryOfOrigin === country
+//     );
+//   }
+//   return filteredSchedule;
+// };
 
-export default function Home({
-  detail,
-  populars,
-  sessions,
-  upComing,
-  schedules,
-}) {
+export default function Home({ detail, populars, sessions, upComing }) {
   const { media: current } = useAniList(sessions, { stats: "CURRENT" });
   const { media: plan } = useAniList(sessions, { stats: "PLANNING" });
   const { media: release } = useAniList(sessions);
+
+  const [schedules, setSchedules] = useState(null);
 
   const [anime, setAnime] = useState([]);
 
@@ -60,9 +55,16 @@ export default function Home({
     }
   }, [upComing]);
 
-  const [releaseData, setReleaseData] = useState([]);
+  useEffect(() => {
+    const getSchedule = async () => {
+      const res = await fetch(`https://ruka.moopa.live/api/schedules`);
+      const data = await res.json();
+      setSchedules(data);
+    };
+    getSchedule();
+  }, []);
 
-  // console.log(schedules);
+  const [releaseData, setReleaseData] = useState([]);
 
   useEffect(() => {
     function getRelease() {
@@ -542,8 +544,6 @@ export default function Home({
 }
 
 export async function getServerSideProps(context) {
-  dotenv.config();
-
   const session = await getServerSession(context.req, context.res, authOptions);
 
   const trendingDetail = await aniListData({
@@ -556,18 +556,6 @@ export async function getServerSideProps(context) {
   });
   const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
 
-  const apikey = process.env.API_KEY;
-
-  let schedules;
-  if (apikey) {
-    const res = await fetch(`https://api.anify.tv/schedule?apikey=${apikey}`);
-    if (res.error) {
-      schedules = null;
-    } else {
-      schedules = await res.json();
-    }
-  }
-
   const upComing = await getUpcomingAnime();
 
   return {
@@ -577,7 +565,6 @@ export async function getServerSideProps(context) {
       populars: popularDetail.props,
       sessions: session,
       upComing,
-      schedules: schedules || null,
     },
   };
 }
