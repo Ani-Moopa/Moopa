@@ -187,7 +187,11 @@ export default function MyList({ media, sessions, user, time }) {
           {media.length !== 0 ? (
             filterMedia(listFilter).map((item, index) => {
               return (
-                <div key={index} className="flex flex-col gap-5 mx-3">
+                <div
+                  key={index}
+                  id={item.status?.toLowerCase()}
+                  className="flex flex-col gap-5 mx-3"
+                >
                   <h1 className="font-karla font-bold text-xl">{item.name}</h1>
                   <table className="bg-secondary rounded-lg">
                     <thead>

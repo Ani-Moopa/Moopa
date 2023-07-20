@@ -452,7 +452,9 @@ export default function Card() {
                         <h2 className="font-outfit xl:text-[15px] text-[11px] font-light pt-2 text-[#8B8B8B]">
                           {anime.format || <p>-</p>} &#183;{" "}
                           {anime.status || <p>-</p>} &#183;{" "}
-                          {anime.episodes || 0} Episodes
+                          {anime.episodes
+                            ? `${anime.episodes || "N/A"} Episodes`
+                            : `${anime.chapters || "N/A"} Chapters`}
                         </h2>
                       </m.div>
                     );

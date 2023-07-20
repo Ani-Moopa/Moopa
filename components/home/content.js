@@ -11,8 +11,11 @@ import { parseCookies } from "nookies";
 
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/router";
 
-export default function Content({ ids, section, data, og }) {
+export default function Content({ ids, section, data, og, userName }) {
+  const router = useRouter();
+
   const [startX, setStartX] = useState(null);
   const containerRef = useRef(null);
   const [cookie, setCookie] = useState(null);
@@ -111,9 +114,29 @@ export default function Content({ ids, section, data, og }) {
   const slicedData =
     filteredData?.length > 15 ? filteredData?.slice(0, 15) : filteredData;
 
+  const goToPage = () => {
+    if (section === "Trending Now") {
+      router.push(`/${lang}/anime/trending`);
+    }
+    if (section === "Popular Anime") {
+      router.push(`/${lang}/anime/popular`);
+    }
+    if (section === "Your Plan") {
+      router.push(`/${lang}/profile/${userName}/#planning`);
+    }
+    if (section === "On-Going Anime" || section === "Your Watch List") {
+      router.push(`/${lang}/profile/${userName}/#current`);
+    }
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-between lg:justify-normal lg:gap-3 px-5">
+      <div
+        className={`flex items-center justify-between lg:justify-normal lg:gap-3 px-5 ${
+          section === "Recommendations" ? "" : "cursor-pointer"
+        }`}
+        onClick={goToPage}
+      >
         <h1 className="font-karla text-[20px] font-bold">{section}</h1>
         <ChevronRightIcon className="w-5 h-5" />
       </div>
@@ -210,8 +233,12 @@ export default function Content({ ids, section, data, og }) {
             );
           })}
           {filteredData.length >= 10 && section !== "Recommendations" && (
-            <div key={section} className="flex ">
-              <div className="h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a]">
+            <div
+              key={section}
+              className="flex cursor-pointer"
+              onClick={goToPage}
+            >
+              <div className="h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">
                 <h1 className="whitespace-pre-wrap text-sm">
                   More on {section}
                 </h1>
