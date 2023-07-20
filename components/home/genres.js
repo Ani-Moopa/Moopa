@@ -80,7 +80,7 @@ export default function Genres() {
             ))}
           </div>
         </div>
-        <div className="bg-gradient-to-l from-primary to-transparent z-40 absolute w-7 h-[200px] right-0" />
+        <div className="bg-gradient-to-l from-primary to-transparent z-40 absolute w-7 h-[200px] lg:h-[300px] right-0" />
       </div>
     </div>
   );
