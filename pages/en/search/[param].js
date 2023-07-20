@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion as m } from "framer-motion";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Navbar from "../../../components/navbar";
@@ -462,18 +462,16 @@ export default function Card() {
 
                 {loading && (
                   <>
-                    <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
-                      {[1, 2, 4, 5, 6, 7, 8].map((item) => (
-                        <div
-                          key={item}
-                          className="flex flex-col w-[135px] xl:w-[185px] gap-5"
-                          style={{ scale: 0.98 }}
-                        >
-                          <Skeleton className="h-[192px] w-[135px] xl:h-[265px] xl:w-[185px]" />
-                          <Skeleton width={110} height={30} />
-                        </div>
-                      ))}
-                    </SkeletonTheme>
+                    {[1, 2, 4, 5, 6, 7, 8].map((item) => (
+                      <div
+                        key={item}
+                        className="flex flex-col w-[135px] xl:w-[185px] gap-5"
+                        style={{ scale: 0.98 }}
+                      >
+                        <Skeleton className="h-[192px] w-[135px] xl:h-[265px] xl:w-[185px]" />
+                        <Skeleton width={110} height={30} />
+                      </div>
+                    ))}
                   </>
                 )}
               </div>

@@ -1,5 +1,4 @@
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import Skeleton from "react-loading-skeleton";
 
 import {
   ChevronDownIcon,
@@ -352,123 +351,60 @@ export default function Info({ info, color, api }) {
           )}
         </div>
       </Modal>
-      <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
-        <Layout navTop="text-white bg-primary lg:pt-0 lg:px-0 bg-slate bg-opacity-40 z-50">
-          <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
-            <div className="bg-image w-screen">
-              <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
-              {info ? (
-                <Image
-                  src={
-                    info?.bannerImage ||
-                    info?.coverImage?.extraLarge ||
-                    info?.coverImage.large
-                  }
-                  priority={true}
-                  alt="banner anime"
-                  height={1000}
-                  width={1000}
-                  className="object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-[70%] z-0"
+      <Layout navTop="text-white bg-primary lg:pt-0 lg:px-0 bg-slate bg-opacity-40 z-50">
+        <div className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
+          <div className="bg-image w-screen">
+            <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
+            {info ? (
+              <Image
+                src={
+                  info?.bannerImage ||
+                  info?.coverImage?.extraLarge ||
+                  info?.coverImage.large
+                }
+                priority={true}
+                alt="banner anime"
+                height={1000}
+                width={1000}
+                className="object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-[70%] z-0"
+              />
+            ) : (
+              <div className="bg-image w-screen absolute top-0 left-0 h-[300px]" />
+            )}
+          </div>
+          <div className="lg:w-[90%] xl:w-[75%] lg:pt-[10rem] z-30 flex flex-col gap-5">
+            {/* Mobile */}
+
+            <div className="lg:hidden pt-5 w-screen px-5 flex flex-col">
+              <div className="h-[250px] flex flex-col gap-1 justify-center">
+                <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
+                  {info?.title?.romaji || info?.title?.english}
+                </h1>
+                <p
+                  className="line-clamp-2 text-sm font-light antialiased w-[56%]"
+                  dangerouslySetInnerHTML={{ __html: info?.description }}
                 />
-              ) : (
-                <div className="bg-image w-screen absolute top-0 left-0 h-[300px]" />
-              )}
-            </div>
-            <div className="lg:w-[90%] xl:w-[75%] lg:pt-[10rem] z-30 flex flex-col gap-5">
-              {/* Mobile */}
-
-              <div className="lg:hidden pt-5 w-screen px-5 flex flex-col">
-                <div className="h-[250px] flex flex-col gap-1 justify-center">
-                  <h1 className="font-karla font-extrabold text-lg line-clamp-1 w-[70%]">
-                    {info?.title?.romaji || info?.title?.english}
-                  </h1>
-                  <p
-                    className="line-clamp-2 text-sm font-light antialiased w-[56%]"
-                    dangerouslySetInnerHTML={{ __html: info?.description }}
-                  />
-                  <div className="font-light flex gap-1 py-1 flex-wrap font-outfit text-[10px] text-[#ffffff] w-[70%]">
-                    {info?.genres
-                      ?.slice(
-                        0,
-                        info?.genres?.length > 3 ? info?.genres?.length : 3
-                      )
-                      .map((item, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-secondary shadow-lg font-outfit font-light rounded-full"
-                        >
-                          <span className="">{item}</span>
-                        </span>
-                      ))}
-                  </div>
-                  {info && (
-                    <div className="flex items-center gap-5 pt-3 text-center">
-                      <div className="flex items-center gap-2  text-center">
-                        <button
-                          type="button"
-                          className="bg-action px-10 rounded-sm font-karla font-bold"
-                          onClick={() => handleOpen()}
-                        >
-                          {!loading
-                            ? statuses
-                              ? statuses.name
-                              : "Add to List"
-                            : "Loading..."}
-                        </button>
-                        <div className="h-6 w-6">
-                          <HeartIcon />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                <div className="font-light flex gap-1 py-1 flex-wrap font-outfit text-[10px] text-[#ffffff] w-[70%]">
+                  {info?.genres
+                    ?.slice(
+                      0,
+                      info?.genres?.length > 3 ? info?.genres?.length : 3
+                    )
+                    .map((item, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-secondary shadow-lg font-outfit font-light rounded-full"
+                      >
+                        <span className="">{item}</span>
+                      </span>
+                    ))}
                 </div>
-                <div className="bg-secondary rounded-sm xs:h-[30px]">
-                  <div className="grid grid-cols-3 place-content-center xxs:flex  items-center justify-center h-full xxs:gap-10 p-2 text-sm">
-                    {info && info.status !== "NOT_YET_RELEASED" ? (
-                      <>
-                        <div className="flex-center flex-col xxs:flex-row gap-2">
-                          <TvIcon className="w-5 h-5 text-action" />
-                          <h4 className="font-karla">{info?.type}</h4>
-                        </div>
-                        <div className="flex-center flex-col xxs:flex-row gap-2">
-                          <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
-                          <h4>{info?.averageScore}%</h4>
-                        </div>
-                        <div className="flex-center flex-col xxs:flex-row gap-2">
-                          <RectangleStackIcon className="w-5 h-5 text-action" />
-                          {info?.episodes ? (
-                            <h1>{info?.episodes} Episodes</h1>
-                          ) : (
-                            <h1>TBA</h1>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <div>{info && "Not Yet Released"}</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* PC */}
-              <div className="hidden lg:flex gap-8 w-full flex-nowrap">
-                <div className="shrink-0 lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] relative">
-                  {info ? (
-                    <>
-                      <div className="bg-image lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
-                      <Image
-                        src={
-                          info.coverImage.extraLarge || info.coverImage.large
-                        }
-                        priority={true}
-                        alt="poster anime"
-                        height={700}
-                        width={700}
-                        className="object-cover lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
-                      />
+                {info && (
+                  <div className="flex items-center gap-5 pt-3 text-center">
+                    <div className="flex items-center gap-2  text-center">
                       <button
                         type="button"
-                        className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
+                        className="bg-action px-10 rounded-sm font-karla font-bold"
                         onClick={() => handleOpen()}
                       >
                         {!loading
@@ -477,450 +413,461 @@ export default function Info({ info, color, api }) {
                             : "Add to List"
                           : "Loading..."}
                       </button>
+                      <div className="h-6 w-6">
+                        <HeartIcon />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="bg-secondary rounded-sm xs:h-[30px]">
+                <div className="grid grid-cols-3 place-content-center xxs:flex  items-center justify-center h-full xxs:gap-10 p-2 text-sm">
+                  {info && info.status !== "NOT_YET_RELEASED" ? (
+                    <>
+                      <div className="flex-center flex-col xxs:flex-row gap-2">
+                        <TvIcon className="w-5 h-5 text-action" />
+                        <h4 className="font-karla">{info?.type}</h4>
+                      </div>
+                      <div className="flex-center flex-col xxs:flex-row gap-2">
+                        <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
+                        <h4>{info?.averageScore}%</h4>
+                      </div>
+                      <div className="flex-center flex-col xxs:flex-row gap-2">
+                        <RectangleStackIcon className="w-5 h-5 text-action" />
+                        {info?.episodes ? (
+                          <h1>{info?.episodes} Episodes</h1>
+                        ) : (
+                          <h1>TBA</h1>
+                        )}
+                      </div>
                     </>
                   ) : (
-                    <Skeleton className="h-[250px] w-[180px]" />
+                    <div>{info && "Not Yet Released"}</div>
                   )}
                 </div>
+              </div>
+            </div>
 
-                {/* PC */}
-                <div className="hidden lg:flex w-full flex-col gap-5 h-[250px]">
-                  <div className="flex flex-col gap-2">
-                    <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
-                      {info ? (
-                        info?.title?.romaji || info?.title?.english
-                      ) : (
-                        <Skeleton width={450} />
-                      )}
-                    </h1>
+            {/* PC */}
+            <div className="hidden lg:flex gap-8 w-full flex-nowrap">
+              <div className="shrink-0 lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] relative">
+                {info ? (
+                  <>
+                    <div className="bg-image lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] bg-opacity-30 absolute backdrop-blur-lg z-10 -top-7" />
+                    <Image
+                      src={info.coverImage.extraLarge || info.coverImage.large}
+                      priority={true}
+                      alt="poster anime"
+                      height={700}
+                      width={700}
+                      className="object-cover lg:h-[250px] lg:w-[180px] w-[115px] h-[164px] z-20 absolute rounded-md -top-7"
+                    />
+                    <button
+                      type="button"
+                      className="bg-action flex-center z-20 h-[20px] w-[180px] absolute bottom-0 rounded-sm font-karla font-bold"
+                      onClick={() => handleOpen()}
+                    >
+                      {!loading
+                        ? statuses
+                          ? statuses.name
+                          : "Add to List"
+                        : "Loading..."}
+                    </button>
+                  </>
+                ) : (
+                  <Skeleton className="h-[250px] w-[180px]" />
+                )}
+              </div>
+
+              {/* PC */}
+              <div className="hidden lg:flex w-full flex-col gap-5 h-[250px]">
+                <div className="flex flex-col gap-2">
+                  <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
                     {info ? (
-                      <div className="flex gap-6">
-                        {info?.episodes && (
-                          <div
-                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            {info?.episodes} Episodes
-                          </div>
-                        )}
-                        {info?.startDate?.year && (
-                          <div
-                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            {info?.startDate?.year}
-                          </div>
-                        )}
-                        {info?.averageScore && (
-                          <div
-                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            {info?.averageScore}%
-                          </div>
-                        )}
-                        {info?.type && (
-                          <div
-                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            {info?.type}
-                          </div>
-                        )}
-                        {info?.status && (
-                          <div
-                            className={`dynamic-text rounded-md px-2 font-karla font-bold`}
-                            style={color}
-                          >
-                            {info?.status}
-                          </div>
-                        )}
+                      info?.title?.romaji || info?.title?.english
+                    ) : (
+                      <Skeleton width={450} />
+                    )}
+                  </h1>
+                  {info ? (
+                    <div className="flex gap-6">
+                      {info?.episodes && (
                         <div
                           className={`dynamic-text rounded-md px-2 font-karla font-bold`}
                           style={color}
                         >
-                          Sub | EN
+                          {info?.episodes} Episodes
                         </div>
+                      )}
+                      {info?.startDate?.year && (
+                        <div
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.startDate?.year}
+                        </div>
+                      )}
+                      {info?.averageScore && (
+                        <div
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.averageScore}%
+                        </div>
+                      )}
+                      {info?.type && (
+                        <div
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.type}
+                        </div>
+                      )}
+                      {info?.status && (
+                        <div
+                          className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                          style={color}
+                        >
+                          {info?.status}
+                        </div>
+                      )}
+                      <div
+                        className={`dynamic-text rounded-md px-2 font-karla font-bold`}
+                        style={color}
+                      >
+                        Sub | EN
                       </div>
-                    ) : (
-                      <Skeleton width={240} height={32} />
-                    )}
-                  </div>
-                  {info ? (
-                    <p
-                      dangerouslySetInnerHTML={{ __html: info?.description }}
-                      className="overflow-y-scroll scrollbar-thin pr-2  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg h-[140px]"
-                    />
+                    </div>
                   ) : (
-                    <Skeleton className="h-[130px]" />
+                    <Skeleton width={240} height={32} />
                   )}
                 </div>
+                {info ? (
+                  <p
+                    dangerouslySetInnerHTML={{ __html: info?.description }}
+                    className="overflow-y-scroll scrollbar-thin pr-2  scrollbar-thumb-secondary scrollbar-thumb-rounded-lg h-[140px]"
+                  />
+                ) : (
+                  <Skeleton className="h-[130px]" />
+                )}
               </div>
+            </div>
 
-              <div>
-                <div className="flex gap-5 items-center">
-                  {info?.relations?.edges?.length > 0 && (
-                    <div className="p-3 lg:p-0 text-[20px] lg:text-2xl font-bold font-karla">
-                      Relations
-                    </div>
-                  )}
-                  {info?.relations?.edges?.length > 3 && (
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => setShowAll(!showAll)}
-                    >
-                      {showAll ? "show less" : "show more"}
-                    </div>
-                  )}
-                </div>
-                <div
-                  className={`w-screen lg:w-full flex gap-5 overflow-x-scroll snap-x scroll-px-5 scrollbar-none lg:grid lg:grid-cols-3 justify-items-center lg:pt-7 lg:pb-5 px-3 lg:px-4 pt-4 rounded-xl`}
-                >
-                  {info?.relations?.edges ? (
-                    info?.relations?.edges
-                      .slice(0, showAll ? info?.relations?.edges.length : 3)
-                      .map((r, index) => {
-                        const rel = r.node;
-                        return (
-                          <Link
+            <div>
+              <div className="flex gap-5 items-center">
+                {info?.relations?.edges?.length > 0 && (
+                  <div className="p-3 lg:p-0 text-[20px] lg:text-2xl font-bold font-karla">
+                    Relations
+                  </div>
+                )}
+                {info?.relations?.edges?.length > 3 && (
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => setShowAll(!showAll)}
+                  >
+                    {showAll ? "show less" : "show more"}
+                  </div>
+                )}
+              </div>
+              <div
+                className={`w-screen lg:w-full flex gap-5 overflow-x-scroll snap-x scroll-px-5 scrollbar-none lg:grid lg:grid-cols-3 justify-items-center lg:pt-7 lg:pb-5 px-3 lg:px-4 pt-4 rounded-xl`}
+              >
+                {info?.relations?.edges ? (
+                  info?.relations?.edges
+                    .slice(0, showAll ? info?.relations?.edges.length : 3)
+                    .map((r, index) => {
+                      const rel = r.node;
+                      return (
+                        <Link
+                          key={rel.id}
+                          href={
+                            rel.type === "ANIME" ||
+                            rel.type === "OVA" ||
+                            rel.type === "MOVIE" ||
+                            rel.type === "SPECIAL" ||
+                            rel.type === "ONA"
+                              ? `/en/anime/${rel.id}`
+                              : `/en/manga/${rel.id}`
+                          }
+                          className={`lg:hover:scale-[1.02] snap-start hover:shadow-lg scale-100 transition-transform duration-200 ease-out w-full ${
+                            rel.type === "MUSIC" ? "pointer-events-none" : ""
+                          }`}
+                        >
+                          <div
                             key={rel.id}
-                            href={
-                              rel.type === "ANIME" ||
-                              rel.type === "OVA" ||
-                              rel.type === "MOVIE" ||
-                              rel.type === "SPECIAL" ||
-                              rel.type === "ONA"
-                                ? `/en/anime/${rel.id}`
-                                : `/en/manga/${rel.id}`
-                            }
-                            className={`lg:hover:scale-[1.02] snap-start hover:shadow-lg scale-100 transition-transform duration-200 ease-out w-full ${
-                              rel.type === "MUSIC" ? "pointer-events-none" : ""
-                            }`}
+                            className="w-[400px] lg:w-full h-[126px] bg-secondary flex rounded-md"
                           >
-                            <div
-                              key={rel.id}
-                              className="w-[400px] lg:w-full h-[126px] bg-secondary flex rounded-md"
-                            >
-                              <div className="w-[90px] bg-image rounded-l-md shrink-0">
-                                <Image
-                                  src={
-                                    rel.coverImage.extraLarge ||
-                                    rel.coverImage.large
-                                  }
-                                  alt={rel.id}
-                                  height={500}
-                                  width={500}
-                                  className="object-cover h-full w-full shrink-0 rounded-l-md"
-                                />
-                              </div>
-                              <div className="h-full grid px-3 items-center">
-                                <div className="text-action font-outfit font-bold">
-                                  {r.relationType}
-                                </div>
-                                <div className="font-outfit font-thin line-clamp-2">
-                                  {rel.title.userPreferred || rel.title.romaji}
-                                </div>
-                                <div className={``}>{rel.type}</div>
-                              </div>
+                            <div className="w-[90px] bg-image rounded-l-md shrink-0">
+                              <Image
+                                src={
+                                  rel.coverImage.extraLarge ||
+                                  rel.coverImage.large
+                                }
+                                alt={rel.id}
+                                height={500}
+                                width={500}
+                                className="object-cover h-full w-full shrink-0 rounded-l-md"
+                              />
                             </div>
-                          </Link>
-                        );
-                      })
-                  ) : (
-                    <>
-                      {[1, 2, 3].map((item) => (
-                        <div key={item} className="w-full hidden lg:block">
-                          <Skeleton className="h-[126px]" />
-                        </div>
-                      ))}
-                      <div className="w-full lg:hidden">
+                            <div className="h-full grid px-3 items-center">
+                              <div className="text-action font-outfit font-bold">
+                                {r.relationType}
+                              </div>
+                              <div className="font-outfit font-thin line-clamp-2">
+                                {rel.title.userPreferred || rel.title.romaji}
+                              </div>
+                              <div className={``}>{rel.type}</div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })
+                ) : (
+                  <>
+                    {[1, 2, 3].map((item) => (
+                      <div key={item} className="w-full hidden lg:block">
                         <Skeleton className="h-[126px]" />
                       </div>
-                    </>
-                  )}
-                </div>
+                    ))}
+                    <div className="w-full lg:hidden">
+                      <Skeleton className="h-[126px]" />
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="flex flex-col gap-5 lg:gap-10 p-3 lg:p-0">
-                <div className="flex lg:flex-row flex-col gap-5 lg:gap-0 justify-between ">
-                  <div className="flex justify-between">
-                    <div className="flex items-center lg:gap-10 sm:gap-7 gap-3">
-                      {info && (
-                        <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
-                          Episodes
-                        </h1>
-                      )}
-                      {info?.nextAiringEpisode && (
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
-                            <h1>Next :</h1>
-                            <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
-                              {time}
-                            </div>
-                          </div>
-                          <div className="h-6 w-6">
-                            <ClockIcon />
+            </div>
+            <div className="flex flex-col gap-5 lg:gap-10 p-3 lg:p-0">
+              <div className="flex lg:flex-row flex-col gap-5 lg:gap-0 justify-between ">
+                <div className="flex justify-between">
+                  <div className="flex items-center lg:gap-10 sm:gap-7 gap-3">
+                    {info && (
+                      <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
+                        Episodes
+                      </h1>
+                    )}
+                    {info?.nextAiringEpisode && (
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
+                          <h1>Next :</h1>
+                          <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
+                            {time}
                           </div>
                         </div>
-                      )}
-                    </div>
+                        <div className="h-6 w-6">
+                          <ClockIcon />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className="lg:hidden bg-secondary p-1 rounded-md cursor-pointer"
+                    onClick={() => setVisible(!visible)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
+                    visible ? "" : "hidden"
+                  }`}
+                >
+                  <div className="flex items-end gap-3">
+                    {filterProviders?.length > 0 && (
+                      <div className="relative flex gap-2 items-center">
+                        <p className="hidden md:block">Provider</p>
+                        <select
+                          onChange={handleProvider}
+                          value={prvValue}
+                          className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
+                        >
+                          {availableProviders
+                            ?.filter((p) => p.available === true)
+                            .map((p) => {
+                              return (
+                                <option key={p.name} value={p.name}>
+                                  {p.name}
+                                </option>
+                              );
+                            })}
+                        </select>
+                        <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                      </div>
+                    )}
+                    {episode?.length > 50 && (
+                      <div className="relative flex gap-2 items-center">
+                        <p className="hidden md:block">Episodes</p>
+                        <select
+                          onChange={onEpisodeIndexChange}
+                          value={selectedRange}
+                          className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded-lg"
+                        >
+                          <option value="All">All</option>
+                          {[...Array(Math.ceil(episode?.length / 50))].map(
+                            (_, index) => {
+                              const start = index * 50 + 1;
+                              const end = Math.min(
+                                start + 50 - 1,
+                                episode?.length
+                              );
+                              const optionLabel = `${start} to ${end}`;
+                              if (episode[0]?.number !== 1) {
+                                var valueLabel = `${episode.length - end + 1}-${
+                                  episode.length - start + 1
+                                }`;
+                              } else {
+                                var valueLabel = `${start}-${end}`;
+                              }
+                              return (
+                                <option key={valueLabel} value={valueLabel}>
+                                  {optionLabel}
+                                </option>
+                              );
+                            }
+                          )}
+                        </select>
+                        <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-3 rounded-sm items-center p-2">
                     <div
-                      className="lg:hidden bg-secondary p-1 rounded-md cursor-pointer"
-                      onClick={() => setVisible(!visible)}
+                      className={
+                        episode?.length > 0
+                          ? episode?.some((item) => item?.title === null)
+                            ? "pointer-events-none"
+                            : "cursor-pointer"
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("1");
+                        localStorage.setItem("epiView", "1");
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
+                        width="31"
+                        height="20"
                         fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
+                        viewBox="0 0 31 20"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <div
-                    className={`flex lg:flex items-center gap-0 lg:gap-5 justify-between ${
-                      visible ? "" : "hidden"
-                    }`}
-                  >
-                    <div className="flex items-end gap-3">
-                      {filterProviders?.length > 0 && (
-                        <div className="relative flex gap-2 items-center">
-                          <p className="hidden md:block">Provider</p>
-                          <select
-                            onChange={handleProvider}
-                            value={prvValue}
-                            className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
-                          >
-                            {availableProviders
-                              ?.filter((p) => p.available === true)
-                              .map((p) => {
-                                return (
-                                  <option key={p.name} value={p.name}>
-                                    {p.name}
-                                  </option>
-                                );
-                              })}
-                          </select>
-                          <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
-                        </div>
-                      )}
-                      {episode?.length > 50 && (
-                        <div className="relative flex gap-2 items-center">
-                          <p className="hidden md:block">Episodes</p>
-                          <select
-                            onChange={onEpisodeIndexChange}
-                            value={selectedRange}
-                            className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb-rounded-lg"
-                          >
-                            <option value="All">All</option>
-                            {[...Array(Math.ceil(episode?.length / 50))].map(
-                              (_, index) => {
-                                const start = index * 50 + 1;
-                                const end = Math.min(
-                                  start + 50 - 1,
-                                  episode?.length
-                                );
-                                const optionLabel = `${start} to ${end}`;
-                                if (episode[0]?.number !== 1) {
-                                  var valueLabel = `${
-                                    episode.length - end + 1
-                                  }-${episode.length - start + 1}`;
-                                } else {
-                                  var valueLabel = `${start}-${end}`;
-                                }
-                                return (
-                                  <option key={valueLabel} value={valueLabel}>
-                                    {optionLabel}
-                                  </option>
-                                );
-                              }
-                            )}
-                          </select>
-                          <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex gap-3 rounded-sm items-center p-2">
-                      <div
-                        className={
-                          episode?.length > 0
-                            ? episode?.some((item) => item?.title === null)
-                              ? "pointer-events-none"
-                              : "cursor-pointer"
-                            : "pointer-events-none"
-                        }
-                        onClick={() => {
-                          setEpiView("1");
-                          localStorage.setItem("epiView", "1");
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                        <rect
                           width="31"
                           height="20"
-                          fill="none"
-                          viewBox="0 0 31 20"
-                        >
-                          <rect
-                            width="31"
-                            height="20"
-                            className={`${
-                              episode?.length > 0
-                                ? episode?.some((item) => item?.title === null)
-                                  ? "fill-[#1c1c22]"
-                                  : epiView === "1"
-                                  ? "fill-action"
-                                  : "fill-[#3A3A44]"
-                                : "fill-[#1c1c22]"
-                            }`}
-                            rx="3"
-                          ></rect>
-                        </svg>
-                      </div>
-                      <div
-                        className={
-                          episode?.length > 0
-                            ? episode?.some((item) => item?.title === null)
-                              ? "pointer-events-none"
-                              : "cursor-pointer"
-                            : "pointer-events-none"
-                        }
-                        onClick={() => {
-                          setEpiView("2");
-                          localStorage.setItem("epiView", "2");
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="33"
-                          height="20"
-                          fill="none"
                           className={`${
                             episode?.length > 0
                               ? episode?.some((item) => item?.title === null)
                                 ? "fill-[#1c1c22]"
-                                : epiView === "2"
+                                : epiView === "1"
                                 ? "fill-action"
                                 : "fill-[#3A3A44]"
                               : "fill-[#1c1c22]"
                           }`}
-                          viewBox="0 0 33 20"
-                        >
-                          <rect width="33" height="7" y="1" rx="3"></rect>
-                          <rect width="33" height="7" y="12" rx="3"></rect>
-                        </svg>
-                      </div>
-                      <div
-                        className={
+                          rx="3"
+                        ></rect>
+                      </svg>
+                    </div>
+                    <div
+                      className={
+                        episode?.length > 0
+                          ? episode?.some((item) => item?.title === null)
+                            ? "pointer-events-none"
+                            : "cursor-pointer"
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("2");
+                        localStorage.setItem("epiView", "2");
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="33"
+                        height="20"
+                        fill="none"
+                        className={`${
                           episode?.length > 0
-                            ? `cursor-pointer`
-                            : "pointer-events-none"
-                        }
-                        onClick={() => {
-                          setEpiView("3");
-                          localStorage.setItem("epiView", "3");
-                        }}
+                            ? episode?.some((item) => item?.title === null)
+                              ? "fill-[#1c1c22]"
+                              : epiView === "2"
+                              ? "fill-action"
+                              : "fill-[#3A3A44]"
+                            : "fill-[#1c1c22]"
+                        }`}
+                        viewBox="0 0 33 20"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="33"
-                          height="20"
-                          fill="none"
-                          className={`${
-                            episode?.length > 0
-                              ? epiView === "3"
-                                ? "fill-action"
-                                : "fill-[#3A3A44]"
-                              : "fill-[#1c1c22]"
-                          }`}
-                          viewBox="0 0 33 20"
-                        >
-                          <rect width="29" height="4" x="2" y="2" rx="2"></rect>
-                          <rect width="29" height="4" x="2" y="8" rx="2"></rect>
-                          <rect
-                            width="16"
-                            height="4"
-                            x="2"
-                            y="14"
-                            rx="2"
-                          ></rect>
-                        </svg>
-                      </div>
+                        <rect width="33" height="7" y="1" rx="3"></rect>
+                        <rect width="33" height="7" y="12" rx="3"></rect>
+                      </svg>
+                    </div>
+                    <div
+                      className={
+                        episode?.length > 0
+                          ? `cursor-pointer`
+                          : "pointer-events-none"
+                      }
+                      onClick={() => {
+                        setEpiView("3");
+                        localStorage.setItem("epiView", "3");
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="33"
+                        height="20"
+                        fill="none"
+                        className={`${
+                          episode?.length > 0
+                            ? epiView === "3"
+                              ? "fill-action"
+                              : "fill-[#3A3A44]"
+                            : "fill-[#1c1c22]"
+                        }`}
+                        viewBox="0 0 33 20"
+                      >
+                        <rect width="29" height="4" x="2" y="2" rx="2"></rect>
+                        <rect width="29" height="4" x="2" y="8" rx="2"></rect>
+                        <rect width="16" height="4" x="2" y="14" rx="2"></rect>
+                      </svg>
                     </div>
                   </div>
                 </div>
-                {!loading ? (
-                  Array.isArray(episode) ? (
-                    episode && (
-                      <div
-                        className={`${
-                          epiView === "3" &&
-                          "scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] h-[640px]"
-                        }`}
-                      >
-                        {episode?.length !== 0 && episode ? (
-                          <div
-                            className={`grid ${
-                              epiView === "1"
-                                ? "grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 lg:gap-8"
-                                : "flex flex-col gap-5"
-                            }  pb-5 pt-2 lg:pt-0 ${
-                              epiView === "3" ? "" : "place-items-center"
-                            }`}
-                          >
-                            {epiView === "1"
-                              ? episode
-                                  .slice(firstEpisodeIndex, lastEpisodeIndex)
-                                  ?.map((epi, index) => {
-                                    const time = artStorage?.[epi?.id]?.time;
-                                    const duration =
-                                      artStorage?.[epi?.id]?.duration;
-                                    let prog = (time / duration) * 100;
-                                    if (prog > 90) prog = 100;
-                                    return (
-                                      <Link
-                                        key={index}
-                                        href={`/en/anime/watch/${epi.id}/${info.id}/${prvValue}`}
-                                        className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
-                                      >
-                                        <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
-                                          Episode {epi?.number}
-                                        </span>
-                                        <span
-                                          className={`absolute bottom-7 left-0 h-1 bg-red-600`}
-                                          style={{
-                                            width:
-                                              progress &&
-                                              artStorage &&
-                                              epi?.number <= progress
-                                                ? "100%"
-                                                : artStorage?.[epi?.id]
-                                                ? `${prog}%`
-                                                : "0%",
-                                          }}
-                                        />
-                                        <div className="absolute inset-0 bg-black z-30 opacity-20" />
-                                        <Image
-                                          src={epi?.image}
-                                          alt="epi image"
-                                          width={500}
-                                          height={500}
-                                          className="object-cover w-full h-[150px] sm:h-[100px] z-20"
-                                        />
-                                      </Link>
-                                    );
-                                  })
-                              : ""}
-                            {epiView === "2" &&
-                              episode
+              </div>
+              {!loading ? (
+                Array.isArray(episode) ? (
+                  episode && (
+                    <div
+                      className={`${
+                        epiView === "3" &&
+                        "scrollbar-thin scrollbar-thumb-[#1b1c21] scrollbar-thumb-rounded-full overflow-y-scroll hover:scrollbar-thumb-[#2e2f37] h-[640px]"
+                      }`}
+                    >
+                      {episode?.length !== 0 && episode ? (
+                        <div
+                          className={`grid ${
+                            epiView === "1"
+                              ? "grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 lg:gap-8"
+                              : "flex flex-col gap-5"
+                          }  pb-5 pt-2 lg:pt-0 ${
+                            epiView === "3" ? "" : "place-items-center"
+                          }`}
+                        >
+                          {epiView === "1"
+                            ? episode
                                 .slice(firstEpisodeIndex, lastEpisodeIndex)
-                                .map((epi, index) => {
+                                ?.map((epi, index) => {
                                   const time = artStorage?.[epi?.id]?.time;
                                   const duration =
                                     artStorage?.[epi?.id]?.duration;
@@ -930,140 +877,182 @@ export default function Info({ info, color, api }) {
                                     <Link
                                       key={index}
                                       href={`/en/anime/watch/${epi.id}/${info.id}/${prvValue}`}
-                                      className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                                      className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
                                     >
-                                      <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
-                                        <div className="relative">
-                                          <Image
-                                            src={epi?.image}
-                                            alt="Anime Cover"
-                                            width={1000}
-                                            height={1000}
-                                            className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
-                                          />
-                                          <span
-                                            className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
-                                            style={{
-                                              width:
-                                                progress &&
-                                                artStorage &&
-                                                epi?.number <= progress
-                                                  ? "100%"
-                                                  : artStorage?.[epi?.id]
-                                                  ? `${prog}%`
-                                                  : "0",
-                                            }}
-                                          />
-                                          <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
-                                            Episode {epi?.number}
-                                          </span>
-                                          <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 20 20"
-                                              fill="currentColor"
-                                              className="w-5 h-5 invisible group-hover:visible"
-                                            >
-                                              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                            </svg>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <div
-                                        className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-5 ${
-                                          epi?.id == id ? "text-[#7a7a7a]" : ""
-                                        }`}
-                                      >
-                                        <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-                                          {epi?.title}
-                                        </h1>
-                                        {epi?.description && (
-                                          <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
-                                            {epi?.description}
-                                          </p>
-                                        )}
-                                      </div>
+                                      <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
+                                        Episode {epi?.number}
+                                      </span>
+                                      <span
+                                        className={`absolute bottom-7 left-0 h-1 bg-red-600`}
+                                        style={{
+                                          width:
+                                            progress &&
+                                            artStorage &&
+                                            epi?.number <= progress
+                                              ? "100%"
+                                              : artStorage?.[epi?.id]
+                                              ? `${prog}%`
+                                              : "0%",
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-black z-30 opacity-20" />
+                                      <Image
+                                        src={epi?.image}
+                                        alt="epi image"
+                                        width={500}
+                                        height={500}
+                                        className="object-cover w-full h-[150px] sm:h-[100px] z-20"
+                                      />
                                     </Link>
                                   );
-                                })}
-                            {epiView === "3" &&
-                              episode
-                                .slice(firstEpisodeIndex, lastEpisodeIndex)
-                                .map((epi, index) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="flex flex-col gap-3 px-2"
-                                    >
-                                      <Link
-                                        href={`/en/anime/watch/${epi.id}/${info.id}/${prvValue}`}
-                                        className={`text-start text-sm lg:text-lg ${
-                                          progress && epi.number <= progress
-                                            ? "text-[#5f5f5f]"
-                                            : "text-white"
-                                        }`}
-                                      >
-                                        <p>Episode {epi.number}</p>
-                                        {epi.title && (
-                                          <p
-                                            className={`text-xs lg:text-sm ${
-                                              progress && epi.number <= progress
-                                                ? "text-[#5f5f5f]"
-                                                : "text-[#b1b1b1]"
-                                            } italic`}
+                                })
+                            : ""}
+                          {epiView === "2" &&
+                            episode
+                              .slice(firstEpisodeIndex, lastEpisodeIndex)
+                              .map((epi, index) => {
+                                const time = artStorage?.[epi?.id]?.time;
+                                const duration =
+                                  artStorage?.[epi?.id]?.duration;
+                                let prog = (time / duration) * 100;
+                                if (prog > 90) prog = 100;
+                                return (
+                                  <Link
+                                    key={index}
+                                    href={`/en/anime/watch/${epi.id}/${info.id}/${prvValue}`}
+                                    className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
+                                  >
+                                    <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
+                                      <div className="relative">
+                                        <Image
+                                          src={epi?.image}
+                                          alt="Anime Cover"
+                                          width={1000}
+                                          height={1000}
+                                          className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
+                                        />
+                                        <span
+                                          className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                                          style={{
+                                            width:
+                                              progress &&
+                                              artStorage &&
+                                              epi?.number <= progress
+                                                ? "100%"
+                                                : artStorage?.[epi?.id]
+                                                ? `${prog}%`
+                                                : "0",
+                                          }}
+                                        />
+                                        <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
+                                          Episode {epi?.number}
+                                        </span>
+                                        <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                            className="w-5 h-5 invisible group-hover:visible"
                                           >
-                                            "{epi.title}"
-                                          </p>
-                                        )}
-                                      </Link>
-                                      {index !== episode?.length - 1 && (
-                                        <span className="h-[1px] bg-white" />
+                                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                          </svg>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-5 ${
+                                        epi?.id == id ? "text-[#7a7a7a]" : ""
+                                      }`}
+                                    >
+                                      <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
+                                        {epi?.title}
+                                      </h1>
+                                      {epi?.description && (
+                                        <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
+                                          {epi?.description}
+                                        </p>
                                       )}
                                     </div>
-                                  );
-                                })}
-                          </div>
-                        ) : (
-                          <p>No Episodes Available</p>
-                        )}
-                      </div>
-                    )
-                  ) : (
-                    <div className="flex flex-col">
-                      <pre
-                        className={`rounded-md overflow-hidden ${getLanguageClassName(
-                          "bash"
-                        )}`}
-                      >
-                        <code>{episode?.message}</code>
-                      </pre>
+                                  </Link>
+                                );
+                              })}
+                          {epiView === "3" &&
+                            episode
+                              .slice(firstEpisodeIndex, lastEpisodeIndex)
+                              .map((epi, index) => {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex flex-col gap-3 px-2"
+                                  >
+                                    <Link
+                                      href={`/en/anime/watch/${epi.id}/${info.id}/${prvValue}`}
+                                      className={`text-start text-sm lg:text-lg ${
+                                        progress && epi.number <= progress
+                                          ? "text-[#5f5f5f]"
+                                          : "text-white"
+                                      }`}
+                                    >
+                                      <p>Episode {epi.number}</p>
+                                      {epi.title && (
+                                        <p
+                                          className={`text-xs lg:text-sm ${
+                                            progress && epi.number <= progress
+                                              ? "text-[#5f5f5f]"
+                                              : "text-[#b1b1b1]"
+                                          } italic`}
+                                        >
+                                          "{epi.title}"
+                                        </p>
+                                      )}
+                                    </Link>
+                                    {index !== episode?.length - 1 && (
+                                      <span className="h-[1px] bg-white" />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                        </div>
+                      ) : (
+                        <p>No Episodes Available</p>
+                      )}
                     </div>
                   )
                 ) : (
-                  <div className="flex justify-center">
-                    <div className="lds-ellipsis">
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </div>
+                  <div className="flex flex-col">
+                    <pre
+                      className={`rounded-md overflow-hidden ${getLanguageClassName(
+                        "bash"
+                      )}`}
+                    >
+                      <code>{episode?.message}</code>
+                    </pre>
                   </div>
-                )}
-              </div>
+                )
+              ) : (
+                <div className="flex justify-center">
+                  <div className="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              )}
             </div>
-            {info && rec?.length !== 0 && (
-              <div className="w-screen lg:w-[90%] xl:w-[85%]">
-                <Content
-                  ids="recommendAnime"
-                  section="Recommendations"
-                  data={rec}
-                />
-              </div>
-            )}
           </div>
-        </Layout>
-      </SkeletonTheme>
+          {info && rec?.length !== 0 && (
+            <div className="w-screen lg:w-[90%] xl:w-[85%]">
+              <Content
+                ids="recommendAnime"
+                section="Recommendations"
+                data={rec}
+              />
+            </div>
+          )}
+        </div>
+      </Layout>
     </>
   );
 }
