@@ -38,7 +38,7 @@ export default function PrimarySide({
     async function fetchData() {
       if (info) {
         const res = await fetch(
-          `https://test-api.moopa.live/consumet/source/${providerId}/${watchId}`
+          `https://ruka.moopa.live/consumet/source/${providerId}/${watchId}`
         );
         const data = await res.json();
 
