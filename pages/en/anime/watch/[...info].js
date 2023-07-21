@@ -16,6 +16,7 @@ export default function Info({
   watchId,
   provider,
   epiNumber,
+  proxy,
 }) {
   const [info, setInfo] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
@@ -125,7 +126,7 @@ export default function Info({
       setInfo(data.data.Media);
 
       const response = await fetch(
-        `https://ruka.moopa.live/consumet/episode/${aniId}`
+        `https://test-api.moopa.live/consumet/episode/${aniId}`
       );
       const episodes = await response.json();
 
@@ -161,6 +162,8 @@ export default function Info({
     getInfo();
   }, [sessions?.user?.name, epiNumber]);
 
+  // console.log(proxy);
+
   return (
     <>
       <Head>
@@ -180,6 +183,7 @@ export default function Info({
             watchId={watchId}
             status={statuses}
             onList={onList}
+            proxy={proxy}
             setOnList={setOnList}
             setLoading={setLoading}
             loading={loading}
@@ -210,6 +214,8 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const proxy = process.env.PROXY_URI;
+
   const aniId = query.info[0];
   const provider = query.info[1];
   const watchId = query.id;
@@ -222,6 +228,7 @@ export async function getServerSideProps(context) {
       provider: provider || null,
       watchId: watchId || null,
       epiNumber: epiNumber || null,
+      proxy,
     },
   };
 }

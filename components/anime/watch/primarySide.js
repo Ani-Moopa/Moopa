@@ -21,6 +21,7 @@ export default function PrimarySide({
   watchId,
   status,
   onList,
+  proxy,
   setOnList,
   episodeList,
 }) {
@@ -37,7 +38,7 @@ export default function PrimarySide({
     async function fetchData() {
       if (info) {
         const res = await fetch(
-          `https://ruka.moopa.live/consumet/source/${providerId}/${watchId}`
+          `https://test-api.moopa.live/consumet/source/${providerId}/${watchId}`
         );
         const data = await res.json();
 
@@ -104,6 +105,7 @@ export default function PrimarySide({
                 progress={epiNumber}
                 stats={status}
                 skip={skip}
+                proxy={proxy}
                 aniId={info.id}
               />
             )

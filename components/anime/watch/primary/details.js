@@ -14,7 +14,7 @@ export default function Details({
   handleOpen,
 }) {
   const [url, setUrl] = useState(null);
-  const { markPlanning, deleteFromList } = useAniList(session);
+  const { markPlanning } = useAniList(session);
 
   function handlePlan() {
     if (onList === false) {
