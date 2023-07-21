@@ -25,8 +25,7 @@ export default function VideoPlayer({
   session,
   aniId,
   stats,
-  op,
-  ed,
+  skip,
   title,
   poster,
   proxy,
@@ -77,7 +76,6 @@ export default function VideoPlayer({
           return {
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
-            // url: `${proxy}${items.url}`,
             url:
               provider === "gogoanime"
                 ? `https://cors.moopa.my.id/?url=${encodeURIComponent(
@@ -85,9 +83,6 @@ export default function VideoPlayer({
                   )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`
                 : `${proxy}${items.url}`,
           };
-          // url: `https://m3u8proxy.moopa.workers.dev/?url=${encodeURIComponent(items.url)}${
-          //   referer ? `&referer=${encodeURIComponent(referer)}` : ""
-          // }`,
         });
 
         const defSource = source?.find((i) => i?.default === true);
@@ -109,18 +104,11 @@ export default function VideoPlayer({
             });
 
           const defSub = data?.subtitles.find((i) => i.lang === "English");
-          // const thumb = data?.subtitles.find((i) => i.lang === "Thumbnails");
 
-          // setThumbnails(thumb?.url);
           setDefSub(defSub?.url);
 
-          // console.log(subtitle);
           setSubtitle(subtitle);
         }
-
-        // const defUrl = `https://cors.moopa.my.id/?url=${encodeURIComponent(
-        //   sumber.url
-        // )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`;
 
         setSource(source);
       } catch (error) {
@@ -243,9 +231,9 @@ export default function VideoPlayer({
               });
 
               if (
-                op &&
-                currentTime >= op.interval.startTime &&
-                currentTime <= op.interval.endTime
+                skip?.op &&
+                currentTime >= skip.op.interval.startTime &&
+                currentTime <= skip.op.interval.endTime
               ) {
                 // Add the layer if it's not already added
                 if (!art.controls["op"]) {
@@ -260,14 +248,14 @@ export default function VideoPlayer({
                     position: "top",
                     html: '<button class="skip-button">Skip Opening</button>',
                     click: function (...args) {
-                      art.seek = op.interval.endTime;
+                      art.seek = skip.op.interval.endTime;
                     },
                   });
                 }
               } else if (
-                ed &&
-                currentTime >= ed.interval.startTime &&
-                currentTime <= ed.interval.endTime
+                skip?.ed &&
+                currentTime >= skip.ed.interval.startTime &&
+                currentTime <= skip.ed.interval.endTime
               ) {
                 // Add the layer if it's not already added
                 if (!art.controls["ed"]) {
@@ -282,7 +270,7 @@ export default function VideoPlayer({
                     position: "top",
                     html: '<button class="skip-button">Skip Ending</button>',
                     click: function (...args) {
-                      art.seek = ed.interval.endTime;
+                      art.seek = skip.ed.interval.endTime;
                     },
                   });
                 }
@@ -296,13 +284,6 @@ export default function VideoPlayer({
                 }
               }
             });
-
-            // art.on("destroy", async () => {
-            //   art.storage.set(id, {
-            //     time: art.currentTime,
-            //     duration: art.duration,
-            //   });
-            // });
           }}
         />
       )}
