@@ -150,7 +150,7 @@ export default function Info({ info, color }) {
             <ListEditor
               animeId={info?.id}
               session={session}
-              stats={statuses}
+              stats={statuses?.value}
               prg={progress}
               max={info?.episodes}
               image={info}

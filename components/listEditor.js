@@ -3,7 +3,7 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 
 const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
-  const [status, setStatus] = useState(stats ?? "");
+  const [status, setStatus] = useState(stats ?? "CURRENT");
   const [progress, setProgress] = useState(prg ?? 0);
 
   const handleSubmit = async (e) => {
