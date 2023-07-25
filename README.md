@@ -70,7 +70,7 @@
   - [x] Ability to auto track anime after watching >= 90% through the video
   - [x] Create a user profile page to see lists of anime watched
   - [x] Ability to edit list inside detail page
-- [X] Working on Manga pages
+- [x] Working on Manga pages
 
 ## Bug Report
 
@@ -101,6 +101,7 @@ NEXTAUTH_URL="for development use http://localhost:3000/ and for production use 
 PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there. Skip this if you only use gogoanime as a source"
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
 API_KEY="this API key is for manga page. get the key from https://anify.tv/discord (key doesn't contain any special character in it)"
+DISQUS_SHORTNAME='put your disqus shortname here. (optional)'
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :

@@ -12,6 +12,7 @@ export default function Details({
   onList,
   setOnList,
   handleOpen,
+  disqus,
 }) {
   const [url, setUrl] = useState(null);
   const { markPlanning } = useAniList(session);
@@ -130,6 +131,7 @@ export default function Details({
               title: info.title.romaji,
               url: url,
               episode: epiNumber,
+              name: disqus,
             }}
           />
         </div>

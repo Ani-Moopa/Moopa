@@ -22,6 +22,7 @@ export default function PrimarySide({
   status,
   onList,
   proxy,
+  disqus,
   setOnList,
   episodeList,
 }) {
@@ -193,6 +194,7 @@ export default function PrimarySide({
             onList={onList}
             setOnList={setOnList}
             handleOpen={handleOpen}
+            disqus={disqus}
           />
         </div>
       </div>

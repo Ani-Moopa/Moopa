@@ -17,6 +17,7 @@ export default function Info({
   provider,
   epiNumber,
   proxy,
+  disqus,
 }) {
   const [info, setInfo] = useState(null);
   const [currentEpisode, setCurrentEpisode] = useState(null);
@@ -184,6 +185,7 @@ export default function Info({
             status={statuses}
             onList={onList}
             proxy={proxy}
+            disqus={disqus}
             setOnList={setOnList}
             setLoading={setLoading}
             loading={loading}
@@ -215,6 +217,7 @@ export async function getServerSideProps(context) {
   }
 
   const proxy = process.env.PROXY_URI;
+  const disqus = process.env.DISQUS_SHORTNAME;
 
   const aniId = query.info[0];
   const provider = query.info[1];
@@ -229,6 +232,7 @@ export async function getServerSideProps(context) {
       watchId: watchId || null,
       epiNumber: epiNumber || null,
       proxy,
+      disqus,
     },
   };
 }
