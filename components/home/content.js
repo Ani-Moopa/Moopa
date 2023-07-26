@@ -151,7 +151,7 @@ export default function Content({ ids, section, data, og, userName }) {
         </div>
         <div
           id={ids}
-          className="scroll flex h-full w-full justif select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 scroll-smooth"
+          className="scroll flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 scroll-smooth"
           onScroll={handleScroll}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
@@ -165,14 +165,14 @@ export default function Content({ ids, section, data, og, userName }) {
             return (
               <div
                 key={anime.id}
-                className="flex flex-col gap-3 shrink-0 cursor-pointer  "
+                className="flex flex-col gap-3 shrink-0 cursor-pointer"
               >
                 <Link
                   href={`/${lang}/anime/${anime.id}`}
                   className="hover:scale-105 hover:shadow-lg group relative duration-300 ease-out"
                 >
                   {ids === "onGoing" && (
-                    <div className="h-[190px] lg:h-[265px] w-[135px]  lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
+                    <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
                       <div className="flex flex-col items-center h-full justify-end text-center pb-5">
                         <h1 className="line-clamp-1 w-[70%] text-[10px]">
                           {anime.title.romaji || anime.title.english}
@@ -217,7 +217,7 @@ export default function Content({ ids, section, data, og, userName }) {
                     alt={
                       anime.title.romaji || anime.title.english || "coverImage"
                     }
-                    width={209}
+                    width={500}
                     height={300}
                     placeholder="blur"
                     blurDataURL={
@@ -231,7 +231,7 @@ export default function Content({ ids, section, data, og, userName }) {
                 </Link>
                 <Link
                   href={`/en/anime/${anime.id}`}
-                  className="w-[185px] line-clamp-2"
+                  className="w-[135px] lg:w-[185px] line-clamp-2"
                 >
                   <h1 className="font-karla font-bold xl:text-base text-[15px]">
                     {anime.status === "RELEASING" ? (
