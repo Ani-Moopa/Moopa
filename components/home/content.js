@@ -229,19 +229,21 @@ export default function Content({ ids, section, data, og, userName }) {
                     className="z-20 h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md brightness-90"
                   />
                 </Link>
-                <Link
-                  href={`/en/anime/${anime.id}`}
-                  className="w-[135px] lg:w-[185px] line-clamp-2"
-                >
-                  <h1 className="font-karla font-bold xl:text-base text-[15px]">
-                    {anime.status === "RELEASING" ? (
-                      <span className="dots bg-green-500" />
-                    ) : anime.status === "NOT_YET_RELEASED" ? (
-                      <span className="dots bg-red-500" />
-                    ) : null}
-                    {anime.title.romaji}
-                  </h1>
-                </Link>
+                {ids !== "onGoing" && (
+                  <Link
+                    href={`/en/anime/${anime.id}`}
+                    className="w-[135px] lg:w-[185px] line-clamp-2"
+                  >
+                    <h1 className="font-karla font-bold xl:text-base text-[15px]">
+                      {anime.status === "RELEASING" ? (
+                        <span className="dots bg-green-500" />
+                      ) : anime.status === "NOT_YET_RELEASED" ? (
+                        <span className="dots bg-red-500" />
+                      ) : null}
+                      {anime.title.romaji}
+                    </h1>
+                  </Link>
+                )}
               </div>
             );
           })}
