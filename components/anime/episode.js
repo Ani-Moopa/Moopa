@@ -26,22 +26,27 @@ export default function AnimeEpisode({ info, progress }) {
     setLoading(true);
     setProviders(null);
     const fetchData = async () => {
-      const res = await fetch(
-        `https://ruka.moopa.live/consumet/episode/${info.id}`
-      );
-      const firstResponse = await res.json();
-      if (firstResponse.data.length > 0) {
-        const defaultProvider = firstResponse.data?.find(
-          (x) => x.providerId === "gogoanime"
+      try {
+        const res = await fetch(
+          `https://ruka.moopa.live/consumet/episode/${info.id}`
         );
-        setProviderId(
-          defaultProvider?.providerId || firstResponse.data[0].providerId
-        ); // set to first provider id
-      }
+        const firstResponse = await res.json();
+        if (firstResponse.data.length > 0) {
+          const defaultProvider = firstResponse.data?.find(
+            (x) => x.providerId === "gogoanime"
+          );
+          setProviderId(
+            defaultProvider?.providerId || firstResponse.data[0].providerId
+          ); // set to first provider id
+        }
 
-      setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
-      setProviders(firstResponse.data);
-      setLoading(false);
+        setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
+        setProviders(firstResponse.data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setProviders([]);
+      }
     };
     fetchData();
   }, [info.id]);
@@ -121,7 +126,7 @@ export default function AnimeEpisode({ info, progress }) {
               visible ? "" : "hidden"
             }`}
           >
-            {providers && (
+            {providers && providers.length > 0 && (
               <div className="flex gap-5">
                 <div className="relative flex gap-2 items-center">
                   <select
@@ -178,45 +183,57 @@ export default function AnimeEpisode({ info, progress }) {
                 : `flex flex-col gap-3`
             }
           >
-            {currentEpisodes.map((episode, index) => {
-              return (
-                <Fragment key={index}>
-                  {view === 1 && (
-                    <ThumbnailOnly
-                      key={index}
-                      index={index}
-                      info={info}
-                      providerId={providerId}
-                      episode={episode}
-                      artStorage={artStorage}
-                      progress={progress}
-                      // image={thumbnail}
-                    />
-                  )}
-                  {view === 2 && (
-                    <ThumbnailDetail
-                      key={index}
-                      index={index}
-                      epi={episode}
-                      provider={providerId}
-                      info={info}
-                      artStorage={artStorage}
-                      progress={progress}
-                    />
-                  )}
-                  {view === 3 && (
-                    <ListMode
-                      key={index}
-                      info={info}
-                      episode={episode}
-                      index={index}
-                      providerId={providerId}
-                      progress={progress}
-                    />
-                  )}
-                </Fragment>
-              );
-            })}
+            {Array.isArray(providers) ? (
+              providers.length > 0 ? (
+                currentEpisodes.map((episode, index) => {
+                  return (
+                    <Fragment key={index}>
+                      {view === 1 && (
+                        <ThumbnailOnly
+                          key={index}
+                          index={index}
+                          info={info}
+                          providerId={providerId}
+                          episode={episode}
+                          artStorage={artStorage}
+                          progress={progress}
+                          // image={thumbnail}
+                        />
+                      )}
+                      {view === 2 && (
+                        <ThumbnailDetail
+                          key={index}
+                          index={index}
+                          epi={episode}
+                          provider={providerId}
+                          info={info}
+                          artStorage={artStorage}
+                          progress={progress}
+                        />
+                      )}
+                      {view === 3 && (
+                        <ListMode
+                          key={index}
+                          info={info}
+                          episode={episode}
+                          index={index}
+                          providerId={providerId}
+                          progress={progress}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })
+              ) : (
+                <div className="h-[20vh] lg:w-full flex-center flex-col gap-5">
+                  <p className="text-center font-karla font-bold lg:text-lg">
+                    Oops!<br></br> It looks like this anime is not available.
+                  </p>
+                </div>
+              )
+            ) : (
+              <p>{providers.message}</p>
+            )}
           </div>
         ) : (
           <div className="flex justify-center">

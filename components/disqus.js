@@ -1,5 +1,4 @@
 import { DiscussionEmbed } from "disqus-react";
-require("dotenv").config();
 
 const DisqusComments = ({ post }) => {
   const disqusShortname = post.name || "your_disqus_shortname";
