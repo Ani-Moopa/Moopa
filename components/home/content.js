@@ -151,7 +151,7 @@ export default function Content({ ids, section, data, og, userName }) {
         </div>
         <div
           id={ids}
-          className="scroll flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 scroll-smooth"
+          className="scroll flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-4 lg:p-10 py-8 px-5 z-30 scroll-smooth"
           onScroll={handleScroll}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
@@ -234,7 +234,7 @@ export default function Content({ ids, section, data, og, userName }) {
                     href={`/en/anime/${anime.id}`}
                     className="w-[135px] lg:w-[185px] line-clamp-2"
                   >
-                    <h1 className="font-karla font-bold xl:text-base text-[15px]">
+                    <h1 className="font-outfit font-bold xl:text-base text-[15px]">
                       {anime.status === "RELEASING" ? (
                         <span className="dots bg-green-500" />
                       ) : anime.status === "NOT_YET_RELEASED" ? (
