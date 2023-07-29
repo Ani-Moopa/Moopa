@@ -39,7 +39,7 @@ export default function PrimarySide({
     async function fetchData() {
       if (info) {
         const res = await fetch(
-          `https://ruka.moopa.live/consumet/source/${providerId}/${watchId}`
+          `https://aka.moopa.live/consumet/source/${providerId}/${watchId}`
         );
         const data = await res.json();
 

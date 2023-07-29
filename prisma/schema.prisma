@@ -7,6 +7,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model UserProfile {
+  id       String        @id @default(cuid())
+  name     String
+  setting  Json
+  watchList WatchListItem[]
+}
+
 model WatchListEpisode {
   id           String  @id @default(cuid())
   title        String
@@ -24,11 +31,4 @@ model WatchListItem {
   episodes WatchListEpisode[]
   userProfile UserProfile? @relation(fields: [userProfileId], references: [id])
   userProfileId String?
-}
-
-model UserProfile {
-  id       String        @id @default(cuid())
-  name     String
-  setting  Json
-  watchList WatchListItem[]
 }

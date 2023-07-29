@@ -2,7 +2,6 @@ import { useEffect, useState, Fragment } from "react";
 import { ChevronDownIcon, ClockIcon } from "@heroicons/react/20/solid";
 import { convertSecondsToTime } from "../../utils/getTimes";
 import ChangeView from "./changeView";
-import Link from "next/link";
 import ThumbnailOnly from "./viewMode/thumbnailOnly";
 import ThumbnailDetail from "./viewMode/thumbnailDetail";
 import ListMode from "./viewMode/listMode";
@@ -18,9 +17,6 @@ export default function AnimeEpisode({ info, progress }) {
   const [view, setView] = useState(3);
 
   const [providers, setProviders] = useState(null);
-  // const [thumbnail, setThumbnail] = useState();
-
-  // console.log(artStorage);
 
   useEffect(() => {
     setLoading(true);
@@ -28,7 +24,7 @@ export default function AnimeEpisode({ info, progress }) {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `https://ruka.moopa.live/consumet/episode/${info.id}`
+          `https://aka.moopa.live/consumet/episode/${info.id}`
         );
         const firstResponse = await res.json();
         if (firstResponse.data.length > 0) {

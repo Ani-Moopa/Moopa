@@ -58,7 +58,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const res = await fetch(`https://ruka.moopa.live/api/schedules`);
+      const res = await fetch(`https://aka.moopa.live/api/schedules`);
       const data = await res.json();
       setSchedules(data);
     };
@@ -132,7 +132,6 @@ export default function Home({ detail, populars, sessions, upComing }) {
     }
     userData();
   }, [sessions, current, plan]);
-
   return (
     <>
       <Head>
