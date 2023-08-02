@@ -234,7 +234,7 @@ export default function Content({ ids, section, data, og, userName }) {
                     href={`/en/anime/${anime.id}`}
                     className="w-[135px] lg:w-[185px] line-clamp-2"
                   >
-                    <h1 className="font-outfit font-bold xl:text-base text-[15px]">
+                    <h1 className="font-karla font-semibold xl:text-base text-[15px]">
                       {anime.status === "RELEASING" ? (
                         <span className="dots bg-green-500" />
                       ) : anime.status === "NOT_YET_RELEASED" ? (

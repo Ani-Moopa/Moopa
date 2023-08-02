@@ -126,9 +126,7 @@ export default function Info({
 
       setInfo(data.data.Media);
 
-      const response = await fetch(
-        `https://aka.moopa.live/consumet/episode/${aniId}`
-      );
+      const response = await fetch(`/api/consumet/episode/${aniId}`);
       const episodes = await response.json();
 
       if (episodes) {

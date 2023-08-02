@@ -39,7 +39,7 @@ export default function PrimarySide({
     async function fetchData() {
       if (info) {
         const res = await fetch(
-          `https://aka.moopa.live/consumet/source/${providerId}/${watchId}`
+          `/api/consumet/source/${providerId}/${watchId}`
         );
         const data = await res.json();
 
@@ -95,7 +95,7 @@ export default function PrimarySide({
         )}
       </Modal>
       <div className="w-full h-full">
-        <div className="w-full aspect-video">
+        <div key={watchId} className="w-full aspect-video bg-black">
           {!loading ? (
             episodeData && (
               <VideoPlayer

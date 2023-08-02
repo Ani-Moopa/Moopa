@@ -16,7 +16,7 @@ import SearchBar from "../../components/searchBar";
 import Genres from "../../components/home/genres";
 import Schedule from "../../components/home/schedule";
 import getUpcomingAnime from "../../lib/anilist/getUpcomingAnime";
-import { useCountdown } from "../../lib/useCountdownSeconds";
+import { useCountdown } from "../../utils/useCountdownSeconds";
 
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";

@@ -23,9 +23,7 @@ export default function AnimeEpisode({ info, progress }) {
     setProviders(null);
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `https://aka.moopa.live/consumet/episode/${info.id}`
-        );
+        const res = await fetch(`/api/consumet/episode/${info.id}`);
         const firstResponse = await res.json();
         if (firstResponse.data.length > 0) {
           const defaultProvider = firstResponse.data?.find(
