@@ -9,6 +9,7 @@ import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import Modal from "../../modal";
 import AniList from "../../media/aniList";
+import axios from "axios";
 
 export default function PrimarySide({
   info,
@@ -38,20 +39,21 @@ export default function PrimarySide({
     setSkip();
     async function fetchData() {
       if (info) {
-        const res = await fetch(
+        const { data } = await axios.get(
           `/api/consumet/source/${providerId}/${watchId}`
         );
-        const data = await res.json();
 
-        const res4 = await fetch(
+        const res = await fetch(
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
             epiNumber
           )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
         );
-        const skip = await res4.json();
+        const skip = await res.json();
 
-        const op = skip.results?.find((item) => item.skipType === "op") || null;
-        const ed = skip.results?.find((item) => item.skipType === "ed") || null;
+        const op =
+          skip?.results?.find((item) => item.skipType === "op") || null;
+        const ed =
+          skip?.results?.find((item) => item.skipType === "ed") || null;
 
         setSkip({ op, ed });
 

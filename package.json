@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "3.7.1",
+  "version": "3.8.0",
   "private": true,
   "founder": "Factiven",
   "scripts": {
@@ -14,12 +14,13 @@
     "@apollo/client": "^3.7.3",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.17",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^5.1.0",
     "@vercel/og": "^0.5.4",
     "artplayer": "^5.0.9",
     "artplayer-plugin-hls-quality": "^2.0.0",
     "axios": "^1.4.0",
     "closest-match": "^1.3.3",
+    "cron": "^2.4.0",
     "disqus-react": "^1.1.5",
     "dotenv": "^16.0.3",
     "framer-motion": "^8.5.0",

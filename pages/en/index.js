@@ -20,6 +20,7 @@ import { useCountdown } from "../../utils/useCountdownSeconds";
 
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";
+import axios from "axios";
 
 // Filter schedules for each day
 // const filterByCountryOfOrigin = (schedule, country) => {
@@ -58,8 +59,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const res = await fetch(`https://aka.moopa.live/api/schedules`);
-      const data = await res.json();
+      const { data } = await axios.get(`/api/anify/schedule`);
       setSchedules(data);
     };
     getSchedule();

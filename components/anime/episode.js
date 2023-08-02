@@ -5,6 +5,7 @@ import ChangeView from "./changeView";
 import ThumbnailOnly from "./viewMode/thumbnailOnly";
 import ThumbnailDetail from "./viewMode/thumbnailDetail";
 import ListMode from "./viewMode/listMode";
+import axios from "axios";
 
 export default function AnimeEpisode({ info, progress }) {
   const [providerId, setProviderId] = useState(); // default provider
@@ -15,6 +16,7 @@ export default function AnimeEpisode({ info, progress }) {
   const [loading, setLoading] = useState(true);
   const [artStorage, setArtStorage] = useState(null);
   const [view, setView] = useState(3);
+  const [isDub, setIsDub] = useState(false);
 
   const [providers, setProviders] = useState(null);
 
@@ -23,8 +25,9 @@ export default function AnimeEpisode({ info, progress }) {
     setProviders(null);
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/consumet/episode/${info.id}`);
-        const firstResponse = await res.json();
+        const { data: firstResponse } = await axios.get(
+          `/api/consumet/episode/${info.id}${isDub === true ? "?dub=true" : ""}`
+        );
         if (firstResponse.data.length > 0) {
           const defaultProvider = firstResponse.data?.find(
             (x) => x.providerId === "gogoanime"
@@ -43,7 +46,7 @@ export default function AnimeEpisode({ info, progress }) {
       }
     };
     fetchData();
-  }, [info.id]);
+  }, [info.id, isDub]);
 
   const episodes =
     providers?.find((provider) => provider.providerId === providerId)
@@ -95,69 +98,97 @@ export default function AnimeEpisode({ info, progress }) {
                 </div>
               )}
             </div>
-            <div
-              className="lg:hidden bg-secondary p-1 rounded-md cursor-pointer"
-              onClick={() => setVisible(!visible)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
+
+            <div className="flex items-center gap-2">
+              <div
+                onClick={() => setIsDub((prev) => !prev)}
+                className="flex lg:hidden flex-col items-center relative rounded-md bg-secondary py-1.5 px-3 font-karla text-sm hover:ring-1 ring-action cursor-pointer group"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                />
-              </svg>
+                {isDub ? "Dub" : "Sub"}
+                <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-28 bg-secondary text-center transition-all transform duration-200 ease-out">
+                  Switch to {isDub ? "Sub" : "Dub"}
+                </span>
+              </div>
+              <div
+                className="lg:hidden bg-secondary p-1 rounded-md cursor-pointer"
+                onClick={() => setVisible(!visible)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
           <div
-            className={`flex lg:flex gap-5 justify-between ${
+            className={`flex lg:flex gap-3 items-center justify-between ${
               visible ? "" : "hidden"
             }`}
           >
             {providers && providers.length > 0 && (
-              <div className="flex gap-5">
-                <div className="relative flex gap-2 items-center">
-                  <select
-                    title="Providers"
-                    onChange={handleChange}
-                    value={providerId}
-                    className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
-                  >
-                    {providers.map((provider) => (
-                      <option
-                        key={provider.providerId}
-                        value={provider.providerId}
-                      >
-                        {provider.providerId}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+              <>
+                <div
+                  onClick={() => setIsDub((prev) => !prev)}
+                  className="hidden lg:flex flex-col items-center relative rounded-[3px] bg-secondary py-1 px-3 font-karla text-sm hover:ring-1 ring-action cursor-pointer group"
+                >
+                  {isDub ? "Dub" : "Sub"}
+                  <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-28 bg-secondary text-center transition-all transform duration-200 ease-out">
+                    Switch to {isDub ? "Sub" : "Dub"}
+                  </span>
                 </div>
-
-                {totalPages > 1 && (
-                  <div className="relative flex gap-2 items-center">
+                <div className="flex gap-3">
+                  <div className="relative flex gap-2 items-center group">
                     <select
-                      title="Pages"
-                      onChange={(e) => handlePageChange(Number(e.target.value))}
-                      className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action"
+                      title="Providers"
+                      onChange={handleChange}
+                      value={providerId}
+                      className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action group-hover:ring-1 group-hover:ring-action"
                     >
-                      {[...Array(totalPages)].map((_, i) => (
-                        <option key={i} value={i + 1}>
-                          {i + 1}
+                      {providers.map((provider) => (
+                        <option
+                          key={provider.providerId}
+                          value={provider.providerId}
+                        >
+                          {provider.providerId}
                         </option>
                       ))}
                     </select>
+                    {/* <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-32 bg-secondary text-center transition-all transform duration-200 ease-out">
+                      Select Providers
+                    </span> */}
                     <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                   </div>
-                )}
-              </div>
+
+                  {totalPages > 1 && (
+                    <div className="relative flex gap-2 items-center">
+                      <select
+                        title="Pages"
+                        onChange={(e) =>
+                          handlePageChange(Number(e.target.value))
+                        }
+                        className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action hover:ring-1 hover:ring-action"
+                      >
+                        {[...Array(totalPages)].map((_, i) => (
+                          <option key={i} value={i + 1}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+                    </div>
+                  )}
+                </div>
+              </>
             )}
 
             <ChangeView
