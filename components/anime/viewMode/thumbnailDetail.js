@@ -8,6 +8,7 @@ export default function ThumbnailDetail({
   provider,
   artStorage,
   progress,
+  dub,
 }) {
   const time = artStorage?.[epi?.id]?.time;
   const duration = artStorage?.[epi?.id]?.duration;
@@ -19,7 +20,7 @@ export default function ThumbnailDetail({
       key={index}
       href={`/en/anime/watch/${info.id}/${provider}?id=${encodeURIComponent(
         epi.id
-      )}&num=${epi.number}`}
+      )}&num=${epi.number}${dub ? `&dub=${dub}` : ""}`}
       className="flex group h-[110px] lg:h-[160px] w-full rounded-lg transition-all duration-300 ease-out bg-secondary cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
     >
       <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">

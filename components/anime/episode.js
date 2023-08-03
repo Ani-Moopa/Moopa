@@ -222,6 +222,7 @@ export default function AnimeEpisode({ info, progress }) {
                           episode={episode}
                           artStorage={artStorage}
                           progress={progress}
+                          dub={isDub}
                           // image={thumbnail}
                         />
                       )}
@@ -234,6 +235,7 @@ export default function AnimeEpisode({ info, progress }) {
                           info={info}
                           artStorage={artStorage}
                           progress={progress}
+                          dub={isDub}
                         />
                       )}
                       {view === 3 && (
@@ -244,6 +246,7 @@ export default function AnimeEpisode({ info, progress }) {
                           index={index}
                           providerId={providerId}
                           progress={progress}
+                          dub={isDub}
                         />
                       )}
                     </Fragment>

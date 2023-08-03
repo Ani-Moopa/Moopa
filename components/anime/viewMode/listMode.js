@@ -6,13 +6,14 @@ export default function ListMode({
   index,
   providerId,
   progress,
+  dub,
 }) {
   return (
     <div key={episode.number} className="flex flex-col gap-3 px-2">
       <Link
         href={`/en/anime/watch/${info.id}/${providerId}?id=${encodeURIComponent(
           episode.id
-        )}&num=${episode.number}`}
+        )}&num=${episode.number}${dub ? `&dub=${dub}` : ""}`}
         className={`text-start text-sm lg:text-lg ${
           progress && episode.number <= progress
             ? "text-[#5f5f5f]"

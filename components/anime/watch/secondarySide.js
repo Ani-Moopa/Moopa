@@ -9,6 +9,7 @@ export default function SecondarySide({
   episode,
   progress,
   artStorage,
+  dub,
 }) {
   return (
     <div className="lg:w-[35%] shrink-0 w-screen">
@@ -27,7 +28,7 @@ export default function SecondarySide({
                     info.id
                   }/${providerId}?id=${encodeURIComponent(item.id)}&num=${
                     item.number
-                  }`}
+                  }${dub ? `&dub=${dub}` : ""}`}
                   key={item.id}
                   className={`bg-secondary flex w-full h-[110px] rounded-lg scale-100 transition-all duration-300 ease-out ${
                     item.id == watchId
@@ -99,7 +100,7 @@ export default function SecondarySide({
                     info.id
                   }/${providerId}?id=${encodeURIComponent(item.id)}&num=${
                     item.number
-                  }`}
+                  }${dub ? `&dub=${dub}` : ""}`}
                   key={item.id}
                   className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
                     item.id == watchId

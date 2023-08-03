@@ -43,12 +43,20 @@ export default function PrimarySide({
           `/api/consumet/source/${providerId}/${watchId}`
         );
 
-        const res = await fetch(
+        const skip = await fetch(
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
             epiNumber
           )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
-        );
-        const skip = await res.json();
+        ).then((r) => {
+          if (!r.ok) {
+            switch (r.status) {
+              case 404: {
+                return null;
+              }
+            }
+          }
+          return r.json();
+        });
 
         const op =
           skip?.results?.find((item) => item.skipType === "op") || null;

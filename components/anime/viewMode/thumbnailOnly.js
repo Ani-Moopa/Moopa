@@ -7,6 +7,7 @@ export default function ThumbnailOnly({
   episode,
   artStorage,
   progress,
+  dub,
 }) {
   const time = artStorage?.[episode?.id]?.time;
   const duration = artStorage?.[episode?.id]?.duration;
@@ -17,7 +18,7 @@ export default function ThumbnailOnly({
       // key={index}
       href={`/en/anime/watch/${info.id}/${providerId}?id=${encodeURIComponent(
         episode.id
-      )}&num=${episode.number}`}
+      )}&num=${episode.number}${dub ? `&dub=${dub}` : ""}`}
       className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
     >
       <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
