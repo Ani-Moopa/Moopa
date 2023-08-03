@@ -8,27 +8,35 @@ export default async function handler(req, res) {
     const id = req.query.id;
     const dub = req.query.dub || false;
 
+    const providers = ["enime", "gogoanime"];
+    const datas = [];
+
     const cached = cacheData.get(id + dub);
     if (cached) {
       return res.status(200).json(cached);
     } else {
-      const providers = ["enime", "gogoanime"];
-      const datas = [];
-
       async function fetchData(provider) {
         try {
-          const { data } = await axios.get(
-            `${API_URL}/meta/anilist/info/${id}?provider=${provider}${
-              dub && "&dub=true"
-            }`
-          );
+          const data = await fetch(
+            dub && provider === "gogoanime"
+              ? `${API_URL}/meta/anilist/info/${id}?dub=true`
+              : `${API_URL}/meta/anilist/info/${id}?provider=${provider}`
+          ).then((res) => {
+            if (!res.ok) {
+              switch (res.status) {
+                case 404: {
+                  return null;
+                }
+              }
+            }
+            return res.json();
+          });
           if (data.episodes.length > 0) {
             datas.push({
               providerId: provider,
               episodes: dub ? data.episodes : data.episodes.reverse(),
             });
           }
-          // console.log(data);
         } catch (error) {
           console.error(
             `Error fetching data for provider '${provider}':`,
@@ -36,18 +44,16 @@ export default async function handler(req, res) {
           );
         }
       }
-
       if (dub === false) {
         await Promise.all(providers.map((provider) => fetchData(provider)));
       } else {
         await fetchData("gogoanime");
       }
+
       if (datas.length === 0) {
         return res.status(404).json({ message: "Anime not found" });
       } else {
-        // cache for 15 minutes
-        cacheData.put(id + dub, { data: datas }, 1000 * 60 * 15);
-
+        cacheData.put(id + dub, { data: datas }, 1000 * 60 * 60 * 15); // 15 minutes
         res.status(200).json({ data: datas });
       }
     }

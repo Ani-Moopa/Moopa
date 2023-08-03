@@ -162,7 +162,7 @@ export default function Info({
       setLoading(false);
     }
     getInfo();
-  }, [sessions?.user?.name, epiNumber]);
+  }, [sessions?.user?.name, epiNumber, dub]);
 
   // console.log(proxy);
 
@@ -198,6 +198,7 @@ export default function Info({
             episode={episodesList}
             progress={progress}
             artStorage={artStorage}
+            dub={dub}
           />
         </div>
       </div>

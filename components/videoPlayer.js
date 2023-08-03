@@ -78,7 +78,7 @@ export default function VideoPlayer({
             html: items.quality === "default" ? "adaptive" : items.quality,
             url:
               provider === "gogoanime"
-                ? `https://cors.moopa.my.id/?url=${encodeURIComponent(
+                ? `https://cors.moopa.workers.dev/?url=${encodeURIComponent(
                     items.url
                   )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`
                 : `${proxy}${items.url}`,
