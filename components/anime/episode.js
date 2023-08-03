@@ -135,17 +135,19 @@ export default function AnimeEpisode({ info, progress }) {
               visible ? "" : "hidden"
             }`}
           >
+            {providers && (
+              <div
+                onClick={() => setIsDub((prev) => !prev)}
+                className="hidden lg:flex flex-col items-center relative rounded-[3px] bg-secondary py-1 px-3 font-karla text-sm hover:ring-1 ring-action cursor-pointer group"
+              >
+                {isDub ? "Dub" : "Sub"}
+                <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-28 bg-secondary text-center transition-all transform duration-200 ease-out">
+                  Switch to {isDub ? "Sub" : "Dub"}
+                </span>
+              </div>
+            )}
             {providers && providers.length > 0 && (
               <>
-                <div
-                  onClick={() => setIsDub((prev) => !prev)}
-                  className="hidden lg:flex flex-col items-center relative rounded-[3px] bg-secondary py-1 px-3 font-karla text-sm hover:ring-1 ring-action cursor-pointer group"
-                >
-                  {isDub ? "Dub" : "Sub"}
-                  <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-28 bg-secondary text-center transition-all transform duration-200 ease-out">
-                    Switch to {isDub ? "Sub" : "Dub"}
-                  </span>
-                </div>
                 <div className="flex gap-3">
                   <div className="relative flex gap-2 items-center group">
                     <select
