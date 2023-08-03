@@ -18,6 +18,7 @@ module.exports = withPWA({
       },
     ],
   },
+  distDir: process.env.BUILD_DIR || ".next",
   trailingSlash: true,
   async headers() {
     return [
