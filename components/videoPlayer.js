@@ -202,6 +202,7 @@ export default function VideoPlayer({
             });
 
             art.on("video:timeupdate", () => {
+            let marked = 0;
               if (!session) return;
               const mediaSession = navigator.mediaSession;
               const currentTime = art.currentTime;
@@ -216,9 +217,11 @@ export default function VideoPlayer({
 
               if (percentage >= 0.9) {
                 // use >= instead of >
-                markProgress(aniId, progress, stats);
-                art.off("video:timeupdate");
-                console.log("Video progress marked");
+                if (marked < 1) {
+                  marked = 1;
+                  markProgress(aniId, progress, stats);
+                  // console.log("Video progress marked");
+                }
               }
             });
 
