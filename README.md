@@ -29,21 +29,21 @@
 <details>
 <summary>More Screenshots</summary>
 
-<h5 align="center">Home page after you login</h5>
+<h3 align="center">Home page after you login</h3>
 <img src="https://user-images.githubusercontent.com/97084324/234463979-4b4fa1ba-34cb-4ae4-b4e1-59500b24ac6f.png"/>
 
-<h5 align="center">Profile Page</h5>
+<h3 align="center">Profile Page</h3>
 <img src="https://user-images.githubusercontent.com/97084324/234556937-76ec236c-a077-4af5-a910-0cb85e900e38.gif"/>
 
-<h5 align="center">Info page for PC/Mobile</h5>
+<h3 align="center">Info page for PC/Mobile</h3>
 <p align="center">
 <img src="https://user-images.githubusercontent.com/97084324/234508708-082b8d64-1dea-4525-98a5-51a5a95e8db3.png"/>
 </p>
 
-<h5 align="center">Watch Page</h5>
-<img src="https://user-images.githubusercontent.com/97084324/234466915-c2107ee5-5cfe-4cf5-9da4-9ad02aaf066a.png"/>
+<h3 align="center">Watch Page</h3>
+<img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/c654aa13-76d7-47fe-ac02-924fbbb40f76"/>
  
-<h5 align="center">Read Page</h5>
+<h3 align="center">Manga Reader</h3>
 <img src="https://github.com/DevanAbinaya/Ani-Moopa/assets/97084324/ccd2ee11-4ee3-411c-b634-d48c84f1a9e2"/>
 
 </details>
@@ -56,6 +56,8 @@
 
 - Free ad-supported streaming service
 - Anime tracking through Anilist API
+- Skip OP/ED buttons
+- Dub Anime support
 - User-friendly interface
 - Mobile-responsive design
 - PWA supported
@@ -70,7 +72,7 @@
   - [x] Ability to auto track anime after watching >= 90% through the video
   - [x] Create a user profile page to see lists of anime watched
   - [x] Ability to edit list inside detail page
-- [X] Working on Manga pages
+- [x] Working on Manga pages
 
 ## Bug Report
 
@@ -93,14 +95,20 @@ npm install
 3. Create `.env` file in the root folder and put this inside the file :
 
 ```bash
+## AniList
 CLIENT_ID="get the id from here https://anilist.co/settings/developer"
 CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
 GRAPHQL_ENDPOINT="https://graphql.anilist.co"
+
+## NextAuth
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
+
+## NextJS
 PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there. Skip this if you only use gogoanime as a source"
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
-API_KEY="this API key is for manga page. get the key from https://anify.tv/discord (key doesn't contain any special character in it)"
+API_KEY="this API key is used for schedules and manga page. get the key from https://anify.tv/discord"
+DISQUS_SHORTNAME='put your disqus shortname here. (optional)'
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :
@@ -114,6 +122,10 @@ https://your-website-url/api/auth/callback/AniListProvider
 ```bash
 npm run dev
 ```
+
+## Disclaimer
+
+If you want to host this web app yourself, please try to make significant changes to give it a unique look. The main reason I'm sharing this project as open source is to help others find some guidance, not to encourage copying and pasting. If you end up using this code for your own project, I'd love to see what you come up with! Feel free to share it with me, as I'm excited to see the creative things you can build using this code. :)
 
 ## Credits
 
@@ -129,6 +141,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Contact
 
 Thank You for passing by!!
+
 If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
 <br>
 or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account)

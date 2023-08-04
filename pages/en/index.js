@@ -16,10 +16,11 @@ import SearchBar from "../../components/searchBar";
 import Genres from "../../components/home/genres";
 import Schedule from "../../components/home/schedule";
 import getUpcomingAnime from "../../lib/anilist/getUpcomingAnime";
-import { useCountdown } from "../../lib/useCountdownSeconds";
+import { useCountdown } from "../../utils/useCountdownSeconds";
 
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";
+import axios from "axios";
 
 // Filter schedules for each day
 // const filterByCountryOfOrigin = (schedule, country) => {
@@ -58,8 +59,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const res = await fetch(`https://ruka.moopa.live/api/schedules`);
-      const data = await res.json();
+      const { data } = await axios.get(`/api/anify/schedule`);
       setSchedules(data);
     };
     getSchedule();
@@ -132,7 +132,6 @@ export default function Home({ detail, populars, sessions, upComing }) {
     }
     userData();
   }, [sessions, current, plan]);
-
   return (
     <>
       <Head>

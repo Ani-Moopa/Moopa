@@ -57,7 +57,7 @@ export default function Genres() {
       <div className="flex xl:justify-center items-center relative">
         <div className="bg-gradient-to-r from-primary to-transparent z-40 absolute w-7 h-[200px] left-0" />
         <div className="flex lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 overflow-y-hidden overflow-x-scroll snap-x snap-proximity scrollbar-none relative">
-          <div className="flex lg:gap-10 gap-3">
+          <div className="flex lg:gap-10 gap-4">
             {g.map((a, index) => (
               <Link
                 href={`${lang}/search/anime/?genres=${a.name}`}
