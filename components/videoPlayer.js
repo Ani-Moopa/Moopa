@@ -30,6 +30,7 @@ export default function VideoPlayer({
   poster,
   proxy,
   provider,
+  track,
 }) {
   const [url, setUrl] = useState("");
   const [source, setSource] = useState([]);
@@ -171,11 +172,13 @@ export default function VideoPlayer({
               },
             }),
           }}
+          id={aniId}
           res={resolution}
           quality={source}
           subSize={subSize}
           subtitles={subtitle}
           provider={provider}
+          track={track}
           style={{
             width: "100%",
             height: "100%",

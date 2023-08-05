@@ -141,6 +141,7 @@ export default function PrimarySide({
                 skip={skip}
                 proxy={proxy}
                 aniId={info.id}
+                track={navigation}
               />
             )
           ) : (
