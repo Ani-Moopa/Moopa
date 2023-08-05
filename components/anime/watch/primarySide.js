@@ -74,6 +74,29 @@ export default function PrimarySide({
     fetchData();
   }, [providerId, watchId, info]);
 
+  useEffect(() => {
+    const mediaSession = navigator.mediaSession;
+    if (!mediaSession) return;
+
+    const now = navigation?.playing;
+    const poster = now?.image || info?.bannerImage;
+    const title = now?.title || info?.title?.romaji;
+
+    const artwork = poster
+      ? [{ src: poster, sizes: "512x512", type: "image/jpeg" }]
+      : undefined;
+
+    mediaSession.metadata = new MediaMetadata({
+      title: title,
+      artist: `Moopa ${
+        title === info?.title?.romaji
+          ? "- Episode " + epiNumber
+          : `- ${info?.title?.romaji || info?.title?.english}`
+      }`,
+      artwork,
+    });
+  }, [navigation, info, epiNumber]);
+
   function handleOpen() {
     setOpen(true);
     document.body.style.overflow = "hidden";
