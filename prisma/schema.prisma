@@ -12,7 +12,6 @@ model UserProfile {
   name             String             @unique
   setting          Json?
   watchList        WatchListItem[]
-  WatchListEpisode WatchListEpisode[]
 }
 
 model WatchListEpisode {
@@ -20,7 +19,6 @@ model WatchListEpisode {
   aniId           String?
   title           String?
   image           String?
-  episode         Int?
   timeWatched     Int?
   duration        Int?
   userProfile     UserProfile?   @relation(fields: [userProfileId], references: [name])
@@ -32,7 +30,6 @@ model WatchListEpisode {
 model WatchListItem {
   id            String             @id @default(cuid())
   title         String             @unique
-  episodes      WatchListEpisode[]
   userProfile   UserProfile?       @relation(fields: [userProfileId], references: [name])
   userProfileId String?
 }
