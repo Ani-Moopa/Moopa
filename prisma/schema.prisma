@@ -24,4 +24,5 @@ model WatchListEpisode {
   duration        Int?
   userProfile     UserProfile?   @relation(fields: [userProfileId], references: [name])
   userProfileId   String?
+  watchId         String? 
 }
