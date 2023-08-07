@@ -110,7 +110,11 @@ export default function TrendingAnime({ sessions }) {
               key={index}
               className="flex flex-col items-center w-[150px] lg:w-[180px]"
             >
-              <Link href={`/en/anime/${i.id}`} className="p-2">
+              <Link
+                href={`/en/anime/${i.id}`}
+                className="p-2"
+                title={i.title.romaji}
+              >
                 <Image
                   src={i.coverImage.large}
                   alt={i.title.romaji}
@@ -119,7 +123,11 @@ export default function TrendingAnime({ sessions }) {
                   className="w-[140px] h-[190px] lg:w-[170px] lg:h-[230px] object-cover rounded hover:scale-105 scale-100 transition-all duration-200 ease-out"
                 />
               </Link>
-              <Link href={`/en/anime/${i.id}`} className="w-full px-2">
+              <Link
+                href={`/en/anime/${i.id}`}
+                className="w-full px-2"
+                title={i.title.romaji}
+              >
                 <h1 className="font-karla font-bold xl:text-base text-[15px] line-clamp-2">
                   {i.status === "RELEASING" ? (
                     <span className="dots bg-green-500" />

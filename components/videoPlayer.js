@@ -2,6 +2,7 @@ import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/anilist/useAnilist";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
+import { useRouter } from "next/router";
 
 const fontSize = [
   {
@@ -36,11 +37,15 @@ export default function VideoPlayer({
   const [source, setSource] = useState([]);
   const { markProgress } = useAniList(session);
 
+  const router = useRouter();
+
   const [resolution, setResolution] = useState("auto");
   const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
   const [defSize, setDefSize] = useState();
   const [subtitle, setSubtitle] = useState();
   const [defSub, setDefSub] = useState();
+
+  const [autoPlay, setAutoPlay] = useState(false);
 
   useEffect(() => {
     const resol = localStorage.getItem("quality");
@@ -119,6 +124,7 @@ export default function VideoPlayer({
     compiler();
   }, [data, resolution]);
 
+  // console.log(localStorage.getItem("autoplay"));
   return (
     <>
       {url && (
@@ -179,6 +185,8 @@ export default function VideoPlayer({
           subtitles={subtitle}
           provider={provider}
           track={track}
+          autoplay={autoPlay}
+          setautoplay={setAutoPlay}
           style={{
             width: "100%",
             height: "100%",
@@ -205,19 +213,49 @@ export default function VideoPlayer({
             });
 
             let marked = 0;
-            
-            art.on("video:timeupdate", () => {
+
+            let fetchTimeout;
+
+            // art.on("video:timeupdate", async () => {
+            //   if (art.paused) {
+            //     clearTimeout(fetchTimeout);
+            //     fetchTimeout = null;
+            //   } else if (!fetchTimeout) {
+            //     const updateDatabase = async () => {
+            //       console.log("updating database", art.currentTime);
+            //       fetchTimeout = setTimeout(updateDatabase, 5000); // 5 seconds (5000 milliseconds)
+            //     };
+            //     updateDatabase();
+            //   }
+            // });
+
+            art.on("video:timeupdate", async () => {
               if (!session) return;
-              const mediaSession = navigator.mediaSession;
-              const currentTime = art.currentTime;
+              // const mediaSession = navigator.mediaSession;
+              var currentTime = art.currentTime;
               const duration = art.duration;
               const percentage = currentTime / duration;
 
-              mediaSession.setPositionState({
-                duration: art.duration,
-                playbackRate: art.playbackRate,
-                position: art.currentTime,
-              });
+              // if (!fetchInterval) {
+              //   fetchInterval = setInterval(async () => {
+              //     const resp = await fetch("/api/user/update/episode", {
+              //       method: "PUT",
+              //       body: JSON.stringify({
+              //         name: session.user.name,
+              //         id: id,
+              //         duration: art.duration,
+              //         timeWatched: art.currentTime,
+              //       }),
+              //     });
+              //     console.log("updating database", art.currentTime);
+              //   }, 10000); // 10 seconds (10,000 milliseconds)
+              // }
+
+              // mediaSession.setPositionState({
+              //   duration: art.duration,
+              //   playbackRate: art.playbackRate,
+              //   position: art.currentTime,
+              // });
 
               if (percentage >= 0.9) {
                 // use >= instead of >
@@ -228,6 +266,53 @@ export default function VideoPlayer({
                 }
               }
             });
+
+            if (localStorage.getItem("autoplay") === "true") {
+              art.on("video:ended", () => {
+                if (!track?.next) return;
+                art.controls.add({
+                  name: "next-button",
+                  position: "top",
+                  // tooltip: "Play Next Episode",
+                  // html: '<button class="skip-button">Skip Opening</button>',
+                  html: '<div class="vid-con"><button class="next-button progress">Play Next</button></div>',
+                  click: function (...args) {
+                    if (track?.next) {
+                      router.push(
+                        `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
+                          track?.next?.id
+                        )}&num=${track?.next?.number}`
+                      );
+                    }
+                  },
+                });
+
+                // const button = document.querySelector(".next-button");
+                // button.addEventListener("click", () => {
+                //   // Add code to play the next video here
+                // });
+                const button = document.querySelector(".next-button");
+
+                function stopTimeout() {
+                  clearTimeout(timeoutId);
+                  // remove progress from .next-button class
+                  button.classList.remove("progress");
+                }
+
+                let timeoutId = setTimeout(() => {
+                  art.controls.remove("next-button");
+                  if (track?.next) {
+                    router.push(
+                      `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
+                        track?.next?.id
+                      )}&num=${track?.next?.number}`
+                    );
+                  }
+                }, 7000); // 5 seconds (5000 milliseconds)
+
+                button.addEventListener("mouseover", stopTimeout);
+              });
+            }
 
             art.on("video:timeupdate", () => {
               var currentTime = art.currentTime;

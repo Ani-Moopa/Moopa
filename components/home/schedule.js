@@ -37,6 +37,8 @@ export default function Schedule({ data, scheduleData, time }) {
     setCurrentPage(todayIndex >= 0 ? todayIndex : 0);
   }, [currentDay, days]);
 
+  // console.log({ scheduleData });
+
   return (
     <div className="flex flex-col gap-5 px-4 lg:px-0">
       <h1 className="font-bold font-karla text-[20px] lg:px-5">

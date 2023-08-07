@@ -429,7 +429,7 @@ export default function Card() {
                               ? `/en/manga/${anime.id}`
                               : `/en/anime/${anime.id}`
                           }
-                          className=""
+                          title={anime.title.userPreferred}
                         >
                           <Image
                             className="object-cover bg-[#3B3C41] w-[146px] h-[208px] xxs:w-[115px] xxs:h-[163px] xs:w-[135px] xs:h-[192px] xl:w-[185px] xl:h-[265px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
@@ -439,7 +439,10 @@ export default function Card() {
                             height={500}
                           />
                         </Link>
-                        <Link href={`/en/anime/${anime.id}`}>
+                        <Link
+                          href={`/en/anime/${anime.id}`}
+                          title={anime.title.userPreferred}
+                        >
                           <h1 className="font-outfit font-bold xl:text-base text-[15px] pt-4 line-clamp-2">
                             {anime.status === "RELEASING" ? (
                               <span className="dots bg-green-500" />

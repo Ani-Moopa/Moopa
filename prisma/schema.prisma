@@ -1,0 +1,38 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UserProfile {
+  id               String             @id @default(cuid())
+  name             String             @unique
+  setting          Json?
+  watchList        WatchListItem[]
+  WatchListEpisode WatchListEpisode[]
+}
+
+model WatchListEpisode {
+  id              String         @id @default(cuid())
+  aniId           String?
+  title           String?
+  image           String?
+  episode         Int?
+  timeWatched     Int?
+  duration        Int?
+  userProfile     UserProfile?   @relation(fields: [userProfileId], references: [name])
+  userProfileId   String?
+  watchListItem   WatchListItem? @relation(fields: [watchListItemId], references: [id])
+  watchListItemId String?
+}
+
+model WatchListItem {
+  id            String             @id @default(cuid())
+  title         String             @unique
+  episodes      WatchListEpisode[]
+  userProfile   UserProfile?       @relation(fields: [userProfileId], references: [name])
+  userProfileId String?
+}

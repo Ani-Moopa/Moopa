@@ -170,6 +170,7 @@ export default function Content({ ids, section, data, og, userName }) {
                 <Link
                   href={`/${lang}/anime/${anime.id}`}
                   className="hover:scale-105 hover:shadow-lg group relative duration-300 ease-out"
+                  title={anime.title.romaji}
                 >
                   {ids === "onGoing" && (
                     <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
@@ -233,6 +234,7 @@ export default function Content({ ids, section, data, og, userName }) {
                   <Link
                     href={`/en/anime/${anime.id}`}
                     className="w-[135px] lg:w-[185px] line-clamp-2"
+                    title={anime.title.romaji}
                   >
                     <h1 className="font-karla font-semibold xl:text-base text-[15px]">
                       {anime.status === "RELEASING" ? (

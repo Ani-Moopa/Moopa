@@ -21,6 +21,7 @@ import { useCountdown } from "../../utils/useCountdownSeconds";
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";
 import axios from "axios";
+// import { createUser } from "../../prisma/user";
 
 // Filter schedules for each day
 // const filterByCountryOfOrigin = (schedule, country) => {
@@ -32,6 +33,36 @@ import axios from "axios";
 //   }
 //   return filteredSchedule;
 // };
+
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  // if (session) {
+  //   await createUser(session.user.name);
+  // }
+
+  const trendingDetail = await aniListData({
+    sort: "TRENDING_DESC",
+    page: 1,
+  });
+  const popularDetail = await aniListData({
+    sort: "POPULARITY_DESC",
+    page: 1,
+  });
+  const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
+
+  const upComing = await getUpcomingAnime();
+
+  return {
+    props: {
+      genre: genreDetail.props,
+      detail: trendingDetail.props,
+      populars: popularDetail.props,
+      sessions: session,
+      upComing,
+    },
+  };
+}
 
 export default function Home({ detail, populars, sessions, upComing }) {
   const { media: current } = useAniList(sessions, { stats: "CURRENT" });
@@ -353,30 +384,4 @@ export default function Home({ detail, populars, sessions, upComing }) {
       <Footer />
     </>
   );
-}
-
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
-  const trendingDetail = await aniListData({
-    sort: "TRENDING_DESC",
-    page: 1,
-  });
-  const popularDetail = await aniListData({
-    sort: "POPULARITY_DESC",
-    page: 1,
-  });
-  const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
-
-  const upComing = await getUpcomingAnime();
-
-  return {
-    props: {
-      genre: genreDetail.props,
-      detail: trendingDetail.props,
-      populars: popularDetail.props,
-      sessions: session,
-      upComing,
-    },
-  };
 }

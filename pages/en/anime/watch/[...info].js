@@ -9,6 +9,8 @@ import Navigasi from "../../../../components/home/staticNav";
 import PrimarySide from "../../../../components/anime/watch/primarySide";
 import SecondarySide from "../../../../components/anime/watch/secondarySide";
 import { GET_MEDIA_USER } from "../../../../queries";
+import { createList } from "../../../../prisma/user";
+// import { updateUser } from "../../../../prisma/user";
 
 export default function Info({
   sessions,
@@ -147,6 +149,20 @@ export default function Info({
           const previousEpisode = getProvider.episodes?.find(
             (i) => i.number === parseInt(epiNumber) - 1
           );
+
+          // if (sessions.user.name) {
+          //   const resp = await fetch("/api/user/update/episode", {
+          //     method: "PUT",
+          //     body: JSON.stringify({
+          //       name: sessions.user.name,
+          //       id: watchId,
+          //       title: currentEpisode.title,
+          //       image: currentEpisode.image,
+          //       number: Number(epiNumber),
+          //     }),
+          //   });
+          // }
+
           setCurrentEpisode({
             prev: previousEpisode,
             playing: currentEpisode,
@@ -226,6 +242,13 @@ export async function getServerSideProps(context) {
   const watchId = query.id;
   const epiNumber = query.num;
   const dub = query.dub;
+
+  if (session) {
+    const user = await createList(session.user.name, watchId);
+    if (user) {
+      console.log(user);
+    }
+  }
 
   return {
     props: {
