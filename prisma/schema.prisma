@@ -11,7 +11,6 @@ model UserProfile {
   id               String             @id @default(cuid())
   name             String             @unique
   setting          Json?
-  watchList        WatchListItem[]
   WatchListEpisode WatchListEpisode[]
 }
 
@@ -25,14 +24,5 @@ model WatchListEpisode {
   duration        Int?
   userProfile     UserProfile?   @relation(fields: [userProfileId], references: [name])
   userProfileId   String?
-  watchListItem   WatchListItem? @relation(fields: [watchListItemId], references: [id])
-  watchListItemId String?
-}
-
-model WatchListItem {
-  id            String             @id @default(cuid())
-  title         String             @unique
-  episodes      WatchListEpisode[]
-  userProfile   UserProfile?       @relation(fields: [userProfileId], references: [name])
-  userProfileId String?
+  watchId         String? 
 }
