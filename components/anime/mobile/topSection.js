@@ -60,14 +60,14 @@ export default function DetailTop({ info, statuses, handleOpen, loading }) {
               </div>
               <div className="flex-center flex-col xxs:flex-row gap-2">
                 <ArrowTrendingUpIcon className="w-5 h-5 text-action" />
-                <h4>{info?.averageScore}%</h4>
+                <h4>{info?.averageScore ? `${info?.averageScore}%` : "N/A"}</h4>
               </div>
               <div className="flex-center flex-col xxs:flex-row gap-2">
                 <RectangleStackIcon className="w-5 h-5 text-action" />
                 {info?.episodes ? (
                   <h1>{info?.episodes} Episodes</h1>
                 ) : (
-                  <h1>TBA</h1>
+                  <h1>N/A</h1>
                 )}
               </div>
             </>

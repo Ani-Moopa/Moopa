@@ -164,18 +164,16 @@ export default function Info({ info, color }) {
             <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[300px] w-screen z-10 inset-0" />
             {info ? (
               <>
-                <Image
-                  src={
-                    info?.bannerImage ||
-                    info?.coverImage?.extraLarge ||
-                    info?.coverImage.large
-                  }
-                  priority={true}
-                  alt="banner anime"
-                  height={1000}
-                  width={1000}
-                  className="hidden md:block object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-[70%] z-0"
-                />
+                {info?.bannerImage && (
+                  <Image
+                    src={info?.bannerImage}
+                    priority={true}
+                    alt="banner anime"
+                    height={1000}
+                    width={1000}
+                    className="hidden md:block object-cover bg-image w-screen absolute top-0 left-0 h-[300px] brightness-[70%] z-0"
+                  />
+                )}
                 <Image
                   src={info?.coverImage.extraLarge || info?.coverImage.large}
                   priority={true}

@@ -19,7 +19,6 @@ jobs:
           echo "Version found in commit message: $version"
           echo "::set-output name=version::$version"
         shell: bash
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
