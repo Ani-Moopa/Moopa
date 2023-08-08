@@ -26,6 +26,7 @@ export default function PrimarySide({
   disqus,
   setOnList,
   episodeList,
+  timeWatched,
 }) {
   const [episodeData, setEpisodeData] = useState();
   const [open, setOpen] = useState(false);
@@ -35,8 +36,7 @@ export default function PrimarySide({
 
   useEffect(() => {
     setLoading(true);
-    setEpisodeData();
-    setSkip();
+
     async function fetchData() {
       if (info) {
         const { data } = await axios.get(
@@ -72,6 +72,11 @@ export default function PrimarySide({
     }
 
     fetchData();
+
+    return () => {
+      setEpisodeData();
+      setSkip();
+    };
   }, [providerId, watchId, info]);
 
   useEffect(() => {
@@ -141,7 +146,9 @@ export default function PrimarySide({
                 skip={skip}
                 proxy={proxy}
                 aniId={info.id}
+                aniTitle={info.title?.romaji || info.title?.english}
                 track={navigation}
+                timeWatched={timeWatched}
               />
             )
           ) : (

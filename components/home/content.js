@@ -10,10 +10,17 @@ import {
 import { parseCookies } from "nookies";
 
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
-import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 
-export default function Content({ ids, section, data, og, userName }) {
+export default function Content({
+  ids,
+  section,
+  data,
+  userData,
+  og,
+  userName,
+}) {
   const router = useRouter();
 
   const [startX, setStartX] = useState(null);
@@ -115,6 +122,9 @@ export default function Content({ ids, section, data, og, userName }) {
     filteredData?.length > 15 ? filteredData?.slice(0, 15) : filteredData;
 
   const goToPage = () => {
+    if (section === "Recently Watched") {
+      router.push(`/${lang}/anime/recently-watched`);
+    }
     if (section === "Trending Now") {
       router.push(`/${lang}/anime/trending`);
     }
@@ -159,97 +169,182 @@ export default function Content({ ids, section, data, og, userName }) {
           onClick={handleClick}
           ref={containerRef}
         >
-          {slicedData?.map((anime) => {
-            const progress = og?.find((i) => i.mediaId === anime.id);
+          {ids !== "recentlyWatched"
+            ? slicedData?.map((anime) => {
+                const progress = og?.find((i) => i.mediaId === anime.id);
 
-            return (
-              <div
-                key={anime.id}
-                className="flex flex-col gap-3 shrink-0 cursor-pointer"
-              >
-                <Link
-                  href={`/${lang}/anime/${anime.id}`}
-                  className="hover:scale-105 hover:shadow-lg group relative duration-300 ease-out"
-                  title={anime.title.romaji}
-                >
-                  {ids === "onGoing" && (
-                    <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
-                      <div className="flex flex-col items-center h-full justify-end text-center pb-5">
-                        <h1 className="line-clamp-1 w-[70%] text-[10px]">
-                          {anime.title.romaji || anime.title.english}
-                        </h1>
-                        {checkProgress(progress) &&
-                          !clicked?.hasOwnProperty(anime.id) && (
-                            <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
-                          )}
-                        {checkProgress(progress) && (
-                          <div
-                            onClick={() => handleAlert(anime.id)}
-                            className="group-hover:visible invisible absolute top-0 bg-black bg-opacity-20 w-full h-full z-20 text-center"
-                          >
-                            <h1 className="text-[12px] lg:text-sm pt-28 lg:pt-44 font-bold opacity-100">
-                              {checkProgress(progress)}
+                return (
+                  <div
+                    key={anime.id}
+                    className="flex flex-col gap-3 shrink-0 cursor-pointer"
+                  >
+                    <Link
+                      href={`/${lang}/anime/${anime.id}`}
+                      className="hover:scale-105 hover:shadow-lg duration-300 ease-out group relative"
+                      title={anime.title.romaji}
+                    >
+                      {ids === "onGoing" && (
+                        <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
+                          <div className="flex flex-col items-center h-full justify-end text-center pb-5">
+                            <h1 className="line-clamp-1 w-[70%] text-[10px]">
+                              {anime.title.romaji || anime.title.english}
                             </h1>
-                          </div>
-                        )}
-                        {anime.nextAiringEpisode && (
-                          <div className="flex gap-1 text-[13px] lg:text-base">
-                            <h1>
-                              Episode {anime.nextAiringEpisode.episode} in
-                            </h1>
-                            <h1 className="font-bold">
-                              {convertSecondsToTime(
-                                anime?.nextAiringEpisode?.timeUntilAiring
+                            {checkProgress(progress) &&
+                              !clicked?.hasOwnProperty(anime.id) && (
+                                <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
                               )}
-                            </h1>
+                            {checkProgress(progress) && (
+                              <div
+                                onClick={() => handleAlert(anime.id)}
+                                className="group-hover:visible invisible absolute top-0 bg-black bg-opacity-20 w-full h-full z-20 text-center"
+                              >
+                                <h1 className="text-[12px] lg:text-sm pt-28 lg:pt-44 font-bold opacity-100">
+                                  {checkProgress(progress)}
+                                </h1>
+                              </div>
+                            )}
+                            {anime.nextAiringEpisode && (
+                              <div className="flex gap-1 text-[13px] lg:text-base">
+                                <h1>
+                                  Episode {anime.nextAiringEpisode.episode} in
+                                </h1>
+                                <h1 className="font-bold">
+                                  {convertSecondsToTime(
+                                    anime?.nextAiringEpisode?.timeUntilAiring
+                                  )}
+                                </h1>
+                              </div>
+                            )}
                           </div>
+                        </div>
+                      )}
+                      <Image
+                        draggable={false}
+                        src={
+                          anime.image ||
+                          anime.coverImage?.extraLarge ||
+                          anime.coverImage?.large ||
+                          "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
+                        }
+                        alt={
+                          anime.title.romaji ||
+                          anime.title.english ||
+                          "coverImage"
+                        }
+                        width={500}
+                        height={300}
+                        placeholder="blur"
+                        blurDataURL={
+                          anime.image ||
+                          anime.coverImage?.extraLarge ||
+                          anime.coverImage?.large ||
+                          "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
+                        }
+                        className="z-20 h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md brightness-90"
+                      />
+                    </Link>
+                    {ids !== "onGoing" && (
+                      <Link
+                        href={`/en/anime/${anime.id}`}
+                        className="w-[135px] lg:w-[185px] line-clamp-2"
+                        title={anime.title.romaji}
+                      >
+                        <h1 className="font-karla font-semibold xl:text-base text-[15px]">
+                          {anime.status === "RELEASING" ? (
+                            <span className="dots bg-green-500" />
+                          ) : anime.status === "NOT_YET_RELEASED" ? (
+                            <span className="dots bg-red-500" />
+                          ) : null}
+                          {anime.title.romaji}
+                        </h1>
+                      </Link>
+                    )}
+                  </div>
+                );
+              })
+            : userData
+                ?.filter((i) => i.title !== null)
+                ?.slice(0, 10)
+                .map((i) => {
+                  const time = i.timeWatched;
+                  const duration = i.duration;
+                  let prog = (time / duration) * 100;
+                  if (prog > 90) prog = 100;
+
+                  return (
+                    <Link
+                      key={i.watchId}
+                      className="flex flex-col gap-2 shrink-0 cursor-pointer"
+                      href={`/en/anime/watch/${i.aniId}/${
+                        i.provider
+                      }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}`}
+                    >
+                      <div className="relative w-[320px] aspect-video rounded-md overflow-hidden group">
+                        <div className="w-full h-full bg-gradient-to-t from-black/70 from-20% to-transparent group-hover:to-black/40 transition-all duration-300 ease-out absolute z-30" />
+                        <div className="absolute bottom-3 left-0 mx-2 text-white flex gap-2 items-center w-[80%] z-30">
+                          <PlayIcon className="w-5 h-5 shrink-0" />
+                          <h1
+                            className="font-semibold font-karla line-clamp-1"
+                            title={i?.title || i.anititle}
+                          >
+                            {i?.title === i.aniTitle
+                              ? `Episode ${i.episode}`
+                              : i?.title || i.anititle}
+                          </h1>
+                        </div>
+                        <span
+                          className={`absolute bottom-0 left-0 h-[2px] bg-red-600 z-30`}
+                          style={{
+                            width: `${prog}%`,
+                          }}
+                        />
+                        {i?.image && (
+                          <Image
+                            src={i?.image}
+                            width={200}
+                            height={200}
+                            alt="Episode Thumbnail"
+                            className="w-fit group-hover:scale-[1.02] duration-300 ease-out z-10"
+                          />
                         )}
                       </div>
-                    </div>
-                  )}
-                  <Image
-                    draggable={false}
-                    src={
-                      anime.image ||
-                      anime.coverImage?.extraLarge ||
-                      anime.coverImage?.large ||
-                      "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
-                    }
-                    alt={
-                      anime.title.romaji || anime.title.english || "coverImage"
-                    }
-                    width={500}
-                    height={300}
-                    placeholder="blur"
-                    blurDataURL={
-                      anime.image ||
-                      anime.coverImage?.extraLarge ||
-                      anime.coverImage?.large ||
-                      "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
-                    }
-                    className="z-20 h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md brightness-90"
-                  />
-                </Link>
-                {ids !== "onGoing" && (
-                  <Link
-                    href={`/en/anime/${anime.id}`}
-                    className="w-[135px] lg:w-[185px] line-clamp-2"
-                    title={anime.title.romaji}
-                  >
-                    <h1 className="font-karla font-semibold xl:text-base text-[15px]">
-                      {anime.status === "RELEASING" ? (
-                        <span className="dots bg-green-500" />
-                      ) : anime.status === "NOT_YET_RELEASED" ? (
-                        <span className="dots bg-red-500" />
-                      ) : null}
-                      {anime.title.romaji}
-                    </h1>
-                  </Link>
-                )}
+                      <div className="flex flex-col font-karla w-full">
+                        {/* <h1 className="font-semibold">{i.title}</h1> */}
+                        <p className="flex items-center gap-1 text-sm text-gray-400 w-[320px]">
+                          <span
+                            className="text-white"
+                            style={{
+                              display: "inline-block",
+                              maxWidth: "220px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                            title={i.aniTitle}
+                          >
+                            {i.aniTitle}
+                          </span>{" "}
+                          | Episode {i.episode}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+          {userData?.length >= 10 && section !== "Recommendations" && (
+            <div
+              key={section}
+              className="flex cursor-pointer"
+              onClick={goToPage}
+            >
+              <div className="w-[320px] aspect-video overflow-hidden object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">
+                <h1 className="whitespace-pre-wrap text-sm">
+                  More on {section}
+                </h1>
+                <ArrowRightCircleIcon className="w-5 h-5" />
               </div>
-            );
-          })}
-          {filteredData.length >= 10 && section !== "Recommendations" && (
+            </div>
+          )}
+          {filteredData?.length >= 10 && section !== "Recommendations" && (
             <div
               key={section}
               className="flex cursor-pointer"

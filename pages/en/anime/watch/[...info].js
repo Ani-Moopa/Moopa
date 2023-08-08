@@ -9,7 +9,7 @@ import Navigasi from "../../../../components/home/staticNav";
 import PrimarySide from "../../../../components/anime/watch/primarySide";
 import SecondarySide from "../../../../components/anime/watch/secondarySide";
 import { GET_MEDIA_USER } from "../../../../queries";
-import { createList } from "../../../../prisma/user";
+import { createList, createUser, getEpisode } from "../../../../prisma/user";
 // import { updateUser } from "../../../../prisma/user";
 
 export default function Info({
@@ -19,6 +19,7 @@ export default function Info({
   provider,
   epiNumber,
   dub,
+  userData,
   proxy,
   disqus,
 }) {
@@ -150,19 +151,6 @@ export default function Info({
             (i) => i.number === parseInt(epiNumber) - 1
           );
 
-          // if (sessions.user.name) {
-          //   const resp = await fetch("/api/user/update/episode", {
-          //     method: "PUT",
-          //     body: JSON.stringify({
-          //       name: sessions.user.name,
-          //       id: watchId,
-          //       title: currentEpisode.title,
-          //       image: currentEpisode.image,
-          //       number: Number(epiNumber),
-          //     }),
-          //   });
-          // }
-
           setCurrentEpisode({
             prev: previousEpisode,
             playing: currentEpisode,
@@ -178,6 +166,10 @@ export default function Info({
       setLoading(false);
     }
     getInfo();
+
+    return () => {
+      setCurrentEpisode(null);
+    };
   }, [sessions?.user?.name, epiNumber, dub]);
 
   // console.log(proxy);
@@ -206,6 +198,7 @@ export default function Info({
             setOnList={setOnList}
             setLoading={setLoading}
             loading={loading}
+            timeWatched={userData?.timeWatched}
           />
           <SecondarySide
             info={info}
@@ -243,11 +236,20 @@ export async function getServerSideProps(context) {
   const epiNumber = query.num;
   const dub = query.dub;
 
+  let userData = null;
+
   if (session) {
-    const user = await createList(session.user.name, watchId);
-    if (user) {
-      console.log(user);
-    }
+    await createUser(session.user.name);
+    await createList(session.user.name, watchId);
+    const data = await getEpisode(session.user.name, watchId);
+    userData = JSON.parse(
+      JSON.stringify(data, (key, value) => {
+        if (key === "createdDate") {
+          return String(value);
+        }
+        return value;
+      })
+    );
   }
 
   return {
@@ -258,6 +260,7 @@ export async function getServerSideProps(context) {
       watchId: watchId || null,
       epiNumber: epiNumber || null,
       dub: dub || null,
+      userData: userData?.[0] || null,
       proxy,
       disqus,
     },

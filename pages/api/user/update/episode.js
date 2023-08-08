@@ -10,7 +10,6 @@ export default async function handler(req, res) {
       case "POST": {
         const { name, id } = JSON.parse(req.body);
 
-        // console.log(name, id);
         const episode = await createList(name, id);
         if (!episode) {
           return res
@@ -21,16 +20,29 @@ export default async function handler(req, res) {
         }
       }
       case "PUT": {
-        const { name, id, title, image, number, duration, timeWatched } =
-          JSON.parse(req.body);
-        const episode = await updateUserEpisode({
+        const {
           name,
           id,
+          watchId,
           title,
           image,
           number,
           duration,
           timeWatched,
+          aniTitle,
+          provider,
+        } = JSON.parse(req.body);
+        const episode = await updateUserEpisode({
+          name,
+          id,
+          watchId,
+          title,
+          image,
+          number,
+          duration,
+          timeWatched,
+          aniTitle,
+          provider,
         });
         if (!episode) {
           return res.status(200).json({ message: "Episode is already there" });
@@ -39,8 +51,9 @@ export default async function handler(req, res) {
         }
       }
       case "GET": {
-        const { id, name } = req.body;
-        const episode = await getEpisode(name);
+        const { name, id } = req.query;
+        // console.log(req.query);
+        const episode = await getEpisode(name, id);
         if (!episode) {
           return res.status(404).json({ message: "Episode not found" });
         } else {

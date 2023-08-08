@@ -369,7 +369,7 @@ pre code {
 
 .next-button {
   position: relative;
-  @apply xs:w-28 xs:h-9 w-24 h-7 rounded-md font-karla shadow-xl text-black xs:text-[15px] text-xs md:text-sm flex-center;
+  @apply xs:w-28 xs:h-9 w-24 h-7 rounded-md font-karla shadow-xl text-black xs:text-[15px] text-xs md:text-sm flex-center hover:bg-[#b9b9b9];
   background: #ffffff;
   border-radius: 6px;
   cursor: pointer;

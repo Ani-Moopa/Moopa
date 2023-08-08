@@ -73,23 +73,19 @@ export const getUser = async (name) => {
   if (!name) {
     const user = await prisma.userProfile.findMany({
       include: {
-        watchList: {
-          include: {
-            episodes: true,
-          },
-        },
+        WatchListEpisode: true,
       },
     });
     return user;
   } else {
-    const user = await prisma.userProfile.findUnique({
+    const user = await prisma.userProfile.findFirst({
       where: {
         name: name,
       },
       include: {
-        watchList: {
-          include: {
-            episodes: true,
+        WatchListEpisode: {
+          orderBy: {
+            createdDate: "desc",
           },
         },
       },
@@ -107,13 +103,11 @@ export const deleteUser = async (name) => {
   return user;
 };
 
-// Episodes Handler
-
 export const createList = async (name, id, title) => {
   const checkEpisode = await prisma.watchListEpisode.findFirst({
     where: {
       userProfileId: name,
-      aniId: id,
+      watchId: id,
     },
   });
   if (checkEpisode) {
@@ -125,7 +119,7 @@ export const createList = async (name, id, title) => {
         WatchListEpisode: {
           create: [
             {
-              aniId: id,
+              watchId: id,
             },
           ],
         },
@@ -138,11 +132,23 @@ export const createList = async (name, id, title) => {
   }
 };
 
-export const getEpisode = async (name, id, title) => {
-  const episode = await prisma.watchListEpisode.findFirst({
+export const getEpisode = async (name, id) => {
+  console.log({ name, id });
+  const episode = await prisma.watchListEpisode.findMany({
+    // where: {
+    //   AND: [{ userProfileId: name }, { watchId: id }],
+    // },
     where: {
-      userProfileId: name,
-      aniId: id,
+      AND: [
+        {
+          userProfileId: name,
+        },
+        {
+          watchId: {
+            equals: id,
+          },
+        },
+      ],
     },
   });
   return episode;
@@ -151,23 +157,30 @@ export const getEpisode = async (name, id, title) => {
 export const updateUserEpisode = async ({
   name,
   id,
+  watchId,
   title,
   image,
   number,
   duration,
   timeWatched,
+  aniTitle,
+  provider,
 }) => {
   const user = await prisma.watchListEpisode.updateMany({
     where: {
       userProfileId: name,
-      aniId: id,
+      watchId: watchId,
     },
     data: {
       title: title,
+      aniTitle: aniTitle,
       image: image,
+      aniId: id,
+      provider: provider,
       duration: duration,
       episode: number,
       timeWatched: timeWatched,
+      createdDate: new Date(),
     },
   });
 

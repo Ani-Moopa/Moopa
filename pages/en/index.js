@@ -21,25 +21,14 @@ import { useCountdown } from "../../utils/useCountdownSeconds";
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";
 import axios from "axios";
-// import { createUser } from "../../prisma/user";
-
-// Filter schedules for each day
-// const filterByCountryOfOrigin = (schedule, country) => {
-//   const filteredSchedule = {};
-//   for (const day in schedule) {
-//     filteredSchedule[day] = schedule[day].filter(
-//       (anime) => anime.countryOfOrigin === country
-//     );
-//   }
-//   return filteredSchedule;
-// };
+import { createUser } from "../../prisma/user";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  // if (session) {
-  //   await createUser(session.user.name);
-  // }
+  if (session) {
+    await createUser(session.user.name);
+  }
 
   const trendingDetail = await aniListData({
     sort: "TRENDING_DESC",
@@ -120,11 +109,48 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [user, setUser] = useState(null);
+
+  // console.log({ user });
 
   const [prog, setProg] = useState(null);
 
   const popular = populars?.data;
   const data = detail.data[0];
+
+  useEffect(() => {
+    async function userData() {
+      let data;
+      if (sessions?.user?.name) {
+        data = await fetch(
+          `/api/user/profile?name=${sessions?.user?.name}`
+        ).then((res) => {
+          if (!res.ok) {
+            switch (res.status) {
+              case 404: {
+                return console.log("user not found");
+              }
+              case 500: {
+                return console.log("server error");
+              }
+            }
+          }
+          return res.json();
+        });
+      }
+      if (!data) {
+        const dat = JSON.parse(localStorage.getItem("artplayer_settings"));
+        if (dat) {
+          const arr = Object.keys(dat).map((key) => dat[key]);
+          setUser(arr);
+        }
+      } else {
+        setUser(data?.WatchListEpisode);
+      }
+      // const data = await res.json();
+    }
+    userData();
+  }, [sessions?.user?.name]);
 
   useEffect(() => {
     const time = new Date().getHours();
@@ -143,7 +169,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
     setGreeting(greeting);
 
     async function userData() {
-      if (!sessions) return;
+      if (!sessions?.user?.name) return;
+
       const getMedia =
         current.filter((item) => item.status === "CURRENT")[0] || null;
       const list = getMedia?.entries
@@ -162,7 +189,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
       }
     }
     userData();
-  }, [sessions, current, plan]);
+  }, [sessions?.user?.name, current, plan]);
+
   return (
     <>
       <Head>
@@ -259,6 +287,22 @@ export default function Home({ detail, populars, sessions, upComing }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
+            {user?.length > 0 && (
+              <motion.div // Add motion.div to each child component
+                key="recentlyWatched"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="recentlyWatched"
+                  section="Recently Watched"
+                  userData={user}
+                />
+              </motion.div>
+            )}
+
             {sessions && releaseData?.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="onGoing"
