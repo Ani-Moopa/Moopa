@@ -31,7 +31,7 @@ export default async function handler(req, res) {
             }
             return res.json();
           });
-          if (data.episodes.length > 0) {
+          if (data.episodes?.length > 0) {
             datas.push({
               providerId: provider,
               episodes: dub ? data.episodes : data.episodes.reverse(),
