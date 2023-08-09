@@ -2,6 +2,7 @@ import Player from "../lib/Artplayer";
 import { useEffect, useState } from "react";
 import { useAniList } from "../lib/anilist/useAnilist";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
+import { useRouter } from "next/router";
 
 const fontSize = [
   {
@@ -31,16 +32,22 @@ export default function VideoPlayer({
   proxy,
   provider,
   track,
+  aniTitle,
+  timeWatched,
 }) {
   const [url, setUrl] = useState("");
   const [source, setSource] = useState([]);
   const { markProgress } = useAniList(session);
+
+  const router = useRouter();
 
   const [resolution, setResolution] = useState("auto");
   const [subSize, setSubSize] = useState({ size: "16px", html: "Small" });
   const [defSize, setDefSize] = useState();
   const [subtitle, setSubtitle] = useState();
   const [defSub, setDefSub] = useState();
+
+  const [autoPlay, setAutoPlay] = useState(false);
 
   useEffect(() => {
     const resol = localStorage.getItem("quality");
@@ -127,7 +134,7 @@ export default function VideoPlayer({
           option={{
             url: `${url}`,
             title: `${title}`,
-            autoplay: true,
+            autoplay: false,
             screenshot: true,
             moreVideoAttr: {
               crossOrigin: "anonymous",
@@ -136,9 +143,6 @@ export default function VideoPlayer({
             ...(provider !== "gogoanime" && {
               plugins: [
                 artplayerPluginHlsQuality({
-                  // Show quality in control
-                  // control: true,
-
                   // Show quality in setting
                   setting: true,
 
@@ -179,6 +183,8 @@ export default function VideoPlayer({
           subtitles={subtitle}
           provider={provider}
           track={track}
+          autoplay={autoPlay}
+          setautoplay={setAutoPlay}
           style={{
             width: "100%",
             height: "100%",
@@ -186,19 +192,21 @@ export default function VideoPlayer({
           }}
           getInstance={(art) => {
             art.on("ready", () => {
-              // console.log(art.storage.settings);
               const seek = art.storage.get(id);
-              const seekTime = seek?.time || 0;
+              const seekTime = seek?.timeWatched || 0;
               const duration = art.duration;
               const percentage = seekTime / duration;
+              const percentagedb = timeWatched / duration;
 
               if (subSize) {
                 art.subtitle.style.fontSize = subSize?.size;
               }
 
-              if (percentage >= 0.9) {
+              if (percentage >= 0.9 || percentagedb >= 0.9) {
                 art.currentTime = 0;
                 console.log("Video started from the beginning");
+              } else if (timeWatched) {
+                art.currentTime = timeWatched;
               } else {
                 art.currentTime = seekTime;
               }
@@ -206,36 +214,129 @@ export default function VideoPlayer({
 
             let marked = 0;
             
-            art.on("video:timeupdate", () => {
+            art.on("video:playing", () => {
               if (!session) return;
-              const mediaSession = navigator.mediaSession;
-              const currentTime = art.currentTime;
+              const intervalId = setInterval(async () => {
+                const resp = await fetch("/api/user/update/episode", {
+                  method: "PUT",
+                  body: JSON.stringify({
+                    name: session?.user?.name,
+                    id: String(aniId),
+                    watchId: id,
+                    title: track?.playing?.title || aniTitle,
+                    aniTitle: aniTitle,
+                    image: track?.playing?.image,
+                    number: track?.playing?.number,
+                    duration: art.duration,
+                    timeWatched: art.currentTime,
+                    provider: provider,
+                  }),
+                });
+                // console.log("updating db");
+              }, 5000);
+
+              art.on("video:pause", () => {
+                clearInterval(intervalId);
+              });
+
+              art.on("video:ended", () => {
+                clearInterval(intervalId);
+              });
+
+              art.on("destroy", () => {
+                clearInterval(intervalId);
+                // console.log("clearing interval");
+              });
+            });
+
+            art.on("video:playing", () => {
+              const interval = setInterval(async () => {
+                art.storage.set(id, {
+                  aniId: String(aniId),
+                  watchId: id,
+                  title: track?.playing?.title || aniTitle,
+                  aniTitle: aniTitle,
+                  image: track?.playing?.image,
+                  episode: track?.playing?.number,
+                  duration: art.duration,
+                  timeWatched: art.currentTime,
+                  provider: provider,
+                  createdAt: new Date().toISOString(),
+                });
+              }, 5000);
+
+              art.on("video:pause", () => {
+                clearInterval(interval);
+              });
+
+              art.on("video:ended", () => {
+                clearInterval(interval);
+              });
+
+              art.on("destroy", () => {
+                clearInterval(interval);
+              });
+            });
+
+            art.on("video:timeupdate", async () => {
+              if (!session) return;
+
+              var currentTime = art.currentTime;
               const duration = art.duration;
               const percentage = currentTime / duration;
-
-              mediaSession.setPositionState({
-                duration: art.duration,
-                playbackRate: art.playbackRate,
-                position: art.currentTime,
-              });
 
               if (percentage >= 0.9) {
                 // use >= instead of >
                 if (marked < 1) {
                   marked = 1;
                   markProgress(aniId, progress, stats);
-                  // console.log("Video progress marked");
                 }
+              }
+            });
+
+            art.on("video:ended", () => {
+              if (!track?.next) return;
+              if (localStorage.getItem("autoplay") === "true") {
+                art.controls.add({
+                  name: "next-button",
+                  position: "top",
+                  html: '<div class="vid-con"><button class="next-button progress">Play Next</button></div>',
+                  click: function (...args) {
+                    if (track?.next) {
+                      router.push(
+                        `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
+                          track?.next?.id
+                        )}&num=${track?.next?.number}`
+                      );
+                    }
+                  },
+                });
+
+                const button = document.querySelector(".next-button");
+
+                function stopTimeout() {
+                  clearTimeout(timeoutId);
+                  button.classList.remove("progress");
+                }
+
+                let timeoutId = setTimeout(() => {
+                  art.controls.remove("next-button");
+                  if (track?.next) {
+                    router.push(
+                      `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
+                        track?.next?.id
+                      )}&num=${track?.next?.number}`
+                    );
+                  }
+                }, 7000);
+
+                button.addEventListener("mouseover", stopTimeout);
               }
             });
 
             art.on("video:timeupdate", () => {
               var currentTime = art.currentTime;
               // console.log(art.currentTime);
-              art.storage.set(id, {
-                time: art.currentTime,
-                duration: art.duration,
-              });
 
               if (
                 skip?.op &&

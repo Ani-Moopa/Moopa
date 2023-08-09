@@ -1,10 +1,21 @@
 import { useState } from "react";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
-const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
+const ListEditor = ({
+  animeId,
+  session,
+  stats,
+  prg,
+  max,
+  image = null,
+  close,
+}) => {
   const [status, setStatus] = useState(stats ?? "CURRENT");
   const [progress, setProgress] = useState(prg ?? 0);
+
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,9 +68,11 @@ const ListEditor = ({ animeId, session, stats, prg, max, image = null }) => {
         draggable: true,
         theme: "dark",
       });
+      close();
       setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+        // window.location.reload();
+        router.reload();
+      }, 1000);
       // showAlert("Media list entry saved", "success");
     } catch (error) {
       toast.error("Something went wrong", {

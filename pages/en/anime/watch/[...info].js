@@ -9,6 +9,8 @@ import Navigasi from "../../../../components/home/staticNav";
 import PrimarySide from "../../../../components/anime/watch/primarySide";
 import SecondarySide from "../../../../components/anime/watch/secondarySide";
 import { GET_MEDIA_USER } from "../../../../queries";
+import { createList, createUser, getEpisode } from "../../../../prisma/user";
+// import { updateUser } from "../../../../prisma/user";
 
 export default function Info({
   sessions,
@@ -17,6 +19,7 @@ export default function Info({
   provider,
   epiNumber,
   dub,
+  userData,
   proxy,
   disqus,
 }) {
@@ -124,7 +127,7 @@ export default function Info({
           }
         }
       }
-
+      
       setInfo(data.data.Media);
 
       const response = await fetch(
@@ -156,12 +159,16 @@ export default function Info({
           setLoading(false);
         }
       }
-
+      
       setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
       // setEpiData(episodes);
       setLoading(false);
     }
     getInfo();
+
+    return () => {
+      setCurrentEpisode(null);
+    };
   }, [sessions?.user?.name, epiNumber, dub]);
 
   // console.log(proxy);
@@ -190,6 +197,7 @@ export default function Info({
             setOnList={setOnList}
             setLoading={setLoading}
             loading={loading}
+            timeWatched={userData?.timeWatched}
           />
           <SecondarySide
             info={info}
@@ -227,6 +235,22 @@ export async function getServerSideProps(context) {
   const epiNumber = query.num;
   const dub = query.dub;
 
+  let userData = null;
+
+  if (session) {
+    await createUser(session.user.name);
+    await createList(session.user.name, watchId);
+    const data = await getEpisode(session.user.name, watchId);
+    userData = JSON.parse(
+      JSON.stringify(data, (key, value) => {
+        if (key === "createdDate") {
+          return String(value);
+        }
+        return value;
+      })
+    );
+  }
+
   return {
     props: {
       sessions: session,
@@ -235,6 +259,7 @@ export async function getServerSideProps(context) {
       watchId: watchId || null,
       epiNumber: epiNumber || null,
       dub: dub || null,
+      userData: userData?.[0] || null,
       proxy,
       disqus,
     },

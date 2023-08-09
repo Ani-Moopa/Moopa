@@ -358,3 +358,43 @@ pre code {
     opacity: 0;
   }
 }
+
+/* .skip-button {
+  @apply bg-white xs:w-28 xs:h-9 w-24 h-7 -top-12 right-[2%] rounded-md font-karla shadow-xl hover:bg-[#f1f1f1] text-black absolute xs:text-[15px] text-xs md:text-sm;
+} */
+
+.vid-con {
+  @apply h-full absolute -top-12 right-[2%];
+}
+
+.next-button {
+  position: relative;
+  @apply xs:w-28 xs:h-9 w-24 h-7 rounded-md font-karla shadow-xl text-black xs:text-[15px] text-xs md:text-sm flex-center hover:bg-[#b9b9b9];
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.next-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+.next-button.progress::before {
+  animation: progress 7s ease forwards;
+}
+@keyframes progress {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 0%;
+  }
+}

@@ -9,12 +9,12 @@ import { useEffect, useState } from "react";
 import { setCookie } from "nookies";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
+import getAnifyInfo from "../../../lib/anify/info";
 
 export default function Manga({ info, userManga, chapters }) {
   const [domainUrl, setDomainUrl] = useState("");
   const [firstEp, setFirstEp] = useState();
-  const chaptersData =
-    info.chapters.data.length === 0 ? chapters : info.chapters.data;
+  const chaptersData = info.chapters.data;
 
   useEffect(() => {
     setDomainUrl(window.location.origin);
@@ -84,8 +84,7 @@ export async function getServerSideProps(context) {
 
   const { id } = context.query;
   const key = process.env.API_KEY;
-  const res = await fetch(`https://api.anify.tv/info/${id}?apikey=${key}`);
-  const data = await res.json();
+  const data = await getAnifyInfo(id, key);
 
   let userManga = null;
 
@@ -152,27 +151,10 @@ export async function getServerSideProps(context) {
     };
   }
 
-  let chapter = null;
-
-  if (data?.chapters?.data.length === 0) {
-    const res2 = await fetch(
-      `https://api.anify.tv/chapters/${id}?apikey=${key}`
-    );
-    const data2 = await res2.json();
-    if (data2.error) {
-      return {
-        notFound: true
-      }
-    } else {
-      chapter = data2; 
-    }
-  }
-
   return {
     props: {
       info: data,
       userManga,
-      chapters: chapter || null,
     },
   };
 }

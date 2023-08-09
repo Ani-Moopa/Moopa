@@ -21,17 +21,40 @@ import { useCountdown } from "../../utils/useCountdownSeconds";
 import Navigasi from "../../components/home/staticNav";
 import MobileNav from "../../components/home/mobileNav";
 import axios from "axios";
+import { createUser } from "../../prisma/user";
 
-// Filter schedules for each day
-// const filterByCountryOfOrigin = (schedule, country) => {
-//   const filteredSchedule = {};
-//   for (const day in schedule) {
-//     filteredSchedule[day] = schedule[day].filter(
-//       (anime) => anime.countryOfOrigin === country
-//     );
-//   }
-//   return filteredSchedule;
-// };
+import { checkAdBlock } from "adblock-checker";
+import { ToastContainer, toast } from "react-toastify";
+
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    await createUser(session.user.name);
+  }
+
+  const trendingDetail = await aniListData({
+    sort: "TRENDING_DESC",
+    page: 1,
+  });
+  const popularDetail = await aniListData({
+    sort: "POPULARITY_DESC",
+    page: 1,
+  });
+  const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
+
+  const upComing = await getUpcomingAnime();
+
+  return {
+    props: {
+      genre: genreDetail.props,
+      detail: trendingDetail.props,
+      populars: popularDetail.props,
+      sessions: session,
+      upComing,
+    },
+  };
+}
 
 export default function Home({ detail, populars, sessions, upComing }) {
   const { media: current } = useAniList(sessions, { stats: "CURRENT" });
@@ -41,6 +64,27 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [schedules, setSchedules] = useState(null);
 
   const [anime, setAnime] = useState([]);
+
+  useEffect(() => {
+    async function adBlock() {
+      const ad = await checkAdBlock();
+      if (ad) {
+        toast.dark(
+          "Please disable your adblock for better experience, we don't have any ads on our site.",
+          {
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "dark",
+          }
+        );
+      }
+    }
+    adBlock();
+  }, []);
 
   const update = () => {
     setAnime((prevAnime) => prevAnime.slice(1));
@@ -89,11 +133,51 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [list, setList] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
+  const [user, setUser] = useState(null);
+
+  // console.log({ user });
 
   const [prog, setProg] = useState(null);
 
   const popular = populars?.data;
   const data = detail.data[0];
+
+  useEffect(() => {
+    async function userData() {
+      let data;
+      if (sessions?.user?.name) {
+        data = await fetch(
+          `/api/user/profile?name=${sessions?.user?.name}`
+        ).then((res) => {
+          if (!res.ok) {
+            switch (res.status) {
+              case 404: {
+                return console.log("user not found");
+              }
+              case 500: {
+                return console.log("server error");
+              }
+            }
+          }
+          return res.json();
+        });
+      }
+      if (!data) {
+        const dat = JSON.parse(localStorage.getItem("artplayer_settings"));
+        if (dat) {
+          const arr = Object.keys(dat).map((key) => dat[key]);
+          const newFirst = arr?.sort((a, b) => {
+            return new Date(b?.createdAt) - new Date(a?.createdAt);
+          });
+          setUser(newFirst);
+        }
+      } else {
+        setUser(data?.WatchListEpisode);
+      }
+      // const data = await res.json();
+    }
+    userData();
+  }, [sessions?.user?.name]);
 
   useEffect(() => {
     const time = new Date().getHours();
@@ -112,7 +196,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
     setGreeting(greeting);
 
     async function userData() {
-      if (!sessions) return;
+      if (!sessions?.user?.name) return;
+
       const getMedia =
         current.filter((item) => item.status === "CURRENT")[0] || null;
       const list = getMedia?.entries
@@ -131,7 +216,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
       }
     }
     userData();
-  }, [sessions, current, plan]);
+  }, [sessions?.user?.name, current, plan]);
+
   return (
     <>
       <Head>
@@ -158,6 +244,13 @@ export default function Home({ detail, populars, sessions, upComing }) {
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
         <SearchBar />
+        <ToastContainer
+          pauseOnFocusLoss={false}
+          style={{
+            width: "400px",
+          }}
+        />
+
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
@@ -228,6 +321,22 @@ export default function Home({ detail, populars, sessions, upComing }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
+            {user?.length > 0 && (
+              <motion.div // Add motion.div to each child component
+                key="recentlyWatched"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="recentlyWatched"
+                  section="Recently Watched"
+                  userData={user}
+                />
+              </motion.div>
+            )}
+
             {sessions && releaseData?.length > 0 && (
               <motion.div // Add motion.div to each child component
                 key="onGoing"
@@ -353,30 +462,4 @@ export default function Home({ detail, populars, sessions, upComing }) {
       <Footer />
     </>
   );
-}
-
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
-  const trendingDetail = await aniListData({
-    sort: "TRENDING_DESC",
-    page: 1,
-  });
-  const popularDetail = await aniListData({
-    sort: "POPULARITY_DESC",
-    page: 1,
-  });
-  const genreDetail = await aniListData({ sort: "TYPE", page: 1 });
-
-  const upComing = await getUpcomingAnime();
-
-  return {
-    props: {
-      genre: genreDetail.props,
-      detail: trendingDetail.props,
-      populars: popularDetail.props,
-      sessions: session,
-      upComing,
-    },
-  };
 }

@@ -154,6 +154,7 @@ export default function Info({ info, color }) {
               prg={progress}
               max={info?.episodes}
               image={info}
+              close={handleClose}
             />
           )}
         </div>

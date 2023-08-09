@@ -1,11 +1,15 @@
 import { Html, Head, Main, NextScript } from "next/document";
+// import { randomBytes } from "crypto";
 
 export default function Document() {
+  // const nonce = randomBytes(128).toString("base64");
+  // const csp = `object-src 'none'; base-uri 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http: 'nonce-${nonce}' 'strict-dynamic'`;
+
   return (
     <Html lang="en">
       <Head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png"></link>
+        <link rel="apple-touch-icon" href="/icon.png" />
         <meta name="theme-color" content="#141519" />
         <link
           rel="stylesheet"
