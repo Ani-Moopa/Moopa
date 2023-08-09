@@ -20,6 +20,7 @@ const fontSize = [
 ];
 
 export default function VideoPlayer({
+  info,
   data,
   id,
   progress,
@@ -213,7 +214,7 @@ export default function VideoPlayer({
             });
 
             let marked = 0;
-            
+
             art.on("video:playing", () => {
               if (!session) return;
               const intervalId = setInterval(async () => {
@@ -225,8 +226,11 @@ export default function VideoPlayer({
                     watchId: id,
                     title: track?.playing?.title || aniTitle,
                     aniTitle: aniTitle,
-                    image: track?.playing?.image,
-                    number: track?.playing?.number,
+                    image:
+                      track?.playing?.image ||
+                      info?.bannerImage ||
+                      info?.coverImage?.extraLarge,
+                    number: Number(progress),
                     duration: art.duration,
                     timeWatched: art.currentTime,
                     provider: provider,
@@ -256,8 +260,11 @@ export default function VideoPlayer({
                   watchId: id,
                   title: track?.playing?.title || aniTitle,
                   aniTitle: aniTitle,
-                  image: track?.playing?.image,
-                  episode: track?.playing?.number,
+                  image:
+                    track?.playing?.image ||
+                    info?.bannerImage ||
+                    info?.coverImage?.extraLarge,
+                  episode: Number(progress),
                   duration: art.duration,
                   timeWatched: art.currentTime,
                   provider: provider,

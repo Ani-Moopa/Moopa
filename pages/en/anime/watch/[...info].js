@@ -62,6 +62,7 @@ export default function Info({
                     }
                   }
                 }
+                bannerImage
                 description
                 coverImage {
                   extraLarge
