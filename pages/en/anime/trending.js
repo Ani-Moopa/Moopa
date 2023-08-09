@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import Navbar from "../../../components/navbar";
 import Footer from "../../../components/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
@@ -98,7 +97,7 @@ export default function TrendingAnime({ sessions }) {
     <>
       <MobileNav sessions={sessions} />
       <div className="flex flex-col gap-2 items-center min-h-screen w-screen px-2 relative pb-10">
-        <div className="z-50 bg-primary pt-5 pb-3 shadow-md shadow-primary w-full fixed left-3">
+        <div className="z-50 bg-primary pt-5 pb-3 shadow-md shadow-primary w-full fixed px-3">
           <Link href="/en" className="flex gap-2 items-center font-karla">
             <ChevronLeftIcon className="w-5 h-5" />
             <h1 className="text-xl">Trending Now</h1>

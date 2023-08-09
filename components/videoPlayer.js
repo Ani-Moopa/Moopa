@@ -252,7 +252,7 @@ export default function VideoPlayer({
             art.on("video:playing", () => {
               const interval = setInterval(async () => {
                 art.storage.set(id, {
-                  id: String(aniId),
+                  aniId: String(aniId),
                   watchId: id,
                   title: track?.playing?.title || aniTitle,
                   aniTitle: aniTitle,
@@ -261,6 +261,7 @@ export default function VideoPlayer({
                   duration: art.duration,
                   timeWatched: art.currentTime,
                   provider: provider,
+                  createdAt: new Date().toISOString(),
                 });
               }, 5000);
 

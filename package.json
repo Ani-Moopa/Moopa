@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "3.8.7",
+  "version": "3.9.0",
   "private": true,
   "founder": "Factiven",
   "scripts": {
@@ -16,6 +16,7 @@
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^5.1.1",
     "@vercel/og": "^0.5.4",
+    "adblock-checker": "^0.1.4",
     "artplayer": "^5.0.9",
     "artplayer-plugin-hls-quality": "^2.0.0",
     "axios": "^1.4.0",
@@ -39,7 +40,6 @@
     "react-icons": "^4.7.1",
     "react-loading-skeleton": "^3.2.0",
     "react-toastify": "^9.1.3",
-    "socket.io-client": "^4.7.2",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {

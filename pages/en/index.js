@@ -23,6 +23,9 @@ import MobileNav from "../../components/home/mobileNav";
 import axios from "axios";
 import { createUser } from "../../prisma/user";
 
+import { checkAdBlock } from "adblock-checker";
+import { ToastContainer, toast } from "react-toastify";
+
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
@@ -61,6 +64,27 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [schedules, setSchedules] = useState(null);
 
   const [anime, setAnime] = useState([]);
+
+  useEffect(() => {
+    async function adBlock() {
+      const ad = await checkAdBlock();
+      if (ad) {
+        toast.dark(
+          "Please disable your adblock for better experience, we don't have any ads on our site.",
+          {
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "dark",
+          }
+        );
+      }
+    }
+    adBlock();
+  }, []);
 
   const update = () => {
     setAnime((prevAnime) => prevAnime.slice(1));
@@ -142,7 +166,10 @@ export default function Home({ detail, populars, sessions, upComing }) {
         const dat = JSON.parse(localStorage.getItem("artplayer_settings"));
         if (dat) {
           const arr = Object.keys(dat).map((key) => dat[key]);
-          setUser(arr);
+          const newFirst = arr?.sort((a, b) => {
+            return new Date(b?.createdAt) - new Date(a?.createdAt);
+          });
+          setUser(newFirst);
         }
       } else {
         setUser(data?.WatchListEpisode);
@@ -217,6 +244,13 @@ export default function Home({ detail, populars, sessions, upComing }) {
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
         <Navigasi />
         <SearchBar />
+        <ToastContainer
+          pauseOnFocusLoss={false}
+          style={{
+            width: "400px",
+          }}
+        />
+
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">

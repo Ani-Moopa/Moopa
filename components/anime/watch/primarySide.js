@@ -47,15 +47,15 @@ export default function PrimarySide({
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
             epiNumber
           )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
-        ).then((r) => {
-          if (!r.ok) {
-            switch (r.status) {
+        ).then((res) => {
+          if (!res.ok) {
+            switch (res.status) {
               case 404: {
                 return null;
               }
             }
           }
-          return r.json();
+          return res.json();
         });
 
         const op =

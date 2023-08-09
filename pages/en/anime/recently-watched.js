@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import Navbar from "../../../components/navbar";
 import Footer from "../../../components/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
@@ -11,8 +10,6 @@ import MobileNav from "../../../components/home/mobileNav";
 
 export default function PopularAnime({ sessions }) {
   const [data, setData] = useState(null);
-  const [page, setPage] = useState(1);
-  const [nextPage, setNextPage] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,26 +47,6 @@ export default function PopularAnime({ sessions }) {
     };
     fetchData();
   }, []);
-
-  //   useEffect(() => {
-  //     function handleScroll() {
-  //       if (page > 5 || !nextPage) {
-  //         window.removeEventListener("scroll", handleScroll);
-  //         return;
-  //       }
-
-  //       if (
-  //         window.innerHeight + window.pageYOffset >=
-  //         document.body.offsetHeight - 3
-  //       ) {
-  //         setPage((prevPage) => prevPage + 1);
-  //       }
-  //     }
-
-  //     window.addEventListener("scroll", handleScroll);
-
-  //     return () => window.removeEventListener("scroll", handleScroll);
-  //   }, [page, nextPage]);
 
   return (
     <>
@@ -136,6 +113,7 @@ export default function PopularAnime({ sessions }) {
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                         }}
+                        title={i.aniTitle}
                       >
                         {i.aniTitle}
                       </span>{" "}
@@ -164,14 +142,6 @@ export default function PopularAnime({ sessions }) {
             </>
           )}
         </div>
-        {/* {!loading && page > 5 && nextPage && (
-          <button
-            onClick={() => setPage((p) => p + 1)}
-            className="bg-secondary xl:w-[30%] w-[80%] h-10 rounded-md"
-          >
-            Load More
-          </button>
-        )} */}
       </div>
       <Footer />
     </>

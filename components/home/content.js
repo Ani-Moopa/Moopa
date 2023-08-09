@@ -263,7 +263,7 @@ export default function Content({
                 );
               })
             : userData
-                ?.filter((i) => i.title !== null)
+                ?.filter((i) => i.title && i.title !== null)
                 ?.slice(0, 10)
                 .map((i) => {
                   const time = i.timeWatched;
