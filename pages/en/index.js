@@ -29,8 +29,13 @@ import { ToastContainer, toast } from "react-toastify";
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  if (session) {
-    await createUser(session.user.name);
+  try {
+    if (session) {
+      await createUser(session.user.name);
+    }
+  } catch (error) {
+    console.error(error);
+    // Handle the error here
   }
 
   const trendingDetail = await aniListData({
@@ -145,22 +150,34 @@ export default function Home({ detail, populars, sessions, upComing }) {
   useEffect(() => {
     async function userData() {
       let data;
-      if (sessions?.user?.name) {
-        data = await fetch(
-          `/api/user/profile?name=${sessions?.user?.name}`
-        ).then((res) => {
+      try {
+        if (sessions?.user?.name) {
+          const res = await fetch(
+            `/api/user/profile?name=${sessions.user.name}`
+          );
           if (!res.ok) {
             switch (res.status) {
               case 404: {
-                return console.log("user not found");
+                console.log("user not found");
+                break;
               }
               case 500: {
-                return console.log("server error");
+                console.log("server error");
+                break;
+              }
+              default: {
+                console.log("unknown error");
+                break;
               }
             }
+          } else {
+            data = await res.json();
+            // Do something with the data
           }
-          return res.json();
-        });
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle the error here
       }
       if (!data) {
         const dat = JSON.parse(localStorage.getItem("artplayer_settings"));

@@ -136,6 +136,7 @@ export default function PrimarySide({
             episodeData && (
               <VideoPlayer
                 session={session}
+                info={info}
                 data={episodeData}
                 provider={providerId}
                 id={watchId}

@@ -20,7 +20,7 @@ module.exports = withPWA({
   },
   distDir: process.env.BUILD_DIR || ".next",
   trailingSlash: true,
-  output: 'standalone',
+  output: "standalone",
   // async headers() {
   //   return [
   //     {
