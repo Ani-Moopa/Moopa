@@ -133,7 +133,7 @@ export const createList = async (name, id, title) => {
 };
 
 export const getEpisode = async (name, id) => {
-  console.log({ name, id });
+  // console.log({ name, id });
   const episode = await prisma.watchListEpisode.findMany({
     // where: {
     //   AND: [{ userProfileId: name }, { watchId: id }],
