@@ -36,7 +36,6 @@ export default function PrimarySide({
 
   useEffect(() => {
     setLoading(true);
-
     async function fetchData() {
       if (info) {
         const { data } = await axios.get(
@@ -72,7 +71,6 @@ export default function PrimarySide({
     }
 
     fetchData();
-
     return () => {
       setEpisodeData();
       setSkip();

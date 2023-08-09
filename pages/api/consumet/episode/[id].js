@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       if (datas.length === 0) {
         return res.status(404).json({ message: "Anime not found" });
       } else {
-        cacheData.put(id + dub, { data: datas }, 1000 * 60 * 60 * 10); // 15 minutes
+        cacheData.put(id + dub, { data: datas }, 1000 * 60 * 60 * 10); 
         res.status(200).json({ data: datas });
       }
     }

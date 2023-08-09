@@ -127,7 +127,7 @@ export default function Info({
           }
         }
       }
-
+      
       setInfo(data.data.Media);
 
       const response = await fetch(
@@ -150,7 +150,6 @@ export default function Info({
           const previousEpisode = getProvider.episodes?.find(
             (i) => i.number === parseInt(epiNumber) - 1
           );
-
           setCurrentEpisode({
             prev: previousEpisode,
             playing: currentEpisode,
@@ -160,7 +159,7 @@ export default function Info({
           setLoading(false);
         }
       }
-
+      
       setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
       // setEpiData(episodes);
       setLoading(false);

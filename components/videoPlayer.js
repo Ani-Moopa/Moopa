@@ -213,7 +213,7 @@ export default function VideoPlayer({
             });
 
             let marked = 0;
-
+            
             art.on("video:playing", () => {
               if (!session) return;
               const intervalId = setInterval(async () => {

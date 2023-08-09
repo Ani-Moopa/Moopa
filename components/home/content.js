@@ -169,6 +169,7 @@ export default function Content({
           onClick={handleClick}
           ref={containerRef}
         >
+
           {ids !== "recentlyWatched"
             ? slicedData?.map((anime) => {
                 const progress = og?.find((i) => i.mediaId === anime.id);
@@ -308,6 +309,7 @@ export default function Content({
                           />
                         )}
                       </div>
+
                       <div className="flex flex-col font-karla w-full">
                         {/* <h1 className="font-semibold">{i.title}</h1> */}
                         <p className="flex items-center gap-1 text-sm text-gray-400 w-[320px]">

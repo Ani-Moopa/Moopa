@@ -22,7 +22,6 @@
     "axios": "^1.4.0",
     "closest-match": "^1.3.3",
     "cron": "^2.4.0",
-    "crypto": "^1.0.1",
     "disqus-react": "^1.1.5",
     "dotenv": "^16.0.3",
     "framer-motion": "^8.5.0",
