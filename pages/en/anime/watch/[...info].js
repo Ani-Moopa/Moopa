@@ -127,7 +127,7 @@ export default function Info({
           }
         }
       }
-      
+
       setInfo(data.data.Media);
 
       const response = await fetch(
@@ -159,7 +159,7 @@ export default function Info({
           setLoading(false);
         }
       }
-      
+
       setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
       // setEpiData(episodes);
       setLoading(false);
@@ -237,18 +237,23 @@ export async function getServerSideProps(context) {
 
   let userData = null;
 
-  if (session) {
-    await createUser(session.user.name);
-    await createList(session.user.name, watchId);
-    const data = await getEpisode(session.user.name, watchId);
-    userData = JSON.parse(
-      JSON.stringify(data, (key, value) => {
-        if (key === "createdDate") {
-          return String(value);
-        }
-        return value;
-      })
-    );
+  try {
+    if (session) {
+      await createUser(session.user.name);
+      await createList(session.user.name, watchId);
+      const data = await getEpisode(session.user.name, watchId);
+      userData = JSON.parse(
+        JSON.stringify(data, (key, value) => {
+          if (key === "createdDate") {
+            return String(value);
+          }
+          return value;
+        })
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    // Handle the error here
   }
 
   return {
