@@ -1,4 +1,3 @@
-import axios from "axios";
 import cacheData from "memory-cache";
 
 const API_URL = process.env.API_URI;
