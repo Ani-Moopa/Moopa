@@ -43,12 +43,16 @@ export default async function handler(req, res) {
         }
         case "DELETE": {
           const { name } = req.body;
+          // return res.status(200).json({ name });
           const user = await deleteUser(name);
           if (!user) {
             return res.status(404).json({ message: "User not found" });
           } else {
             return res.status(200).json(user);
           }
+        }
+        default: {
+          return res.status(405).json({ message: "Method not allowed" });
         }
       }
     } catch (error) {
