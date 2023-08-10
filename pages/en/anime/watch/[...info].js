@@ -172,8 +172,6 @@ export default function Info({
     };
   }, [sessions?.user?.name, epiNumber, dub]);
 
-  // console.log(proxy);
-
   return (
     <>
       <Head>

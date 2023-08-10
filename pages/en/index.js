@@ -9,7 +9,6 @@ import Content from "../../components/home/content";
 import { motion } from "framer-motion";
 
 import { signOut } from "next-auth/react";
-import { useAniList } from "../../lib/anilist/useAnilist";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]";
 import SearchBar from "../../components/searchBar";
@@ -25,6 +24,7 @@ import { createUser } from "../../prisma/user";
 
 import { checkAdBlock } from "adblock-checker";
 import { ToastContainer, toast } from "react-toastify";
+import { useAniList } from "../../lib/anilist/useAnilist";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -35,7 +35,6 @@ export async function getServerSideProps(context) {
     }
   } catch (error) {
     console.error(error);
-    // Handle the error here
   }
 
   const trendingDetail = await aniListData({
@@ -120,12 +119,16 @@ export default function Home({ detail, populars, sessions, upComing }) {
     function getRelease() {
       let releasingAnime = [];
       let progress = [];
+      let seenIds = new Set(); // Create a Set to store the IDs of seen anime
       release.map((list) => {
         list.entries.map((entry) => {
-          if (entry.media.status === "RELEASING") {
+          if (
+            entry.media.status === "RELEASING" &&
+            !seenIds.has(entry.media.id)
+          ) {
             releasingAnime.push(entry.media);
+            seenIds.add(entry.media.id); // Add the ID to the Set
           }
-
           progress.push(entry);
         });
       });

@@ -22,7 +22,9 @@ export default function ListMode({
         )}&num=${episode.number}${dub ? `&dub=${dub}` : ""}`}
         className={`text-start text-sm lg:text-lg ${
           progress
-            ? episode.number <= progress
+            ? progress && episode.number <= progress
+              ? "text-[#5f5f5f]"
+              : "text-white"
             : prog === 100
             ? "text-[#5f5f5f]"
             : "text-white"
@@ -33,7 +35,9 @@ export default function ListMode({
           <p
             className={`text-xs lg:text-sm ${
               progress
-                ? episode.number <= progress
+                ? progress && episode.number <= progress
+                  ? "text-[#5f5f5f]"
+                  : "text-[#b1b1b1]"
                 : prog === 100
                 ? "text-[#5f5f5f]"
                 : "text-[#b1b1b1]"
