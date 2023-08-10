@@ -8,6 +8,7 @@ export default function Details({
   info,
   session,
   epiNumber,
+  description,
   id,
   onList,
   setOnList,
@@ -120,7 +121,7 @@ export default function Details({
       <div className={`bg-secondary rounded-md mt-3 mx-3`}>
         {info && (
           <p
-            dangerouslySetInnerHTML={{ __html: info?.description }}
+            dangerouslySetInnerHTML={{ __html: description }}
             className={`p-5 text-sm font-light font-roboto text-[#e4e4e4] `}
           />
         )}

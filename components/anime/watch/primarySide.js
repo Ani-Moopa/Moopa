@@ -229,6 +229,7 @@ export default function PrimarySide({
           <Details
             info={info}
             session={session}
+            description={navigation?.playing?.description || info?.description}
             epiNumber={epiNumber}
             id={watchId}
             onList={onList}

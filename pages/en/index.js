@@ -251,7 +251,11 @@ export default function Home({ detail, populars, sessions, upComing }) {
         />
         <meta
           name="twitter:image"
-          content="https://cdn.discordapp.com/attachments/1084446049986420786/1093300833422168094/image.png"
+          content="https://beta.moopa.live/preview.png"
+        />
+        <meta
+          name="description"
+          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
         />
         <link rel="icon" href="/c.svg" />
       </Head>

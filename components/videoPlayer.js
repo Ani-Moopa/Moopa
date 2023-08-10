@@ -285,6 +285,12 @@ export default function VideoPlayer({
               });
             });
 
+            art.on("resize", () => {
+              art.subtitle.style({
+                fontSize: art.height * 0.05 + "px",
+              });
+            });
+
             art.on("video:timeupdate", async () => {
               if (!session) return;
 
