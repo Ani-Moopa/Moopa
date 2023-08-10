@@ -227,9 +227,7 @@ export default function VideoPlayer({
                     title: track?.playing?.title || aniTitle,
                     aniTitle: aniTitle,
                     image:
-                      track?.playing?.image ||
-                      info?.bannerImage ||
-                      info?.coverImage?.extraLarge,
+                      track?.playing?.image || info?.coverImage?.extraLarge,
                     number: Number(progress),
                     duration: art.duration,
                     timeWatched: art.currentTime,
@@ -260,10 +258,7 @@ export default function VideoPlayer({
                   watchId: id,
                   title: track?.playing?.title || aniTitle,
                   aniTitle: aniTitle,
-                  image:
-                    track?.playing?.image ||
-                    info?.bannerImage ||
-                    info?.coverImage?.extraLarge,
+                  image: track?.playing?.image || info?.coverImage?.extraLarge,
                   episode: Number(progress),
                   duration: art.duration,
                   timeWatched: art.currentTime,
