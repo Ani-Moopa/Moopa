@@ -16,13 +16,17 @@ export default async function handler(req, res) {
         case "POST": {
           const { name, id } = JSON.parse(req.body);
 
-          const episode = await createList(name, id);
-          if (!episode) {
-            return res
-              .status(200)
-              .json({ message: "Episode is already created" });
+          if (session.user.name !== name) {
+            return res.status(401).json({ message: "Unauthorized" });
           } else {
-            return res.status(201).json(episode);
+            const episode = await createList(name, id);
+            if (!episode) {
+              return res
+                .status(200)
+                .json({ message: "Episode is already created" });
+            } else {
+              return res.status(201).json(episode);
+            }
           }
         }
         case "PUT": {
