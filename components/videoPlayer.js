@@ -35,6 +35,7 @@ export default function VideoPlayer({
   track,
   aniTitle,
   timeWatched,
+  dub,
 }) {
   const [url, setUrl] = useState("");
   const [source, setSource] = useState([]);
@@ -314,7 +315,9 @@ export default function VideoPlayer({
                       router.push(
                         `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
                           track?.next?.id
-                        )}&num=${track?.next?.number}`
+                        )}&num=${track?.next?.number}${
+                          dub ? `&dub=${dub}` : ""
+                        }`
                       );
                     }
                   },
@@ -333,7 +336,7 @@ export default function VideoPlayer({
                     router.push(
                       `/en/anime/watch/${aniId}/${provider}?id=${encodeURIComponent(
                         track?.next?.id
-                      )}&num=${track?.next?.number}`
+                      )}&num=${track?.next?.number}${dub ? `&dub=${dub}` : ""}`
                     );
                   }
                 }, 7000);

@@ -197,6 +197,7 @@ export default function Info({
             setLoading={setLoading}
             loading={loading}
             timeWatched={userData?.timeWatched}
+            dub={dub}
           />
           <SecondarySide
             info={info}
