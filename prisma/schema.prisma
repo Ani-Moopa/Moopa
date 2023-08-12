@@ -25,7 +25,7 @@ model WatchListEpisode {
   duration      Int?
   provider      String?
   createdDate   DateTime?   @default(now())
-  userProfile   UserProfile @relation(fields: [userProfileId], references: [name])
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [name], onDelete: Cascade)
   userProfileId String
   watchId       String
 }

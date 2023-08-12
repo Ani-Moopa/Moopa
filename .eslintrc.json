@@ -1,4 +1,7 @@
 {
   "extends": "next/core-web-vitals",
-  "rules": { "react/no-unescaped-entities": 0 }
+  "rules": {
+    "react/no-unescaped-entities": 0,
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }]
+  }
 }

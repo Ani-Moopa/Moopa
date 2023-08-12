@@ -5,6 +5,7 @@ import { MdChevronRight } from "react-icons/md";
 import {
   ChevronRightIcon,
   ArrowRightCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 import { parseCookies } from "nookies";
@@ -12,6 +13,7 @@ import { parseCookies } from "nookies";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 export default function Content({
   ids,
@@ -20,6 +22,7 @@ export default function Content({
   userData,
   og,
   userName,
+  setRemoved,
 }) {
   const router = useRouter();
 
@@ -139,10 +142,64 @@ export default function Content({
     }
   };
 
+  const removeItem = async (id) => {
+    if (userName) {
+      // remove from database
+      const res = await fetch(`/api/user/update/episode`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: userName,
+          id: id,
+        }),
+      });
+      const data = await res.json();
+
+      // remove from local storage
+      const artplayerSettings =
+        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+      if (artplayerSettings[id]) {
+        delete artplayerSettings[id];
+        localStorage.setItem(
+          "artplayer_settings",
+          JSON.stringify(artplayerSettings)
+        );
+      }
+
+      // update client
+      setRemoved(id);
+
+      if (data?.message === "Episode deleted") {
+        toast.success("Episode removed from history", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          theme: "dark",
+        });
+      }
+    } else {
+      const artplayerSettings =
+        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+      if (artplayerSettings[id]) {
+        delete artplayerSettings[id];
+        localStorage.setItem(
+          "artplayer_settings",
+          JSON.stringify(artplayerSettings)
+        );
+      }
+
+      setRemoved(id);
+    }
+  };
+
   return (
     <div>
       <div
-        className={`flex items-center justify-between lg:justify-normal lg:gap-3 px-5 ${
+        className={`flex items-center justify-between lg:justify-normal lg:gap-3 px-5 z-40 ${
           section === "Recommendations" ? "" : "cursor-pointer"
         }`}
         onClick={goToPage}
@@ -169,7 +226,6 @@ export default function Content({
           onClick={handleClick}
           ref={containerRef}
         >
-
           {ids !== "recentlyWatched"
             ? slicedData?.map((anime) => {
                 const progress = og?.find((i) => i.mediaId === anime.id);
@@ -273,14 +329,27 @@ export default function Content({
                   if (prog > 90) prog = 100;
 
                   return (
-                    <Link
+                    <div
                       key={i.watchId}
-                      className="flex flex-col gap-2 shrink-0 cursor-pointer"
-                      href={`/en/anime/watch/${i.aniId}/${
-                        i.provider
-                      }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}`}
+                      className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
                     >
-                      <div className="relative w-[320px] aspect-video rounded-md overflow-hidden group">
+                      <div className="absolute z-40 top-1 right-1 group-hover/item:visible invisible hover:text-action">
+                        <div
+                          className="flex flex-col items-center group/delete"
+                          onClick={() => removeItem(i.watchId)}
+                        >
+                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full" />
+                          <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/delete:visible group-hover/delete:scale-100 group-hover/delete:translate-x-0 group-hover/delete:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
+                            Remove from history
+                          </span>
+                        </div>
+                      </div>
+                      <Link
+                        className="relative w-[320px] aspect-video rounded-md overflow-hidden group"
+                        href={`/en/anime/watch/${i.aniId}/${
+                          i.provider
+                        }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}`}
+                      >
                         <div className="w-full h-full bg-gradient-to-t from-black/70 from-20% to-transparent group-hover:to-black/40 transition-all duration-300 ease-out absolute z-30" />
                         <div className="absolute bottom-3 left-0 mx-2 text-white flex gap-2 items-center w-[80%] z-30">
                           <PlayIcon className="w-5 h-5 shrink-0" />
@@ -299,6 +368,7 @@ export default function Content({
                             width: `${prog}%`,
                           }}
                         />
+
                         {i?.image && (
                           <Image
                             src={i?.image}
@@ -308,9 +378,14 @@ export default function Content({
                             className="w-fit group-hover:scale-[1.02] duration-300 ease-out z-10"
                           />
                         )}
-                      </div>
+                      </Link>
 
-                      <div className="flex flex-col font-karla w-full">
+                      <Link
+                        className="flex flex-col font-karla w-full"
+                        href={`/en/anime/watch/${i.aniId}/${
+                          i.provider
+                        }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}`}
+                      >
                         {/* <h1 className="font-semibold">{i.title}</h1> */}
                         <p className="flex items-center gap-1 text-sm text-gray-400 w-[320px]">
                           <span
@@ -328,24 +403,25 @@ export default function Content({
                           </span>{" "}
                           | Episode {i.episode}
                         </p>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
                   );
                 })}
-          {userData?.length >= 10 && section !== "Recommendations" && (
-            <div
-              key={section}
-              className="flex cursor-pointer"
-              onClick={goToPage}
-            >
-              <div className="w-[320px] aspect-video overflow-hidden object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">
-                <h1 className="whitespace-pre-wrap text-sm">
-                  More on {section}
-                </h1>
-                <ArrowRightCircleIcon className="w-5 h-5" />
+          {userData?.filter((i) => i.aniId !== null)?.length >= 10 &&
+            section !== "Recommendations" && (
+              <div
+                key={section}
+                className="flex cursor-pointer"
+                onClick={goToPage}
+              >
+                <div className="w-[320px] aspect-video overflow-hidden object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">
+                  <h1 className="whitespace-pre-wrap text-sm">
+                    More on {section}
+                  </h1>
+                  <ArrowRightCircleIcon className="w-5 h-5" />
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {filteredData?.length >= 10 && section !== "Recommendations" && (
             <div
               key={section}

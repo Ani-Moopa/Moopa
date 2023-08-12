@@ -151,6 +151,7 @@ export default function RightBar({
                 Chapter Progress
               </label>
               <input
+                id="chapter-progress"
                 type="number"
                 placeholder="0"
                 min={0}
