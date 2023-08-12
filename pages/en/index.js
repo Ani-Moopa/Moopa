@@ -155,6 +155,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const popular = populars?.data;
   const data = detail.data[0];
 
+
   useEffect(() => {
     async function userData() {
       let data;
@@ -259,18 +260,18 @@ export default function Home({ detail, populars, sessions, upComing }) {
         />
         <meta
           name="twitter:image"
-          content="https://beta.moopa.live/preview.png"
+          content="https://beta.Madara.live/preview.png"
         />
         <meta
           name="description"
-          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
+          content="Discover your new favorite anime or manga title! Madara offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara today!"
         />
         <link rel="icon" href="/c.svg" />
       </Head>
 
       <MobileNav sessions={sessions} />
 
-      <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd] ">
+      <div className="h-auto w-screen bg-[#363062] text-[#D8B9C3] ">
         <Navigasi />
         <SearchBar />
         <ToastContainer
@@ -298,7 +299,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
                   legacyBehavior
                   className="flex"
                 >
-                  <a className="rounded-sm p-3 text-md font-karla font-light ring-1 ring-[#FF7F57]">
+                  <a className="rounded-sm p-3 text-md font-karla font-light ring-1 ring-[#D8B9C3]">
                     START WATCHING
                   </a>
                 </Link>
@@ -306,7 +307,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
             </div>
             <div className="z-10 row-start-1 flex justify-center ">
               <div className="relative  lg:h-[467px] lg:w-[322px] lg:scale-100">
-                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent lg:h-[467px] lg:w-[322px]" />
+                <div className="absolute bg-gradient-to-t from-[#363062] to-transparent lg:h-[467px] lg:w-[322px]" />
 
                 <Image
                   draggable={false}
