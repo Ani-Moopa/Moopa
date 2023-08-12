@@ -107,8 +107,14 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const { data } = await axios.get(`/api/anify/schedule`);
-      setSchedules(data);
+      const res = await fetch(`/api/anify/schedule`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSchedules(null);
+      } else {
+        setSchedules(data);
+      }
     };
     getSchedule();
   }, []);
@@ -142,8 +148,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
   const [user, setUser] = useState(null);
-
-  // console.log({ user });
+  const [removed, setRemoved] = useState();
 
   const [prog, setProg] = useState(null);
 
@@ -197,7 +202,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
       // const data = await res.json();
     }
     userData();
-  }, [sessions?.user?.name]);
+  }, [sessions?.user?.name, removed]);
 
   useEffect(() => {
     const time = new Date().getHours();
@@ -269,7 +274,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
         <Navigasi />
         <SearchBar />
         <ToastContainer
-          pauseOnFocusLoss={false}
+          pauseOnHover={false}
           style={{
             width: "400px",
           }}
@@ -357,6 +362,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
                   ids="recentlyWatched"
                   section="Recently Watched"
                   userData={user}
+                  userName={sessions?.user?.name}
+                  setRemoved={setRemoved}
                 />
               </motion.div>
             )}

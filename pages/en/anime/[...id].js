@@ -125,7 +125,7 @@ export default function Info({ info, color }) {
           }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
       </Head>
-      <ToastContainer pauseOnFocusLoss={false} />
+      <ToastContainer pauseOnHover={false} />
       <Modal open={open} onClose={() => handleClose()}>
         <div>
           {!session && (

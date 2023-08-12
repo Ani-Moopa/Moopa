@@ -228,19 +228,38 @@ export const updateUserEpisode = async ({
   }
 };
 
-export const updateTimeWatched = async (id, timeWatched) => {
+export const deleteEpisode = async (name, id) => {
   try {
-    const user = await prisma.watchListEpisode.update({
+    const user = await prisma.watchListEpisode.deleteMany({
       where: {
-        id: id,
-      },
-      data: {
-        timeWatched: timeWatched,
+        watchId: id,
+        userProfileId: name,
       },
     });
-    return user;
+    if (user) {
+      return user;
+    } else {
+      return { message: "Episode not found" };
+    }
   } catch (error) {
     console.error(error);
-    throw new Error("Error updating time watched");
+    throw new Error("Error deleting episode");
   }
 };
+
+// export const updateTimeWatched = async (id, timeWatched) => {
+//   try {
+//     const user = await prisma.watchListEpisode.update({
+//       where: {
+//         id: id,
+//       },
+//       data: {
+//         timeWatched: timeWatched,
+//       },
+//     });
+//     return user;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error("Error updating time watched");
+//   }
+// };

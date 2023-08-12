@@ -229,8 +229,7 @@ export async function getServerSideProps(context) {
   const proxy = process.env.PROXY_URI;
   const disqus = process.env.DISQUS_SHORTNAME;
 
-  const aniId = query.info[0];
-  const provider = query.info[1];
+  const [aniId, provider] = query.info;
   const watchId = query.id;
   const epiNumber = query.num;
   const dub = query.dub;

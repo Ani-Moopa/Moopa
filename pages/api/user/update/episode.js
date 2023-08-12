@@ -3,6 +3,7 @@ import { authOptions } from "../../auth/[...nextauth]";
 
 import {
   createList,
+  deleteEpisode,
   getEpisode,
   updateUserEpisode,
 } from "../../../../prisma/user";
@@ -70,6 +71,19 @@ export default async function handler(req, res) {
             return res.status(404).json({ message: "Episode not found" });
           } else {
             return res.status(200).json(episode);
+          }
+        }
+        case "DELETE": {
+          const { name, id } = req.body;
+          if (session.user.name !== name) {
+            return res.status(401).json({ message: "Unauthorized" });
+          } else {
+            const episode = await deleteEpisode(name, id);
+            if (!episode) {
+              return res.status(404).json({ message: "Episode not found" });
+            } else {
+              return res.status(200).json({ message: "Episode deleted" });
+            }
           }
         }
       }
