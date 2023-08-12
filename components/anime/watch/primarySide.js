@@ -164,13 +164,14 @@ export default function PrimarySide({
                   <Link
                     href={`/en/anime/${info.id}`}
                     className="hover:underline"
+                    title={navigation?.playing?.title || info.title?.romaji}
                   >
                     {navigation?.playing?.title || info.title?.romaji}
                   </Link>
                 </h1>
-                <h1 className="text-sm font-karla font-light">
+                <h3 className="text-sm font-karla font-light">
                   Episode {epiNumber}
-                </h1>
+                </h3>
               </div>
               <div className="flex gap-4 items-center justify-end">
                 <div className="relative">

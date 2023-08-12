@@ -45,7 +45,10 @@ export default function DesktopDetails({
 
         <div className="hidden lg:flex w-full flex-col gap-5 h-[250px]">
           <div className="flex flex-col gap-2">
-            <h1 className=" font-inter font-bold text-[36px] text-white line-clamp-1">
+            <h1
+              className="title font-inter font-bold text-[36px] text-white line-clamp-1"
+              title={info?.title?.romaji || info?.title?.english}
+            >
               {info ? (
                 info?.title?.romaji || info?.title?.english
               ) : (

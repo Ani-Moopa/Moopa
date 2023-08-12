@@ -49,7 +49,10 @@ export default function Details({
             <Skeleton height={240} />
           )}
         </div>
-        <div className="grid w-full pl-5 gap-3 h-[240px]">
+        <div
+          className="grid w-full pl-5 gap-3 h-[240px]"
+          episode={info?.episodes || "0"}
+        >
           <div className="grid grid-cols-2 gap-1 items-center">
             <h2 className="text-sm font-light font-roboto text-[#878787]">
               Studios
@@ -94,11 +97,15 @@ export default function Details({
             <div className="grid grid-flow-dense grid-cols-2 gap-2 h-full w-full">
               {info ? (
                 <>
-                  <div className="line-clamp-3">{info.title?.romaji || ""}</div>
-                  <div className="line-clamp-3">
+                  <div className="title-rm line-clamp-3">
+                    {info.title?.romaji || ""}
+                  </div>
+                  <div className="title-en line-clamp-3">
                     {info.title?.english || ""}
                   </div>
-                  <div className="line-clamp-3">{info.title?.native || ""}</div>
+                  <div className="title-nt line-clamp-3">
+                    {info.title?.native || ""}
+                  </div>
                 </>
               ) : (
                 <Skeleton width={200} height={50} />
