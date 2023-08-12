@@ -1,9 +1,9 @@
-// import { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 // const prisma = new PrismaClient();
 
 import { prisma } from "../lib/prisma";
 
-export const createUser = async (name, setting) => {
+export const createUser = async (name) => {
   try {
     const checkUser = await prisma.userProfile.findUnique({
       where: {
@@ -22,6 +22,15 @@ export const createUser = async (name, setting) => {
       return null;
     }
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        console.log(
+          "There is a unique constraint violation, a new user cannot be created with this name"
+        );
+      }
+    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+      console.log("An unknown Prisma error occurred:", error.message);
+    }
     console.error(error);
     throw new Error("Error creating user");
   }
@@ -218,19 +227,38 @@ export const updateUserEpisode = async ({
   }
 };
 
-export const updateTimeWatched = async (id, timeWatched) => {
+export const deleteEpisode = async (name, id) => {
   try {
-    const user = await prisma.watchListEpisode.update({
+    const user = await prisma.watchListEpisode.deleteMany({
       where: {
-        id: id,
-      },
-      data: {
-        timeWatched: timeWatched,
+        watchId: id,
+        userProfileId: name,
       },
     });
-    return user;
+    if (user) {
+      return user;
+    } else {
+      return { message: "Episode not found" };
+    }
   } catch (error) {
     console.error(error);
-    throw new Error("Error updating time watched");
+    throw new Error("Error deleting episode");
   }
 };
+
+// export const updateTimeWatched = async (id, timeWatched) => {
+//   try {
+//     const user = await prisma.watchListEpisode.update({
+//       where: {
+//         id: id,
+//       },
+//       data: {
+//         timeWatched: timeWatched,
+//       },
+//     });
+//     return user;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error("Error updating time watched");
+//   }
+// };

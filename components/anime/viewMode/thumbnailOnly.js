@@ -9,7 +9,7 @@ export default function ThumbnailOnly({
   progress,
   dub,
 }) {
-  const time = artStorage?.[episode?.id]?.time;
+  const time = artStorage?.[episode?.id]?.timeWatched;
   const duration = artStorage?.[episode?.id]?.duration;
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
@@ -25,7 +25,7 @@ export default function ThumbnailOnly({
         Episode {episode?.number}
       </span>
       <span
-        className={`absolute bottom-7 left-0 h-1 bg-red-600`}
+        className={`absolute bottom-7 left-0 h-[2px] bg-red-600`}
         style={{
           width:
             progress && artStorage && episode?.number <= progress

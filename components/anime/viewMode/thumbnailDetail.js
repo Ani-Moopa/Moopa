@@ -10,7 +10,7 @@ export default function ThumbnailDetail({
   progress,
   dub,
 }) {
-  const time = artStorage?.[epi?.id]?.time;
+  const time = artStorage?.[epi?.id]?.timeWatched;
   const duration = artStorage?.[epi?.id]?.duration;
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
@@ -33,7 +33,7 @@ export default function ThumbnailDetail({
             className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
           />
           <span
-            className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+            className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
             style={{
               width:
                 progress && artStorage && epi?.number <= progress

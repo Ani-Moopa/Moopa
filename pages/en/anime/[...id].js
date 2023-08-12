@@ -125,14 +125,14 @@ export default function Info({ info, color }) {
           }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
       </Head>
-      <ToastContainer pauseOnFocusLoss={false} />
+      <ToastContainer pauseOnHover={false} />
       <Modal open={open} onClose={() => handleClose()}>
         <div>
           {!session && (
             <div className="flex-center flex-col gap-5 px-10 py-5 bg-secondary rounded-md">
-              <h1 className="text-md font-extrabold font-karla">
+              <div className="text-md font-extrabold font-karla">
                 Edit your list
-              </h1>
+              </div>
               <button
                 className="flex items-center bg-[#363642] rounded-md text-white p-1"
                 onClick={() => signIn("AniListProvider")}

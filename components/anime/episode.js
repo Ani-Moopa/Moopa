@@ -246,6 +246,7 @@ export default function AnimeEpisode({ info, progress }) {
                           info={info}
                           episode={episode}
                           index={index}
+                          artStorage={artStorage}
                           providerId={providerId}
                           progress={progress}
                           dub={isDub}
