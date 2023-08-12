@@ -180,7 +180,7 @@ input:checked ~ span:last-child {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #27272e;
+  background: #ff748c;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {
@@ -232,7 +232,7 @@ pre {
   line-height: 1.5;
   padding: 1rem;
   margin: 1rem 0;
-  @apply bg-[#191c24];
+  @apply bg-[#ffdbe0];
   white-space: pre-wrap;
   word-wrap: break-word;
 }
