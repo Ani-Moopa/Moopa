@@ -66,7 +66,7 @@ export default function TopSection({ info, firstEp, setCookie }) {
       </div>
       <div className="w-full flex flex-col justify-start z-40">
         <div className="md:h-1/2 py-2 md:py-5 flex flex-col md:gap-2 justify-end">
-          <h1 className="text-xl md:text-2xl xl:text-3xl text-white font-semibold font-karla line-clamp-1 text-start">
+          <h1 className="title text-xl md:text-2xl xl:text-3xl text-white font-semibold font-karla line-clamp-1 text-start">
             {info.title?.romaji || info.title?.english || info.title?.native}
           </h1>
           <span className="flex flex-wrap text-xs lg:text-sm md:text-[#747478]">

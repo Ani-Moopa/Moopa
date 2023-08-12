@@ -172,8 +172,6 @@ export default function Info({
     };
   }, [sessions?.user?.name, epiNumber, dub]);
 
-  // console.log(proxy);
-
   return (
     <>
       <Head>
@@ -199,6 +197,7 @@ export default function Info({
             setLoading={setLoading}
             loading={loading}
             timeWatched={userData?.timeWatched}
+            dub={dub}
           />
           <SecondarySide
             info={info}
@@ -230,8 +229,7 @@ export async function getServerSideProps(context) {
   const proxy = process.env.PROXY_URI;
   const disqus = process.env.DISQUS_SHORTNAME;
 
-  const aniId = query.info[0];
-  const provider = query.info[1];
+  const [aniId, provider] = query.info;
   const watchId = query.id;
   const epiNumber = query.num;
   const dub = query.dub;

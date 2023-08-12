@@ -14,10 +14,7 @@ export default function DMCA() {
                   property rights of others and complying with the Digital
                   Millennium Copyright Act (DMCA)."
         />
-        <meta
-          property="og:image"
-          content="https://cdn.discordapp.com/attachments/1068758633464201268/1081591948705546330/logo.png"
-        />
+        <meta property="og:image" content="/icon-512x512.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/c.svg" />
       </Head>
