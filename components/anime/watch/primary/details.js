@@ -51,7 +51,7 @@ export default function Details({
         </div>
         <div
           className="grid w-full pl-5 gap-3 h-[240px]"
-          episode={info?.episodes || "0"}
+          data-episode={info?.episodes || "0"}
         >
           <div className="grid grid-cols-2 gap-1 items-center">
             <h2 className="text-sm font-light font-roboto text-[#878787]">

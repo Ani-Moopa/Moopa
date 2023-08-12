@@ -115,7 +115,7 @@ export default function Read({ data, currentId, sessions }) {
               }`
             : "Getting Info..."}
         </title>
-        <meta id="CoverImage" manga-cover={info?.coverImage} />
+        <meta id="CoverImage" data-manga-cover={info?.coverImage} />
       </Head>
       <div className="w-screen flex justify-evenly relative">
         <ToastContainer pauseOnFocusLoss={false} />
