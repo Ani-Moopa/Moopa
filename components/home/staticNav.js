@@ -48,11 +48,11 @@ export default function Navigasi() {
           <div className="flex items-center lg:gap-16 lg:pt-7">
             <Link
               href="/en/"
-              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#FF7F57]"
+              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#363062]"
             >
-              moopa
+              Madara
             </Link>
-            <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
+            <ul className="hidden items-center gap-10 pt-2 font-outfit text-[20px] lg:flex">
               <li>
                 <Link
                   href={`/en/search/anime?season=${season}&seasonYear=${year}`}
