@@ -45,7 +45,7 @@ export function Navigasi() {
               href="/id/"
               className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#FF7F57]"
             >
-              moopa
+              Madara
             </Link>
             <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
               <li>
@@ -205,16 +205,16 @@ export default function Home({ detail, populars, sessions }) {
   return (
     <>
       <Head>
-        <title>Moopa</title>
+        <title>Madara</title>
         <meta charSet="UTF-8"></meta>
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="Moopa - Free Anime and Manga Streaming"
+          content="Madara - Free Anime and Manga Streaming"
         />
         <meta
           name="twitter:description"
-          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
+          content="Discover your new favorite anime or manga title! Madara offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara today!"
         />
         <meta
           name="twitter:image"

@@ -271,7 +271,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
       <MobileNav sessions={sessions} />
 
-      <div className="h-auto w-screen bg-[#363062] text-[#D8B9C3] ">
+      <div className="h-auto w-screen bg-[#231f40] text-[#D8B9C3] ">
         <Navigasi />
         <SearchBar />
         <ToastContainer
@@ -307,7 +307,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
             </div>
             <div className="z-10 row-start-1 flex justify-center ">
               <div className="relative  lg:h-[467px] lg:w-[322px] lg:scale-100">
-                <div className="absolute bg-gradient-to-t from-[#363062] to-transparent lg:h-[467px] lg:w-[322px]" />
+                <div className="absolute bg-gradient-to-t from-[#231f40] to-transparent lg:h-[467px] lg:w-[322px]" />
 
                 <Image
                   draggable={false}

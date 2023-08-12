@@ -55,12 +55,12 @@ function Footer() {
       <div className="mx-auto flex w-[80%] lg:w-[95%] xl:w-[80%] flex-col space-y-10 pb-6 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:py-0">
         <div className="flex items-center gap-24">
           <div className="lg:flex grid items-center lg:gap-10 gap-3">
-            {/* <h1 className="font-outfit text-[2.56rem]">moopa</h1> */}
-            <h1 className="font-outfit text-[40px]">moopa</h1>
+            {/* <h1 className="font-outfit text-[2.56rem]">Madara</h1> */}
+            <h1 className="font-outfit text-[40px]">Madara</h1>
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-1">
                 <p className="flex items-center gap-1 font-karla lg:text-[0.81rem] text-[0.7rem] text-[#CCCCCC]">
-                  &copy; {new Date().getFullYear()} moopa.live | Website Made by
+                  &copy; {new Date().getFullYear()} Madara.live | Website Made by
                   Factiven
                 </p>
                 <p className="font-karla lg:text-[0.8rem] text-[0.65rem] text-[#9c9c9c]  lg:w-[520px] italic">
@@ -144,7 +144,7 @@ function Footer() {
                 <Link href={`/${lang}/dmca`}>DMCA</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <Link href="https://github.com/DevanAbinaya/Ani-Moopa">
+                <Link href="https://github.com/DevanAbinaya/Ani-Madara">
                   Github
                 </Link>
               </li>

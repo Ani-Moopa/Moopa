@@ -69,7 +69,7 @@ export default async function handler(request) {
               filter: "brightness(100%)",
             }}
           >
-            moopa
+            Madara
           </span>
           <h1
             style={{

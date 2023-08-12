@@ -246,7 +246,7 @@ export default function Info({ info, color, api }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`Moopa - ${info.title.romaji || info.title.english}`}
+          content={`Madara - ${info.title.romaji || info.title.english}`}
         />
         <meta
           name="twitter:description"
