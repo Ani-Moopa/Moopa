@@ -43,12 +43,20 @@ export default async function handler(req, res) {
         }
         case "DELETE": {
           const { name } = req.body;
-          const user = await deleteUser(name);
-          if (!user) {
-            return res.status(404).json({ message: "User not found" });
+          // return res.status(200).json({ name });
+          if (session.user.name !== name) {
+            return res.status(401).json({ message: "Unauthorized" });
           } else {
-            return res.status(200).json(user);
+            const user = await deleteUser(name);
+            if (!user) {
+              return res.status(404).json({ message: "User not found" });
+            } else {
+              return res.status(200).json(user);
+            }
           }
+        }
+        default: {
+          return res.status(405).json({ message: "Method not allowed" });
         }
       }
     } catch (error) {

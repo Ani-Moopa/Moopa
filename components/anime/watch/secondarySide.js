@@ -18,7 +18,7 @@ export default function SecondarySide({
         {episode && episode.length > 0 ? (
           episode.some((item) => item.title && item.description) > 0 ? (
             episode.map((item) => {
-              const time = artStorage?.[item.id]?.time;
+              const time = artStorage?.[item.id]?.timeWatched;
               const duration = artStorage?.[item.id]?.duration;
               let prog = (time / duration) * 100;
               if (prog > 90) prog = 100;
@@ -50,7 +50,7 @@ export default function SecondarySide({
                         }`}
                       />
                       <span
-                        className={`absolute bottom-0 left-0 h-[3px] bg-red-700`}
+                        className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
                         style={{
                           width:
                             progress && artStorage && item?.number <= progress

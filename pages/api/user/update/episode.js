@@ -3,6 +3,7 @@ import { authOptions } from "../../auth/[...nextauth]";
 
 import {
   createList,
+  deleteEpisode,
   getEpisode,
   updateUserEpisode,
 } from "../../../../prisma/user";
@@ -16,13 +17,17 @@ export default async function handler(req, res) {
         case "POST": {
           const { name, id } = JSON.parse(req.body);
 
-          const episode = await createList(name, id);
-          if (!episode) {
-            return res
-              .status(200)
-              .json({ message: "Episode is already created" });
+          if (session.user.name !== name) {
+            return res.status(401).json({ message: "Unauthorized" });
           } else {
-            return res.status(201).json(episode);
+            const episode = await createList(name, id);
+            if (!episode) {
+              return res
+                .status(200)
+                .json({ message: "Episode is already created" });
+            } else {
+              return res.status(201).json(episode);
+            }
           }
         }
         case "PUT": {
@@ -66,6 +71,19 @@ export default async function handler(req, res) {
             return res.status(404).json({ message: "Episode not found" });
           } else {
             return res.status(200).json(episode);
+          }
+        }
+        case "DELETE": {
+          const { name, id } = req.body;
+          if (session.user.name !== name) {
+            return res.status(401).json({ message: "Unauthorized" });
+          } else {
+            const episode = await deleteEpisode(name, id);
+            if (!episode) {
+              return res.status(404).json({ message: "Episode not found" });
+            } else {
+              return res.status(200).json({ message: "Episode deleted" });
+            }
           }
         }
       }

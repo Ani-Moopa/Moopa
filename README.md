@@ -95,6 +95,7 @@ npm install
 3. Generate Prisma :
 
 ```bash
+npx prisma migrate dev
 npx prisma generate
 ```
 

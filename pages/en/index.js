@@ -9,7 +9,6 @@ import Content from "../../components/home/content";
 import { motion } from "framer-motion";
 
 import { signOut } from "next-auth/react";
-import { useAniList } from "../../lib/anilist/useAnilist";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]";
 import SearchBar from "../../components/searchBar";
@@ -25,6 +24,7 @@ import { createUser } from "../../prisma/user";
 
 import { checkAdBlock } from "adblock-checker";
 import { ToastContainer, toast } from "react-toastify";
+import { useAniList } from "../../lib/anilist/useAnilist";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -35,7 +35,6 @@ export async function getServerSideProps(context) {
     }
   } catch (error) {
     console.error(error);
-    // Handle the error here
   }
 
   const trendingDetail = await aniListData({
@@ -108,8 +107,14 @@ export default function Home({ detail, populars, sessions, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const { data } = await axios.get(`/api/anify/schedule`);
-      setSchedules(data);
+      const res = await fetch(`/api/anify/schedule`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSchedules(null);
+      } else {
+        setSchedules(data);
+      }
     };
     getSchedule();
   }, []);
@@ -120,12 +125,16 @@ export default function Home({ detail, populars, sessions, upComing }) {
     function getRelease() {
       let releasingAnime = [];
       let progress = [];
+      let seenIds = new Set(); // Create a Set to store the IDs of seen anime
       release.map((list) => {
         list.entries.map((entry) => {
-          if (entry.media.status === "RELEASING") {
+          if (
+            entry.media.status === "RELEASING" &&
+            !seenIds.has(entry.media.id)
+          ) {
             releasingAnime.push(entry.media);
+            seenIds.add(entry.media.id); // Add the ID to the Set
           }
-
           progress.push(entry);
         });
       });
@@ -139,8 +148,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
   const [planned, setPlanned] = useState(null);
   const [greeting, setGreeting] = useState("");
   const [user, setUser] = useState(null);
-
-  // console.log({ user });
+  const [removed, setRemoved] = useState();
 
   const [prog, setProg] = useState(null);
 
@@ -194,7 +202,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
       // const data = await res.json();
     }
     userData();
-  }, [sessions?.user?.name]);
+  }, [sessions?.user?.name, removed]);
 
   useEffect(() => {
     const time = new Date().getHours();
@@ -251,7 +259,11 @@ export default function Home({ detail, populars, sessions, upComing }) {
         />
         <meta
           name="twitter:image"
-          content="https://cdn.discordapp.com/attachments/1084446049986420786/1093300833422168094/image.png"
+          content="https://beta.moopa.live/preview.png"
+        />
+        <meta
+          name="description"
+          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
         />
         <link rel="icon" href="/c.svg" />
       </Head>
@@ -262,7 +274,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
         <Navigasi />
         <SearchBar />
         <ToastContainer
-          pauseOnFocusLoss={false}
+          pauseOnHover={false}
           style={{
             width: "400px",
           }}
@@ -350,6 +362,8 @@ export default function Home({ detail, populars, sessions, upComing }) {
                   ids="recentlyWatched"
                   section="Recently Watched"
                   userData={user}
+                  userName={sessions?.user?.name}
+                  setRemoved={setRemoved}
                 />
               </motion.div>
             )}
