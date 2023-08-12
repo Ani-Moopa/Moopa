@@ -33,7 +33,7 @@ export default function Manga({ info, userManga, chapters }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`Moopa - ${info.title.romaji || info.title.english}`}
+          content={`Madara-To - ${info.title.romaji || info.title.english}`}
         />
         <meta
           name="twitter:description"

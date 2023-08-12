@@ -238,16 +238,16 @@ export default function Home({ detail, populars, sessions, upComing }) {
   return (
     <>
       <Head>
-        <title>Moopa</title>
+        <title>Madara-To</title>
         <meta charSet="UTF-8"></meta>
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="Moopa - Free Anime and Manga Streaming"
+          content="Madara-To - Free Anime and Manga Streaming"
         />
         <meta
           name="twitter:description"
-          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
+          content="Discover your new favorite anime or manga title! Madara-To offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara-To today!"
         />
         <meta
           name="twitter:image"

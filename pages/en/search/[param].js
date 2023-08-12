@@ -197,7 +197,7 @@ export default function Card() {
   return (
     <>
       <Head>
-        <title>Moopa - search</title>
+        <title>Madara-To - search</title>
         <link rel="icon" href="/c.svg" />
       </Head>
       <div className="bg-primary">

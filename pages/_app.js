@@ -16,7 +16,7 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <AnimatePresence mode="wait">
-        <SkeletonTheme baseColor="#232329" highlightColor="#2a2a32">
+        <SkeletonTheme baseColor="##ff748c" highlightColor="#74ffe7">
           <m.div
             key={`route-${router.route}`}
             transition={{ duration: 0.5 }}
