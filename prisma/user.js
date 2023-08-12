@@ -125,7 +125,6 @@ export const deleteUser = async (name) => {
         name: name,
       },
     });
-    console.log({ user });
     return user;
   } catch (error) {
     console.error(error);
