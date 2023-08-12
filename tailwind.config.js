@@ -46,12 +46,12 @@ module.exports = {
         nav: "5.3rem",
       },
       colors: {
-        primary: "#251162",
-        secondary: "#2d1578",
-        action: "#990000",
+        primary: "#241468",
+        secondary: "#9F0D7F",
+        action: "#EA1179",
         image: "#3B3C41",
-        txt: "#040404",
-        tersier: "#0c0d10",
+        txt: "#F79BD3",
+        tersier: "#9F0D7F",
       },
     },
     fontFamily: {
