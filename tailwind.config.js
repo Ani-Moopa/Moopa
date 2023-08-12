@@ -46,9 +46,9 @@ module.exports = {
         nav: "5.3rem",
       },
       colors: {
-        primary: "#141519",
-        secondary: "#232329",
-        action: "#FF7F57",
+        primary: "##251162",
+        secondary: "#2d1578",
+        action: "#990000",
         image: "#3B3C41",
         txt: "#dbdcdd",
         tersier: "#0c0d10",
