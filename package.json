@@ -1,6 +1,6 @@
 {
   "name": "madara",
-  "version": "2.0",
+  "version": "4.2.0",
   "private": true,
   "founder": "Factiven",
   "scripts": {
@@ -15,6 +15,7 @@
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^5.1.1",
+    "@vercel/analytics": "^1.0.2",
     "@vercel/og": "^0.5.4",
     "adblock-checker": "^0.1.4",
     "artplayer": "^5.0.9",

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { AnimatePresence, motion as m } from "framer-motion";
 import NextNProgress from "nextjs-progressbar";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from '@vercel/analytics/react';
 import "../styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -42,6 +43,7 @@ export default function App({
               showOnShallow={true}
             />
             <Component {...pageProps} />
+            <Analytics />
           </m.div>
         </SkeletonTheme>
       </AnimatePresence>
