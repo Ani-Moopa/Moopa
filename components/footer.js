@@ -9,46 +9,12 @@ function Footer() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [season, setSeason] = useState(getCurrentSeason());
 
-  const [lang, setLang] = useState("en");
+
   const [checked, setChecked] = useState(false);
   const [cookie, setCookies] = useState(null);
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   let lang = null;
-  //   if (!cookie) {
-  //     const cookie = parseCookies();
-  //     lang = cookie.lang || null;
-  //     setCookies(cookie);
-  //   }
-  //   if (lang === "en" || lang === null) {
-  //     setLang("en");
-  //     setChecked(false);
-  //   } else if (lang === "id") {
-  //     setLang("id");
-  //     setChecked(true);
-  //   }
-  // }, []);
-
-  // function switchLang() {
-  //   setChecked(!checked);
-  //   if (checked) {
-  //     console.log("switching to en");
-  //     setCookie(null, "lang", "en", {
-  //       maxAge: 365 * 24 * 60 * 60,
-  //       path: "/",
-  //     });
-  //     router.push("/en");
-  //   } else {
-  //     console.log("switching to id");
-  //     setCookie(null, "lang", "id", {
-  //       maxAge: 365 * 24 * 60 * 60,
-  //       path: "/",
-  //     });
-  //     router.push("/id");
-  //   }
-  // }
 
   return (
     <section className="text-[#dbdcdd] z-40 bg-[#0c0d10] lg:flex lg:h-[12rem] w-full lg:items-center lg:justify-between">
@@ -84,22 +50,22 @@ function Footer() {
             <ul className="flex flex-col gap-y-[0.7rem] ">
               <li className="cursor-pointer hover:text-action">
                 <Link
-                  href={`/${lang}/search/anime?season=${season}&seasonYear=${year}`}
+                  href={`/en/search/anime?season=${season}&seasonYear=${year}`}
                 >
                   This Season
                 </Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <Link href={`/${lang}/search/anime`}>Popular Anime</Link>
+                <Link href={`/en/search/anime`}>Popular Anime</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <Link href={`/${lang}/search/manga`}>Popular Manga</Link>
+                <Link href={`/en/search/manga`}>Popular Manga</Link>
               </li>
               {status === "loading" ? (
                 <p>Loading...</p>
               ) : session ? (
                 <li className="cursor-pointer hover:text-action">
-                  <Link href={`/${lang}/profile/${session?.user?.name}`}>
+                  <Link href={`/en/profile/${session?.user?.name}`}>
                     My List
                   </Link>
                 </li>
@@ -113,13 +79,13 @@ function Footer() {
             </ul>
             <ul className="flex flex-col gap-y-[0.7rem]">
               <li className="cursor-pointer hover:text-action">
-                <Link href={`/${lang}/search/anime`}>Movies</Link>
+                <Link href={`/en/search/anime`}>Movies</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <Link href={`/${lang}/search/anime`}>TV Shows</Link>
+                <Link href={`/en/search/anime`}>TV Shows</Link>
               </li>
               <li className="cursor-pointer hover:text-action">
-                <Link href={`/${lang}/dmca`}>DMCA</Link>
+                <Link href={`/en/dmca`}>DMCA</Link>
               </li>
             </ul>
           </div>

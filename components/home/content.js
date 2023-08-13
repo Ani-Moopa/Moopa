@@ -28,30 +28,15 @@ export default function Content({
 
   const [startX, setStartX] = useState(null);
   const containerRef = useRef(null);
-  const [cookie, setCookie] = useState(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const [clicked, setClicked] = useState(false);
-
-  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const click = localStorage.getItem("clicked");
 
     if (click) {
       setClicked(JSON.parse(click));
-    }
-
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookie(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
     }
   }, []);
 
@@ -126,19 +111,19 @@ export default function Content({
 
   const goToPage = () => {
     if (section === "Recently Watched") {
-      router.push(`/${lang}/anime/recently-watched`);
+      router.push(`/en/anime/recently-watched`);
     }
     if (section === "Trending Now") {
-      router.push(`/${lang}/anime/trending`);
+      router.push(`/en/anime/trending`);
     }
     if (section === "Popular Anime") {
-      router.push(`/${lang}/anime/popular`);
+      router.push(`/en/anime/popular`);
     }
     if (section === "Your Plan") {
-      router.push(`/${lang}/profile/${userName}/#planning`);
+      router.push(`/en/profile/${userName}/#planning`);
     }
     if (section === "On-Going Anime" || section === "Your Watch List") {
-      router.push(`/${lang}/profile/${userName}/#current`);
+      router.push(`/en/profile/${userName}/#current`);
     }
   };
 
@@ -236,7 +221,7 @@ export default function Content({
                     className="flex flex-col gap-3 shrink-0 cursor-pointer"
                   >
                     <Link
-                      href={`/${lang}/anime/${anime.id}`}
+                      href={`/en/anime/${anime.id}`}
                       className="hover:scale-105 hover:shadow-lg duration-300 ease-out group relative"
                       title={anime.title.romaji}
                     >

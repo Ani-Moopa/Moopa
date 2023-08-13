@@ -9,9 +9,6 @@ function Navbar(props) {
   const [isVisible, setIsVisible] = useState(false);
   const [fade, setFade] = useState(false);
 
-  const [lang, setLang] = useState("en");
-  const [cookie, setCookies] = useState(null);
-
   const handleShowClick = () => {
     setIsVisible(true);
     setFade(true);
@@ -22,27 +19,13 @@ function Navbar(props) {
     setFade(false);
   };
 
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookies(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
-    }
-  }, []);
-
   // console.log(session.user?.image);
 
   return (
     <header className={`${props.className}`}>
       <div className="flex h-16 w-auto items-center justify-between px-5 lg:mx-auto lg:w-[80%] lg:px-0 text-[#cbd1a0]">
         <div className="pb-2 font-outfit text-4xl font-semibold lg:block text-white">
-          <Link href={`/${lang}/`}>Madara</Link>
+          <Link href={`/en/`}>Madara</Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -75,7 +58,7 @@ function Navbar(props) {
         >
           {isVisible && session && (
             <Link
-              href={`/${lang}/profile/${session?.user?.name}`}
+              href={`/en/profile/${session?.user?.name}`}
               className="fixed lg:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
             >
               <Image
@@ -91,7 +74,7 @@ function Navbar(props) {
             <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg lg:hidden">
               <div className="grid grid-cols-4 place-items-center gap-6">
                 <button className="group flex flex-col items-center">
-                  <Link href={`/${lang}/`} className="">
+                  <Link href={`/en/`} className="">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -108,14 +91,14 @@ function Navbar(props) {
                     </svg>
                   </Link>
                   <Link
-                    href={`/${lang}/`}
+                    href={`/en/`}
                     className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                   >
                     home
                   </Link>
                 </button>
                 <button className="group flex flex-col items-center">
-                  <Link href={`/${lang}/about`}>
+                  <Link href={`/en/about`}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -132,7 +115,7 @@ function Navbar(props) {
                     </svg>
                   </Link>
                   <Link
-                    href={`/${lang}/about`}
+                    href={`/en/about`}
                     className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                   >
                     about
@@ -140,7 +123,7 @@ function Navbar(props) {
                 </button>
                 <button className="group flex gap-[1.5px] flex-col items-center ">
                   <div>
-                    <Link href={`/${lang}/search/anime`}>
+                    <Link href={`/en/search/anime`}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -158,7 +141,7 @@ function Navbar(props) {
                     </Link>
                   </div>
                   <Link
-                    href={`/${lang}/search/anime`}
+                    href={`/en/search/anime`}
                     className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                   >
                     search
@@ -237,7 +220,7 @@ function Navbar(props) {
           <ul className="hidden gap-10 font-roboto text-md lg:flex items-center relative">
             <li>
               <Link
-                href={`/${lang}/`}
+                href={`/en/`}
                 className="p-2 transition-all duration-100 hover:text-orange-600"
               >
                 home
@@ -245,7 +228,7 @@ function Navbar(props) {
             </li>
             <li>
               <Link
-                href={`/${lang}/about`}
+                href={`/en/about`}
                 className="p-2 transition-all duration-100 hover:text-orange-600"
               >
                 about
@@ -253,7 +236,7 @@ function Navbar(props) {
             </li>
             <li>
               <Link
-                href={`/${lang}/search/anime`}
+                href={`/en/search/anime`}
                 className="p-2 transition-all duration-100 hover:text-orange-600"
               >
                 search
@@ -286,7 +269,7 @@ function Navbar(props) {
                     </button>
                     <div className="absolute z-50 w-28 text-center -bottom-20 text-white shadow-2xl opacity-0 bg-secondary p-1 py-2 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all grid place-items-center gap-1">
                       <Link
-                        href={`/${lang}/profile/${session?.user.name}`}
+                        href={`/en/profile/${session?.user.name}`}
                         className="hover:text-action"
                       >
                         Profile

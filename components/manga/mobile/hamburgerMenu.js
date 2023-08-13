@@ -9,9 +9,6 @@ export default function HamburgerMenu() {
   const [isVisible, setIsVisible] = useState(false);
   const [fade, setFade] = useState(false);
 
-  const [lang, setLang] = useState("en");
-  const [cookie, setCookies] = useState(null);
-
   const handleShowClick = () => {
     setIsVisible(true);
     setFade(true);
@@ -22,19 +19,6 @@ export default function HamburgerMenu() {
     setFade(false);
   };
 
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookies(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
-    }
-  }, []);
   return (
     <>
       {!isVisible && (
@@ -66,7 +50,7 @@ export default function HamburgerMenu() {
       >
         {isVisible && session && (
           <Link
-            href={`/${lang}/profile/${session?.user?.name}`}
+            href={`/en/profile/${session?.user?.name}`}
             className="fixed lg:hidden bottom-[100px] w-[60px] h-[60px] flex items-center justify-center right-[20px] rounded-full z-50 bg-[#17171f]"
           >
             <Image
@@ -82,7 +66,7 @@ export default function HamburgerMenu() {
           <div className="fixed bottom-[30px] right-[20px] z-50 flex h-[51px] w-[300px] items-center justify-center gap-8 rounded-[8px] text-[11px] bg-[#17171f] shadow-lg lg:hidden">
             <div className="grid grid-cols-4 place-items-center gap-6">
               <button className="group flex flex-col items-center">
-                <Link href={`/${lang}/`} className="">
+                <Link href={`/en/`} className="">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -99,14 +83,14 @@ export default function HamburgerMenu() {
                   </svg>
                 </Link>
                 <Link
-                  href={`/${lang}/`}
+                  href={`/en/`}
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
                   home
                 </Link>
               </button>
               <button className="group flex flex-col items-center">
-                <Link href={`/${lang}/about`}>
+                <Link href={`/en/about`}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -123,7 +107,7 @@ export default function HamburgerMenu() {
                   </svg>
                 </Link>
                 <Link
-                  href={`/${lang}/about`}
+                  href={`/en/about`}
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
                   about
@@ -131,7 +115,7 @@ export default function HamburgerMenu() {
               </button>
               <button className="group flex gap-[1.5px] flex-col items-center ">
                 <div>
-                  <Link href={`/${lang}/search/anime`}>
+                  <Link href={`/en/search/anime`}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -149,7 +133,7 @@ export default function HamburgerMenu() {
                   </Link>
                 </div>
                 <Link
-                  href={`/${lang}/search/anime`}
+                  href={`/en/search/anime`}
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
                   search

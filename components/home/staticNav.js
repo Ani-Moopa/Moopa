@@ -10,27 +10,10 @@ export default function Navigasi() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [season, setSeason] = useState(getCurrentSeason());
 
-  const [lang, setLang] = useState("en");
-  const [cookie, setCookies] = useState(null);
-
   const router = useRouter();
 
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookies(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
-    }
-  }, []);
-
   const handleFormSubmission = (inputValue) => {
-    router.push(`/${lang}/search/${encodeURIComponent(inputValue)}`);
+    router.push(`/en/search/${encodeURIComponent(inputValue)}`);
   };
 
   const handleKeyDown = async (event) => {
