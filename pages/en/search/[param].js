@@ -198,6 +198,8 @@ export default function Card() {
     <>
       <Head>
         <title>Moopa - search</title>
+        <meta name="title" content="Search" />
+        <meta name="description" content="Search your favourites Anime/Manga" />
         <link rel="icon" href="/c.svg" />
       </Head>
       <div className="bg-primary">

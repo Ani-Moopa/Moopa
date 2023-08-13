@@ -8,6 +8,14 @@ export default function About() {
     <>
       <Head>
         <title>Moopa - About</title>
+        <meta name="title" content="About" />
+        <meta
+          name="description"
+          content="Moopa is a platform where you can watch and stream anime or read
+              manga for free, without any ads or VPNs. Our mission is to provide
+              a convenient and enjoyable experience for anime and manga
+              enthusiasts all around the world."
+        />
         <meta name="about" content="About this web" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/c.svg" />
