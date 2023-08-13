@@ -252,11 +252,11 @@ export default function Home({ detail, populars, sessions, upComing }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="Madara-To - Free Anime and Manga Streaming"
+          content="Madara - Free Anime and Manga Streaming"
         />
         <meta
           name="twitter:description"
-          content="Discover your new favorite anime or manga title! Madara-To offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara-To today!"
+          content="Discover your new favorite anime or manga title! Madara offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara today!"
         />
         <meta
           name="twitter:image"

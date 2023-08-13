@@ -48,7 +48,7 @@ export default function Navigasi() {
           <div className="flex items-center lg:gap-16 lg:pt-7">
             <Link
               href="/en/"
-              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#363062]"
+              className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[##cbd1a0]"
             >
               Madara
             </Link>

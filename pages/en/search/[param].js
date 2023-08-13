@@ -197,7 +197,7 @@ export default function Card() {
   return (
     <>
       <Head>
-        <title>Madara-To - search</title>
+        <title>Madara - search</title>
         <link rel="icon" href="/c.svg" />
       </Head>
       <div className="bg-primary">
