@@ -411,7 +411,7 @@ export default function Content({
             section !== "Recommendations" && (
               <div
                 key={section}
-                className="flex cursor-pointer"
+                className="flex flex-col cursor-pointer"
                 onClick={goToPage}
               >
                 <div className="w-[320px] aspect-video overflow-hidden object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">
