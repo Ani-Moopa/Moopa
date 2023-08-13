@@ -124,6 +124,12 @@ export default function Info({ info, color }) {
             info.title.romaji || info.title.english
           }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
       </Head>
       <ToastContainer pauseOnHover={false} />
       <Modal open={open} onClose={() => handleClose()}>

@@ -176,6 +176,12 @@ export default function Info({
     <>
       <Head>
         <title>{info?.title?.romaji || "Retrieving data..."}</title>
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
       </Head>
 
       <Navigasi />
