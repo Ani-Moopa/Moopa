@@ -15,40 +15,40 @@ function Footer() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookies(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-      setChecked(false);
-    } else if (lang === "id") {
-      setLang("id");
-      setChecked(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   let lang = null;
+  //   if (!cookie) {
+  //     const cookie = parseCookies();
+  //     lang = cookie.lang || null;
+  //     setCookies(cookie);
+  //   }
+  //   if (lang === "en" || lang === null) {
+  //     setLang("en");
+  //     setChecked(false);
+  //   } else if (lang === "id") {
+  //     setLang("id");
+  //     setChecked(true);
+  //   }
+  // }, []);
 
-  function switchLang() {
-    setChecked(!checked);
-    if (checked) {
-      console.log("switching to en");
-      setCookie(null, "lang", "en", {
-        maxAge: 365 * 24 * 60 * 60,
-        path: "/",
-      });
-      router.push("/en");
-    } else {
-      console.log("switching to id");
-      setCookie(null, "lang", "id", {
-        maxAge: 365 * 24 * 60 * 60,
-        path: "/",
-      });
-      router.push("/id");
-    }
-  }
+  // function switchLang() {
+  //   setChecked(!checked);
+  //   if (checked) {
+  //     console.log("switching to en");
+  //     setCookie(null, "lang", "en", {
+  //       maxAge: 365 * 24 * 60 * 60,
+  //       path: "/",
+  //     });
+  //     router.push("/en");
+  //   } else {
+  //     console.log("switching to id");
+  //     setCookie(null, "lang", "id", {
+  //       maxAge: 365 * 24 * 60 * 60,
+  //       path: "/",
+  //     });
+  //     router.push("/id");
+  //   }
+  // }
 
   return (
     <section className="text-[#dbdcdd] z-40 bg-[#0c0d10] lg:flex lg:h-[12rem] w-full lg:items-center lg:justify-between">
@@ -68,27 +68,6 @@ function Footer() {
                   linked to the media which is hosted on 3rd party services.
                 </p>
               </div>
-
-              <label className="flex items-center relative w-max cursor-pointer select-none text-txt">
-                <span className="text-base text-[#cccccc] font-inter font-semibold mr-3">
-                  Lang
-                </span>
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => switchLang()}
-                  className="appearance-none transition-colors cursor-pointer w-14 h-5 rounded-full focus:outline-none  focus:ring-offset-2 focus:ring-offset-black focus:ring-action bg-secondary"
-                />
-                <span className="absolute font-medium text-xs uppercase right-2 text-action">
-                  {" "}
-                  EN{" "}
-                </span>
-                <span className="absolute font-medium text-xs uppercase right-[2.1rem] text-action">
-                  {" "}
-                  ID{" "}
-                </span>
-                <span className="w-6 h-6 right-[2.1rem] absolute rounded-full transform transition-transform bg-gray-200" />
-              </label>
             </div>
           </div>
           {/* <div className="lg:hidden lg:block">
@@ -142,11 +121,6 @@ function Footer() {
               </li>
               <li className="cursor-pointer hover:text-action">
                 <Link href={`/${lang}/dmca`}>DMCA</Link>
-              </li>
-              <li className="cursor-pointer hover:text-action">
-                <Link href="https://github.com/DevanAbinaya/Ani-Madara">
-                  Github
-                </Link>
               </li>
             </ul>
           </div>

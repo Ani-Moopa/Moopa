@@ -40,7 +40,7 @@ function Navbar(props) {
 
   return (
     <header className={`${props.className}`}>
-      <div className="flex h-16 w-auto items-center justify-between px-5 lg:mx-auto lg:w-[80%] lg:px-0 text-[#D8B9C3]">
+      <div className="flex h-16 w-auto items-center justify-between px-5 lg:mx-auto lg:w-[80%] lg:px-0 text-[#cbd1a0]">
         <div className="pb-2 font-outfit text-4xl font-semibold lg:block text-white">
           <Link href={`/${lang}/`}>Madara</Link>
         </div>
