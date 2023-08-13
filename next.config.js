@@ -48,32 +48,32 @@ module.exports = withPWA({
           },
         ],
       },
-      {
-        source: "/(.*)",
-        headers: createSecureHeaders({
-          contentSecurityPolicy: {
-            directives: {
-              styleSrc: [
-                "'self'",
-                "'unsafe-inline'",
-                "https://cdnjs.cloudflare.com",
-                "https://fonts.googleapis.com",
-              ],
-              imgSrc: [
-                "'self'",
-                "https://s4.anilist.co",
-                "data:",
-                "https://media.kitsu.io",
-                "https://artworks.thetvdb.com",
-                "https://img.moopa.live",
-              ],
-              baseUri: "self",
-              formAction: "self",
-              frameAncestors: true,
-            },
-          },
-        }),
-      },
+      // {
+      //   source: "/(.*)",
+      //   headers: createSecureHeaders({
+      //     contentSecurityPolicy: {
+      //       directives: {
+      //         styleSrc: [
+      //           "'self'",
+      //           "'unsafe-inline'",
+      //           "https://cdnjs.cloudflare.com",
+      //           "https://fonts.googleapis.com",
+      //         ],
+      //         imgSrc: [
+      //           "'self'",
+      //           "https://s4.anilist.co",
+      //           "data:",
+      //           "https://media.kitsu.io",
+      //           "https://artworks.thetvdb.com",
+      //           "https://img.moopa.live",
+      //         ],
+      //         baseUri: "self",
+      //         formAction: "self",
+      //         frameAncestors: true,
+      //       },
+      //     },
+      //   }),
+      // },
     ];
   },
 });
