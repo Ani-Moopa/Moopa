@@ -1,11 +1,11 @@
 {
   "name": "madara",
-  "version": "v1.00",
+  "version": "1.00",
   "private": true,
   "founder": "Factiven",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma generate && next build",
     "export": "next build && next export",
     "start": "next start",
     "lint": "next lint"
