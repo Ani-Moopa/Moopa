@@ -247,7 +247,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
   return (
     <>
       <Head>
-        <title>Madara-To</title>
+        <title>Madara</title>
         <meta charSet="UTF-8"></meta>
         <meta name="twitter:card" content="summary_large_image" />
         <meta
@@ -266,7 +266,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
           name="description"
           content="Discover your new favorite anime or manga title! Madara offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Madara today!"
         />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/madara.svg" />
       </Head>
 
       <MobileNav sessions={sessions} />
