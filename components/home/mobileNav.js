@@ -76,7 +76,7 @@ export default function MobileNav({ sessions }) {
                   href="/en/"
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
-                  home
+                  Home
                 </Link>
               </button>
               <button className="group flex flex-col items-center">
@@ -100,7 +100,7 @@ export default function MobileNav({ sessions }) {
                   href="/en/about"
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
-                  about
+                  About
                 </Link>
               </button>
               <button className="group flex gap-[1.5px] flex-col items-center ">
@@ -126,7 +126,7 @@ export default function MobileNav({ sessions }) {
                   href="/en/search/anime"
                   className="font-karla font-bold text-[#8BA0B2] group-hover:text-action"
                 >
-                  search
+                  Search
                 </Link>
               </button>
               {sessions ? (
@@ -144,7 +144,7 @@ export default function MobileNav({ sessions }) {
                     </svg>
                   </div>
                   <h1 className="font-karla font-bold text-[#8BA0B2] group-hover:text-action">
-                    logout
+                    Logout
                   </h1>
                 </button>
               ) : (
@@ -162,7 +162,7 @@ export default function MobileNav({ sessions }) {
                     </svg>
                   </div>
                   <h1 className="font-karla font-bold text-[#8BA0B2] group-hover:text-action">
-                    login
+                    Login
                   </h1>
                 </button>
               )}

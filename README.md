@@ -5,7 +5,7 @@
 </div>
 
 <h1 align="center">
-  <a href="https://moopa.live">Moopa Anime Streaming Website</a>
+  <a href="https://moopa.live">Madara Anime Streaming Website</a>
 </h1>
 
 <p align="center">
@@ -62,83 +62,10 @@
 - Mobile-responsive design
 - PWA supported
 
-## To Do List
-
-- [x] Add PWA support
-- [x] Connect to consumet API to fetch episodes data
-- [x] Implement skip op/ed button on supported anime
-- [x] Create README file
-- [x] Integrate Anilist API for anime tracking
-  - [x] Ability to auto track anime after watching >= 90% through the video
-  - [x] Create a user profile page to see lists of anime watched
-  - [x] Ability to edit list inside detail page
-- [x] Working on Manga pages
-
-## Bug Report
-
-If you encounter any issues or bug on the site please head to [issues](https://github.com/DevanAbinaya/Ani-Moopa/issues) and create a bug report there.
-
-## For Local Development
-
-1. Clone this repository using :
-
-```bash
-git clone https://github.com/DevanAbinaya/Ani-Moopa.git
-```
-
-2. Install package using npm :
-
-```bash
-npm install
-```
-
-3. Generate Prisma :
-
-```bash
-npx prisma migrate dev
-npx prisma generate
-```
-
-4. Create `.env` file in the root folder and put this inside the file :
-
-```bash
-## AniList
-CLIENT_ID="get the id from here https://anilist.co/settings/developer"
-CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
-GRAPHQL_ENDPOINT="https://graphql.anilist.co"
-
-## NextAuth
-NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
-NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
-
-## NextJS
-PROXY_URI="I recommend you to use this cors-anywhere as a proxy https://github.com/Rob--W/cors-anywhere follow the instruction on how to use it there. Skip this if you only use gogoanime as a source"
-API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
-API_KEY="this API key is used for schedules and manga page. get the key from https://anify.tv/discord"
-DISQUS_SHORTNAME='put your disqus shortname here. (optional)'
-
-## Prisma
-DATABASE_URL="Your postgresql connection url"
-```
-
-5. Add this endpoint as Redirect Url on AniList Developer :
-
-```bash
-https://your-website-url/api/auth/callback/AniListProvider
-```
-
-6. Start local server :
-
-```bash
-npm run dev
-```
-
-## Disclaimer
-
-If you want to host this web app yourself, please try to make significant changes to give it a unique look. The main reason I'm sharing this project as open source is to help others find some guidance, not to encourage copying and pasting. If you end up using this code for your own project, I'd love to see what you come up with! Feel free to share it with me, as I'm excited to see the creative things you can build using this code. :)
 
 ## Credits
 
+- [Inspiration](https://github.com/DevanAbinaya/Ani-Moopa) for inspiration
 - [Consumet API](https://github.com/consumet/api.consumet.org) for anime sources
 - [AniList API](https://github.com/AniList/ApiV2-GraphQL-Docs) for anime details source
 - [Anify API](https://anify.tv/discord) for manga sources
@@ -152,15 +79,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 Thank You for passing by!!
 
-If you have any questions or feedback, please reach out to us at [contact@moopa.live](mailto:contact@moopa.live?subject=[Moopa]%20-%20Your%20Subject), or you can join our [discord sever](https://discord.gg/4xTGhr85BG).
+If you have any questions or feedback, please reach out to us at [officialmadarato@gmail.com](mailto:officialmadarato@gmail?subject=[Madara]%20-%20Your%20Subject).
 <br>
-or you can DM me on Discord `Factiven#9110`/`CritenDust#3704`. (just contact me on one of these account)
 
-[![Discord Banner](https://discordapp.com/api/guilds/822413263148285973/widget.png?style=banner2)](https://discord.gg/v5fjSdKwr2)
 
-## Support This Project
 
-✨ [Star this project](https://github.com/DevanAbinaya/Ani-Moopa)
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6F9XZ3)  
-<a href="https://trakteer.id/factiven" target="_blank"><img id="wse-buttons-preview" src="https://cdn.trakteer.id/images/embed/trbtn-red-5.png" height="36" style="border: 0px; height: 36px;" alt="Trakteer Saya"></a>

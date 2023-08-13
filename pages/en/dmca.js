@@ -90,10 +90,10 @@ export default function DMCA() {
                 our website infringes upon your intellectual property rights and
                 you hold the copyright for that content, please report it to{" "}
                 <a
-                  href="mailto:contact@Madara-To.live?subject=[Madara-To]%20-%20Your%20Subject"
+                  href="mailto:officialmadarato@gmail?subject=[Madara-To]%20-%20Your%20Subject"
                   className="font-semibold"
                 >
-                  contact@Madara-To.live
+                  officialmadarato@gmail.com
                 </a>{" "}
                 and the content will be immediately removed.
               </p>

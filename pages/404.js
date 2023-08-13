@@ -23,7 +23,7 @@ export default function Custom404() {
         </p>
         <Link href={`/en/`}>
           <div className="bg-[#fa7d56] xl:text-xl text-white font-bold py-2 px-4 rounded hover:bg-[#fb6f44]">
-            Go back home
+            Go back Home
           </div>
         </Link>
       </div>
