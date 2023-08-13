@@ -2,8 +2,6 @@ import Head from "next/head";
 import Footer from "../components/footer";
 import Navbar from "../components/navbar";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { parseCookies } from "nookies";
 
 export default function Custom404() {
   return (

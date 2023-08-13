@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { parseCookies } from "nookies";
 
 export default function Home() {
   return (

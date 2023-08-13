@@ -1,17 +1,12 @@
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import { parseCookies, setCookie } from "nookies";
 
 function Footer() {
   const { data: session, status } = useSession();
   const [year, setYear] = useState(new Date().getFullYear());
   const [season, setSeason] = useState(getCurrentSeason());
-
-
-  const [checked, setChecked] = useState(false);
-  const [cookie, setCookies] = useState(null);
 
   const router = useRouter();
 

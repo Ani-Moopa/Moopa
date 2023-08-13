@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
-import { parseCookies } from "nookies";
 
 function Navbar(props) {
   const { data: session, status } = useSession();

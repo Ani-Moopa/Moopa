@@ -42,8 +42,6 @@ export default function Read({ data, currentId, sessions }) {
 
   const router = useRouter();
 
-  // console.log(cookies);
-
   useEffect(() => {
     hasRun.current = false;
   }, [currentId]);

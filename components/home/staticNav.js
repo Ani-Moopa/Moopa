@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getCurrentSeason } from "../../utils/getTimes";
 import Link from "next/link";
-import { parseCookies } from "nookies";
+
 
 export default function Navigasi() {
   const { data: sessions, status } = useSession();
