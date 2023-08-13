@@ -21,7 +21,7 @@ function Footer() {
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-1">
                 <p className="flex items-center gap-1 font-karla lg:text-[0.81rem] text-[0.7rem] text-[#CCCCCC]">
-                  &copy; {new Date().getFullYear()} Madara.to | Website Made by Guzma ✨ and Chadgami 💀 with love ❤️
+                  &copy; {new Date().getFullYear()} Madara.to | Anime Platform Made by Guzma ✨ and Chadgami 💀 with love ❤️
                 </p>
                 <p className="font-karla lg:text-[0.8rem] text-[0.65rem] text-[#9c9c9c]  lg:w-[520px] italic">
                   This site does not store any files on our server, we only

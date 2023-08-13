@@ -5,7 +5,7 @@
 </div>
 
 <h1 align="center">
-  <a href="https://moopa.live">Madara Anime Streaming Website</a>
+  <a href="https://moopa.live">Madara Anime Streaming Platform</a>
 </h1>
 
 <p align="center">
@@ -50,7 +50,7 @@
 
 ## Introduction
 
-<p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by <a href="https://github.com/consumet">Consumet API</a> build with <a href="https://github.com/vercel/next.js/">NextJs</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a> with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
+<p><a href="https://moopa.live">Moopa</a> is an anime streaming Platform made possible by <a href="https://github.com/consumet">Consumet API</a> build with <a href="https://github.com/vercel/next.js/">NextJs</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a> with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
 
 ## Features
 

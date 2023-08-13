@@ -40,7 +40,7 @@ export default function About() {
               whether they are casual viewers or die-hard fans.
             </p>
             <p className="text-lg mb-8">
-              Thank you for choosing our website as your go-to platform for
+              Thank you for choosing our Platform as your go-to platform for
               anime and manga. We hope you enjoy your stay here, and feel free
               to contact us if you have any feedback or suggestions.
             </p>
