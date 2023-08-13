@@ -21,13 +21,17 @@ module.exports = withPWA({
   // distDir: process.env.BUILD_DIR || ".next",
   trailingSlash: true,
   output: "standalone",
-  async headers() {
-    return [
+  async redirects() {
+    return[
       {
         source: '/',
         destination: '/en',
         permanent: true,
       },
+    ]
+  },
+  async headers() {
+    return [
       // {
       //   // matching all API routes
       //   source: "/api/:path*",
