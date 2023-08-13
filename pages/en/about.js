@@ -10,7 +10,7 @@ export default function About() {
         <title>Madara - About</title>
         <meta name="about" content="About this web" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/madara.svg" />
       </Head>
       <Layout>
         <motion.div

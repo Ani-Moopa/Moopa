@@ -12,7 +12,7 @@ export default function Custom404() {
         <title>Not Found</title>
         <meta name="about" content="About this web" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/madara.svg" />
       </Head>
       <Navbar className="bg-[#0c0d10]" />
       <div className="min-h-screen w-screen flex flex-col items-center justify-center ">

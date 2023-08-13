@@ -13,7 +13,7 @@ export default function Document() {
           integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
           crossOrigin="anonymous"
         />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/madara.svg" />
       </Head>
       <body>
         <Main />

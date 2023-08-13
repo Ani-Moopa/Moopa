@@ -198,7 +198,7 @@ export default function Card() {
     <>
       <Head>
         <title>Madara - search</title>
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/madara.svg" />
       </Head>
       <div className="bg-primary">
         <Navbar />
