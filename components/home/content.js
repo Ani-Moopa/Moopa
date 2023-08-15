@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
+import { useDraggable } from "react-use-draggable-scroll";
 import Image from "next/image";
 import { MdChevronRight } from "react-icons/md";
 import {
@@ -26,11 +27,10 @@ export default function Content({
 }) {
   const router = useRouter();
 
-  const [startX, setStartX] = useState(null);
-  const containerRef = useRef(null);
+  const ref = useRef();
+  const { events } = useDraggable(ref);
   const [cookie, setCookie] = useState(null);
 
-  const [isDragging, setIsDragging] = useState(false);
   const [clicked, setClicked] = useState(false);
 
   const [lang, setLang] = useState("en");
@@ -55,39 +55,20 @@ export default function Content({
     }
   }, []);
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 3;
-    containerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleClick = (e) => {
-    if (isDragging) {
-      e.preventDefault();
-    }
-  };
-
   const [scrollLeft, setScrollLeft] = useState(false);
   const [scrollRight, setScrollRight] = useState(true);
 
   const slideLeft = () => {
+    ref.current.classList.add("scroll-smooth");
     var slider = document.getElementById(ids);
     slider.scrollLeft = slider.scrollLeft - 500;
+    ref.current.classList.remove("scroll-smooth");
   };
   const slideRight = () => {
+    ref.current.classList.add("scroll-smooth");
     var slider = document.getElementById(ids);
     slider.scrollLeft = slider.scrollLeft + 500;
+    ref.current.classList.remove("scroll-smooth");
   };
 
   const handleScroll = (e) => {
@@ -218,13 +199,10 @@ export default function Content({
         </div>
         <div
           id={ids}
-          className="scroll flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-4 lg:p-10 py-8 px-5 z-30 scroll-smooth"
+          className="flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-4 lg:p-10 py-8 px-5 z-30"
           onScroll={handleScroll}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onClick={handleClick}
-          ref={containerRef}
+          {...events}
+          ref={ref}
         >
           {ids !== "recentlyWatched"
             ? slicedData?.map((anime) => {
