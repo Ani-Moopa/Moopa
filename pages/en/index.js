@@ -194,10 +194,33 @@ export default function Home({ detail, populars, sessions, upComing }) {
           const newFirst = arr?.sort((a, b) => {
             return new Date(b?.createdAt) - new Date(a?.createdAt);
           });
-          setUser(newFirst);
+
+          const uniqueTitles = new Set();
+
+          // Filter out duplicates and store unique entries
+          const filteredData = newFirst.filter((entry) => {
+            if (uniqueTitles.has(entry.aniTitle)) {
+              return false;
+            }
+            uniqueTitles.add(entry.aniTitle);
+            return true;
+          });
+
+          setUser(filteredData);
         }
       } else {
-        setUser(data?.WatchListEpisode);
+        // Create a Set to store unique aniTitles
+        const uniqueTitles = new Set();
+
+        // Filter out duplicates and store unique entries
+        const filteredData = data?.WatchListEpisode.filter((entry) => {
+          if (uniqueTitles.has(entry.aniTitle)) {
+            return false;
+          }
+          uniqueTitles.add(entry.aniTitle);
+          return true;
+        });
+        setUser(filteredData);
       }
       // const data = await res.json();
     }

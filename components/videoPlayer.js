@@ -227,14 +227,17 @@ export default function VideoPlayer({
                     watchId: id,
                     title: track?.playing?.title || aniTitle,
                     aniTitle: aniTitle,
-                    image: track?.playing?.image || info?.coverImage?.extraLarge,
+                    image:
+                      track?.playing?.image || info?.coverImage?.extraLarge,
                     number: Number(progress),
                     duration: art.duration,
                     timeWatched: art.currentTime,
                     provider: provider,
+                    nextId: track?.next?.id,
+                    nextNumber: Number(track?.next?.number),
                   }),
                 });
-                // console.log("updating db");
+                // console.log("updating db", { track });
               }, 5000);
 
               art.on("video:pause", () => {
@@ -263,6 +266,8 @@ export default function VideoPlayer({
                   duration: art.duration,
                   timeWatched: art.currentTime,
                   provider: provider,
+                  nextId: track?.next?.id,
+                  nextNumber: track?.next?.number,
                   createdAt: new Date().toISOString(),
                 });
               }, 5000);

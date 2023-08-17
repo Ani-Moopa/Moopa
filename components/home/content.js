@@ -219,7 +219,7 @@ export default function Content({
                       title={anime.title.romaji}
                     >
                       {ids === "onGoing" && (
-                        <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
+                        <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black/90 absolute z-40 rounded-md whitespace-normal font-karla group">
                           <div className="flex flex-col items-center h-full justify-end text-center pb-5">
                             <h1 className="line-clamp-1 w-[70%] text-[10px]">
                               {anime.title.romaji || anime.title.english}
@@ -311,17 +311,39 @@ export default function Content({
                       key={i.watchId}
                       className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
                     >
-                      <div className="absolute z-40 top-1 right-1 group-hover/item:visible invisible hover:text-action">
-                        <div
-                          className="flex flex-col items-center group/delete"
+                      <div className="absolute flex flex-col gap-1 z-40 top-1 right-1 transition-all duration-200 ease-out opacity-0 group-hover/item:opacity-100 scale-90 group-hover/item:scale-100 group-hover/item:visible invisible ">
+                        <button
+                          type="button"
+                          className="flex flex-col items-center group/delete relative"
                           onClick={() => removeItem(i.watchId)}
                         >
-                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full" />
+                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
                           <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/delete:visible group-hover/delete:scale-100 group-hover/delete:translate-x-0 group-hover/delete:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
                             Remove from history
                           </span>
-                        </div>
+                        </button>
+                        {i?.nextId && (
+                          <button
+                            type="button"
+                            className="flex flex-col items-center group/next relative"
+                            onClick={() => {
+                              router.push(
+                                `/en/anime/watch/${i.aniId}/${
+                                  i.provider
+                                }?id=${encodeURIComponent(i?.nextId)}&num=${
+                                  i?.nextNumber
+                                }`
+                              );
+                            }}
+                          >
+                            <ChevronRightIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
+                            <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/next:visible group-hover/next:scale-100 group-hover/next:translate-x-0 group-hover/next:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
+                              Play Next Episode
+                            </span>
+                          </button>
+                        )}
                       </div>
+                      {/* Next Episode */}
                       <Link
                         className="relative w-[320px] aspect-video rounded-md overflow-hidden group"
                         href={`/en/anime/watch/${i.aniId}/${
