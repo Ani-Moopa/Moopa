@@ -91,22 +91,13 @@ function Footer() {
               </label>
             </div>
           </div>
-          {/* <div className="lg:hidden lg:block">
-            <Image
-              src="https://i1210.photobucket.com/albums/cc417/kusanagiblog/NarutoVSSasuke.gif"
-              alt="gambar"
-              title="request nya rapip yulistian"
-              width={210}
-              height={85}
-            />
-          </div> */}
         </div>
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:gap-[9.06rem] text-[#a7a7a7] text-sm lg:text-end">
           <div className="flex flex-col gap-10 font-karla font-bold lg:flex-row lg:gap-[5.94rem]">
             <ul className="flex flex-col gap-y-[0.7rem] ">
               <li className="cursor-pointer hover:text-action">
                 <Link
-                  href={`/${lang}/search/anime?season=${season}&seasonYear=${year}`}
+                  href={`/${lang}/search/anime?season=${season}&year=${year}`}
                 >
                   This Season
                 </Link>
