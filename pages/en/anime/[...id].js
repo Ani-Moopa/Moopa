@@ -109,6 +109,14 @@ export default function Info({ info, color }) {
             ? info?.title?.romaji || info?.title?.english
             : "Retrieving Data..."}
         </title>
+        <meta
+          name="title"
+          content={info?.title?.romaji}
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
+        <meta name="description" content={info.description} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"

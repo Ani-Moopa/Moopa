@@ -115,6 +115,12 @@ export default function Read({ data, currentId, sessions }) {
               }`
             : "Getting Info..."}
         </title>
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
         <meta id="CoverImage" data-manga-cover={info?.coverImage} />
       </Head>
       <div className="w-screen flex justify-evenly relative">

@@ -19,11 +19,12 @@ export default function Info({
   provider,
   epiNumber,
   dub,
+  data,
   userData,
   proxy,
   disqus,
 }) {
-  const [info, setInfo] = useState(null);
+  const [info, setInfo] = useState(data.data.Media);
   const [currentEpisode, setCurrentEpisode] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,54 +33,12 @@ export default function Info({
   const [artStorage, setArtStorage] = useState(null);
   const [episodesList, setepisodesList] = useState();
   const [onList, setOnList] = useState(false);
+  const [origin, setOrigin] = useState(null);
 
   useEffect(() => {
     setLoading(true);
+    setOrigin(window.location.origin);
     async function getInfo() {
-      const ress = await fetch(`https://graphql.anilist.co`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `query ($id: Int) {
-              Media (id: $id) {
-                id
-                idMal
-                title {
-                  romaji
-                  english
-                  native
-                }
-                status
-                genres
-                episodes
-                studios {
-                  edges {
-                    node {
-                      id
-                      name
-                    }
-                  }
-                }
-                bannerImage
-                description
-                coverImage {
-                  extraLarge
-                  color
-                }
-                synonyms
-                  
-              }
-            }
-          `,
-          variables: {
-            id: aniId,
-          },
-        }),
-      });
-      const data = await ress.json();
-
       if (sessions?.user?.name) {
         const response = await fetch("https://graphql.anilist.co/", {
           method: "POST",
@@ -129,8 +88,6 @@ export default function Info({
         }
       }
 
-      setInfo(data.data.Media);
-
       const response = await fetch(
         `/api/consumet/episode/${aniId}${dub ? `?dub=${dub}` : ""}`
       );
@@ -176,6 +133,36 @@ export default function Info({
     <>
       <Head>
         <title>{info?.title?.romaji || "Retrieving data..."}</title>
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
+        <meta
+          name="description"
+          content={currentEpisode?.playing?.description || info?.description}
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`Episode ${epiNumber} - ${
+            info.title.romaji || info.title.english
+          }`}
+        />
+        <meta
+          name="twitter:description"
+          content={`${
+            currentEpisode?.playing?.description?.slice(0, 180) ||
+            info?.description?.slice(0, 180)
+          }...`}
+        />
+        <meta
+          name="twitter:image"
+          content={`${origin}/api/og?title=${
+            info.title.romaji || info.title.english
+          }&image=${info.bannerImage || info.coverImage.extraLarge}`}
+        />
       </Head>
 
       <Navigasi />
@@ -236,6 +223,50 @@ export async function getServerSideProps(context) {
 
   let userData = null;
 
+  const ress = await fetch(`https://graphql.anilist.co`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `query ($id: Int) {
+              Media (id: $id) {
+                id
+                idMal
+                title {
+                  romaji
+                  english
+                  native
+                }
+                status
+                genres
+                episodes
+                studios {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
+                bannerImage
+                description
+                coverImage {
+                  extraLarge
+                  color
+                }
+                synonyms
+                  
+              }
+            }
+          `,
+      variables: {
+        id: aniId,
+      },
+    }),
+  });
+  const data = await ress.json();
+
   try {
     if (session) {
       await createUser(session.user.name);
@@ -264,6 +295,7 @@ export async function getServerSideProps(context) {
       epiNumber: epiNumber || null,
       dub: dub || null,
       userData: userData?.[0] || null,
+      data: data || null,
       proxy,
       disqus,
     },

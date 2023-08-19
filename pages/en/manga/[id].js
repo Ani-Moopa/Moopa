@@ -45,6 +45,12 @@ export default function Manga({ info, userManga, chapters }) {
             info.title.romaji || info.title.english
           }&image=${info.bannerImage || info.coverImage}`}
         />
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
       </Head>
       <div className="min-h-screen w-screen flex flex-col items-center relative">
         <HamburgerMenu />

@@ -42,6 +42,8 @@ export default async function handler(req, res) {
             timeWatched,
             aniTitle,
             provider,
+            nextId,
+            nextNumber,
           } = JSON.parse(req.body);
           const episode = await updateUserEpisode({
             name,
@@ -54,6 +56,8 @@ export default async function handler(req, res) {
             timeWatched,
             aniTitle,
             provider,
+            nextId,
+            nextNumber,
           });
           if (!episode) {
             return res

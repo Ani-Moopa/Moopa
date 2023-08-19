@@ -54,9 +54,7 @@ export default function Navigasi() {
             </Link>
             <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
               <li>
-                <Link
-                  href={`/en/search/anime?season=${season}&seasonYear=${year}`}
-                >
+                <Link href={`/en/search/anime?season=${season}&year=${year}`}>
                   This Season
                 </Link>
               </li>

@@ -1,5 +1,5 @@
 import { aniListData } from "../../lib/anilist/AniList";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Footer from "../../components/footer";
@@ -194,10 +194,33 @@ export default function Home({ detail, populars, sessions, upComing }) {
           const newFirst = arr?.sort((a, b) => {
             return new Date(b?.createdAt) - new Date(a?.createdAt);
           });
-          setUser(newFirst);
+
+          const uniqueTitles = new Set();
+
+          // Filter out duplicates and store unique entries
+          const filteredData = newFirst.filter((entry) => {
+            if (uniqueTitles.has(entry.aniTitle)) {
+              return false;
+            }
+            uniqueTitles.add(entry.aniTitle);
+            return true;
+          });
+
+          setUser(filteredData);
         }
       } else {
-        setUser(data?.WatchListEpisode);
+        // Create a Set to store unique aniTitles
+        const uniqueTitles = new Set();
+
+        // Filter out duplicates and store unique entries
+        const filteredData = data?.WatchListEpisode.filter((entry) => {
+          if (uniqueTitles.has(entry.aniTitle)) {
+            return false;
+          }
+          uniqueTitles.add(entry.aniTitle);
+          return true;
+        });
+        setUser(filteredData);
       }
       // const data = await res.json();
     }
@@ -244,11 +267,16 @@ export default function Home({ detail, populars, sessions, upComing }) {
   }, [sessions?.user?.name, current, plan]);
 
   return (
-    <>
+    <Fragment>
       <Head>
         <title>Moopa</title>
         <meta charSet="UTF-8"></meta>
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="title" content="Moopa" />
+        <meta
+          name="description"
+          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
+        />
         <meta
           name="twitter:title"
           content="Moopa - Free Anime and Manga Streaming"
@@ -261,10 +289,7 @@ export default function Home({ detail, populars, sessions, upComing }) {
           name="twitter:image"
           content="https://beta.moopa.live/preview.png"
         />
-        <meta
-          name="description"
-          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
-        />
+
         <link rel="icon" href="/c.svg" />
       </Head>
 
@@ -491,6 +516,6 @@ export default function Home({ detail, populars, sessions, upComing }) {
         </div>
       </div>
       <Footer />
-    </>
+    </Fragment>
   );
 }

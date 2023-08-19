@@ -55,7 +55,7 @@ export default function Genres() {
         <ChevronRightIcon className="w-5 h-5" />
       </div>
       <div className="flex xl:justify-center items-center relative">
-        <div className="bg-gradient-to-r from-primary to-transparent z-40 absolute w-7 h-[200px] left-0" />
+        <div className="bg-gradient-to-r from-primary to-transparent z-40 absolute w-7 h-full left-0" />
         <div className="flex lg:gap-8 gap-3 lg:p-10 py-8 px-5 z-30 overflow-y-hidden overflow-x-scroll snap-x snap-proximity scrollbar-none relative">
           <div className="flex lg:gap-10 gap-4">
             {g.map((a, index) => (
@@ -80,7 +80,7 @@ export default function Genres() {
             ))}
           </div>
         </div>
-        <div className="bg-gradient-to-l from-primary to-transparent z-40 absolute w-7 h-[200px] lg:h-[300px] right-0" />
+        <div className="bg-gradient-to-l from-primary to-transparent z-40 absolute w-7 h-full right-0" />
       </div>
     </div>
   );
