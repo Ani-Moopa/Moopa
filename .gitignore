@@ -29,6 +29,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+local.emv
 .env*.local
 .vs
 service-account.json

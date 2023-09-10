@@ -55,7 +55,7 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-100%, 0%);
-  background: #8d2f79;
+  background: #2f3640;
   height: 40px;
   border-radius: 40px;
   @apply h-12;
@@ -180,7 +180,7 @@ input:checked ~ span:last-child {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #ff748c;
+  background: #27272e;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {

@@ -116,7 +116,9 @@ export default function Schedule({ data, scheduleData, time }) {
               style={{ scrollbarGutter: "stable" }}
             >
               <div className="flex flex-col gap-2 px-2 pt-2">
-                {scheduleData[days[currentPage]]
+                { console.log(scheduleData) }
+                {
+                  scheduleData[days[currentPage]]
                   ?.filter((show, index, self) => {
                     return index === self.findIndex((s) => s.id === show.id);
                   })
