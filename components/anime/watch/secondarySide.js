@@ -4,24 +4,27 @@ import Link from "next/link";
 
 export default function SecondarySide({
   info,
+  map,
   providerId,
   watchId,
   episode,
-  progress,
   artStorage,
   dub,
 }) {
+  const progress = info.mediaListEntry?.progress;
   return (
     <div className="lg:w-[35%] shrink-0 w-screen">
       <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">Up Next</h1>
       <div className="flex flex-col gap-5 lg:pl-5 py-2 scrollbar-thin px-2 scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
         {episode && episode.length > 0 ? (
-          episode.some((item) => item.title && item.description) > 0 ? (
+          map?.some((item) => item.title && item.description) > 0 ? (
             episode.map((item) => {
               const time = artStorage?.[item.id]?.timeWatched;
               const duration = artStorage?.[item.id]?.duration;
               let prog = (time / duration) * 100;
               if (prog > 90) prog = 100;
+
+              const mapData = map?.find((i) => i.number === item.number);
               return (
                 <Link
                   href={`/en/anime/watch/${
@@ -38,8 +41,9 @@ export default function SecondarySide({
                 >
                   <div className="w-[43%] lg:w-[40%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
                     <div className="relative">
+                      {/* {mapData?.image && ( */}
                       <Image
-                        src={item.image}
+                        src={mapData?.image || info?.coverImage?.extraLarge}
                         alt="Anime Cover"
                         width={1000}
                         height={1000}
@@ -49,6 +53,7 @@ export default function SecondarySide({
                             : "brightness-75"
                         }`}
                       />
+                      {/* )} */}
                       <span
                         className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
                         style={{
@@ -61,7 +66,7 @@ export default function SecondarySide({
                         }}
                       />
                       <span className="absolute bottom-2 left-2 font-karla font-bold text-sm">
-                        Episode {item.number}
+                        Episode {item?.number}
                       </span>
                       {item.id == watchId && (
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
@@ -78,15 +83,15 @@ export default function SecondarySide({
                     </div>
                   </div>
                   <div
-                    className={`w-[70%] h-full select-none p-4 flex flex-col gap-2 ${
+                    className={`w-full h-full overflow-x-hidden select-none p-4 flex flex-col gap-2 ${
                       item.id == watchId ? "text-[#7a7a7a]" : ""
                     }`}
                   >
                     <h1 className="font-karla font-bold italic line-clamp-1">
-                      {item.title}
+                      {mapData?.title}
                     </h1>
                     <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
-                      {item?.description}
+                      {mapData?.description}
                     </p>
                   </div>
                 </Link>

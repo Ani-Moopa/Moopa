@@ -1,31 +1,38 @@
-name: Create Release on Version Update
+name: Build and Release
 
 on:
   push:
     branches:
       - main
-permissions:
-  contents: write
+
 jobs:
-  create_release:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check commit message and version
-        id: check_version
-        run: |
-          commit_message=$(git log -1 --pretty=format:%s)
-          version=$(echo $commit_message | grep -o -E "v[0-9]+\.[0-9]+\.[0-9]+" || true)
-          echo "Version found in commit message: $version"
-          echo "::set-output name=version::$version"
-        shell: bash
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          tag_name: ${{ steps.check_version.outputs.version }}
-          release_name: Release ${{ steps.check_version.outputs.version }}
+          node-version: 18
+
+      - name: Get version from package.json
+        id: app-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Create Changelog
+        id: changelog
+        run: echo "CHANGELOG=$(git log --format='- %s' ${{ github.event.before }}..${{ github.sha }})" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create-release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          tag_name: v${{ steps.app-version.outputs.current-version}}
+          name: Release v${{ steps.app-version.outputs.current-version}}
           draft: false
           prerelease: false

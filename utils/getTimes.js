@@ -34,10 +34,34 @@ export function getCurrentSeason() {
   }
 }
 
+export function convertUnixToCountdown(time) {
+  let date = new Date(time * 1000);
+  let days = date.getDay();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  let countdown = "";
+
+  if (days > 0) {
+    countdown += `${days}d `;
+  }
+
+  if (hours > 0) {
+    countdown += `${hours}h `;
+  }
+
+  if (minutes > 0) {
+    countdown += `${minutes}m `;
+  }
+
+  return countdown.trim();
+}
+
 export function convertSecondsToTime(sec) {
   let days = Math.floor(sec / (3600 * 24));
   let hours = Math.floor((sec % (3600 * 24)) / 3600);
   let minutes = Math.floor((sec % 3600) / 60);
+  let seconds = Math.floor(sec % 60);
 
   let time = "";
 
@@ -53,5 +77,32 @@ export function convertSecondsToTime(sec) {
     time += `${minutes}m `;
   }
 
+  if (days <= 0) {
+    time += `${seconds}s `;
+  }
+
   return time.trim();
 }
+
+// Function to convert timestamp to AM/PM time format
+export const timeStamptoAMPM = (timestamp) => {
+  const date = new Date(timestamp * 1000);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+
+  return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+};
+
+export const timeStamptoHour = (timestamp) => {
+  const options = { hour: "numeric", minute: "numeric", hour12: true };
+  const currentTime = new Date().getTime() / 1000;
+  const formattedTime = new Date(timestamp * 1000).toLocaleTimeString(
+    undefined,
+    options
+  );
+  const status = timestamp <= currentTime ? "aired" : "airing";
+
+  return `${status} at ${formattedTime}`;
+};

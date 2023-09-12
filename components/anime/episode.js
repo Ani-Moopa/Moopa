@@ -1,13 +1,18 @@
 import { useEffect, useState, Fragment } from "react";
-import { ChevronDownIcon, ClockIcon } from "@heroicons/react/20/solid";
-import { convertSecondsToTime } from "../../utils/getTimes";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import ChangeView from "./changeView";
 import ThumbnailOnly from "./viewMode/thumbnailOnly";
 import ThumbnailDetail from "./viewMode/thumbnailDetail";
 import ListMode from "./viewMode/listMode";
-import axios from "axios";
+import { convertSecondsToTime } from "../../utils/getTimes";
 
-export default function AnimeEpisode({ info, progress }) {
+export default function AnimeEpisode({
+  info,
+  session,
+  progress,
+  setProgress,
+  setWatch,
+}) {
   const [providerId, setProviderId] = useState(); // default provider
   const [currentPage, setCurrentPage] = useState(1); // for pagination
   const [visible, setVisible] = useState(false); // for mobile view
@@ -19,42 +24,60 @@ export default function AnimeEpisode({ info, progress }) {
   const [isDub, setIsDub] = useState(false);
 
   const [providers, setProviders] = useState(null);
+  const [mapProviders, setMapProviders] = useState(null);
 
   useEffect(() => {
     setLoading(true);
-    setProviders(null);
     const fetchData = async () => {
-      try {
-        const { data: firstResponse } = await axios.get(
-          `/api/consumet/episode/${info.id}${isDub === true ? "?dub=true" : ""}`
-        );
-        if (firstResponse.data.length > 0) {
-          const defaultProvider = firstResponse.data?.find(
-            (x) => x.providerId === "gogoanime"
-          );
-          setProviderId(
-            defaultProvider?.providerId || firstResponse.data[0].providerId
-          ); // set to first provider id
-        }
+      const response = await fetch(
+        `/api/v2/episode/${info.id}?releasing=${
+          info.status === "RELEASING" ? "true" : "false"
+        }${isDub ? "&dub=true" : ""}`
+      ).then((res) => res.json());
+      const getMap = response.find((i) => i?.map === true);
+      let allProvider = response;
 
-        setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
-        setProviders(firstResponse.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        setProviders([]);
+      if (getMap) {
+        allProvider = response.filter((i) => {
+          if (i?.providerId === "gogoanime" && i?.map !== true) {
+            return null;
+          }
+          return i;
+        });
+        setMapProviders(getMap?.episodes);
       }
+
+      if (allProvider.length > 0) {
+        const defaultProvider = allProvider.find(
+          (x) => x.providerId === "gogoanime" || x.providerId === "9anime"
+        );
+        setProviderId(defaultProvider?.providerId || allProvider[0].providerId); // set to first provider id
+      }
+
+      setView(Number(localStorage.getItem("view")) || 3);
+      setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
+      setProviders(allProvider);
+      setLoading(false);
     };
     fetchData();
+
+    return () => {
+      setProviders(null);
+      setMapProviders(null);
+    };
   }, [info.id, isDub]);
 
   const episodes =
-    providers?.find((provider) => provider.providerId === providerId)
-      ?.episodes || [];
+    providers
+      ?.find((provider) => provider.providerId === providerId)
+      ?.episodes?.slice(0, mapProviders?.length) || [];
 
   const lastEpisodeIndex = currentPage * itemsPerPage;
   const firstEpisodeIndex = lastEpisodeIndex - itemsPerPage;
-  const currentEpisodes = episodes.slice(firstEpisodeIndex, lastEpisodeIndex);
+  let currentEpisodes = episodes.slice(firstEpisodeIndex, lastEpisodeIndex);
+  if (isDub) {
+    currentEpisodes = currentEpisodes.filter((i) => i.hasDub === true);
+  }
   const totalPages = Math.ceil(episodes.length / itemsPerPage);
 
   const handleChange = (event) => {
@@ -66,36 +89,90 @@ export default function AnimeEpisode({ info, progress }) {
   };
 
   useEffect(() => {
-    if (episodes?.some((item) => item?.title === null)) {
+    if (
+      !mapProviders ||
+      mapProviders?.every(
+        (item) =>
+          item?.image?.includes("https://s4.anilist.co/") ||
+          item?.image === null
+      )
+    ) {
       setView(3);
     }
   }, [providerId, episodes]);
 
+  useEffect(() => {
+    if (episodes) {
+      const getEpi = info?.nextAiringEpisode
+        ? episodes.find((i) => i.number === progress + 1)
+        : episodes[0];
+      if (getEpi) {
+        const watchUrl = `/en/anime/watch/${
+          info.id
+        }/${providerId}?id=${encodeURIComponent(getEpi.id)}&num=${
+          getEpi.number
+        }${isDub ? `&dub=${isDub}` : ""}`;
+        setWatch(watchUrl);
+      } else {
+        setWatch(null);
+      }
+    }
+  }, [episodes]);
+
+  useEffect(() => {
+    if (artStorage) {
+      // console.log({ artStorage });
+      const currentData =
+        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+
+      // Create a new object to store the updated data
+      const updatedData = {};
+
+      // Iterate through the current data and copy items with different aniId to the updated object
+      for (const key in currentData) {
+        const item = currentData[key];
+        if (Number(item.aniId) === info.id && item.provider === providerId) {
+          updatedData[key] = item;
+        }
+      }
+
+      if (!session?.user?.name) {
+        setProgress(
+          Object.keys(updatedData).length > 0
+            ? Math.max(
+                ...Object.keys(updatedData).map(
+                  (key) => updatedData[key].episode
+                )
+              )
+            : 0
+        );
+      } else {
+        return;
+      }
+    }
+  }, [providerId, artStorage, info.id, session?.user?.name]);
+
   return (
     <>
-      <div className="flex flex-col gap-5  px-3">
+      <div className="flex flex-col gap-5 px-3">
         <div className="flex lg:flex-row flex-col gap-5 lg:gap-0 justify-between ">
           <div className="flex justify-between">
-            <div className="flex items-center lg:gap-10 sm:gap-7 gap-3">
+            <div className="flex items-center md:gap-5">
               {info && (
                 <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
                   Episodes
                 </h1>
               )}
-              {info?.nextAiringEpisode && (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-4 text-[10px] xxs:text-sm lg:text-base">
-                    <h1>Next :</h1>
-                    <div className="px-4 rounded-sm font-karla font-bold bg-white text-black">
-                      {convertSecondsToTime(
-                        info.nextAiringEpisode.timeUntilAiring
-                      )}
-                    </div>
-                  </div>
-                  <div className="h-6 w-6">
-                    <ClockIcon />
-                  </div>
-                </div>
+              {info.nextAiringEpisode?.timeUntilAiring && (
+                <p className="hidden md:block bg-gray-100 text-gray-900 rounded-md px-2 font-karla font-medium">
+                  Ep {info.nextAiringEpisode.episode}{" "}
+                  <span className="animate-pulse">{">>"}</span>{" "}
+                  <span className="font-bold">
+                    {convertSecondsToTime(
+                      info.nextAiringEpisode.timeUntilAiring
+                    )}{" "}
+                  </span>
+                </p>
               )}
             </div>
 
@@ -165,9 +242,6 @@ export default function AnimeEpisode({ info, progress }) {
                         </option>
                       ))}
                     </select>
-                    {/* <span className="absolute invisible opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-0 group-hover:-translate-y-7 translate-y-0 group-hover:visible rounded-sm shadow top-0 w-32 bg-secondary text-center transition-all transform duration-200 ease-out">
-                      Select Providers
-                    </span> */}
                     <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
                   </div>
 
@@ -197,6 +271,7 @@ export default function AnimeEpisode({ info, progress }) {
               view={view}
               setView={setView}
               episode={currentEpisodes}
+              map={mapProviders}
             />
           </div>
         </div>
@@ -204,15 +279,21 @@ export default function AnimeEpisode({ info, progress }) {
         {/* Episodes */}
         {!loading ? (
           <div
-            className={
+            className={`${
               view === 1
                 ? "grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 lg:gap-8 place-items-center"
-                : `flex flex-col gap-3`
-            }
+                : view === 2
+                ? "flex flex-col gap-3"
+                : `flex flex-col odd:bg-secondary even:bg-primary`
+            } py-2`}
           >
             {Array.isArray(providers) ? (
               providers.length > 0 ? (
                 currentEpisodes.map((episode, index) => {
+                  const mapData = mapProviders?.find(
+                    (i) => i.number === episode.number
+                  );
+
                   return (
                     <Fragment key={index}>
                       {view === 1 && (
@@ -220,17 +301,20 @@ export default function AnimeEpisode({ info, progress }) {
                           key={index}
                           index={index}
                           info={info}
+                          image={mapData?.image}
                           providerId={providerId}
                           episode={episode}
                           artStorage={artStorage}
                           progress={progress}
                           dub={isDub}
-                          // image={thumbnail}
                         />
                       )}
                       {view === 2 && (
                         <ThumbnailDetail
                           key={index}
+                          image={mapData?.image}
+                          title={mapData?.title}
+                          description={mapData?.description}
                           index={index}
                           epi={episode}
                           provider={providerId}
@@ -245,7 +329,6 @@ export default function AnimeEpisode({ info, progress }) {
                           key={index}
                           info={info}
                           episode={episode}
-                          index={index}
                           artStorage={artStorage}
                           providerId={providerId}
                           progress={progress}

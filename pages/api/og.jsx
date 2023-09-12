@@ -35,7 +35,7 @@ export default async function handler(request) {
       <div
         style={{
           display: "flex",
-          fontSize: 60,
+          fontSize: "60px",
           color: "black",
           background: "#f6f6f6",
           width: "100%",
@@ -63,7 +63,7 @@ export default async function handler(request) {
               position: "absolute",
               top: 10,
               left: 25,
-              fontSize: "40",
+              fontSize: "40px",
               color: "#FF7F57",
               fontFamily: "Outfit",
               filter: "brightness(100%)",

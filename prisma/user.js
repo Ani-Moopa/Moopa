@@ -36,64 +36,73 @@ export const createUser = async (name) => {
   }
 };
 
-export const updateUser = async (name, anime) => {
+export const updateUser = async (name, setting) => {
   try {
-    const checkAnime = await prisma.watchListItem.findUnique({
+    const user = await prisma.userProfile.updateMany({
       where: {
-        title: anime.title,
-        userProfileId: name,
+        name: name,
+      },
+      data: {
+        setting,
       },
     });
-    if (checkAnime) {
-      const checkEpisode = await prisma.watchListEpisode.findUnique({
-        where: {
-          url: anime.id,
-        },
-      });
-      if (checkEpisode) {
-        return null;
-      } else {
-        const user = await prisma.watchListItem.update({
-          where: {
-            title: anime.title,
-            userProfileId: name,
-          },
-        });
-      }
-    } else {
-      const user = await prisma.userProfile.update({
-        where: { name: name },
-        data: {
-          watchList: {
-            create: {
-              title: anime.title,
-              episodes: {
-                create: {
-                  url: anime.id,
-                },
-              },
-            },
-          },
-        },
-        include: {
-          watchList: true,
-        },
-      });
+    return user;
+    // const checkAnime = await prisma.watchListItem.findUnique({
+    //   where: {
+    //     title: anime.title,
+    //     userProfileId: name,
+    //   },
+    // });
+    // if (checkAnime) {
+    //   const checkEpisode = await prisma.watchListEpisode.findUnique({
+    //     where: {
+    //       url: anime.id,
+    //     },
+    //   });
+    //   if (checkEpisode) {
+    //     return null;
+    //   } else {
+    //     const user = await prisma.watchListItem.update({
+    //       where: {
+    //         title: anime.title,
+    //         userProfileId: name,
+    //       },
+    //     });
+    //   }
+    // } else {
+    //   const user = await prisma.userProfile.update({
+    //     where: { name: name },
+    //     data: {
+    //       watchList: {
+    //         create: {
+    //           title: anime.title,
+    //           episodes: {
+    //             create: {
+    //               url: anime.id,
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //     include: {
+    //       watchList: true,
+    //     },
+    //   });
 
-      return user;
-    }
+    //   return user;
+    // }
   } catch (error) {
     console.error(error);
     throw new Error("Error updating user");
   }
 };
 
-export const getUser = async (name) => {
+export const getUser = async (name, list = true) => {
   try {
     if (!name) {
       const user = await prisma.userProfile.findMany({
         include: {
-          WatchListEpisode: true,
+          WatchListEpisode: list,
         },
       });
       return user;
@@ -200,6 +209,9 @@ export const updateUserEpisode = async ({
   timeWatched,
   aniTitle,
   provider,
+  nextId,
+  nextNumber,
+  dub,
 }) => {
   try {
     const user = await prisma.watchListEpisode.updateMany({
@@ -216,6 +228,9 @@ export const updateUserEpisode = async ({
         duration: duration,
         episode: number,
         timeWatched: timeWatched,
+        nextId: nextId,
+        nextNumber: nextNumber,
+        dub: dub,
         createdDate: new Date(),
       },
     });
@@ -243,6 +258,25 @@ export const deleteEpisode = async (name, id) => {
   } catch (error) {
     console.error(error);
     throw new Error("Error deleting episode");
+  }
+};
+
+export const deleteList = async (name, id) => {
+  try {
+    const user = await prisma.watchListEpisode.deleteMany({
+      where: {
+        aniId: id,
+        userProfileId: name,
+      },
+    });
+    if (user) {
+      return user;
+    } else {
+      return { message: "Episode not found" };
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error deleting list");
   }
 };
 

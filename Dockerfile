@@ -17,11 +17,15 @@ RUN npm run build
 FROM base AS runner
 ENV NEXT_TELEMETRY_DISABLED 1
 WORKDIR /app
-RUN addgroup --system --gid 1001 nodejs; \
-    adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=1001:1001 /app/.next/standalone ./
-COPY --from=builder --chown=1001:1001 /app/.next/static ./.next/static
-USER nextjs
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# DB Initialization: Experimental
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/prisma ./prisma
+
+# USER nextjs
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD npx prisma migrate deploy; npx prisma generate; node server.js

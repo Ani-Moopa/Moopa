@@ -1,5 +1,6 @@
 import Link from "next/link";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
+import { useDraggable } from "react-use-draggable-scroll";
 import Image from "next/image";
 import { MdChevronRight } from "react-icons/md";
 import {
@@ -14,6 +15,7 @@ import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import HistoryOptions from "./content/historyOptions";
 
 export default function Content({
   ids,
@@ -26,11 +28,10 @@ export default function Content({
 }) {
   const router = useRouter();
 
-  const [startX, setStartX] = useState(null);
-  const containerRef = useRef(null);
+  const ref = useRef();
+  const { events } = useDraggable(ref);
   const [cookie, setCookie] = useState(null);
 
-  const [isDragging, setIsDragging] = useState(false);
   const [clicked, setClicked] = useState(false);
 
   const [lang, setLang] = useState("en");
@@ -55,39 +56,20 @@ export default function Content({
     }
   }, []);
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 3;
-    containerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleClick = (e) => {
-    if (isDragging) {
-      e.preventDefault();
-    }
-  };
-
   const [scrollLeft, setScrollLeft] = useState(false);
   const [scrollRight, setScrollRight] = useState(true);
 
   const slideLeft = () => {
+    ref.current.classList.add("scroll-smooth");
     var slider = document.getElementById(ids);
     slider.scrollLeft = slider.scrollLeft - 500;
+    ref.current.classList.remove("scroll-smooth");
   };
   const slideRight = () => {
+    ref.current.classList.add("scroll-smooth");
     var slider = document.getElementById(ids);
     slider.scrollLeft = slider.scrollLeft + 500;
+    ref.current.classList.remove("scroll-smooth");
   };
 
   const handleScroll = (e) => {
@@ -128,6 +110,9 @@ export default function Content({
     if (section === "Recently Watched") {
       router.push(`/${lang}/anime/recently-watched`);
     }
+    if (section === "New Episodes") {
+      router.push(`/${lang}/anime/recent`);
+    }
     if (section === "Trending Now") {
       router.push(`/${lang}/anime/trending`);
     }
@@ -142,7 +127,7 @@ export default function Content({
     }
   };
 
-  const removeItem = async (id) => {
+  const removeItem = async (id, aniId) => {
     if (userName) {
       // remove from database
       const res = await fetch(`/api/user/update/episode`, {
@@ -152,24 +137,42 @@ export default function Content({
         },
         body: JSON.stringify({
           name: userName,
-          id: id,
+          id,
+          aniId,
         }),
       });
       const data = await res.json();
 
-      // remove from local storage
-      const artplayerSettings =
-        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
-      if (artplayerSettings[id]) {
-        delete artplayerSettings[id];
-        localStorage.setItem(
-          "artplayer_settings",
-          JSON.stringify(artplayerSettings)
-        );
+      if (id) {
+        // remove from local storage
+        const artplayerSettings =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+        if (artplayerSettings[id]) {
+          delete artplayerSettings[id];
+          localStorage.setItem(
+            "artplayer_settings",
+            JSON.stringify(artplayerSettings)
+          );
+        }
+      }
+      if (aniId) {
+        const currentData =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+
+        const updatedData = {};
+
+        for (const key in currentData) {
+          const item = currentData[key];
+          if (item.aniId !== aniId) {
+            updatedData[key] = item;
+          }
+        }
+
+        localStorage.setItem("artplayer_settings", JSON.stringify(updatedData));
       }
 
       // update client
-      setRemoved(id);
+      setRemoved(id || aniId);
 
       if (data?.message === "Episode deleted") {
         toast.success("Episode removed from history", {
@@ -182,17 +185,38 @@ export default function Content({
         });
       }
     } else {
-      const artplayerSettings =
-        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
-      if (artplayerSettings[id]) {
-        delete artplayerSettings[id];
-        localStorage.setItem(
-          "artplayer_settings",
-          JSON.stringify(artplayerSettings)
-        );
+      if (id) {
+        // remove from local storage
+        const artplayerSettings =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+        if (artplayerSettings[id]) {
+          delete artplayerSettings[id];
+          localStorage.setItem(
+            "artplayer_settings",
+            JSON.stringify(artplayerSettings)
+          );
+        }
+        setRemoved(id);
       }
+      if (aniId) {
+        const currentData =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
 
-      setRemoved(id);
+        // Create a new object to store the updated data
+        const updatedData = {};
+
+        // Iterate through the current data and copy items with different aniId to the updated object
+        for (const key in currentData) {
+          const item = currentData[key];
+          if (item.aniId !== aniId) {
+            updatedData[key] = item;
+          }
+        }
+
+        // Update localStorage with the filtered data
+        localStorage.setItem("artplayer_settings", JSON.stringify(updatedData));
+        setRemoved(aniId);
+      }
     }
   };
 
@@ -218,13 +242,10 @@ export default function Content({
         </div>
         <div
           id={ids}
-          className="scroll flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-4 lg:p-10 py-8 px-5 z-30 scroll-smooth"
+          className="flex h-full w-full select-none overflow-x-scroll overflow-y-hidden scrollbar-hide lg:gap-8 gap-4 lg:p-10 py-8 px-5 z-30"
           onScroll={handleScroll}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onClick={handleClick}
-          ref={containerRef}
+          {...events}
+          ref={ref}
         >
           {ids !== "recentlyWatched"
             ? slicedData?.map((anime) => {
@@ -241,14 +262,14 @@ export default function Content({
                       title={anime.title.romaji}
                     >
                       {ids === "onGoing" && (
-                        <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black absolute z-40 rounded-md whitespace-normal font-karla group">
+                        <div className="h-[190px] lg:h-[265px] w-[135px] lg:w-[185px] bg-gradient-to-b from-transparent to-black/90 absolute z-40 rounded-md whitespace-normal font-karla group">
                           <div className="flex flex-col items-center h-full justify-end text-center pb-5">
                             <h1 className="line-clamp-1 w-[70%] text-[10px]">
                               {anime.title.romaji || anime.title.english}
                             </h1>
                             {checkProgress(progress) &&
                               !clicked?.hasOwnProperty(anime.id) && (
-                                <ExclamationCircleIcon className="w-7 h-7 absolute z-40 -top-3 -right-3" />
+                                <ExclamationCircleIcon className="w-7 h-7 absolute z-40 text-white -top-3 -right-3" />
                               )}
                             {checkProgress(progress) && (
                               <div
@@ -275,30 +296,52 @@ export default function Content({
                           </div>
                         </div>
                       )}
-                      <Image
-                        draggable={false}
-                        src={
-                          anime.image ||
-                          anime.coverImage?.extraLarge ||
-                          anime.coverImage?.large ||
-                          "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
-                        }
-                        alt={
-                          anime.title.romaji ||
-                          anime.title.english ||
-                          "coverImage"
-                        }
-                        width={500}
-                        height={300}
-                        placeholder="blur"
-                        blurDataURL={
-                          anime.image ||
-                          anime.coverImage?.extraLarge ||
-                          anime.coverImage?.large ||
-                          "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
-                        }
-                        className="z-20 h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md brightness-90"
-                      />
+                      <div className="h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] rounded-md z-30">
+                        {ids === "recentAdded" && (
+                          <div className="absolute bg-gradient-to-b from-black/30 to-transparent from-5% to-30% top-0 z-30 w-full h-full rounded" />
+                        )}
+                        <Image
+                          draggable={false}
+                          src={
+                            anime.image ||
+                            anime.coverImage?.extraLarge ||
+                            anime.coverImage?.large ||
+                            "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
+                          }
+                          alt={
+                            anime.title.romaji ||
+                            anime.title.english ||
+                            "coverImage"
+                          }
+                          width={500}
+                          height={300}
+                          placeholder="blur"
+                          blurDataURL={
+                            anime.image ||
+                            anime.coverImage?.extraLarge ||
+                            anime.coverImage?.large ||
+                            "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
+                          }
+                          className="z-20 h-[190px] w-[135px] lg:h-[265px] lg:w-[185px] object-cover rounded-md brightness-90"
+                        />
+                      </div>
+                      {ids === "recentAdded" && (
+                        <Fragment>
+                          <Image
+                            src="/svg/episode-badge.svg"
+                            alt="episode-bade"
+                            width={200}
+                            height={100}
+                            className="w-24 lg:w-32 absolute top-1 -right-[12px] lg:-right-[17px] z-40"
+                          />
+                          <p className="absolute z-40 text-center w-[86px] lg:w-[110px] top-1 -right-2 lg:top-[5.5px] lg:-right-2 font-karla text-sm lg:text-base">
+                            Episode{" "}
+                            <span className="text-white">
+                              {anime?.episodeNumber}
+                            </span>
+                          </p>
+                        </Fragment>
+                      )}
                     </Link>
                     {ids !== "onGoing" && (
                       <Link
@@ -307,7 +350,8 @@ export default function Content({
                         title={anime.title.romaji}
                       >
                         <h1 className="font-karla font-semibold xl:text-base text-[15px]">
-                          {anime.status === "RELEASING" ? (
+                          {anime.status === "RELEASING" ||
+                          ids === "recentAdded" ? (
                             <span className="dots bg-green-500" />
                           ) : anime.status === "NOT_YET_RELEASED" ? (
                             <span className="dots bg-red-500" />
@@ -333,22 +377,50 @@ export default function Content({
                       key={i.watchId}
                       className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
                     >
-                      <div className="absolute z-40 top-1 right-1 group-hover/item:visible invisible hover:text-action">
-                        <div
-                          className="flex flex-col items-center group/delete"
+                      <div className="absolute flex flex-col gap-1 z-40 top-1 right-1 transition-all duration-200 ease-out opacity-0 group-hover/item:opacity-100 scale-90 group-hover/item:scale-100 group-hover/item:visible invisible ">
+                        {/* <button
+                          type="button"
+                          className="flex flex-col items-center group/delete relative"
                           onClick={() => removeItem(i.watchId)}
                         >
-                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full" />
+                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
                           <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/delete:visible group-hover/delete:scale-100 group-hover/delete:translate-x-0 group-hover/delete:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
                             Remove from history
                           </span>
-                        </div>
+                        </button> */}
+                        <HistoryOptions
+                          remove={removeItem}
+                          watchId={i.watchId}
+                          aniId={i.aniId}
+                        />
+                        {i?.nextId && (
+                          <button
+                            type="button"
+                            className="flex flex-col items-center group/next relative"
+                            onClick={() => {
+                              router.push(
+                                `/en/anime/watch/${i.aniId}/${
+                                  i.provider
+                                }?id=${encodeURIComponent(i?.nextId)}&num=${
+                                  i?.nextNumber
+                                }${i?.dub ? `&dub=${i?.dub}` : ""}`
+                              );
+                            }}
+                          >
+                            <ChevronRightIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
+                            <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/next:visible group-hover/next:scale-100 group-hover/next:translate-x-0 group-hover/next:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
+                              Play Next Episode
+                            </span>
+                          </button>
+                        )}
                       </div>
                       <Link
                         className="relative w-[320px] aspect-video rounded-md overflow-hidden group"
                         href={`/en/anime/watch/${i.aniId}/${
                           i.provider
-                        }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}`}
+                        }?id=${encodeURIComponent(i.watchId)}&num=${i.episode}${
+                          i?.dub ? `&dub=${i?.dub}` : ""
+                        }`}
                       >
                         <div className="w-full h-full bg-gradient-to-t from-black/70 from-20% to-transparent group-hover:to-black/40 transition-all duration-300 ease-out absolute z-30" />
                         <div className="absolute bottom-3 left-0 mx-2 text-white flex gap-2 items-center w-[80%] z-30">
@@ -372,8 +444,8 @@ export default function Content({
                         {i?.image && (
                           <Image
                             src={i?.image}
-                            width={200}
-                            height={200}
+                            width="0"
+                            height="0"
                             alt="Episode Thumbnail"
                             className="w-fit group-hover:scale-[1.02] duration-300 ease-out z-10"
                           />
@@ -411,7 +483,7 @@ export default function Content({
             section !== "Recommendations" && (
               <div
                 key={section}
-                className="flex cursor-pointer"
+                className="flex flex-col cursor-pointer"
                 onClick={goToPage}
               >
                 <div className="w-[320px] aspect-video overflow-hidden object-cover rounded-md border-secondary border-2 flex flex-col gap-2 items-center text-center justify-center text-[#6a6a6a] hover:text-[#9f9f9f] hover:border-[#757575] transition-colors duration-200">

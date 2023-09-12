@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import ChapterSelector from "../../../components/manga/chapters";
 import HamburgerMenu from "../../../components/manga/mobile/hamburgerMenu";
 import Navbar from "../../../components/navbar";
@@ -11,7 +10,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import getAnifyInfo from "../../../lib/anify/info";
 
-export default function Manga({ info, userManga, chapters }) {
+export default function Manga({ info, userManga }) {
   const [domainUrl, setDomainUrl] = useState("");
   const [firstEp, setFirstEp] = useState();
   const chaptersData = info.chapters.data;
@@ -44,6 +43,12 @@ export default function Manga({ info, userManga, chapters }) {
           content={`${domainUrl}/api/og?title=${
             info.title.romaji || info.title.english
           }&image=${info.bannerImage || info.coverImage}`}
+        />
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
         />
       </Head>
       <div className="min-h-screen w-screen flex flex-col items-center relative">
@@ -78,9 +83,8 @@ export default function Manga({ info, userManga, chapters }) {
 }
 
 export async function getServerSideProps(context) {
-  dotenv.config();
-
   const session = await getServerSession(context.req, context.res, authOptions);
+  const accessToken = session?.user?.token || null;
 
   const { id } = context.query;
   const key = process.env.API_KEY;
@@ -93,55 +97,37 @@ export async function getServerSideProps(context) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       },
       body: JSON.stringify({
         query: `
-        query ($username: String, $status: MediaListStatus) {
-    MediaListCollection(userName: $username, type: MANGA, status: $status, sort: SCORE_DESC) {
-      user {
-        id
-        name
-      }
-      lists {
-        status
-        name
-        entries {
-          id
-          mediaId
-          status
-          progress
-          score
-          progressVolumes
-          media {
-            id
-            status
-            title {
-              english
-              romaji
+        query ($id: Int) {
+              Media (id: $id) {
+                mediaListEntry {
+                  status
+                  progress
+                  progressVolumes
+                  status
+                }
+                id
+                idMal
+                title {
+                  romaji
+                  english
+                  native
+                }
+              }
             }
-            episodes
-            coverImage {
-              large
-            }
-          }
-        }
-      }
-    }
-  }
         `,
         variables: {
-          username: session?.user?.name,
+          id: parseInt(id),
         },
       }),
     });
     const data = await response.json();
-    const user = data?.data?.MediaListCollection;
-    const userListsCurrent = user?.lists.find((X) => X.status === "CURRENT");
-    const matched = userListsCurrent?.entries.find(
-      (x) => x.mediaId === parseInt(id)
-    );
-    if (matched) {
-      userManga = matched;
+    const user = data?.data?.Media?.mediaListEntry;
+    if (user) {
+      userManga = user;
     }
   }
 

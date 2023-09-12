@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import { useEffect, useRef, useState } from "react";
 import { LeftBar } from "../../../../components/manga/leftBar";
 import { useRouter } from "next/router";
@@ -115,6 +114,12 @@ export default function Read({ data, currentId, sessions }) {
               }`
             : "Getting Info..."}
         </title>
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
         <meta id="CoverImage" data-manga-cover={info?.coverImage} />
       </Head>
       <div className="w-screen flex justify-evenly relative">
@@ -226,8 +231,6 @@ export default function Read({ data, currentId, sessions }) {
 }
 
 export async function getServerSideProps(context) {
-  dotenv.config();
-
   const cookies = nookies.get(context);
 
   const key = process.env.API_KEY;

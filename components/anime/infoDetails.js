@@ -165,9 +165,7 @@ export default function DesktopDetails({
                     >
                       <div className="w-[90px] bg-image rounded-l-md shrink-0">
                         <Image
-                          src={
-                            rel.coverImage.extraLarge || rel.coverImage.large
-                          }
+                          src={rel.coverImage.extraLarge}
                           alt={rel.id}
                           height={500}
                           width={500}
@@ -179,7 +177,7 @@ export default function DesktopDetails({
                           {r.relationType}
                         </div>
                         <div className="font-outfit font-thin line-clamp-2">
-                          {rel.title.userPreferred || rel.title.romaji}
+                          {rel.title.userPreferred}
                         </div>
                         <div className={``}>{rel.type}</div>
                       </div>

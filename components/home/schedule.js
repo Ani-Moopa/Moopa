@@ -1,16 +1,22 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { convertUnixToTime } from "../../utils/getTimes";
 import { PlayIcon } from "@heroicons/react/20/solid";
 import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import { useCountdown } from "../../utils/useCountdownSeconds";
 
-export default function Schedule({ data, scheduleData, time }) {
+export default function Schedule({ data, scheduleData, anime, update }) {
   let now = new Date();
   let currentDay =
     now.toLocaleString("default", { weekday: "long" }).toLowerCase() +
     "Schedule";
   currentDay = currentDay.replace("Schedule", "");
+
+  const [day, hours, minutes, seconds] = useCountdown(
+    anime[0]?.airingSchedule.nodes[0]?.airingAt * 1000 || Date.now(),
+    update
+  );
 
   const [currentPage, setCurrentPage] = useState(0);
   const [days, setDay] = useState();
@@ -37,8 +43,6 @@ export default function Schedule({ data, scheduleData, time }) {
     setCurrentPage(todayIndex >= 0 ? todayIndex : 0);
   }, [currentDay, days]);
 
-  // console.log({ scheduleData });
-
   return (
     <div className="flex flex-col gap-5 px-4 lg:px-0">
       <h1 className="font-bold font-karla text-[20px] lg:px-5">
@@ -46,7 +50,7 @@ export default function Schedule({ data, scheduleData, time }) {
       </h1>
       <div className="rounded mb-5 shadow-md shadow-black">
         <div className="overflow-hidden w-full h-[96px] lg:h-[10rem] rounded relative">
-          <div className="absolute flex flex-col justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-[#0c0c0c] to-transparent w-full h-full">
+          <div className="absolute flex flex-col justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-tersier to-transparent w-full h-full">
             <h1 className="text-xs lg:text-lg">Coming Up Next!</h1>
             <div className="w-1/2 lg:w-2/5 hidden lg:block font-medium font-karla leading-[2.9rem] text-white line-clamp-1">
               <Link
@@ -62,15 +66,15 @@ export default function Schedule({ data, scheduleData, time }) {
           </div>
           {data.bannerImage ? (
             <Image
-              src={data.bannerImage || data.coverImage.large}
+              src={data.bannerImage || data.coverImage.extraLarge}
               width={500}
               height={500}
               alt="banner next anime"
-              className="absolute z-10 top-0 right-0 w-3/4 h-full object-cover brightness-[30%]"
+              className="absolute z-10 top-0 right-0 w-3/4 h-full object-cover opacity-30"
             />
           ) : (
             <Image
-              src={data.coverImage.large}
+              src={data.coverImage.extraLarge}
               width={500}
               height={500}
               sizes="100vw"
@@ -87,22 +91,22 @@ export default function Schedule({ data, scheduleData, time }) {
             <div className="flex items-center gap-2 md:gap-5 font-bold font-karla text-sm md:text-xl">
               {/* Countdown Timer */}
               <div className="flex flex-col items-center">
-                <span className="text-action/80">{time.days}</span>
+                <span className="text-action/80">{day}</span>
                 <span className="text-sm lg:text-base font-medium">Days</span>
               </div>
               <span></span>
               <div className="flex flex-col items-center">
-                <span className="text-action/80">{time.hours}</span>
+                <span className="text-action/80">{hours}</span>
                 <span className="text-sm lg:text-base font-medium">Hours</span>
               </div>
               <span></span>
               <div className="flex flex-col items-center">
-                <span className="text-action/80">{time.minutes}</span>
+                <span className="text-action/80">{minutes}</span>
                 <span className="text-sm lg:text-base font-medium">Mins</span>
               </div>
               <span></span>
               <div className="flex flex-col items-center">
-                <span className="text-action/80">{time.seconds}</span>
+                <span className="text-action/80">{seconds}</span>
                 <span className="text-sm lg:text-base font-medium">Secs</span>
               </div>
             </div>

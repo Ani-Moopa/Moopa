@@ -24,6 +24,9 @@ model WatchListEpisode {
   timeWatched   Int?
   duration      Int?
   provider      String?
+  nextId        String?
+  nextNumber    Int?
+  dub           Boolean?
   createdDate   DateTime?   @default(now())
   userProfile   UserProfile @relation(fields: [userProfileId], references: [name], onDelete: Cascade)
   userProfileId String
