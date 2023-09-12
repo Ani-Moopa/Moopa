@@ -3,6 +3,8 @@ name: Create Release
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - "release.md"
 
