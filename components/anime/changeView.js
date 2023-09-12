@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-
-export default function ChangeView({ view, setView, episode }) {
-  // const [view, setView] = useState(1);
-  // const episode = null;
+export default function ChangeView({ view, setView, episode, map }) {
   return (
     <div className="flex gap-3 rounded-sm items-center p-2">
       <div
         className={
           episode?.length > 0
-            ? episode?.some((item) => item?.title === null)
+            ? map?.every(
+                (item) =>
+                  item?.image?.includes("https://s4.anilist.co/") ||
+                  item.title === null
+              ) || !map
               ? "pointer-events-none"
               : "cursor-pointer"
             : "pointer-events-none"
@@ -30,7 +30,11 @@ export default function ChangeView({ view, setView, episode }) {
             height="20"
             className={`${
               episode?.length > 0
-                ? episode?.some((item) => item?.title === null)
+                ? map?.every(
+                    (item) =>
+                      item?.image?.includes("https://s4.anilist.co/") ||
+                      item.title === null
+                  ) || !map
                   ? "fill-[#1c1c22]"
                   : view === 1
                   ? "fill-action"
@@ -44,7 +48,11 @@ export default function ChangeView({ view, setView, episode }) {
       <div
         className={
           episode?.length > 0
-            ? episode?.some((item) => item?.title === null)
+            ? map?.every(
+                (item) =>
+                  item?.image?.includes("https://s4.anilist.co/") ||
+                  item.title === null
+              ) || !map
               ? "pointer-events-none"
               : "cursor-pointer"
             : "pointer-events-none"
@@ -61,7 +69,11 @@ export default function ChangeView({ view, setView, episode }) {
           fill="none"
           className={`${
             episode?.length > 0
-              ? episode?.some((item) => item?.title === null)
+              ? map?.every(
+                  (item) =>
+                    item?.image?.includes("https://s4.anilist.co/") ||
+                    item.title === null
+                ) || !map
                 ? "fill-[#1c1c22]"
                 : view === 2
                 ? "fill-action"

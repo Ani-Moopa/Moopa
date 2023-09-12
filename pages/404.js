@@ -4,6 +4,7 @@ import Navbar from "../components/navbar";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { parseCookies } from "nookies";
+import Image from "next/image";
 
 export default function Custom404() {
   const [lang, setLang] = useState("en");
@@ -28,11 +29,17 @@ export default function Custom404() {
         <title>Not Found</title>
         <meta name="about" content="About this web" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/svg/c.svg" />
       </Head>
       <Navbar className="bg-[#0c0d10]" />
       <div className="min-h-screen w-screen flex flex-col items-center justify-center ">
-        <img src="/404.svg" alt="404" className="w-[26vw] md:w-[15vw]" />
+        <Image
+          width={500}
+          height={500}
+          src="/svg/404.svg"
+          alt="404"
+          className="w-[26vw] md:w-[15vw]"
+        />
         <h1 className="text-2xl sm:text-4xl xl:text-6xl font-bold my-4">
           Oops! Page not found
         </h1>

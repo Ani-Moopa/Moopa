@@ -47,7 +47,7 @@ module.exports = {
       },
       colors: {
         primary: "#141519",
-        secondary: "#232329",
+        secondary: "#212127",
         action: "#FF7F57",
         image: "#3B3C41",
         txt: "#dbdcdd",
@@ -55,7 +55,6 @@ module.exports = {
       },
     },
     fontFamily: {
-      rama: ["Ramabhadra", "sans-serif"],
       outfit: ["Outfit", "sans-serif"],
       karla: ["Karla", "sans-serif"],
       roboto: ["Roboto", "sans-serif"],

@@ -5,6 +5,9 @@ export default function ThumbnailDetail({
   index,
   epi,
   info,
+  image,
+  title,
+  description,
   provider,
   artStorage,
   progress,
@@ -25,13 +28,15 @@ export default function ThumbnailDetail({
     >
       <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
         <div className="relative">
-          <Image
-            src={epi?.image}
-            alt="Anime Cover"
-            width={1000}
-            height={1000}
-            className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
-          />
+          {image && (
+            <Image
+              src={image || ""}
+              alt="Anime Cover"
+              width={1000}
+              height={1000}
+              className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
+            />
+          )}
           <span
             className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
             style={{
@@ -63,11 +68,11 @@ export default function ThumbnailDetail({
         className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-3`}
       >
         <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-          {epi?.title}
+          {title}
         </h1>
-        {epi?.description && (
+        {description && (
           <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
-            {epi?.description}
+            {description}
           </p>
         )}
       </div>

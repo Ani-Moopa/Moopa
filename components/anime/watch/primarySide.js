@@ -9,18 +9,14 @@ import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import Modal from "../../modal";
 import AniList from "../../media/aniList";
-import axios from "axios";
 
 export default function PrimarySide({
   info,
   session,
   epiNumber,
-  setLoading,
   navigation,
-  loading,
   providerId,
   watchId,
-  status,
   onList,
   proxy,
   disqus,
@@ -33,15 +29,31 @@ export default function PrimarySide({
   const [open, setOpen] = useState(false);
   const [skip, setSkip] = useState();
 
+  const [loading, setLoading] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
     async function fetchData() {
       if (info) {
-        const { data } = await axios.get(
-          `/api/consumet/source/${providerId}/${watchId}`
-        );
+        const anify = await fetch("/api/v2/source", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source:
+              providerId === "gogoanime" && !watchId.startsWith("/")
+                ? "consumet"
+                : "anify",
+            providerId: providerId,
+            watchId: watchId,
+            episode: epiNumber,
+            id: info.id,
+            sub: dub ? "dub" : "sub",
+          }),
+        }).then((res) => res.json());
 
         const skip = await fetch(
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
@@ -65,10 +77,9 @@ export default function PrimarySide({
 
         setSkip({ op, ed });
 
-        setEpisodeData(data);
+        setEpisodeData(anify);
         setLoading(false);
       }
-      //   setMal(malId);
     }
 
     fetchData();
@@ -134,7 +145,7 @@ export default function PrimarySide({
       <div className="w-full h-full">
         <div key={watchId} className="w-full aspect-video bg-black">
           {!loading ? (
-            episodeData && (
+            navigation && episodeData?.sources?.length !== 0 ? (
               <VideoPlayer
                 session={session}
                 info={info}
@@ -142,7 +153,6 @@ export default function PrimarySide({
                 provider={providerId}
                 id={watchId}
                 progress={epiNumber}
-                stats={status}
                 skip={skip}
                 proxy={proxy}
                 aniId={info.id}
@@ -151,9 +161,20 @@ export default function PrimarySide({
                 timeWatched={timeWatched}
                 dub={dub}
               />
+            ) : (
+              <p className="h-full flex-center">
+                Video is not available, please try other providers
+              </p>
             )
           ) : (
-            <div className="aspect-video bg-black" />
+            <div className="flex-center aspect-video bg-black">
+              <div className="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
           )}
         </div>
         <div className="flex flex-col divide-y divide-white/20">

@@ -4,11 +4,47 @@ import Navbar from "../../../components/navbar";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUser } from "../../../prisma/user";
+import { ToastContainer, toast } from "react-toastify";
 
-export default function MyList({ media, sessions, user, time }) {
+export default function MyList({ media, sessions, user, time, userSettings }) {
   const [listFilter, setListFilter] = useState("all");
   const [visible, setVisible] = useState(false);
+  const [useCustomList, setUseCustomList] = useState(true);
+
+  useEffect(() => {
+    if (userSettings) {
+      localStorage.setItem("customList", userSettings.CustomLists);
+      setUseCustomList(userSettings.CustomLists);
+    }
+  }, [userSettings]);
+
+  // Function to handle checkbox state changes
+  const handleCheckboxChange = async () => {
+    setUseCustomList(!useCustomList); // Toggle the checkbox state
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: sessions?.user?.name,
+          settings: {
+            CustomLists: !useCustomList,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data) {
+        toast.success(`Custom List is now ${!useCustomList ? "on" : "off"}`);
+      }
+      localStorage.setItem("customList", !useCustomList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const filterMedia = (status) => {
     if (status === "all") {
@@ -22,6 +58,8 @@ export default function MyList({ media, sessions, user, time }) {
         <title>My Lists</title>
       </Head>
       <Navbar />
+      <ToastContainer pauseOnHover={false} />
+
       <div className="w-screen lg:flex justify-between lg:px-10 xl:px-32 py-5 relative">
         <div className="lg:w-[30%] h-full mt-12 lg:mr-10 grid gap-5 mx-3 lg:mx-0 antialiased">
           <div className="flex items-center gap-5">
@@ -51,28 +89,30 @@ export default function MyList({ media, sessions, user, time }) {
               Created At :
               <UnixTimeConverter unixTime={user.createdAt} />
             </div>
-            {sessions && user.name === sessions?.user.name ? (
-              <Link
-                href={"https://anilist.co/settings/"}
-                className="flex items-center gap-2 p-1 px-2 ring-[1px] antialiased ring-txt rounded-lg text-xs font-karla hover:bg-txt hover:shadow-lg group"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4 group-hover:stroke-black"
+            <div className="flex items-center gap-2">
+              {sessions && user.name === sessions?.user.name ? (
+                <Link
+                  href={"https://anilist.co/settings/"}
+                  className="flex items-center gap-2 p-1 px-2 ring-[1px] antialiased ring-txt rounded-lg text-xs font-karla hover:bg-txt hover:shadow-lg group"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"
-                  />
-                </svg>
-                <span className="group-hover:text-black">Edit Profile</span>
-              </Link>
-            ) : null}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-4 h-4 group-hover:stroke-black"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"
+                    />
+                  </svg>
+                  <span className="group-hover:text-black">Edit Profile</span>
+                </Link>
+              ) : null}
+            </div>
           </div>
           <div className="bg-secondary lg:min-h-[160px] text-xs rounded-md p-4 font-karla">
             <div>
@@ -109,6 +149,27 @@ export default function MyList({ media, sessions, user, time }) {
               </div>
             )}
           </div>
+          {sessions && user.name === sessions?.user.name && (
+            <div className="font-karla flex flex-col gap-4">
+              <h1>User Settings</h1>
+              <div className="flex p-2 items-center justify-between">
+                <h2
+                  className="text-sm text-white/70"
+                  title="Disabling this will stop adding your Anime to 'Watched using Moopa' list."
+                >
+                  Custom Lists
+                </h2>
+                <div className="w-5 h-5">
+                  <input
+                    type="checkbox"
+                    checked={useCustomList}
+                    onChange={handleCheckboxChange}
+                    className="accent-action"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           {media.length !== 0 && (
             <div className="font-karla grid gap-4">
               <div className="flex md:justify-normal justify-between items-center">
@@ -183,7 +244,7 @@ export default function MyList({ media, sessions, user, time }) {
           )}
         </div>
 
-        <div className="lg:w-[75%] grid gap-10 my-12 lg:pt-16">
+        <div className="lg:w-[75%] grid gap-10 my-5 lg:my-12 lg:pt-16">
           {media.length !== 0 ? (
             filterMedia(listFilter).map((item, index) => {
               return (
@@ -381,6 +442,12 @@ export async function getServerSideProps(context) {
     };
   }
 
+  let userData;
+
+  if (session) {
+    userData = await getUser(session.user.name, false);
+  }
+
   const prog = get.lists;
 
   function getIndex(status) {
@@ -400,6 +467,7 @@ export async function getServerSideProps(context) {
       sessions: session,
       user: user,
       time: time,
+      userSettings: userData?.setting || null,
     },
   };
 }

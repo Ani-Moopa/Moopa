@@ -18,9 +18,14 @@
 # production
 /build
 
+# docker
+docker-compose.yml
+
 # misc
 .DS_Store
 *.pem
+/assets/dummyData.json
+/backup
 
 # debug
 npm-debug.log*
@@ -44,3 +49,4 @@ service-account.json
 **/public/sw.js.map
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
+**/public/fallback-*.js

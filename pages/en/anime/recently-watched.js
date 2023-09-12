@@ -6,14 +6,18 @@ import Skeleton from "react-loading-skeleton";
 import Footer from "../../../components/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import MobileNav from "../../../components/home/mobileNav";
 import { ToastContainer, toast } from "react-toastify";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
+import HistoryOptions from "../../../components/home/content/historyOptions";
+import Head from "next/head";
+import MobileNav from "../../../components/shared/MobileNav";
 
 export default function PopularAnime({ sessions }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [remove, setRemoved] = useState();
+  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
@@ -49,9 +53,9 @@ export default function PopularAnime({ sessions }) {
       }
     };
     fetchData();
-  }, [remove]);
+  }, [sessions?.user?.name, remove]);
 
-  const removeItem = async (id) => {
+  const removeItem = async (id, aniId) => {
     if (sessions?.user?.name) {
       // remove from database
       const res = await fetch(`/api/user/update/episode`, {
@@ -61,24 +65,42 @@ export default function PopularAnime({ sessions }) {
         },
         body: JSON.stringify({
           name: sessions?.user?.name,
-          id: id,
+          id,
+          aniId,
         }),
       });
       const data = await res.json();
 
-      // remove from local storage
-      const artplayerSettings =
-        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
-      if (artplayerSettings[id]) {
-        delete artplayerSettings[id];
-        localStorage.setItem(
-          "artplayer_settings",
-          JSON.stringify(artplayerSettings)
-        );
+      if (id) {
+        // remove from local storage
+        const artplayerSettings =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+        if (artplayerSettings[id]) {
+          delete artplayerSettings[id];
+          localStorage.setItem(
+            "artplayer_settings",
+            JSON.stringify(artplayerSettings)
+          );
+        }
+      }
+      if (aniId) {
+        const currentData =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+
+        const updatedData = {};
+
+        for (const key in currentData) {
+          const item = currentData[key];
+          if (item.aniId !== aniId) {
+            updatedData[key] = item;
+          }
+        }
+
+        localStorage.setItem("artplayer_settings", JSON.stringify(updatedData));
       }
 
       // update client
-      setRemoved(id);
+      setRemoved(id || aniId);
 
       if (data?.message === "Episode deleted") {
         toast.success("Episode removed from history", {
@@ -91,22 +113,46 @@ export default function PopularAnime({ sessions }) {
         });
       }
     } else {
-      const artplayerSettings =
-        JSON.parse(localStorage.getItem("artplayer_settings")) || {};
-      if (artplayerSettings[id]) {
-        delete artplayerSettings[id];
-        localStorage.setItem(
-          "artplayer_settings",
-          JSON.stringify(artplayerSettings)
-        );
+      if (id) {
+        // remove from local storage
+        const artplayerSettings =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
+        if (artplayerSettings[id]) {
+          delete artplayerSettings[id];
+          localStorage.setItem(
+            "artplayer_settings",
+            JSON.stringify(artplayerSettings)
+          );
+        }
+        setRemoved(id);
       }
+      if (aniId) {
+        const currentData =
+          JSON.parse(localStorage.getItem("artplayer_settings")) || {};
 
-      setRemoved(id);
+        // Create a new object to store the updated data
+        const updatedData = {};
+
+        // Iterate through the current data and copy items with different aniId to the updated object
+        for (const key in currentData) {
+          const item = currentData[key];
+          if (item.aniId !== aniId) {
+            updatedData[key] = item;
+          }
+        }
+
+        // Update localStorage with the filtered data
+        localStorage.setItem("artplayer_settings", JSON.stringify(updatedData));
+        setRemoved(aniId);
+      }
     }
   };
 
   return (
     <>
+      <Head>
+        <title>Moopa - Recently Watched Episodes</title>
+      </Head>
       <MobileNav sessions={sessions} />
       <ToastContainer pauseOnHover={false} />
       <div className="flex flex-col gap-2 items-center min-h-screen w-screen px-2 relative pb-10">
@@ -130,16 +176,32 @@ export default function PopularAnime({ sessions }) {
                   key={i.watchId}
                   className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
                 >
-                  <div className="absolute z-40 top-1 right-1 group-hover/item:visible invisible hover:text-action">
-                    <div
-                      className="flex flex-col items-center group/delete"
-                      onClick={() => removeItem(i.watchId)}
-                    >
-                      <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full" />
-                      <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/delete:visible group-hover/delete:scale-100 group-hover/delete:translate-x-0 group-hover/delete:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
-                        Remove from history
-                      </span>
-                    </div>
+                  <div className="absolute flex flex-col gap-1 z-40 top-1 right-1 transition-all duration-200 ease-out opacity-0 group-hover/item:opacity-100 scale-90 group-hover/item:scale-100 group-hover/item:visible invisible">
+                    <HistoryOptions
+                      remove={removeItem}
+                      watchId={i.watchId}
+                      aniId={i.aniId}
+                    />
+                    {i?.nextId && (
+                      <button
+                        type="button"
+                        className="flex flex-col items-center group/next relative"
+                        onClick={() => {
+                          router.push(
+                            `/en/anime/watch/${i.aniId}/${
+                              i.provider
+                            }?id=${encodeURIComponent(i?.nextId)}&num=${
+                              i?.nextNumber
+                            }`
+                          );
+                        }}
+                      >
+                        <ChevronRightIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
+                        <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/next:visible group-hover/next:scale-100 group-hover/next:translate-x-0 group-hover/next:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
+                          Play Next Episode
+                        </span>
+                      </button>
+                    )}
                   </div>
                   <Link
                     className="relative md:w-[320px] aspect-video rounded-md overflow-hidden group"

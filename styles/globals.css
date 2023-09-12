@@ -1,7 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Ramabhadra&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  min-height: calc(100% + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
 * {
   -webkit-tap-highlight-color: transparent;
@@ -17,24 +23,9 @@ body {
   }
 }
 
-.tooltiptext {
-  visibility: hidden;
-  opacity: 0;
-  min-width: fit-content;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
 /* disqus style */
 #disqus_thread {
   @apply bg-primary;
-}
-
-.nav-hidden {
-  top: -100%;
 }
 
 a {
@@ -43,6 +34,23 @@ a {
 
 button {
   -webkit-tap-highlight-color: transparent;
+}
+
+.tooltip {
+  @apply hidden md:block opacity-0 absolute pointer-events-none whitespace-nowrap font-karla text-sm -translate-y-5 transition-all duration-100 bg-white text-black px-3 py-[0.5px] rounded z-50 shadow-xl;
+}
+
+.tooltip-container:hover .tooltip {
+  @apply opacity-100 -translate-y-6 transition-all duration-300;
+}
+
+.nav-hidden {
+  top: -100%;
+}
+
+.cust-scroll {
+  @apply scrollbar-thin scrollbar-thumb-white/10 scrollbar-thumb-rounded;
+  /* scrollbar-gutter: stable; */
 }
 
 .chapter-button {
@@ -183,6 +191,15 @@ input:checked ~ span:last-child {
   background: #27272e;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
+.lds-ellipsis span {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  @apply bg-txt;
+}
 .lds-ellipsis div:nth-child(1) {
   left: 8px;
   animation: lds-ellipsis1 0.6s infinite;
@@ -196,6 +213,23 @@ input:checked ~ span:last-child {
   animation: lds-ellipsis2 0.6s infinite;
 }
 .lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+
+.lds-ellipsis span:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis span:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis span:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis span:nth-child(4) {
   left: 56px;
   animation: lds-ellipsis3 0.6s infinite;
 }
@@ -396,5 +430,113 @@ pre code {
   }
   100% {
     left: 0%;
+  }
+}
+
+/* Hide the default checkbox */
+.containers input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.containers {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 20px;
+  user-select: none;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 1em;
+  width: 1em;
+  background-color: #ccc;
+  transition: all 0.3s;
+  border-radius: 5px;
+}
+
+/* When the checkbox is checked, add a blue background */
+.containers input:checked ~ .checkmark {
+  background-color: #47da99;
+  animation: pop 0.5s;
+  animation-direction: alternate;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.containers input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.containers .checkmark:after {
+  left: 0.35em;
+  top: 0.2em;
+  width: 0.25em;
+  height: 0.5em;
+  border: solid white;
+  border-width: 0 0.15em 0.15em 0;
+  transform: rotate(45deg);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.loader {
+  display: block;
+  --height-of-loader: 12px;
+  --loader-color: #3b3b46;
+  width: 240px;
+  height: var(--height-of-loader);
+  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  background: var(--loader-color);
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  border-radius: 30px;
+  animation: moving 1s ease-in-out infinite;
+}
+
+@keyframes moving {
+  50% {
+    width: 100%;
+  }
+
+  100% {
+    width: 0;
+    right: 0;
+    left: unset;
   }
 }

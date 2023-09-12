@@ -16,7 +16,7 @@ export default function DMCA() {
         />
         <meta property="og:image" content="/icon-512x512.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/c.svg" />
+        <link rel="icon" href="/svg/c.svg" />
       </Head>
       <Layout>
         <div className="min-h-screen z-20 flex w-screen justify-center items-center">

@@ -1,12 +1,13 @@
 import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import Footer from "../../../components/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import MobileNav from "../../../components/home/mobileNav";
+import Head from "next/head";
+import MobileNav from "../../../components/shared/MobileNav";
 
 export default function TrendingAnime({ sessions }) {
   const [data, setData] = useState(null);
@@ -94,9 +95,17 @@ export default function TrendingAnime({ sessions }) {
   }, [page, nextPage]);
 
   return (
-    <>
+    <Fragment>
+      <Head>
+        <title>Moopa - Trending Anime</title>
+        <meta name="title" content="Trending Anime" />
+        <meta
+          name="description"
+          content="Explore Top Trending Anime - Dive into the latest and most popular anime series on Moopa. From thrilling action to heartwarming romance, discover the buzzworthy shows that have everyone talking. Stream now and stay up-to-date with the hottest anime trends!"
+        />
+      </Head>
       <MobileNav sessions={sessions} />
-      <div className="flex flex-col gap-2 items-center min-h-screen w-screen px-2 relative pb-10">
+      <main className="flex flex-col gap-2 items-center min-h-screen w-screen px-2 relative pb-10">
         <div className="z-50 bg-primary pt-5 pb-3 shadow-md shadow-primary w-full fixed px-3">
           <Link href="/en" className="flex gap-2 items-center font-karla">
             <ChevronLeftIcon className="w-5 h-5" />
@@ -165,9 +174,9 @@ export default function TrendingAnime({ sessions }) {
             Load More
           </button>
         )}
-      </div>
+      </main>
       <Footer />
-    </>
+    </Fragment>
   );
 }
 

@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
-import { GET_CURRENT_USER } from "../../../queries";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const defaultOptions = {
   watchQuery: {
@@ -40,7 +39,24 @@ export const authOptions = {
         url: process.env.GRAPHQL_ENDPOINT,
         async request(context) {
           const { data } = await client.query({
-            query: GET_CURRENT_USER,
+            query: gql`
+              query {
+                Viewer {
+                  id
+                  name
+                  avatar {
+                    large
+                    medium
+                  }
+                  bannerImage
+                  mediaListOptions {
+                    animeList {
+                      customLists
+                    }
+                  }
+                }
+              }
+            `,
             context: {
               headers: {
                 Authorization: "Bearer " + context.tokens.access_token,
@@ -48,11 +64,47 @@ export const authOptions = {
             },
           });
 
+          const userLists = data.Viewer.mediaListOptions.animeList.customLists;
+
+          let custLists = userLists || [];
+
+          if (!userLists?.includes("Watched using Moopa")) {
+            custLists.push("Watched using Moopa");
+            const fetchGraphQL = async (query, variables) => {
+              const response = await fetch("https://graphql.anilist.co/", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: context.tokens.access_token
+                    ? `Bearer ${context.tokens.access_token}`
+                    : undefined,
+                },
+                body: JSON.stringify({ query, variables }),
+              });
+              return response.json();
+            };
+
+            const customLists = async (lists) => {
+              const setList = `
+                  mutation($lists: [String]){
+                    UpdateUser(animeListOptions: { customLists: $lists }){
+                      id
+                    }
+                  }
+                `;
+              const data = await fetchGraphQL(setList, { lists });
+              return data;
+            };
+
+            await customLists(custLists);
+          }
+
           return {
             token: context.tokens.access_token,
             name: data.Viewer.name,
             sub: data.Viewer.id,
             image: data.Viewer.avatar,
+            list: data.Viewer.mediaListOptions.animeList.customLists,
           };
         },
       },
@@ -64,6 +116,8 @@ export const authOptions = {
           id: profile.sub,
           name: profile?.name,
           image: profile.image,
+          list: profile?.list,
+          version: "1.0.1",
         };
       },
     },
