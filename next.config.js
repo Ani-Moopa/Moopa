@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { createSecureHeaders } = require("next-secure-headers");
+const nextSafe = require("next-safe");
 
 const withPWA = require("next-pwa")({
   dest: "public",
@@ -45,31 +45,65 @@ module.exports = withPWA({
         ],
       },
       {
-        source: "/(.*)",
-        headers: createSecureHeaders({
+        source: "/:path*",
+        headers: nextSafe({
+          contentTypeOptions: "nosniff",
           contentSecurityPolicy: {
-            directives: {
-              styleSrc: [
-                "'self'",
-                "'unsafe-inline'",
-                "https://cdnjs.cloudflare.com",
-                "https://fonts.googleapis.com",
-              ],
-              imgSrc: [
-                "'self'",
-                "https://s4.anilist.co",
-                "data:",
-                "https://media.kitsu.io",
-                "https://artworks.thetvdb.com",
-                "https://img.moopa.live",
-                "https://meo.comick.pictures",
-                "https://kitsu-production-media.s3.us-west-002.backblazeb2.com",
-              ],
-              baseUri: "self",
-              formAction: "self",
-              frameAncestors: true,
-            },
+            "base-uri": "'none'",
+            "child-src": "'none'",
+            "connect-src": [
+              "'self'",
+              "webpack://*",
+              "https://graphql.anilist.co/",
+              "https://api.aniskip.com/",
+              "https://m3u8proxy.moopa.workers.dev/",
+            ],
+            "default-src": "'self'",
+            "font-src": [
+              "'self'",
+              "https://cdnjs.cloudflare.com/",
+              "https://fonts.gstatic.com/",
+            ],
+            "form-action": "'self'",
+            "frame-ancestors": "'none'",
+            "frame-src": "'none'",
+            "img-src": [
+              "'self'",
+              "https://s4.anilist.co",
+              "data:",
+              "https://media.kitsu.io",
+              "https://artworks.thetvdb.com",
+              "https://img.moopa.live",
+              "https://meo.comick.pictures",
+              "https://kitsu-production-media.s3.us-west-002.backblazeb2.com",
+            ],
+            "manifest-src": "'self'",
+            "media-src": ["'self'", "blob:"],
+            "object-src": "'none'",
+            "prefetch-src": false,
+            "script-src": [
+              "'self'",
+              "https://static.cloudflareinsights.com",
+              "'unsafe-inline'",
+              "'unsafe-eval'",
+            ],
+
+            "style-src": [
+              "'self'",
+              "'unsafe-inline'",
+              "https://cdnjs.cloudflare.com",
+              "https://fonts.googleapis.com",
+            ],
+            "worker-src": "'self'",
+            mergeDefaultDirectives: false,
+            reportOnly: false,
           },
+          frameOptions: "DENY",
+          permissionsPolicy: false,
+          // permissionsPolicyDirectiveSupport: ["proposed", "standard"],
+          isDev: false,
+          referrerPolicy: "no-referrer",
+          xssProtection: "1; mode=block",
         }),
       },
     ];
