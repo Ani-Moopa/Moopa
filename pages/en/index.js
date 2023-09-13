@@ -398,7 +398,7 @@ export default function Home({ detail, populars, upComing }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
-            {user?.length > 0 && (
+            {user?.length > 0 && user?.some((i) => i?.watchId) && (
               <motion.section // Add motion.div to each child component
                 key="recentlyWatched"
                 initial={{ y: 20, opacity: 0 }}

@@ -113,18 +113,22 @@ export function NewNavbar({ info, session, scrollP = 200, toTop = false }) {
                 // title={sessions ? "Go to Profile" : "Login With AniList"}
               > */}
             {session ? (
-              <button
-                type="button"
-                onClick={() => router.push(`/en/profile/${session?.user.name}`)}
-                className="w-7 h-7 relative flex flex-col items-center group"
-              >
-                <Image
-                  src={session?.user.image.large}
-                  alt="avatar"
-                  width={50}
-                  height={50}
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-7 h-7 relative flex flex-col items-center group">
+                <button
+                  type="button"
+                  onClick={() =>
+                    router.push(`/en/profile/${session?.user.name}`)
+                  }
+                  className="rounded-full bg-white/30 overflow-hidden"
+                >
+                  <Image
+                    src={session?.user.image.large}
+                    alt="avatar"
+                    width={50}
+                    height={50}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
                 <div className="hidden absolute z-50 w-28 text-center -bottom-20 text-white shadow-2xl opacity-0 bg-secondary p-1 py-2 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all md:grid place-items-center gap-1">
                   <Link
                     href={`/en/profile/${session?.user.name}`}
@@ -133,13 +137,13 @@ export function NewNavbar({ info, session, scrollP = 200, toTop = false }) {
                     Profile
                   </Link>
                   <div
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={() => signOut("AniListProvider")}
                     className="hover:text-action"
                   >
                     Log out
                   </div>
                 </div>
-              </button>
+              </div>
             ) : (
               <button
                 type="button"
@@ -220,7 +224,6 @@ export default function DetailTop({
         <div className="shrink-0 w-[180px] h-[250px] rounded overflow-hidden">
           <Image
             src={info?.coverImage?.extraLarge}
-            // alt="coverImage"
             alt="poster anime"
             width={300}
             height={300}

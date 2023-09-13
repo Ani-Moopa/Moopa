@@ -19,8 +19,8 @@ export default function Navigasi() {
   return (
     <>
       {/* NAVBAR PC */}
-      <div className="flex items-center justify-center">
-        <div className="flex w-full items-center justify-between px-5 lg:mx-[94px] lg:pt-7">
+      <div className="flex items-center justify-center w-full">
+        <div className="flex w-full items-center justify-between px-4 lg:w-[90%] lg:pt-7">
           <div className="flex items-center lg:gap-16">
             <Link
               href="/en/"
@@ -118,20 +118,22 @@ export default function Navigasi() {
               // title={sessions ? "Go to Profile" : "Login With AniList"}
             > */}
             {sessions ? (
-              <button
-                type="button"
-                onClick={() =>
-                  router.push(`/en/profile/${sessions?.user.name}`)
-                }
-                className="w-7 h-7 relative flex flex-col items-center group"
-              >
-                <Image
-                  src={sessions?.user.image.large}
-                  alt="avatar"
-                  width={50}
-                  height={50}
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-8 h-8 relative flex flex-col items-center group">
+                <button
+                  type="button"
+                  onClick={() =>
+                    router.push(`/en/profile/${sessions?.user.name}`)
+                  }
+                  className="rounded-full bg-white/30 overflow-hidden"
+                >
+                  <Image
+                    src={sessions?.user.image.large}
+                    alt="avatar"
+                    width={50}
+                    height={50}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
                 <div className="hidden absolute z-50 w-28 text-center -bottom-20 text-white shadow-2xl opacity-0 bg-secondary p-1 py-2 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all md:grid place-items-center gap-1">
                   <Link
                     href={`/en/profile/${sessions?.user.name}`}
@@ -140,13 +142,13 @@ export default function Navigasi() {
                     Profile
                   </Link>
                   <div
-                    onClick={() => signOut({ callbackUrl: "/" })}
+                    onClick={() => signOut("AniListProvider")}
                     className="hover:text-action cursor-pointer"
                   >
                     Log out
                   </div>
                 </div>
-              </button>
+              </div>
             ) : (
               <button
                 type="button"

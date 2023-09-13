@@ -107,7 +107,7 @@ function Navbar(props) {
                         Profile
                       </Link>
                       <button
-                        onClick={() => signOut({ callbackUrl: "/" })}
+                        onClick={() => signOut("AniListProvider")}
                         className="hover:text-action"
                       >
                         Log out

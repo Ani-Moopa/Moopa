@@ -164,12 +164,14 @@ export default function PopularAnime({ sessions }) {
         </div>
         <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-7 pt-16">
           {data
-            ?.filter((i) => i.title !== null)
+            ?.filter((i) => i?.watchId)
             .map((i) => {
               const time = i.timeWatched;
               const duration = i.duration;
               let prog = (time / duration) * 100;
               if (prog > 90) prog = 100;
+
+              console.log({ i });
 
               return (
                 <div
