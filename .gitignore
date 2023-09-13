@@ -26,6 +26,7 @@ docker-compose.yml
 *.pem
 /assets/dummyData.json
 /backup
+release-template.md
 
 # debug
 npm-debug.log*
