@@ -4,15 +4,26 @@ import redis from "../../../../lib/redis";
 const CONSUMET_URI = process.env.API_URI;
 const API_KEY = process.env.API_KEY;
 
+const isAscending = (data) => {
+  for (let i = 1; i < data.length; i++) {
+    if (data[i].number < data[i - 1].number) {
+      return false;
+    }
+  }
+  return true;
+};
+
 async function fetchConsumet(id, dub) {
   try {
     if (dub) {
       return [];
     }
 
-    const { data } = await axios.get(`${CONSUMET_URI}/meta/anilist/info/${id}`);
+    const { data } = await axios.get(
+      `${CONSUMET_URI}/meta/anilist/episodes/${id}`
+    );
 
-    if (!data?.episodes?.length > 0) {
+    if (data?.message === "Anime not found") {
       return [];
     }
 
@@ -20,13 +31,13 @@ async function fetchConsumet(id, dub) {
       {
         map: true,
         providerId: "gogoanime",
-        episodes: data.episodes.reverse(),
+        episodes: isAscending(data) ? data : data.reverse(),
       },
     ];
 
     return array;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching and processing data:", error.message);
     return [];
   }
 }
@@ -58,7 +69,7 @@ async function fetchAnify(id) {
 
     return modifiedData;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching and processing data:", error.message);
     return [];
   }
 }

@@ -2,13 +2,13 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## Update v4.0.1
+## 🎉 Update v4.0.2
 
 ### Fixed
 
-- No episodes showing on recently watched
-- Logout button on profile send user to profile page
+- Issue #74 : Resolved mobile rotation locked on portrait mode
+- No more descending episode lists causing continue button to play episodes backward
 
 ### Changed
 
-- Changed profile picture from square to circle
+- Update `README.md` file for cors inside env

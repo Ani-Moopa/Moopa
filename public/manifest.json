@@ -7,7 +7,6 @@
   "name": "Moopa",
   "short_name": "moopa",
   "description": "Watch and Read your favorite Anime/Manga in one single app",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icon-192x192.png",
