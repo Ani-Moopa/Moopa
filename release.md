@@ -2,13 +2,9 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.0.2
-
-### Fixed
-
-- Issue #74 : Resolved mobile rotation locked on portrait mode
-- No more descending episode lists causing continue button to play episodes backward
+## 🎉 Update v4.0.3
 
 ### Changed
 
-- Update `README.md` file for cors inside env
+- Increase cache time for `FINISHED` Anime's episodes
+- `New Episodes` component has been temporarily removed due to errors. It will be fixed and added back in a future release.
