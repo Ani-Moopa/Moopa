@@ -206,7 +206,7 @@ export default function Card({
   return (
     <>
       <Head>
-        <title>Moopa - search</title>
+        <title>Shizuru - search</title>
         <meta name="title" content="Search" />
         <meta name="description" content="Search your favourites Anime/Manga" />
         <link rel="icon" href="/svg/c.svg" />
