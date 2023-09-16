@@ -493,7 +493,7 @@ export default function Home({ detail, populars, upComing }) {
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
           >
             {/* SECTION 3 */}
-            {recentAdded.length > 0 && (
+            {recentAdded?.length > 0 && (
               <motion.section // Add motion.div to each child component
                 key="recentAdded"
                 initial={{ y: 20, opacity: 0 }}

@@ -77,8 +77,8 @@ async function fetchAnify(id) {
 export default async function handler(req, res) {
   const { id, releasing = "false", dub = false } = req.query;
 
-  // if releasing is true then cache for 10 minutes, if it false cache for 1 week;
-  const cacheTime = releasing === "true" ? 60 * 10 : 60 * 60 * 24 * 7;
+  // if releasing is true then cache for 10 minutes, if it false cache for 1 month;
+  const cacheTime = releasing === "true" ? 60 * 10 : 60 * 60 * 24 * 30;
 
   let cached;
 
