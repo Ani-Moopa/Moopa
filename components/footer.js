@@ -56,7 +56,7 @@ function Footer() {
                 height={100}
                 className="w-10 h-10"
               /> */}
-            <p className="font-outfit text-4xl">moopa</p>
+            <p className="font-outfit text-4xl">Shizuru</p>
             <p className="font-karla lg:text-[0.8rem] text-[0.65rem] text-[#9c9c9c]  lg:w-[520px] italic">
               This site does not store any files on our server, we only linked
               to the media which is hosted on 3rd party services.
@@ -95,11 +95,6 @@ function Footer() {
                 <li className="cursor-pointer hover:text-action">
                   <Link href={`/${lang}/dmca`}>DMCA</Link>
                 </li>
-                <li className="cursor-pointer hover:text-action">
-                  <Link href="https://github.com/DevanAbinaya/Ani-Moopa">
-                    Github
-                  </Link>
-                </li>
               </ul>
             </div>
           </div>
@@ -108,13 +103,13 @@ function Footer() {
       <div className="bg-tersier border-t border-white/5">
         <div className="mx-auto flex w-[90%] lg:w-[95%] xl:w-[80%] flex-col pb-6 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:py-0">
           <p className="flex items-center gap-1 font-karla lg:text-[0.81rem] text-[0.7rem] text-[#CCCCCC] py-3">
-            &copy; {new Date().getFullYear()} moopa.live | Website Made by{" "}
+            &copy; {new Date().getFullYear()} rawflyanime.com | Website Made by{" "}
             <span className="text-white font-bold">Factiven</span>
           </p>
           <div className="flex items-center gap-5">
             {/* Github Icon */}
             <Link
-              href="https://github.com/Ani-Moopa/Moopa"
+              href="#"
               className="w-5 h-5 hover:opacity-75"
             >
               <svg
