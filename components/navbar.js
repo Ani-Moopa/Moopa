@@ -43,7 +43,7 @@ function Navbar(props) {
     <header className={`${props.className}`}>
       <div className="flex h-16 w-auto items-center justify-between px-5 lg:mx-auto lg:w-[80%] lg:px-0 text-[#dbdcdd]">
         <div className="pb-2 font-outfit text-4xl font-semibold lg:block text-white">
-          <Link href={`/${lang}/`}>moopa</Link>
+          <Link href={`/${lang}/`}>Shizuru</Link>
         </div>
 
         <MobileNav sessions={session} />
