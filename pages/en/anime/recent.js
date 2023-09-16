@@ -70,11 +70,11 @@ export default function Recent({ sessions }) {
   return (
     <Fragment>
       <Head>
-        <title>Moopa - New Episodes</title>
+        <title>Shizuru - New Episodes</title>
         <meta name="title" content="New Episodes" />
         <meta
           name="description"
-          content="Explore Beloved Classics and Favorites - Dive into a curated collection of timeless anime on Moopa's New Episodes Page. From iconic classics to all-time favorites, experience the stories that have captured hearts worldwide. Start streaming now and relive the magic of anime!"
+          content="Explore Beloved Classics and Favorites - Dive into a curated collection of timeless anime on Shizuru's New Episodes Page. From iconic classics to all-time favorites, experience the stories that have captured hearts worldwide. Start streaming now and relive the magic of anime!"
         />
       </Head>
       <MobileNav sessions={sessions} />
