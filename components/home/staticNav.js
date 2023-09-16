@@ -26,7 +26,7 @@ export default function Navigasi() {
               href="/en/"
               className=" font-outfit lg:text-[40px] text-[30px] font-bold text-[#FF7F57]"
             >
-              moopa
+              Shizuru
             </Link>
             <ul className="hidden items-center gap-10 pt-2 font-outfit text-[14px] lg:flex">
               <li>
