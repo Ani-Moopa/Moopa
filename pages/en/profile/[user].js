@@ -155,7 +155,7 @@ export default function MyList({ media, sessions, user, time, userSettings }) {
               <div className="flex p-2 items-center justify-between">
                 <h2
                   className="text-sm text-white/70"
-                  title="Disabling this will stop adding your Anime to 'Watched using Moopa' list."
+                  title="Disabling this will stop adding your Anime to 'Watched using Shizuru' list."
                 >
                   Custom Lists
                 </h2>
