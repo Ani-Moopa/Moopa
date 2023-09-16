@@ -151,7 +151,7 @@ export default function PopularAnime({ sessions }) {
   return (
     <>
       <Head>
-        <title>Moopa - Recently Watched Episodes</title>
+        <title>Shizuru - Recently Watched Episodes</title>
       </Head>
       <MobileNav sessions={sessions} />
       <ToastContainer pauseOnHover={false} />
