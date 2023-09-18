@@ -63,7 +63,7 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-100%, 0%);
-  background: #2f3640;
+  background: #080612;
   height: 40px;
   border-radius: 40px;
   @apply h-12;
