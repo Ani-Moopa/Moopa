@@ -2,7 +2,7 @@
   "name": "Shizuru",
   "version": "4.0.3",
   "private": true,
-  "founder": "Factiven",
+  "founder": "Brainless Intellect",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma migrate deploy && next build && next build",
