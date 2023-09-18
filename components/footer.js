@@ -135,7 +135,7 @@ function Footer() {
             </Link>
             {/* Discord Icon */}
             <Link
-              href="https://discord.gg/v5fjSdKwr2"
+              href="https://discord.gg/YUNSaTJwuG"
               className="w-6 h-6 hover:opacity-75"
             >
               <svg
@@ -152,7 +152,7 @@ function Footer() {
 
             {/* Kofi */}
             <Link
-              href="https://ko-fi.com/factiven"
+              href="https://ko-fi.com/instatechhd"
               className="w-6 h-6 hover:opacity-75"
             >
               <svg
