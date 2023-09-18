@@ -61,7 +61,7 @@ export default function VideoPlayerId({
         <Player
           key={`${url}`}
           option={{
-            url: `https://cors-anywhere.herokuapp.com${url}`,
+            url: `https://cors-anywhere.herokuapp.com + ${url}`,
             quality: source,
             title: `${title}`,
             autoplay: true,
