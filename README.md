@@ -1,11 +1,11 @@
 <div align="center">
-<a href="https:/rawflyanime.com">
+<a href="https://rawflyanime.com">
   <img src="https://user-images.githubusercontent.com/97084324/234460363-216b29d3-acba-4c29-a321-780de84c9ab0.png" alt="logo" width="180"/>
 </a>
 </div>
 
 <h1 align="center">
-  <a href="https://moopa.live">Shizuru Anime Streaming Website</a>
+  <a href="https://rawflyanime.com">Shizuru Anime Streaming Website</a>
 </h1>
 
 <p align="center">
