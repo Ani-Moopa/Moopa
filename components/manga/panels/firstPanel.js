@@ -124,7 +124,7 @@ export default function FirstPanel({
               ref={(el) => (imageRefs.current[index] = el)}
             >
               <Image
-                src={`https://img.moopa.live/image-proxy?url=${encodeURIComponent(
+                src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                   i.url
                 )}&headers=${encodeURIComponent(
                   JSON.stringify({ Referer: i.headers.Referer })
@@ -139,7 +139,8 @@ export default function FirstPanel({
           ))
         ) : (
           <div className="w-full flex-center h-full">
-            {data.error || "Not found"} :(
+            {/* {data.error || "Not found"} :( */}
+            <p dangerouslySetInnerHTML={{ __html: data }} />
           </div>
         )}
       </div>

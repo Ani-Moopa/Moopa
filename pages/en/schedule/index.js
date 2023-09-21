@@ -281,7 +281,6 @@ export default function Schedule({ schedule }) {
           name="twitter:description"
           content="Moopa is a website where you can find all the information about your favorite anime and manga."
         />
-        <link rel="canonical" href="https://moopa.live/en/schedule" />
       </Head>
       <MobileNav sessions={session} hideProfile={true} />
       <div className="w-screen">

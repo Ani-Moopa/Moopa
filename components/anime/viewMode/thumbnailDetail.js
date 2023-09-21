@@ -31,7 +31,7 @@ export default function ThumbnailDetail({
           {image && (
             <Image
               src={image || ""}
-              alt="Anime Cover"
+              alt={`Episode ${epi?.number} Thumbnail`}
               width={1000}
               height={1000}
               className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
@@ -68,7 +68,7 @@ export default function ThumbnailDetail({
         className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-3`}
       >
         <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-          {title}
+          {title || `Episode ${epi?.number}`}
         </h1>
         {description && (
           <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">

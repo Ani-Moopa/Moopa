@@ -41,8 +41,6 @@ export default function Read({ data, currentId, sessions }) {
 
   const router = useRouter();
 
-  // console.log(cookies);
-
   useEffect(() => {
     hasRun.current = false;
   }, [currentId]);
@@ -212,8 +210,9 @@ export default function Read({ data, currentId, sessions }) {
           <RightBar
             id={info?.id}
             hasRun={hasRun}
+            error={data?.error}
             session={sessions}
-            data={chapter}
+            data={data}
             currentId={currentId}
             currentChapter={currentChapter}
             layout={layout}

@@ -12,6 +12,8 @@ export default function RightBar({
   id,
   hasRun,
   session,
+  data,
+  error,
   currentChapter,
   paddingX,
   setPaddingX,
@@ -72,21 +74,25 @@ export default function RightBar({
       >
         <ExclamationCircleIcon className="w-6 h-6" />
       </div>
-      <div className="flex flex-col gap-3 w-full">
-        <h1 className="font-karla font-bold xl:text-lg">Reading mode</h1>
-        <div className="flex relative">
-          <select
-            className="bg-[#161617] text-sm xl:text-base cursor-pointer w-full p-1 px-3 font-karla rounded-md appearance-none"
-            defaultValue={layout}
-            onChange={changeMode}
-          >
-            <option value={1}>Vertical</option>
-            <option value={2}>Right to Left</option>
-            <option value={3}>Right to Left {"(1 Page)"}</option>
-          </select>
-          <ChevronDownIcon className="w-5 h-5 text-white absolute inset-0 my-auto mx-52" />
+      {Array.isArray(data) ? (
+        <div className="flex flex-col gap-3 w-full">
+          <h1 className="font-karla font-bold xl:text-lg">Reading mode</h1>
+          <div className="flex relative">
+            <select
+              className="bg-[#161617] text-sm xl:text-base cursor-pointer w-full p-1 px-3 font-karla rounded-md appearance-none"
+              defaultValue={layout}
+              onChange={changeMode}
+            >
+              <option value={1}>Vertical</option>
+              <option value={2}>Right to Left</option>
+              <option value={3}>Right to Left {"(1 Page)"}</option>
+            </select>
+            <ChevronDownIcon className="w-5 h-5 text-white absolute inset-0 my-auto mx-52" />
+          </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
       {/* Zoom */}
       <div className="flex flex-col gap-3 w-full">
         <h1 className="font-karla font-bold xl:text-lg">Scale Image</h1>

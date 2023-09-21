@@ -365,12 +365,14 @@ export default function MyList({ media, sessions, user, time, userSettings }) {
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
+  const accessToken = session?.user?.token || null;
   const query = context.query;
 
   const response = await fetch("https://graphql.anilist.co/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
     body: JSON.stringify({
       query: `
