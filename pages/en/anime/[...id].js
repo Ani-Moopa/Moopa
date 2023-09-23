@@ -18,6 +18,7 @@ import Footer from "../../../components/footer";
 import { mediaInfoQuery } from "../../../lib/graphql/query";
 import MobileNav from "../../../components/shared/MobileNav";
 import redis from "../../../lib/redis";
+import Characters from "../../../components/anime/charactersCard";
 
 export default function Info({ info, color }) {
   const { data: session } = useSession();
@@ -184,6 +185,12 @@ export default function Info({ info, color }) {
             setProgress={setProgress}
             setWatch={setWatch}
           />
+
+          {info && (
+            <div className="w-full">
+              <Characters info={info?.characters?.edges}/>
+            </div>
+          )}
 
           {info && rec?.length !== 0 && (
             <div className="w-full">
