@@ -2,13 +2,8 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.0.4
+## 🎉 Update v4.0.5
 
 ### Added
 
-- Added novel support (still in experimental, expect many bugs)
-
-### Fixed
-
-- Missing title on episodes thumbnail details view
-- Private user can't see their own profile
+- Added characters card to info page
