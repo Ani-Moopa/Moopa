@@ -186,7 +186,7 @@ export default function Info({ info, color }) {
             setWatch={setWatch}
           />
 
-          {info && (
+          {info?.characters?.edges && (
             <div className="w-full">
               <Characters info={info?.characters?.edges}/>
             </div>
