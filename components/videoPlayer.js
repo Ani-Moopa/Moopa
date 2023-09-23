@@ -74,7 +74,7 @@ export default function VideoPlayer({
 
     async function compiler() {
       try {
-        const referer = data?.headers?.Referer;
+        const referer = JSON.stringify(data?.headers);
         const source = data.sources.map((items) => {
           const isDefault =
             provider !== "gogoanime"
@@ -85,10 +85,9 @@ export default function VideoPlayer({
           return {
             ...(isDefault && { default: true }),
             html: items.quality === "default" ? "adaptive" : items.quality,
-            // url: `https://cors.moopa.live/${items.url}`,
-            url: `${proxy}?url=${encodeURIComponent(items.url)}${
-              referer ? `&referer=${encodeURIComponent(referer)}` : ""
-            }`,
+            url: `${proxy}/proxy/m3u8/${encodeURIComponent(
+              String(items.url)
+            )}/${encodeURIComponent(String(referer))}`,
           };
         });
 

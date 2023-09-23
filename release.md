@@ -2,8 +2,12 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.0.5
+## 🎉 Update v4.0.6
 
-### Added
+### Fixes
 
-- Added characters card to info page
+- Video won't play due to outdated code
+
+### Changed
+
+- Updated readme for cors usage
