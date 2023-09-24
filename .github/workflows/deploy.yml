@@ -1,0 +1,53 @@
+name: Deploy App
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Generate Prisma
+        run: bunx prisma generate || exit
+
+      - name: Build the project
+        run: BUILD_DIR=temp bun run build || exit
+
+      - name: Check if temp directory exists
+        run: |
+          if [ ! -d "temp" ]; then
+            echo '\033[31m temp Directory not exists!\033[0m'
+            exit 1
+          fi
+
+      - name: Remove .next directory
+        run: rm -rf .next
+
+      - name: Move temp to .next directory
+        run: mv temp .next
+
+      - name: Set PORT
+        run: echo "PORT=1000" >> $GITHUB_ENV
+
+      - name: Set App as Serverless
+        run: echo "SERVERLESS=true" >> $GITHUB_ENV
+
+      - name: Reload PM2
+        run: pm2 reload moopa --update-env
+
+        
