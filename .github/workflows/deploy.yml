@@ -10,6 +10,21 @@ jobs:
   auto-deploy:
     runs-on: self-hosted
 
+    env:
+      PORT: ${{ secrets.PORT }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      GRAPHQL_ENDPOINT: ${{ secrets.GRAPHQL_ENDPOINT }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+      NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+      PROXY_URI: ${{ secrets.PROXY_URI }}
+      API_URI: ${{ secrets.API_URI }}
+      API_KEY: ${{ secrets.API_KEY }}
+      DISQUS_SHORTNAME: ${{ secrets.DISQUS_SHORTNAME }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -50,8 +65,9 @@ jobs:
             echo "PM2 process 'moopa' exists"
           else
             echo "PM2 process 'moopa' does not exist, starting a new process"
-          pm2 start bun -n moopa -- start
+            pm2 start bun -n moopa -- start
           fi
-          
+
       - name: Reload PM2
-        run: pm2 reload moopa --update-env
+        run: pm2 stop moopa
+             pm2 start moopa --update-env
