@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "export": "next build && next export",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
