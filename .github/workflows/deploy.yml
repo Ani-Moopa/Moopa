@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  create-release:
+  auto-deploy:
     runs-on: self-hosted
 
     steps:
@@ -44,10 +44,14 @@ jobs:
       - name: Set PORT
         run: echo "PORT=1000" >> $GITHUB_ENV
 
-      - name: Set App as Serverless
-        run: echo "SERVERLESS=true" >> $GITHUB_ENV
-
+      - name: Check if PM2 process exists
+        run: |
+          if pm2 list | grep -q 'moopa'; then
+            echo "PM2 process 'moopa' exists"
+          else
+            echo "PM2 process 'moopa' does not exist, starting a new process"
+          pm2 start bun -n moopa -- start
+          fi
+          
       - name: Reload PM2
         run: pm2 reload moopa --update-env
-
-        
