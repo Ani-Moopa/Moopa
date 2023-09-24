@@ -35,7 +35,7 @@ export default function Characters({ info }) {
                                         item.node.name.full ||
                                         "Character Image"
                                     }
-                                    className="rounded-l-md"
+                                    className="h-full object-cover"
                                 />
                             </div>
                             <div className="py-2 flex flex-col justify-between">
