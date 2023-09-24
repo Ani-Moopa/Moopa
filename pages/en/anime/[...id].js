@@ -15,8 +15,9 @@ import { useAniList } from "@/lib/anilist/useAnilist";
 import Footer from "@/components/shared/footer";
 import { mediaInfoQuery } from "@/lib/graphql/query";
 import MobileNav from "@/components/shared/MobileNav";
-import redis from "@/lib/redis";
+
 import Characters from "@/components/anime/charactersCard";
+import { redis } from "@/lib/redis";
 
 export default function Info({ info, color }) {
   const { data: session } = useSession();
