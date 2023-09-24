@@ -2,12 +2,8 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.0.6
+## 🎉 Update v4.0.7
 
 ### Fixes
 
-- Video won't play due to outdated code
-
-### Changed
-
-- Updated readme for cors usage
+- Improved character card UI for smaller devices
