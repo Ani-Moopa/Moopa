@@ -3,11 +3,11 @@ import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import Skeleton from "react-loading-skeleton";
-import Footer from "../../../components/footer";
+import Footer from "@/components/shared/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import Image from "next/image";
-import MobileNav from "../../../components/shared/MobileNav";
+import MobileNav from "@/components/shared/MobileNav";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);

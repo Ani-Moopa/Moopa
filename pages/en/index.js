@@ -1,26 +1,24 @@
-import { aniListData } from "../../lib/anilist/AniList";
+import { aniListData } from "@/lib/anilist/AniList";
 import { useState, useEffect, Fragment } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import Footer from "../../components/footer";
+import Footer from "@/components/shared/footer";
 import Image from "next/image";
-import Content from "../../components/home/content";
+import Content from "@/components/home/content";
 
 import { motion } from "framer-motion";
 
 import { signOut, useSession } from "next-auth/react";
-import Genres from "../../components/home/genres";
-import Schedule from "../../components/home/schedule";
-import getUpcomingAnime from "../../lib/anilist/getUpcomingAnime";
+import Genres from "@/components/home/genres";
+import Schedule from "@/components/home/schedule";
+import getUpcomingAnime from "@/lib/anilist/getUpcomingAnime";
 
-import Navigasi from "../../components/home/staticNav";
-
-import { ToastContainer } from "react-toastify";
-import getMedia from "../../lib/anilist/getMedia";
+import GetMedia from "@/lib/anilist/getMedia";
 // import UserRecommendation from "../../components/home/recommendation";
-import MobileNav from "../../components/shared/MobileNav";
-import { getGreetings } from "../../utils/getGreetings";
-import redis from "../../lib/redis";
+import MobileNav from "@/components/shared/MobileNav";
+import { getGreetings } from "@/utils/getGreetings";
+import { redis } from "@/lib/redis";
+import { NewNavbar } from "@/components/shared/NavBar";
 
 export async function getServerSideProps() {
   let cachedData;
@@ -79,9 +77,11 @@ export async function getServerSideProps() {
 
 export default function Home({ detail, populars, upComing }) {
   const { data: sessions } = useSession();
-  const { media: current } = getMedia(sessions, { stats: "CURRENT" });
-  const { media: plan } = getMedia(sessions, { stats: "PLANNING" });
-  const { media: release, recommendations } = getMedia(sessions);
+  const { anime: currentAnime, manga: currentManga } = GetMedia(sessions, {
+    stats: "CURRENT",
+  });
+  const { anime: plan } = GetMedia(sessions, { stats: "PLANNING" });
+  const { anime: release } = GetMedia(sessions);
 
   const [schedules, setSchedules] = useState(null);
   const [anime, setAnime] = useState([]);
@@ -89,7 +89,9 @@ export default function Home({ detail, populars, upComing }) {
   const [recentAdded, setRecentAdded] = useState([]);
 
   async function getRecent() {
-    const data = await fetch(`/api/v2/etc/recent/1`).then((res) => res.json());
+    const data = await fetch(`/api/v2/etc/recent/1`)
+      .then((res) => res.json())
+      .catch((err) => console.log(err));
 
     setRecentAdded(data?.results);
   }
@@ -118,13 +120,17 @@ export default function Home({ detail, populars, upComing }) {
 
   useEffect(() => {
     const getSchedule = async () => {
-      const res = await fetch(`/api/v2/etc/schedule`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`/api/v2/etc/schedule`);
+        const data = await res.json();
 
-      if (!res.ok) {
-        setSchedules(null);
-      } else {
-        setSchedules(data);
+        if (!res.ok) {
+          setSchedules(null);
+        } else {
+          setSchedules(data);
+        }
+      } catch (err) {
+        console.log(err);
       }
     };
     getSchedule();
@@ -155,7 +161,8 @@ export default function Home({ detail, populars, upComing }) {
     getRelease();
   }, [release]);
 
-  const [list, setList] = useState(null);
+  const [listAnime, setListAnime] = useState(null);
+  const [listManga, setListManga] = useState(null);
   const [planned, setPlanned] = useState(null);
   const [user, setUser] = useState(null);
   const [removed, setRemoved] = useState();
@@ -257,8 +264,14 @@ export default function Home({ detail, populars, upComing }) {
       if (!sessions?.user?.name) return;
 
       const getMedia =
-        current.filter((item) => item.status === "CURRENT")[0] || null;
-      const list = getMedia?.entries
+        currentAnime.find((item) => item.status === "CURRENT") || null;
+      const listAnime = getMedia?.entries
+        .map(({ media }) => media)
+        .filter((media) => media);
+
+      const getManga =
+        currentManga?.find((item) => item.status === "CURRENT") || null;
+      const listManga = getManga?.entries
         .map(({ media }) => media)
         .filter((media) => media);
 
@@ -266,15 +279,20 @@ export default function Home({ detail, populars, upComing }) {
         .map(({ media }) => media)
         .filter((media) => media);
 
-      if (list) {
-        setList(list);
+      if (listManga) {
+        setListManga(listManga);
+      }
+      if (listAnime) {
+        setListAnime(listAnime);
       }
       if (planned) {
         setPlanned(planned);
       }
     }
     userData();
-  }, [sessions?.user?.name, current, plan]);
+  }, [sessions?.user?.name, currentAnime, plan]);
+
+  // console.log({ recentAdded });
 
   return (
     <Fragment>
@@ -321,15 +339,8 @@ export default function Home({ detail, populars, upComing }) {
       </Head>
       <MobileNav sessions={sessions} hideProfile={true} />
 
+      <NewNavbar paddingY="pt-2 lg:pt-10" withNav={true} home={true} />
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd]">
-        <Navigasi />
-        <ToastContainer
-          pauseOnHover={false}
-          style={{
-            width: "400px",
-          }}
-        />
-
         {/* PC / TABLET */}
         <div className=" hidden justify-center lg:flex my-16">
           <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
@@ -359,8 +370,8 @@ export default function Home({ detail, populars, upComing }) {
                   draggable={false}
                   src={data.coverImage?.extraLarge || data.image}
                   alt={`cover ${data.title.english || data.title.romaji}`}
-                  width="0"
-                  height="0"
+                  width={1200}
+                  height={1200}
                   priority
                   className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay lg:h-[467px] lg:w-[322px]"
                 />
@@ -434,7 +445,7 @@ export default function Home({ detail, populars, upComing }) {
               </motion.section>
             )}
 
-            {sessions && list?.length > 0 && (
+            {sessions && listAnime?.length > 0 && (
               <motion.section // Add motion.div to each child component
                 key="listAnime"
                 initial={{ y: 20, opacity: 0 }}
@@ -445,8 +456,26 @@ export default function Home({ detail, populars, upComing }) {
                 <Content
                   ids="listAnime"
                   section="Your Watch List"
-                  data={list}
+                  data={listAnime}
                   og={prog}
+                  userName={sessions?.user?.name}
+                />
+              </motion.section>
+            )}
+
+            {sessions && listManga?.length > 0 && (
+              <motion.section // Add motion.div to each child component
+                key="listManga"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Content
+                  ids="listManga"
+                  section="Your Manga List"
+                  data={listManga}
+                  // og={prog}
                   userName={sessions?.user?.name}
                 />
               </motion.section>

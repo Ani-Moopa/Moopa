@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { parseCookies, setCookie } from "nookies";
+import Image from "next/image";
 
 function Footer() {
   const [year] = useState(new Date().getFullYear());
@@ -46,7 +47,7 @@ function Footer() {
   return (
     <footer className="flex-col w-full">
       <div className="text-[#dbdcdd] z-40 bg-[#0c0d10] lg:flex lg:h-[12rem] w-full lg:items-center lg:justify-between">
-        <div className="mx-auto flex w-[85%] lg:w-[95%] xl:w-[80%] flex-col space-y-10 py-6 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:py-0">
+        <div className="mx-auto flex w-[90%] lg:w-[95%] xl:w-[80%] flex-col space-y-10 py-6 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:py-0">
           <div className="flex flex-col gap-2">
             {/* <div className="flex items-center gap-2"> */}
             {/* <Image
@@ -56,7 +57,7 @@ function Footer() {
                 height={100}
                 className="w-10 h-10"
               /> */}
-            <p className="font-outfit text-4xl">moopa</p>
+            <div className="flex gap-2 font-outfit text-4xl">moopa</div>
             <p className="font-karla lg:text-[0.8rem] text-[0.65rem] text-[#9c9c9c]  lg:w-[520px] italic">
               This site does not store any files on our server, we only linked
               to the media which is hosted on 3rd party services.
@@ -80,7 +81,7 @@ function Footer() {
                   <Link href={`/${lang}/search/manga`}>Popular Manga</Link>
                 </li>
                 <li className="cursor-pointer hover:text-action">
-                  <Link href={`https://ko-fi.com/factiven`}>Donate</Link>
+                  <Link href={`/donate`}>Donate</Link>
                 </li>
               </ul>
               <ul className="flex flex-col gap-y-[0.7rem]">
@@ -156,10 +157,7 @@ function Footer() {
             </Link>
 
             {/* Kofi */}
-            <Link
-              href="https://ko-fi.com/factiven"
-              className="w-6 h-6 hover:opacity-75"
-            >
+            <Link href="/donate" className="w-6 h-6 hover:opacity-75">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="#fff"

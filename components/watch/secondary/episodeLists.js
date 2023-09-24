@@ -2,7 +2,7 @@ import Skeleton from "react-loading-skeleton";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function SecondarySide({
+export default function EpisodeLists({
   info,
   map,
   providerId,
@@ -13,11 +13,15 @@ export default function SecondarySide({
 }) {
   const progress = info.mediaListEntry?.progress;
   return (
-    <div className="lg:w-[35%] shrink-0 w-screen">
-      <h1 className="text-xl font-karla pl-4 pb-5 font-semibold">Up Next</h1>
+    <div className="w-screen lg:max-w-sm xl:max-w-xl">
+      <h1 className="text-xl font-karla pl-5 pb-5 font-semibold">Up Next</h1>
       <div className="flex flex-col gap-5 lg:pl-5 py-2 scrollbar-thin px-2 scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
         {episode && episode.length > 0 ? (
-          map?.some((item) => item.title && item.description) > 0 ? (
+          map?.some(
+            (item) =>
+              (item?.img || item?.image) &&
+              !item?.img?.includes("https://s4.anilist.co/")
+          ) > 0 ? (
             episode.map((item) => {
               const time = artStorage?.[item.id]?.timeWatched;
               const duration = artStorage?.[item.id]?.duration;
@@ -41,9 +45,14 @@ export default function SecondarySide({
                 >
                   <div className="w-[43%] lg:w-[40%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
                     <div className="relative">
-                      {/* {mapData?.image && ( */}
+                      {/* <div className="absolute inset-0 w-full h-full z-40" /> */}
                       <Image
-                        src={mapData?.image || info?.coverImage?.extraLarge}
+                        src={
+                          mapData?.img ||
+                          mapData?.image ||
+                          info?.coverImage?.extraLarge
+                        }
+                        draggable={false}
                         alt="Anime Cover"
                         width={1000}
                         height={1000}
@@ -88,10 +97,10 @@ export default function SecondarySide({
                     }`}
                   >
                     <h1 className="font-karla font-bold italic line-clamp-1">
-                      {mapData?.title}
+                      {mapData?.title || info?.title?.romaji}
                     </h1>
                     <p className="line-clamp-2 text-xs italic font-outfit font-extralight">
-                      {mapData?.description}
+                      {mapData?.description || `Episode ${item.number}`}
                     </p>
                   </div>
                 </Link>
@@ -107,7 +116,7 @@ export default function SecondarySide({
                     item.number
                   }${dub ? `&dub=${dub}` : ""}`}
                   key={item.id}
-                  className={`bg-secondary flex-center w-full h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
+                  className={`bg-secondary flex-center h-[50px] rounded-lg scale-100 transition-all duration-300 ease-out ${
                     item.id == watchId
                       ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
                       : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"

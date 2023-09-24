@@ -3,15 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import Footer from "../../../components/footer";
+import Footer from "@/components/shared/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
-import HistoryOptions from "../../../components/home/content/historyOptions";
+import HistoryOptions from "@/components/home/content/historyOptions";
 import Head from "next/head";
-import MobileNav from "../../../components/shared/MobileNav";
+import MobileNav from "@/components/shared/MobileNav";
 
 export default function PopularAnime({ sessions }) {
   const [data, setData] = useState(null);
@@ -154,7 +154,6 @@ export default function PopularAnime({ sessions }) {
         <title>Moopa - Recently Watched Episodes</title>
       </Head>
       <MobileNav sessions={sessions} />
-      <ToastContainer pauseOnHover={false} />
       <div className="flex flex-col gap-2 items-center min-h-screen w-screen px-2 relative pb-10">
         <div className="z-50 bg-primary pt-5 pb-3 shadow-md shadow-primary w-full fixed left-0 px-3">
           <Link href="/en" className="flex gap-2 items-center font-karla">
@@ -170,8 +169,6 @@ export default function PopularAnime({ sessions }) {
               const duration = i.duration;
               let prog = (time / duration) * 100;
               if (prog > 90) prog = 100;
-
-              console.log({ i });
 
               return (
                 <div
@@ -233,7 +230,7 @@ export default function PopularAnime({ sessions }) {
                         width={200}
                         height={200}
                         alt="Episode Thumbnail"
-                        className="w-fit group-hover:scale-[1.02] duration-300 ease-out z-10"
+                        className="w-full object-cover group-hover:scale-[1.02] duration-300 ease-out z-10"
                       />
                     )}
                   </Link>

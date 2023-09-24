@@ -3,11 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import Footer from "../../../components/footer";
+import Footer from "@/components/shared/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import Head from "next/head";
-import MobileNav from "../../../components/shared/MobileNav";
+import MobileNav from "@/components/shared/MobileNav";
 
 export default function PopularAnime({ sessions }) {
   const [data, setData] = useState(null);

@@ -23,7 +23,7 @@ export default function ThumbnailOnly({
       className="transition-all duration-200 ease-out lg:hover:scale-105 hover:ring-1 hover:ring-white cursor-pointer bg-secondary shrink-0 relative w-full h-[180px] sm:h-[130px] subpixel-antialiased rounded-md overflow-hidden"
     >
       <span className="absolute text-sm z-40 bottom-1 left-2 font-karla font-semibold text-white">
-        Episode {episode?.number}
+        Episode {episode?.number || 0}
       </span>
       <span
         className={`absolute bottom-7 left-0 h-[2px] bg-red-600`}
@@ -40,7 +40,7 @@ export default function ThumbnailOnly({
       {image && (
         <Image
           src={image || ""}
-          alt="epi image"
+          alt={`Episode ${episode?.number} Thumbnail`}
           width={500}
           height={500}
           className="object-cover w-full h-[150px] sm:h-[100px] z-20 brightness-75"

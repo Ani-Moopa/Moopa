@@ -1,10 +1,9 @@
 import Head from "next/head";
-import Footer from "../components/footer";
-import Navbar from "../components/navbar";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { parseCookies } from "nookies";
 import Image from "next/image";
+import Footer from "@/components/shared/footer";
 
 export default function Custom404() {
   const [lang, setLang] = useState("en");
@@ -31,7 +30,6 @@ export default function Custom404() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/svg/c.svg" />
       </Head>
-      <Navbar className="bg-[#0c0d10]" />
       <div className="min-h-screen w-screen flex flex-col items-center justify-center ">
         <Image
           width={500}

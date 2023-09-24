@@ -2,23 +2,21 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Content from "../../../components/home/content";
-import Modal from "../../../components/modal";
+import Content from "@/components/home/content";
+import Modal from "@/components/modal";
 
 import { signIn, useSession } from "next-auth/react";
-import AniList from "../../../components/media/aniList";
-import ListEditor from "../../../components/listEditor";
+import AniList from "@/components/media/aniList";
+import ListEditor from "@/components/listEditor";
 
-import { ToastContainer } from "react-toastify";
-
-import DetailTop from "../../../components/anime/mobile/topSection";
-import AnimeEpisode from "../../../components/anime/episode";
-import { useAniList } from "../../../lib/anilist/useAnilist";
-import Footer from "../../../components/footer";
-import { mediaInfoQuery } from "../../../lib/graphql/query";
-import MobileNav from "../../../components/shared/MobileNav";
-import redis from "../../../lib/redis";
-import Characters from "../../../components/anime/charactersCard";
+import DetailTop from "@/components/anime/mobile/topSection";
+import AnimeEpisode from "@/components/anime/episode";
+import { useAniList } from "@/lib/anilist/useAnilist";
+import Footer from "@/components/shared/footer";
+import { mediaInfoQuery } from "@/lib/graphql/query";
+import MobileNav from "@/components/shared/MobileNav";
+import redis from "@/lib/redis";
+import Characters from "@/components/anime/charactersCard";
 
 export default function Info({ info, color }) {
   const { data: session } = useSession();
@@ -117,7 +115,6 @@ export default function Info({ info, color }) {
           }&image=${info.bannerImage || info.coverImage.extraLarge}`}
         />
       </Head>
-      <ToastContainer pauseOnHover={false} />
       <Modal open={open} onClose={() => handleClose()}>
         <div>
           {!session && (
@@ -188,7 +185,7 @@ export default function Info({ info, color }) {
 
           {info?.characters?.edges && (
             <div className="w-full">
-              <Characters info={info?.characters?.edges}/>
+              <Characters info={info?.characters?.edges} />
             </div>
           )}
 

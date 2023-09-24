@@ -1,188 +1,15 @@
-import {
-  ArrowUpCircleIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/solid";
-
-import {
-  ArrowLeftIcon,
-  PlayIcon,
-  PlusIcon,
-  ShareIcon,
-  UserIcon,
-} from "@heroicons/react/24/solid";
+import { PlayIcon, PlusIcon, ShareIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useSearch } from "../../../lib/hooks/isOpenState";
 import { useEffect, useState } from "react";
 import { convertSecondsToTime } from "../../../utils/getTimes";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import InfoChip from "./reused/infoChip";
 import Description from "./reused/description";
-
-const getScrollPosition = (el = window) => ({
-  x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
-  y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop,
-});
-
-export function NewNavbar({ info, session, scrollP = 200, toTop = false }) {
-  const router = useRouter();
-  const [scrollPosition, setScrollPosition] = useState();
-  const { isOpen, setIsOpen } = useSearch();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(getScrollPosition());
-    };
-
-    // Add a scroll event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-  return (
-    <>
-      <nav
-        className={`fixed z-[200] top-0 py-3 px-5 w-full ${
-          scrollPosition?.y >= scrollP
-            ? "bg-tersier shadow-tersier shadow-sm"
-            : ""
-        } transition-all duration-200 ease-linear`}
-      >
-        <div className="flex items-center justify-between max-w-screen-2xl mx-auto">
-          <div className="flex w-full items-center gap-4">
-            {info ? (
-              <>
-                <button
-                  type="button"
-                  className="flex-center w-7 h-7 text-white"
-                  onClick={() => {
-                    // router.back();
-                    router.push("/en");
-                  }}
-                >
-                  <ArrowLeftIcon className="w-full h-full" />
-                </button>
-                <span
-                  className={`font-inter font-semibold w-[50%] line-clamp-1 select-none ${
-                    scrollPosition?.y >= scrollP + 80
-                      ? "opacity-100"
-                      : "opacity-0"
-                  } transition-all duration-200 ease-linear`}
-                >
-                  {info.title.romaji}
-                </span>
-              </>
-            ) : (
-              // <></>
-              <Link
-                href={"/en"}
-                className="flex-center text-white font-outfit text-2xl font-semibold"
-              >
-                moopa
-              </Link>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setIsOpen(true)}
-              className="flex-center w-[26px] h-[26px]"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 15l6 6m-11-4a7 7 0 110-14 7 7 0 010 14z"
-                ></path>
-              </svg>
-            </button>
-            {/* <div
-                className="bg-white"
-                // title={sessions ? "Go to Profile" : "Login With AniList"}
-              > */}
-            {session ? (
-              <div className="w-7 h-7 relative flex flex-col items-center group">
-                <button
-                  type="button"
-                  onClick={() =>
-                    router.push(`/en/profile/${session?.user.name}`)
-                  }
-                  className="rounded-full bg-white/30 overflow-hidden"
-                >
-                  <Image
-                    src={session?.user.image.large}
-                    alt="avatar"
-                    width={50}
-                    height={50}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-                <div className="hidden absolute z-50 w-28 text-center -bottom-20 text-white shadow-2xl opacity-0 bg-secondary p-1 py-2 rounded-md font-karla font-light invisible group-hover:visible group-hover:opacity-100 duration-300 transition-all md:grid place-items-center gap-1">
-                  <Link
-                    href={`/en/profile/${session?.user.name}`}
-                    className="hover:text-action"
-                  >
-                    Profile
-                  </Link>
-                  <div
-                    onClick={() => signOut("AniListProvider")}
-                    className="hover:text-action"
-                  >
-                    Log out
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => signIn("AniListProvider")}
-                title="Login With AniList"
-                className="w-7 h-7 bg-white/30 rounded-full overflow-hidden"
-              >
-                <UserIcon className="w-full h-full translate-y-2" />
-              </button>
-            )}
-            {/* </div> */}
-          </div>
-        </div>
-      </nav>
-      {toTop && (
-        <button
-          type="button"
-          onClick={() => {
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
-          }}
-          className={`${
-            scrollPosition?.y >= 180
-              ? "-translate-x-6 opacity-100"
-              : "translate-x-[100%] opacity-0"
-          } transform transition-all duration-300 ease-in-out fixed bottom-24 lg:bottom-14 right-0 z-[500]`}
-        >
-          <ArrowUpCircleIcon className="w-10 h-10 text-white" />
-        </button>
-      )}
-    </>
-  );
-}
+import { NewNavbar } from "@/components/shared/NavBar";
 
 export default function DetailTop({
   info,
-  session,
   statuses,
   handleOpen,
   watchUrl,
@@ -217,7 +44,7 @@ export default function DetailTop({
 
   return (
     <div className="gap-6 w-full px-3 pt-4 md:pt-10 flex flex-col items-center justify-center">
-      <NewNavbar info={info} session={session} />
+      <NewNavbar info={info} />
 
       {/* MAIN */}
       <div className="flex flex-col md:flex-row w-full items-center md:items-end gap-5 pt-12">

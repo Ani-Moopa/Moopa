@@ -11,17 +11,34 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA({
   reactStrictMode: false,
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "s4.anilist.co",
+        hostname: "**.*.*",
+      },
+      {
+        protocol: "https",
+        hostname: "**.**.*.*",
+      },
+      {
+        protocol: "https",
+        hostname: "simkl.in",
       },
     ],
   },
   distDir: process.env.BUILD_DIR || ".next",
   // Uncomment this if you want to use Docker
   // output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/donate",
+        destination: "https://ko-fi.com/factiven",
+        permanent: false,
+        basePath: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

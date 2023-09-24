@@ -1,7 +1,19 @@
+import { rateLimiterRedis, redis } from "@/lib/redis";
+
 const API_URL = process.env.API_URI;
 
 export default async function handler(req, res) {
   try {
+    if (redis) {
+      try {
+        const ipAddress = req.socket.remoteAddress;
+        await rateLimiterRedis.consume(ipAddress);
+      } catch (error) {
+        return res.status(429).json({
+          error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+        });
+      }
+    }
     const page = req.query.page || 1;
 
     var hasNextPage = true;

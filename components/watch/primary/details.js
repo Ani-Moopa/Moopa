@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useAniList } from "../../../../lib/anilist/useAnilist";
+import { useAniList } from "../../../lib/anilist/useAnilist";
 import Skeleton from "react-loading-skeleton";
-import DisqusComments from "../../../disqus";
+import DisqusComments from "../../disqus";
 import Image from "next/image";
 
 export default function Details({
@@ -17,7 +17,6 @@ export default function Details({
 }) {
   const [showComments, setShowComments] = useState(false);
   const { markPlanning } = useAniList(session);
-  const [url, setUrl] = useState(null);
 
   function handlePlan() {
     if (onList === false) {
@@ -27,14 +26,13 @@ export default function Details({
   }
 
   useEffect(() => {
-    const url = window.location.href;
     setShowComments(false);
-    setUrl(url);
   }, [id]);
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="px-4 pt-7 pb-4 h-full flex">
+      {/* <div className="px-4 pt-7 pb-4 h-full flex"> */}
+      <div className="pb-4 h-full flex">
         <div className="aspect-[9/13] h-[240px]">
           {info ? (
             <Image
@@ -58,7 +56,11 @@ export default function Details({
               Studios
             </h2>
             <div className="row-start-2">
-              {info ? info.studios.edges[0].node.name : <Skeleton width={80} />}
+              {info ? (
+                info.studios?.edges[0].node.name
+              ) : (
+                <Skeleton width={80} />
+              )}
             </div>
             <div className="hidden xxs:grid col-start-2 place-content-end relative">
               <div>
@@ -114,7 +116,8 @@ export default function Details({
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-3 px-4 pt-3">
+      {/* <div className="flex flex-wrap gap-3 px-4 pt-3"> */}
+      <div className="flex flex-wrap gap-3 pt-3">
         {info &&
           info.genres?.map((item, index) => (
             <div
@@ -125,7 +128,8 @@ export default function Details({
             </div>
           ))}
       </div>
-      <div className={`bg-secondary rounded-md mt-3 mx-3`}>
+      {/* <div className={`bg-secondary rounded-md mt-3 mx-3`}> */}
+      <div className={`bg-secondary rounded-md mt-3`}>
         {info && (
           <p
             dangerouslySetInnerHTML={{ __html: description }}
@@ -135,7 +139,7 @@ export default function Details({
       </div>
       {/* {<div className="mt-5 px-5"></div>} */}
       {!showComments && (
-        <div className="w-full flex justify-center py-2 font-karla px-3 lg:px-0">
+        <div className="w-full flex justify-center py-2 font-karla lg:px-0">
           <button
             onClick={() => setShowComments(true)}
             className={
@@ -164,14 +168,14 @@ export default function Details({
       )}
       {showComments && (
         <div>
-          {info && url && (
+          {info && (
             <div className="mt-5 px-5">
               <DisqusComments
                 key={id}
                 post={{
                   id: id,
                   title: info.title.romaji,
-                  url: url,
+                  url: window.location.href,
                   episode: epiNumber,
                   name: disqus,
                 }}

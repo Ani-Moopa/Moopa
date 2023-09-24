@@ -3,14 +3,13 @@ import { AnimatePresence, motion as m } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Navbar from "../../../components/navbar";
 import Head from "next/head";
-import Footer from "../../../components/footer";
+import Footer from "@/components/shared/footer";
 
 import Image from "next/image";
-import { aniAdvanceSearch } from "../../../lib/anilist/aniAdvanceSearch";
-import MultiSelector from "../../../components/search/dropdown/multiSelector";
-import SingleSelector from "../../../components/search/dropdown/singleSelector";
+import { aniAdvanceSearch } from "@/lib/anilist/aniAdvanceSearch";
+import MultiSelector from "@/components/search/dropdown/multiSelector";
+import SingleSelector from "@/components/search/dropdown/singleSelector";
 import {
   animeFormatOptions,
   formatOptions,
@@ -20,12 +19,12 @@ import {
   seasonOptions,
   tagsOption,
   yearOptions,
-} from "../../../components/search/selection";
-import InputSelect from "../../../components/search/dropdown/inputSelect";
+} from "@/components/search/selection";
+import InputSelect from "@/components/search/dropdown/inputSelect";
 import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
-import useDebounce from "../../../lib/hooks/useDebounce";
-// import { NewNavbar } from "../../../components/anime/mobile/topSection";
-// import { useSession } from "next-auth/react";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { NewNavbar } from "@/components/shared/NavBar";
+import MobileNav from "@/components/shared/MobileNav";
 
 export async function getServerSideProps(context) {
   const { param } = context.query;
@@ -211,9 +210,15 @@ export default function Card({
         <meta name="description" content="Search your favourites Anime/Manga" />
         <link rel="icon" href="/svg/c.svg" />
       </Head>
-      <Navbar />
-      {/* <NewNavbar session={session} /> */}
-      <main className="w-screen min-h-screen z-40">
+
+      <NewNavbar
+        scrollP={10}
+        withNav={true}
+        shrink={true}
+        paddingY="py-1 lg:py-3"
+      />
+      <MobileNav hideProfile={true} />
+      <main className="w-screen min-h-screen z-40 py-14 lg:py-24">
         <div className="max-w-screen-xl flex flex-col gap-3 mx-auto">
           <div className="w-full flex justify-between items-end gap-2 my-3 lg:gap-10 px-5 xl:px-0 relative">
             <div className="hidden lg:flex items-end w-full gap-5 z-50">

@@ -1,13 +1,13 @@
 {
   "name": "moopa",
-  "version": "4.0.7",
+  "version": "4.1.0",
   "private": true,
   "founder": "Factiven",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "export": "next build && next export",
-    "start": "next start -p $PORT",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "next-safe": "^3.4.1",
     "nextjs-progressbar": "^0.0.16",
     "nookies": "^2.5.2",
+    "rate-limiter-flexible": "^3.0.0",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",

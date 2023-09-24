@@ -1,5 +1,5 @@
 import axios from "axios";
-import redis from "../../../../lib/redis";
+import { rateLimiterRedis, redis } from "@/lib/redis";
 
 const API_KEY = process.env.API_KEY;
 
@@ -19,6 +19,14 @@ export default async function handler(req, res) {
   const id = req.query.id;
   let cached;
   if (redis) {
+    try {
+      const ipAddress = req.socket.remoteAddress;
+      await rateLimiterRedis.consume(ipAddress);
+    } catch (error) {
+      return res.status(429).json({
+        error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+      });
+    }
     cached = await redis.get(id);
   }
   if (cached) {

@@ -114,16 +114,17 @@ NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) wi
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 
 ## NextJS
-PROXY_URI="use this cors proxy https://github.com/Gratenes/m3u8CloudflareWorkerProxy, follow the instruction there on how to deploy it."
+PROXY_URI="This is what I use for proxying video https://github.com/chaycee/M3U8Proxy. Don't put / at the end of the url."
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
-API_KEY="this API key is used for schedules and manga page. get the key from https://anify.tv/discord"
-DISQUS_SHORTNAME='put your disqus shortname here. (optional)'
+API_KEY="this API key is used for schedules, anime and manga page. get the key from https://anify.tv/discord"
+DISQUS_SHORTNAME='put your disqus shortname here (optional)'
+# ADMIN_USERNAME=""
 
 ## Prisma
 DATABASE_URL="Your postgresql connection url"
 
 ## Redis
-# If you don't want to use redis, just comment the REDIS_URL
+# If you don't want to use redis, just comment the REDIS_URL (press ctrl + / on windows or cmd + / on mac)
 REDIS_URL="rediss://username:password@host:port"
 ```
 
