@@ -1,24 +1,24 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { NewNavbar } from "../../../components/anime/mobile/topSection";
 import Link from "next/link";
 import { CalendarIcon } from "@heroicons/react/24/solid";
 import { ClockIcon } from "@heroicons/react/24/outline";
-import Loading from "../../../components/shared/loading";
-import { timeStamptoAMPM, timeStamptoHour } from "../../../utils/getTimes";
+import Loading from "@/components/shared/loading";
+import { timeStamptoAMPM, timeStamptoHour } from "@/utils/getTimes";
 import {
   filterFormattedSchedule,
   filterScheduleByDay,
   sortScheduleByDay,
   transformSchedule,
-} from "../../../utils/schedulesUtils";
+} from "@/utils/schedulesUtils";
 
-import { scheduleQuery } from "../../../lib/graphql/query";
-import MobileNav from "../../../components/shared/MobileNav";
+import { scheduleQuery } from "@/lib/graphql/query";
+import MobileNav from "@/components/shared/MobileNav";
 
 import { useSession } from "next-auth/react";
-import redis from "../../../lib/redis";
+import { redis } from "@/lib/redis";
 import Head from "next/head";
+import { NewNavbar } from "@/components/shared/NavBar";
 
 const day = [
   "Sunday",
@@ -64,9 +64,6 @@ export async function getServerSideProps() {
   if (cachedData) {
     const scheduleByDay = JSON.parse(cachedData);
 
-    // const today = now.getDay();
-    // const todaySchedule = day[today];
-
     return {
       props: {
         schedule: scheduleByDay,
@@ -80,21 +77,6 @@ export async function getServerSideProps() {
     // Calculate weekStart from yesterday's 00:00:00
     const weekStart = yesterdayStart;
     const weekEnd = weekStart + 604800;
-
-    // const today = now.getDay();
-    // const todaySchedule = day[today];
-
-    // const now = new Date();
-    // const currentDayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-    // // Calculate the number of seconds until the current Saturday at 00:00:00
-    // const secondsUntilSaturday = (6 - currentDayOfWeek) * 24 * 60 * 60;
-
-    // // Calculate weekStart as the current time minus secondsUntilSaturday
-    // const weekStart = Math.floor(now.getTime() / 1000) - secondsUntilSaturday;
-
-    // // Calculate weekEnd as one week from weekStart
-    // const weekEnd = weekStart + 604800; // One week in seconds
 
     let page = 1;
     const airingSchedules = [];
@@ -283,8 +265,8 @@ export default function Schedule({ schedule }) {
         />
       </Head>
       <MobileNav sessions={session} hideProfile={true} />
+      <NewNavbar scrollP={10} toTop={true} />
       <div className="w-screen">
-        <NewNavbar scrollP={10} session={session} toTop={true} />
         <span className="absolute z-20 top-0 left-0 w-screen h-[190px] lg:h-[250px] bg-secondary overflow-hidden">
           <div className="absolute top-40 lg:top-36 w-full h-full bg-primary rounded-t-3xl xl:rounded-t-[50px]" />
         </span>
@@ -376,13 +358,13 @@ export default function Schedule({ schedule }) {
                                 key={m.id}
                                 // id={`same_${m.id}`}
                                 href={`/en/${m.type.toLowerCase()}/${m.id}`}
-                                className={`flex bg-secondary rounded group cursor-pointer ml-4 z-50`}
+                                className={`flex bg-secondary rounded group cursor-pointer overflow-hidden ml-4 z-50`}
                               >
                                 <Image
                                   src={m.coverImage.extraLarge}
                                   alt="image"
-                                  width="0"
-                                  height="0"
+                                  width={300}
+                                  height={300}
                                   className="w-[50px] h-[65px] object-cover shrink-0"
                                 />
                                 <div className="flex flex-col justify-center font-karla p-2">
@@ -469,31 +451,12 @@ export default function Schedule({ schedule }) {
                               <span className="tooltip">Airing Now</span>
                             </span>
                           </p>
-                          {/* <span
-                                className={`${
-                                  s.id === nextAiringAnime
-                                    ? "bg-orange-700 text-sm px-3 py-1 rounded-full font-bold text-white"
-                                    : ""
-                                } mx-auto`}
-                              >
-                                Airing Next
-                              </span> */}
-                          {/* </p> */}
-                          {/* {s.media?.bannerImage && (
-                              <Image
-                                src={s.media?.bannerImage}
-                                alt="banner"
-                                width="0"
-                                height="0"
-                                className="absolute pointer-events-none top-0 opacity-0 group-hover:opacity-10 transition-all duration-500 ease-linear -z-10 left-0 rounded-l w-full h-[250px] object-cover"
-                              />
-                            )} */}
                           <Image
                             src={m.coverImage.extraLarge}
                             alt="image"
-                            width="0"
-                            height="0"
-                            className="w-[50px] h-[65px] object-cover shrink-0"
+                            width={200}
+                            height={200}
+                            className="w-[50px] h-[65px] object-cover shrink-0 rounded-l"
                           />
                           <div className="flex flex-col justify-center font-karla p-2">
                             <h1 className="font-semibold line-clamp-1 text-sm group-hover:text-action transition-all duration-200 ease-out">

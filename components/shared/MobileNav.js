@@ -1,12 +1,12 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { CalendarIcon, ClockIcon, HomeIcon } from "@heroicons/react/24/outline";
-import { signIn, signOut } from "next-auth/react";
+import { CalendarIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
-export default function MobileNav({ sessions, hideProfile = false }) {
+export default function MobileNav({ hideProfile = false }) {
+  const { data: sessions } = useSession();
   const [isVisible, setIsVisible] = useState(false);
 
   const handleShowClick = () => {

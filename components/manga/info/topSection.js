@@ -28,6 +28,7 @@ export default function TopSection({ info, firstEp, setCookie }) {
           src={info.coverImage}
           width={500}
           height={500}
+          priority
           alt="cover image"
           className="hidden md:block object-cover h-[10rem] xs:h-[14rem] lg:h-[22rem] rounded-sm shadow-lg shadow-[#1b1b1f] bg-[#34343b]/20"
         />

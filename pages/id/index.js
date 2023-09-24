@@ -1,9 +1,9 @@
 import Head from "next/head";
 import React from "react";
-import Navbar from "../../components/navbar";
 import Image from "next/image";
 import Link from "next/link";
-import Footer from "../../components/footer";
+import Footer from "@/components/shared/footer";
+import { NewNavbar } from "@/components/shared/NavBar";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
         <link rel="icon" href="/svg/c.svg" />
       </Head>
       <main className="flex flex-col h-screen">
-        <Navbar className="bg-[#0c0d10] z-50" />
+        <NewNavbar />
         {/* Create an under construction page with tailwind css */}
         <div className="h-full w-screen flex-center flex-grow flex-col">
           <Image
@@ -26,7 +26,7 @@ export default function Home() {
             className="w-[26vw] md:w-[15vw]"
           />
           <h1 className="text-2xl sm:text-4xl xl:text-6x font-bold my-4">
-            🚧 We are still working on it 🚧
+            🚧 Work still on progress 🚧
           </h1>
           <p className="text-base sm:text-lg xl:text-x text-gray-300 mb-6 text-center">
             "Please be patient, as we're still working on this page and it will

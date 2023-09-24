@@ -7,7 +7,7 @@ import {
   deleteList,
   getEpisode,
   updateUserEpisode,
-} from "../../../../prisma/user";
+} from "@/prisma/user";
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);

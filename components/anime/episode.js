@@ -1,10 +1,10 @@
 import { useEffect, useState, Fragment } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import ChangeView from "./changeView";
+import ViewSelector from "./viewSelector";
 import ThumbnailOnly from "./viewMode/thumbnailOnly";
 import ThumbnailDetail from "./viewMode/thumbnailDetail";
 import ListMode from "./viewMode/listMode";
-import { convertSecondsToTime } from "../../utils/getTimes";
+import { toast } from "react-toastify";
 
 export default function AnimeEpisode({
   info,
@@ -93,8 +93,9 @@ export default function AnimeEpisode({
       !mapProviders ||
       mapProviders?.every(
         (item) =>
+          item?.img?.includes("https://s4.anilist.co/") ||
           item?.image?.includes("https://s4.anilist.co/") ||
-          item?.image === null
+          item?.img === null
       )
     ) {
       setView(3);
@@ -152,27 +153,106 @@ export default function AnimeEpisode({
     }
   }, [providerId, artStorage, info.id, session?.user?.name]);
 
+  let debounceTimeout;
+
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(async () => {
+        const res = await fetch(
+          `/api/v2/episode/${info.id}?releasing=${
+            info.status === "RELEASING" ? "true" : "false"
+          }${isDub ? "&dub=true" : ""}&refresh=true`
+        );
+        if (!res.ok) {
+          console.log(res);
+          toast.error("Something went wrong", {
+            position: "bottom-left",
+            autoClose: 3000,
+            hideProgressBar: true,
+            theme: "colored",
+          });
+          setProviders([]);
+          setLoading(false);
+        } else {
+          const data = await res.json();
+          const getMap = data.find((i) => i?.map === true);
+          let allProvider = data;
+
+          if (getMap) {
+            allProvider = data.filter((i) => {
+              if (i?.providerId === "gogoanime" && i?.map !== true) {
+                return null;
+              }
+              return i;
+            });
+            setMapProviders(getMap?.episodes);
+          }
+
+          if (allProvider.length > 0) {
+            const defaultProvider = allProvider.find(
+              (x) => x.providerId === "gogoanime" || x.providerId === "9anime"
+            );
+            setProviderId(
+              defaultProvider?.providerId || allProvider[0].providerId
+            ); // set to first provider id
+          }
+
+          setView(Number(localStorage.getItem("view")) || 3);
+          setArtStorage(JSON.parse(localStorage.getItem("artplayer_settings")));
+          setProviders(allProvider);
+          setLoading(false);
+        }
+      }, 1000);
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: true,
+        theme: "colored",
+      });
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col gap-5 px-3">
         <div className="flex lg:flex-row flex-col gap-5 lg:gap-0 justify-between ">
           <div className="flex justify-between">
-            <div className="flex items-center md:gap-5">
+            <div className="flex items-center gap-4 md:gap-5">
               {info && (
                 <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
                   Episodes
                 </h1>
               )}
-              {info.nextAiringEpisode?.timeUntilAiring && (
-                <p className="hidden md:block bg-gray-100 text-gray-900 rounded-md px-2 font-karla font-medium">
-                  Ep {info.nextAiringEpisode.episode}{" "}
-                  <span className="animate-pulse">{">>"}</span>{" "}
-                  <span className="font-bold">
-                    {convertSecondsToTime(
-                      info.nextAiringEpisode.timeUntilAiring
-                    )}{" "}
+              {info?.status !== "NOT_YET_RELEASED" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleRefresh();
+                    setProviders(null);
+                    setMapProviders(null);
+                  }}
+                  className="relative flex flex-col items-center w-5 h-5 group"
+                >
+                  <span className="absolute pointer-events-none z-40 opacity-0 -translate-y-8 group-hover:-translate-y-10 group-hover:opacity-100 font-karla shadow-tersier shadow-md whitespace-nowrap bg-secondary px-2 py-1 rounded transition-all duration-200 ease-out">
+                    Refresh Episodes
                   </span>
-                </p>
+                  <svg
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      clipRule="evenodd"
+                      fillRule="evenodd"
+                      d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                    />
+                  </svg>
+                </button>
               )}
             </div>
 
@@ -267,7 +347,7 @@ export default function AnimeEpisode({
               </>
             )}
 
-            <ChangeView
+            <ViewSelector
               view={view}
               setView={setView}
               episode={currentEpisodes}
@@ -301,7 +381,7 @@ export default function AnimeEpisode({
                           key={index}
                           index={index}
                           info={info}
-                          image={mapData?.image}
+                          image={mapData?.img || mapData?.image}
                           providerId={providerId}
                           episode={episode}
                           artStorage={artStorage}
@@ -312,7 +392,7 @@ export default function AnimeEpisode({
                       {view === 2 && (
                         <ThumbnailDetail
                           key={index}
-                          image={mapData?.image}
+                          image={mapData?.img || mapData?.image}
                           title={mapData?.title}
                           description={mapData?.description}
                           index={index}
@@ -346,7 +426,7 @@ export default function AnimeEpisode({
                 </div>
               )
             ) : (
-              <p>{providers.message}</p>
+              <p>{providers?.message}</p>
             )}
           </div>
         ) : (

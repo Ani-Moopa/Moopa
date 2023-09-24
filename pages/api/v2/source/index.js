@@ -1,3 +1,4 @@
+import { rateLimiterRedis, redis } from "@/lib/redis";
 import axios from "axios";
 
 const CONSUMET_URI = process.env.API_URI;
@@ -31,6 +32,17 @@ async function anifySource(providerId, watchId, episode, id, sub) {
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  if (redis) {
+    try {
+      const ipAddress = req.socket.remoteAddress;
+      await rateLimiterRedis.consume(ipAddress);
+    } catch (error) {
+      return res.status(429).json({
+        error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+      });
+    }
   }
 
   const { source, providerId, watchId, episode, id, sub = "sub" } = req.body;

@@ -1,5 +1,7 @@
 import axios from "axios";
-import redis from "../../../../lib/redis";
+import { rateLimitStrict, rateLimiterRedis, redis } from "@/lib/redis";
+import appendImagesToEpisodes from "@/utils/combineImages";
+import appendMetaToEpisodes from "@/utils/appendMetaToEpisodes";
 
 const CONSUMET_URI = process.env.API_URI;
 const API_KEY = process.env.API_KEY;
@@ -23,15 +25,27 @@ async function fetchConsumet(id, dub) {
       `${CONSUMET_URI}/meta/anilist/episodes/${id}`
     );
 
-    if (data?.message === "Anime not found") {
+    if (data?.message === "Anime not found" || data?.length < 1) {
       return [];
     }
+
+    const reformatted = data.map((item) => ({
+      id: item?.id || null,
+      title: item?.title || null,
+      img: item?.image || null,
+      number: item?.number || null,
+      createdAt: item?.createdAt || null,
+      description: item?.description || null,
+      url: item?.url || null,
+    }));
 
     const array = [
       {
         map: true,
         providerId: "gogoanime",
-        episodes: isAscending(data) ? data : data.reverse(),
+        episodes: isAscending(reformatted)
+          ? reformatted
+          : reformatted.reverse(),
       },
     ];
 
@@ -74,20 +88,60 @@ async function fetchAnify(id) {
   }
 }
 
+async function fetchCoverImage(id) {
+  try {
+    if (!process.env.API_KEY) {
+      return [];
+    }
+
+    const { data } = await axios.get(
+      `https://api.anify.tv/episode-covers/${id}?apikey=${API_KEY}`
+    );
+
+    if (!data) {
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching and processing data:", error.message);
+    return [];
+  }
+}
+
 export default async function handler(req, res) {
-  const { id, releasing = "false", dub = false } = req.query;
+  const { id, releasing = "false", dub = false, refresh = null } = req.query;
 
   // if releasing is true then cache for 10 minutes, if it false cache for 1 month;
   const cacheTime = releasing === "true" ? 60 * 10 : 60 * 60 * 24 * 30;
 
   let cached;
+  let meta;
 
   if (redis) {
-    cached = await redis.get(id);
-    console.log("using redis");
+    try {
+      const ipAddress = req.socket.remoteAddress;
+      refresh
+        ? await rateLimitStrict.consume(ipAddress)
+        : await rateLimiterRedis.consume(ipAddress);
+    } catch (error) {
+      return res.status(429).json({
+        error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+      });
+    }
+
+    if (refresh) {
+      await redis.del(id);
+      console.log("deleted cache");
+    } else {
+      cached = await redis.get(id);
+      console.log("using redis");
+    }
+
+    meta = await redis.get(`meta:${id}`);
   }
 
-  if (cached) {
+  if (cached && !refresh) {
     if (dub) {
       const filtered = JSON.parse(cached).filter((item) =>
         item.episodes.some((epi) => epi.hasDub === true)
@@ -96,27 +150,46 @@ export default async function handler(req, res) {
     } else {
       return res.status(200).json(JSON.parse(cached));
     }
-  }
+  } else {
+    const [consumet, anify, cover] = await Promise.all([
+      fetchConsumet(id, dub),
+      fetchAnify(id),
+      fetchCoverImage(id),
+    ]);
 
-  const [consumet, anify] = await Promise.all([
-    fetchConsumet(id, dub),
-    fetchAnify(id),
-  ]);
-
-  const data = [...consumet, ...anify];
-
-  if (redis && cacheTime !== null) {
-    await redis.set(id, JSON.stringify(data), "EX", cacheTime);
-  }
-
-  if (dub) {
-    const filtered = data.filter((item) =>
-      item.episodes.some((epi) => epi.hasDub === true)
+    const hasImage = consumet.map((i) =>
+      i.episodes.some(
+        (e) => e.img !== null || !e.img.includes("https://s4.anilist.co/")
+      )
     );
-    return res.status(200).json(filtered);
+
+    const rawData = [...consumet, ...anify];
+
+    let data = rawData;
+
+    if (meta) {
+      data = await appendMetaToEpisodes(rawData, JSON.parse(meta));
+    } else if (cover && cover?.length > 0 && !hasImage.includes(true))
+      data = await appendImagesToEpisodes(rawData, cover);
+
+    if (redis && cacheTime !== null) {
+      await redis.set(
+        id,
+        JSON.stringify(data.filter((i) => i.episodes.length > 0)),
+        "EX",
+        cacheTime
+      );
+    }
+
+    if (dub) {
+      const filtered = data.filter((item) =>
+        item.episodes.some((epi) => epi.hasDub === true)
+      );
+      return res.status(200).json(filtered);
+    }
+
+    console.log("fresh data");
+
+    return res.status(200).json(data.filter((i) => i.episodes.length > 0));
   }
-
-  console.log("fresh data");
-
-  return res.status(200).json(data);
 }

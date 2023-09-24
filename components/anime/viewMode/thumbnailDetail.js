@@ -32,8 +32,8 @@ export default function ThumbnailDetail({
             <Image
               src={image || ""}
               alt={`Episode ${epi?.number} Thumbnail`}
-              width={1000}
-              height={1000}
+              width={420}
+              height={236}
               className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
             />
           )}
@@ -41,7 +41,7 @@ export default function ThumbnailDetail({
             className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
             style={{
               width:
-                progress && artStorage && epi?.number <= progress
+                progress || (artStorage && epi?.number <= progress)
                   ? "100%"
                   : artStorage?.[epi?.id]
                   ? `${prog}%`
@@ -49,7 +49,7 @@ export default function ThumbnailDetail({
             }}
           />
           <span className="absolute bottom-2 left-2 font-karla font-semibold text-sm lg:text-lg">
-            Episode {epi?.number}
+            Episode {epi?.number || 0}
           </span>
           <div className="z-[9999] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-[1.5]">
             <svg
@@ -68,7 +68,7 @@ export default function ThumbnailDetail({
         className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-3`}
       >
         <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-          {title || `Episode ${epi?.number}`}
+          {title || `Episode ${epi?.number || 0}`}
         </h1>
         {description && (
           <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">

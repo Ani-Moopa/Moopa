@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import Navbar from "../../../components/navbar";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { getUser } from "../../../prisma/user";
-import { ToastContainer, toast } from "react-toastify";
+import { getUser } from "@/prisma/user";
+import { toast } from "react-toastify";
+import { NewNavbar } from "@/components/shared/NavBar";
 
 export default function MyList({ media, sessions, user, time, userSettings }) {
   const [listFilter, setListFilter] = useState("all");
@@ -57,8 +57,7 @@ export default function MyList({ media, sessions, user, time, userSettings }) {
       <Head>
         <title>My Lists</title>
       </Head>
-      <Navbar />
-      <ToastContainer pauseOnHover={false} />
+      <NewNavbar />
 
       <div className="w-screen lg:flex justify-between lg:px-10 xl:px-32 py-5 relative">
         <div className="lg:w-[30%] h-full mt-12 lg:mr-10 grid gap-5 mx-3 lg:mx-0 antialiased">

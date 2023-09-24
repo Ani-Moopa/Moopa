@@ -1,5 +1,7 @@
+import MobileNav from "@/components/shared/MobileNav";
+import { NewNavbar } from "@/components/shared/NavBar";
+import Footer from "@/components/shared/footer";
 import Head from "next/head";
-import Layout from "../../components/layout";
 
 export default function DMCA() {
   return (
@@ -18,11 +20,14 @@ export default function DMCA() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/svg/c.svg" />
       </Head>
-      <Layout>
+      <>
+        <NewNavbar withNav={true} scrollP={5} shrink={true} />
+
+        <MobileNav hideProfile={true} />
         <div className="min-h-screen z-20 flex w-screen justify-center items-center">
-          <div className="w-[75%] text-2xl gap-7 flex flex-col my-[10rem]">
+          <div className="px-5 lg:px-0 lg:w-[75%] text-2xl gap-7 flex flex-col my-[10rem]">
             <div className="flex">
-              <h1 className="text-4xl font-bold font-karla rounded-md bg-[#212121] p-3">
+              <h1 className="text-4xl font-bold font-karla rounded-md bg-secondary p-3">
                 DMCA - Disclaimer
               </h1>
             </div>
@@ -100,7 +105,8 @@ export default function DMCA() {
             </div>
           </div>
         </div>
-      </Layout>
+        <Footer />
+      </>
     </>
   );
 }

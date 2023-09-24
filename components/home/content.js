@@ -305,6 +305,7 @@ export default function Content({
                             anime.image ||
                             anime.coverImage?.extraLarge ||
                             anime.coverImage?.large ||
+                            anime?.coverImage ||
                             "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
                           }
                           alt={
@@ -336,7 +337,7 @@ export default function Content({
                           <p className="absolute z-40 text-center w-[86px] lg:w-[110px] top-1 -right-2 lg:top-[5.5px] lg:-right-2 font-karla text-sm lg:text-base">
                             Episode{" "}
                             <span className="text-white">
-                              {anime?.episodeNumber}
+                              {anime?.currentEpisode || anime?.episodeNumber}
                             </span>
                           </p>
                         </Fragment>
@@ -377,16 +378,6 @@ export default function Content({
                       className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
                     >
                       <div className="absolute flex flex-col gap-1 z-40 top-1 right-1 transition-all duration-200 ease-out opacity-0 group-hover/item:opacity-100 scale-90 group-hover/item:scale-100 group-hover/item:visible invisible ">
-                        {/* <button
-                          type="button"
-                          className="flex flex-col items-center group/delete relative"
-                          onClick={() => removeItem(i.watchId)}
-                        >
-                          <XMarkIcon className="w-6 h-6 shrink-0 bg-primary p-1 rounded-full hover:text-action scale-100 hover:scale-105 transition-all duration-200 ease-out" />
-                          <span className="absolute font-karla bg-secondary shadow-black shadow-2xl py-1 px-2 whitespace-nowrap text-white text-sm rounded-md right-7 -bottom-[2px] z-40 duration-300 transition-all ease-out group-hover/delete:visible group-hover/delete:scale-100 group-hover/delete:translate-x-0 group-hover/delete:opacity-100 opacity-0 translate-x-10 scale-50 invisible">
-                            Remove from history
-                          </span>
-                        </button> */}
                         <HistoryOptions
                           remove={removeItem}
                           watchId={i.watchId}
@@ -443,10 +434,10 @@ export default function Content({
                         {i?.image && (
                           <Image
                             src={i?.image}
-                            width="0"
-                            height="0"
+                            width={320}
+                            height={180}
                             alt="Episode Thumbnail"
-                            className="w-fit group-hover:scale-[1.02] duration-300 ease-out z-10"
+                            className="w-full object-cover group-hover:scale-[1.02] duration-300 ease-out z-10"
                           />
                         )}
                       </Link>

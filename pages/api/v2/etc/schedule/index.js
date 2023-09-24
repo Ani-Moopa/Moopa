@@ -1,6 +1,6 @@
 import axios from "axios";
 import cron from "cron";
-import redis from "../../../../../lib/redis";
+import { rateLimiterRedis, redis } from "@/lib/redis";
 
 const API_KEY = process.env.API_KEY;
 
@@ -43,6 +43,14 @@ export default async function handler(req, res) {
   try {
     let cached;
     if (redis) {
+      try {
+        const ipAddress = req.socket.remoteAddress;
+        await rateLimiterRedis.consume(ipAddress);
+      } catch (error) {
+        return res.status(429).json({
+          error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+        });
+      }
       cached = await redis.get("schedule");
     }
     if (cached) {
@@ -60,9 +68,9 @@ export default async function handler(req, res) {
             60 * 60 * 24 * 7
           );
         }
-        res.status(200).json(data);
+        return res.status(200).json(data);
       } else {
-        res.status(404).json({ message: "Schedule not found" });
+        return res.status(404).json({ message: "Schedule not found" });
       }
     }
   } catch (error) {

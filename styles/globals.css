@@ -258,6 +258,16 @@ input:checked ~ span:last-child {
   }
 }
 
+/* Player CSS */
+
+.art-video-player .art-bottom {
+  @apply bg-none;
+}
+
+.parent-player-title {
+  @apply pointer-events-none px-2 py-4 absolute bottom-[90dvh] bg-white w-full h-full bg-gradient-to-b from-black/50 from-5% to-50% to-transparent z-50;
+}
+
 /* Add this CSS to your global styles or a component-specific CSS file */
 pre {
   color: #f8f8f2;
