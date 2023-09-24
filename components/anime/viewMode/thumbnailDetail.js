@@ -32,7 +32,7 @@ export default function ThumbnailDetail({
             <Image
               src={image || ""}
               alt={`Episode ${epi?.number} Thumbnail`}
-              width={420}
+              width={520}
               height={236}
               className="object-cover z-30 rounded-lg h-[110px] lg:h-[160px] brightness-[65%]"
             />
