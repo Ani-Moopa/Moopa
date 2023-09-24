@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 16
 
       - name: Install dependencies
         run: bun install
@@ -47,8 +47,10 @@ jobs:
       - name: Check if temp directory exists
         run: |
           if [ ! -d "temp" ]; then
-            echo '\033[31m temp Directory not exists!\033[0m'
+            echo "temp Directory does not exist!"
             exit 1
+          else
+            echo "temp Directory exists."
           fi
 
       - name: Remove .next directory
@@ -56,6 +58,9 @@ jobs:
 
       - name: Move temp to .next directory
         run: mv temp .next
+
+      - name: Set HOME environment variable
+        run: echo 'export HOME=$HOME' >> $GITHUB_ENV
 
       - name: Set PORT
         run: echo "PORT=1000" >> $GITHUB_ENV
@@ -71,7 +76,7 @@ jobs:
 
       - name: Reload PM2
         run: |
-          pm2 stop 29
-          pm2 start 29 --update-env
+          pm2 stop moopa
+          pm2 start moopa --update-env
           pm2 save
-          service nginx restart
+          nginx -s reload
