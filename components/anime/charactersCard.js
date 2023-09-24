@@ -21,7 +21,7 @@ export default function Characters({ info }) {
                 {info.slice(0, showAll ? info.length : 6).map((item, index) => {
                     return <a key={index} className="md:hover:scale-[1.02] snap-start hover:shadow-lg scale-100 transition-transform duration-200 ease-out w-full cursor-default">
                         <div className="text-gray-300 space-x-4 col-span-1 flex w-full h-24 bg-secondary rounded-md">
-                            <div className="relative h-full w-16">
+                            <div className="relative h-full w-20">
                                 <Image
                                     draggable={false}
                                     src={
