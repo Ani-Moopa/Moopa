@@ -36,18 +36,23 @@ export default function App({
           data?.message !== "No broadcast" &&
           data?.message !== "unauthorized"
         ) {
-          toast(data.message + unixTimestampToRelativeTime(data.startAt), {
-            position: "top-center",
-            autoClose: false,
-            closeOnClick: true,
-            draggable: true,
-            theme: "colored",
-            className: "toaster",
-            style: {
-              background: "#232329",
-              color: "#fff",
-            },
-          });
+          toast(
+            `${data.message} ${
+              data?.startAt ? unixTimestampToRelativeTime(data.startAt) : ""
+            }`,
+            {
+              position: "top-center",
+              autoClose: false,
+              closeOnClick: true,
+              draggable: true,
+              theme: "colored",
+              className: "toaster",
+              style: {
+                background: "#232329",
+                color: "#fff",
+              },
+            }
+          );
         }
       } catch (err) {
         console.log(err);
