@@ -256,7 +256,11 @@ export default function Content({
                     className="flex flex-col gap-3 shrink-0 cursor-pointer"
                   >
                     <Link
-                      href={`/${lang}/anime/${anime.id}`}
+                      href={
+                        ids === "listManga"
+                          ? `/en/manga/${anime.id}`
+                          : `/${lang}/anime/${anime.id}`
+                      }
                       className="hover:scale-105 hover:shadow-lg duration-300 ease-out group relative"
                       title={anime.title.romaji}
                     >
@@ -345,7 +349,11 @@ export default function Content({
                     </Link>
                     {ids !== "onGoing" && (
                       <Link
-                        href={`/en/anime/${anime.id}`}
+                        href={
+                          ids === "listManga"
+                            ? `/en/manga/${anime.id}`
+                            : `/en/anime/${anime.id}`
+                        }
                         className="w-[135px] lg:w-[185px] line-clamp-2"
                         title={anime.title.romaji}
                       >

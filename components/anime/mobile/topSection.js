@@ -2,7 +2,7 @@ import { PlayIcon, PlusIcon, ShareIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { convertSecondsToTime } from "../../../utils/getTimes";
+import { convertSecondsToTime } from "@/utils/getTimes";
 import Link from "next/link";
 import InfoChip from "./reused/infoChip";
 import Description from "./reused/description";

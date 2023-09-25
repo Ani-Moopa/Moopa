@@ -152,15 +152,15 @@ export default function Info({ info, color }) {
       <MobileNav sessions={session} hideProfile={true} />
       <main className="w-screen min-h-screen relative flex flex-col items-center bg-primary gap-5">
         <div className="w-screen absolute">
-          <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[280px] w-screen z-10 inset-0" />
+          <div className="bg-gradient-to-t from-primary from-10% to-transparent absolute h-[280px] w-screen z-10 inset-0 backdrop-blur-[2px]" />
           {info?.bannerImage && (
             <Image
               src={info?.bannerImage}
-              priority={true}
               alt="banner anime"
               height={1000}
               width={1000}
-              className="object-cover blur-[2px] bg-image w-screen absolute top-0 left-0 h-[250px] brightness-[55%] z-0"
+              blurDataURL={info?.bannerImage}
+              className="object-cover bg-image w-screen absolute top-0 left-0 h-[250px] brightness-[55%] z-0"
             />
           )}
         </div>

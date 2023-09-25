@@ -64,6 +64,7 @@ export default function PlayerComponent({
   const [subtitle, setSubtitle] = useState();
   const [defSub, setDefSub] = useState();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -209,6 +210,13 @@ export default function PlayerComponent({
         art.currentTime = timeWatched;
       } else {
         art.currentTime = seekTime;
+      }
+    });
+
+    art.on("error", (error, reconnectTime) => {
+      if (error && reconnectTime >= 5) {
+        setError(true);
+        console.error("Error while loading video:", error);
       }
     });
 
@@ -436,7 +444,6 @@ export default function PlayerComponent({
    */
   const option = {
     url: url,
-    title: "title",
     autoplay: autoplay ? true : false,
     autoSize: false,
     fullscreen: true,
@@ -445,6 +452,10 @@ export default function PlayerComponent({
     setting: true,
     screenshot: true,
     hotkey: true,
+    pip: true,
+    fastForward: true,
+    airplay: true,
+    lock: true,
   };
 
   return (
@@ -453,24 +464,33 @@ export default function PlayerComponent({
       className={`${className} bg-black`}
       style={{ aspectRatio: aspectRatio }}
     >
-      <div className="w-full h-full">
-        {!loading && track && url && (
-          <NewPlayer
-            playerRef={playerRef}
-            res={resolution}
-            quality={source}
-            option={option}
-            provider={provider}
-            defSize={defSize}
-            defSub={defSub}
-            subSize={subSize}
-            subtitles={subtitle}
-            getInstance={getInstance}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
+      <div className="flex-center w-full h-full">
+        {!error ? (
+          !loading &&
+          track &&
+          url && (
+            <NewPlayer
+              playerRef={playerRef}
+              res={resolution}
+              quality={source}
+              option={option}
+              provider={provider}
+              defSize={defSize}
+              defSub={defSub}
+              subSize={subSize}
+              subtitles={subtitle}
+              getInstance={getInstance}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          )
+        ) : (
+          <p className="text-center">
+            Something went wrong while loading the video, <br />
+            please try from other source
+          </p>
         )}
       </div>
     </div>

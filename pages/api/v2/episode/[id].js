@@ -25,7 +25,7 @@ async function fetchConsumet(id, dub) {
       `${CONSUMET_URI}/meta/anilist/episodes/${id}`
     );
 
-    if (data?.message === "Anime not found" || data?.length < 1) {
+    if (data?.message === "Anime not found" && data?.length < 1) {
       return [];
     }
 
