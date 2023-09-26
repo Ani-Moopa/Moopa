@@ -12,6 +12,7 @@ export default function EpisodeLists({
   dub,
 }) {
   const progress = info.mediaListEntry?.progress;
+
   return (
     <div className="w-screen lg:max-w-sm xl:max-w-xl">
       <h1 className="text-xl font-karla pl-5 pb-5 font-semibold">Up Next</h1>
@@ -67,11 +68,11 @@ export default function EpisodeLists({
                         className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
                         style={{
                           width:
-                            progress && artStorage && item?.number <= progress
+                            progress !== undefined && progress >= item?.number
                               ? "100%"
-                              : artStorage?.[item?.id]
+                              : artStorage?.[item?.id] !== undefined
                               ? `${prog}%`
-                              : "0",
+                              : "0%",
                         }}
                       />
                       <span className="absolute bottom-2 left-2 font-karla font-bold text-sm">

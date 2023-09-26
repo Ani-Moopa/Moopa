@@ -29,7 +29,7 @@ export default function ThumbnailOnly({
         className={`absolute bottom-7 left-0 h-[2px] bg-red-600`}
         style={{
           width:
-            progress && artStorage && episode?.number <= progress
+            progress && episode?.number <= progress
               ? "100%"
               : artStorage?.[episode?.id]
               ? `${prog}%`

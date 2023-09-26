@@ -6,6 +6,7 @@ export default function ViewSelector({ view, setView, episode, map }) {
           episode?.length > 0
             ? map?.every(
                 (item) =>
+                  item?.img === null ||
                   item?.img?.includes("https://s4.anilist.co/") ||
                   item?.image?.includes("https://s4.anilist.co/") ||
                   item.title === null
@@ -33,6 +34,7 @@ export default function ViewSelector({ view, setView, episode, map }) {
               episode?.length > 0
                 ? map?.every(
                     (item) =>
+                      item?.img === null ||
                       item?.img?.includes("https://s4.anilist.co/") ||
                       item?.image?.includes("https://s4.anilist.co/") ||
                       item.title === null
@@ -52,6 +54,7 @@ export default function ViewSelector({ view, setView, episode, map }) {
           episode?.length > 0
             ? map?.every(
                 (item) =>
+                  item?.img === null ||
                   item?.img?.includes("https://s4.anilist.co/") ||
                   item?.image?.includes("https://s4.anilist.co/") ||
                   item.title === null
@@ -74,6 +77,7 @@ export default function ViewSelector({ view, setView, episode, map }) {
             episode?.length > 0
               ? map?.every(
                   (item) =>
+                    item?.img === null ||
                     item?.img?.includes("https://s4.anilist.co/") ||
                     item?.image?.includes("https://s4.anilist.co/") ||
                     item.title === null

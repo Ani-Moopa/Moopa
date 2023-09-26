@@ -4,7 +4,7 @@ import { FlagIcon, ShareIcon } from "@heroicons/react/24/solid";
 import Details from "@/components/watch/primary/details";
 import EpisodeLists from "@/components/watch/secondary/episodeLists";
 import { getServerSession } from "next-auth";
-import { useWatchProvider } from "@/lib/hooks/watchPageProvider";
+import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { authOptions } from "../../../api/auth/[...nextauth]";
 import { createList, createUser, getEpisode } from "@/prisma/user";
 import Link from "next/link";
@@ -289,6 +289,29 @@ export default function Watch({
     };
   }, [provider, watchId, info?.id]);
 
+  useEffect(() => {
+    const mediaSession = navigator.mediaSession;
+    if (!mediaSession) return;
+
+    const now = episodeNavigation?.playing;
+    const poster = now?.img || info?.bannerImage;
+    const title = now?.title || info?.title?.romaji;
+
+    const artwork = poster
+      ? [{ src: poster, sizes: "512x512", type: "image/jpeg" }]
+      : undefined;
+
+    mediaSession.metadata = new MediaMetadata({
+      title: title,
+      artist: `Moopa ${
+        title === info?.title?.romaji
+          ? "- Episode " + epiNumber
+          : `- ${info?.title?.romaji || info?.title?.english}`
+      }`,
+      artwork,
+    });
+  }, [episodeNavigation, info, epiNumber]);
+
   const handleShareClick = async () => {
     try {
       if (navigator.share) {
@@ -338,7 +361,6 @@ export default function Watch({
         <meta name="robots" content="index, follow" />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://moopa.live/" />
         <meta
           property="og:title"
           content={`Watch - ${
@@ -347,11 +369,18 @@ export default function Watch({
         />
         <meta
           property="og:description"
-          content="Discover your new favorite anime or manga title! Moopa offers a vast library of high-quality content, accessible on multiple devices and without any interruptions. Start using Moopa today!"
+          content={episodeNavigation?.playing?.description || info?.description}
         />
-        <meta property="og:image" content="/preview.png" />
+        <meta
+          property="og:image"
+          content={episodeNavigation?.playing?.img || info?.bannerImage}
+        />
         <meta property="og:site_name" content="Moopa" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:image"
+          content={episodeNavigation?.playing?.img || info?.bannerImage}
+        />
         <meta
           name="twitter:title"
           content={`Watch - ${
@@ -499,6 +528,7 @@ export default function Watch({
             >
               <EpisodeLists
                 info={info}
+                session={sessions}
                 map={mapEpisode}
                 providerId={provider}
                 watchId={watchId}

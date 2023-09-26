@@ -3,7 +3,7 @@ import { Combobox, Dialog, Menu, Transition } from "@headlessui/react";
 import useDebounce from "../lib/hooks/useDebounce";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useSearch } from "../lib/hooks/isOpenState";
+import { useSearch } from "../lib/context/isOpenState";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { useAniList } from "../lib/anilist/useAnilist";

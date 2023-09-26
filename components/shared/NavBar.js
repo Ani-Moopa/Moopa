@@ -1,4 +1,4 @@
-import { useSearch } from "@/lib/hooks/isOpenState";
+import { useSearch } from "@/lib/context/isOpenState";
 import { getCurrentSeason } from "@/utils/getTimes";
 import { ArrowLeftIcon, ArrowUpCircleIcon } from "@heroicons/react/20/solid";
 import { UserIcon } from "@heroicons/react/24/solid";

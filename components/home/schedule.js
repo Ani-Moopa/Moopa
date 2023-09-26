@@ -55,7 +55,7 @@ export default function Schedule({ data, scheduleData, anime, update }) {
             <div className="w-1/2 lg:w-2/5 hidden lg:block font-medium font-karla leading-[2.9rem] text-white line-clamp-1">
               <Link
                 href={`/en/anime/${data.id}`}
-                className="hover:underline underline-offset-4 decoration-2 lg:text-[1.7vw] "
+                className="hover:underline underline-offset-4 decoration-2 leading-3 lg:text-[1.5vw] "
               >
                 {data.title.romaji || data.title.english || data.title.native}
               </Link>

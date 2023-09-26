@@ -2,10 +2,9 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.1.1
+## 🎉 Update v4.1.2
 
 ### Fixed
 
-- Another patch API episode route
-- Manga list at homepage send user to anime page
-- Video progress doesn't showed up on episode thumbnail
+- Improvement on episode thumbnail when showing progress
+- Resolved mediaSession not showing on mobile devices

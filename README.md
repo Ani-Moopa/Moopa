@@ -50,7 +50,7 @@
 
 ## Introduction
 
-<p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by <a href="https://github.com/consumet">Consumet API</a> build with <a href="https://github.com/vercel/next.js/">NextJs</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a> with a sleek and modern design that offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not feature any ads, making it a great option for you who want an uninterrupted viewing experience.</p>
+<p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by the <a href="https://github.com/consumet">Consumet API</a>, built with <a href="https://github.com/vercel/next.js/">Next.js</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a>, featuring a sleek and modern design. It offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not display any ads, making it a great option for those who want an uninterrupted viewing experience.</p>
 
 ## Features
 
@@ -80,7 +80,7 @@ If you encounter any issues or bug on the site please head to [issues](https://g
 
 ## For Local Development
 
-> If you host this site for personal use, please refrain from cloning it or adding ads. This project is non-profit and ads may violate its terms, leading to legal action or site takedown. Uphold these guidelines to maintain its integrity and mission.
+> If you want to self-host this app, please note that it is only allowed for personal use. Commercial use is not permitted, and including ads on your self-hosted site may result in actions such as site takedown.
 
 1. Clone this repository using :
 

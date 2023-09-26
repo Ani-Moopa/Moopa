@@ -10,7 +10,7 @@ export default function Description({
         className={`${
           info?.description?.replace(/<[^>]*>/g, "").length > 240
             ? ""
-            : "pointer-events-none"
+            : "pointer-events-none hidden"
         } ${
           readMore ? "hidden" : ""
         } absolute z-30 flex items-end justify-center top-0 w-full h-full transition-all duration-200 ease-linear md:opacity-0 md:hover:opacity-100 bg-gradient-to-b from-transparent to-primary to-95%`}

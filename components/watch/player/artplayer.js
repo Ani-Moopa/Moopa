@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
-import { useWatchProvider } from "../../../lib/hooks/watchPageProvider";
+import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { seekBackward, seekForward } from "./component/overlay";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 
@@ -10,6 +10,7 @@ export default function NewPlayer({
   option,
   getInstance,
   provider,
+  track,
   defSub,
   defSize,
   subtitles,
@@ -273,6 +274,46 @@ export default function NewPlayer({
         seekForward,
       ],
     });
+
+    if ("mediaSession" in navigator) {
+      art.on("video:timeupdate", () => {
+        const session = navigator.mediaSession;
+        if (!session) return;
+        session.setPositionState({
+          duration: art.duration,
+          playbackRate: art.playbackRate,
+          position: art.currentTime,
+        });
+      });
+
+      navigator.mediaSession.setActionHandler("play", () => {
+        art.play();
+      });
+
+      navigator.mediaSession.setActionHandler("pause", () => {
+        art.pause();
+      });
+
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        if (track?.prev) {
+          router.push(
+            `/en/anime/watch/${id}/${provider}?id=${encodeURIComponent(
+              track?.prev?.id
+            )}&num=${track?.prev?.number}`
+          );
+        }
+      });
+
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        if (track?.next) {
+          router.push(
+            `/en/anime/watch/${id}/${provider}?id=${encodeURIComponent(
+              track?.next?.id
+            )}&num=${track?.next?.number}`
+          );
+        }
+      });
+    }
 
     playerRef.current = art;
 

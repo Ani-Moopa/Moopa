@@ -41,9 +41,9 @@ export default function ThumbnailDetail({
             className={`absolute bottom-0 left-0 h-[2px] bg-red-700`}
             style={{
               width:
-                progress || (artStorage && epi?.number <= progress)
+                progress !== undefined && progress >= epi?.number
                   ? "100%"
-                  : artStorage?.[epi?.id]
+                  : artStorage?.[epi?.id] !== undefined
                   ? `${prog}%`
                   : "0%",
             }}

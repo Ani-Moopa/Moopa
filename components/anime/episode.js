@@ -34,12 +34,16 @@ export default function AnimeEpisode({
           info.status === "RELEASING" ? "true" : "false"
         }${isDub ? "&dub=true" : ""}`
       ).then((res) => res.json());
-      const getMap = response.find((i) => i?.map === true);
+      const getMap = response.find((i) => i?.map === true) || response[0];
       let allProvider = response;
 
       if (getMap) {
         allProvider = response.filter((i) => {
-          if (i?.providerId === "gogoanime" && i?.map !== true) {
+          if (
+            i?.providerId === "gogoanime" &&
+            i?.providerId === "9anime" &&
+            i?.map !== true
+          ) {
             return null;
           }
           return i;
@@ -122,7 +126,6 @@ export default function AnimeEpisode({
 
   useEffect(() => {
     if (artStorage) {
-      // console.log({ artStorage });
       const currentData =
         JSON.parse(localStorage.getItem("artplayer_settings")) || {};
 
@@ -138,15 +141,18 @@ export default function AnimeEpisode({
       }
 
       if (!session?.user?.name) {
-        setProgress(
-          Object.keys(updatedData).length > 0
-            ? Math.max(
-                ...Object.keys(updatedData).map(
-                  (key) => updatedData[key].episode
-                )
-              )
-            : 0
+        const maxWatchedEpisode = Object.keys(updatedData).reduce(
+          (maxEpisode, key) => {
+            const episodeData = updatedData[key];
+            if (episodeData.timeWatched >= episodeData.duration * 0.9) {
+              return Math.max(maxEpisode, episodeData.episode);
+            }
+            return maxEpisode;
+          },
+          0
         );
+
+        setProgress(maxWatchedEpisode);
       } else {
         return;
       }
@@ -177,7 +183,7 @@ export default function AnimeEpisode({
           setLoading(false);
         } else {
           const data = await res.json();
-          const getMap = data.find((i) => i?.map === true);
+          const getMap = data.find((i) => i?.map === true) || data[0];
           let allProvider = data;
 
           if (getMap) {

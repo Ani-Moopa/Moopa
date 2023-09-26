@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import NewPlayer from "./artplayer";
 import { icons } from "./component/overlay";
-import { useWatchProvider } from "../../../lib/hooks/watchPageProvider";
+import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { useRouter } from "next/router";
-import { useAniList } from "../../../lib/anilist/useAnilist";
+import { useAniList } from "@/lib/anilist/useAnilist";
 
 export function calculateAspectRatio(width, height) {
   const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
@@ -475,6 +475,7 @@ export default function PlayerComponent({
               quality={source}
               option={option}
               provider={provider}
+              track={track}
               defSize={defSize}
               defSub={defSub}
               subSize={subSize}

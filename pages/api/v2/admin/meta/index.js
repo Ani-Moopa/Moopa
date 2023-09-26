@@ -27,12 +27,6 @@ export default async function handler(req, res) {
         });
       }
 
-      const getId = await redis.get(`meta:${id}`);
-      if (getId) {
-        return res
-          .status(200)
-          .json({ message: `Data already exist for id: ${id}` });
-      }
       await redis.set(`meta:${id}`, JSON.stringify(data));
       return res
         .status(200)
