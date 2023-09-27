@@ -50,12 +50,12 @@ export default function Schedule({ data, scheduleData, anime, update }) {
       </h1>
       <div className="rounded mb-5 shadow-md shadow-black">
         <div className="overflow-hidden w-full h-[96px] lg:h-[10rem] rounded relative">
-          <div className="absolute flex flex-col justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-tersier to-transparent w-full h-full">
+          <div className="absolute flex flex-col lg:gap-1 justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-tersier to-transparent w-full h-full">
             <h1 className="text-xs lg:text-lg">Coming Up Next!</h1>
-            <div className="w-1/2 lg:w-2/5 hidden lg:block font-medium font-karla leading-[2.9rem] text-white line-clamp-1">
+            <div className="w-1/2 lg:w-2/5 hidden lg:block font-karla font-medium">
               <Link
                 href={`/en/anime/${data.id}`}
-                className="hover:underline underline-offset-4 decoration-2 leading-3 lg:text-[1.5vw] "
+                className="hover:underline underline-offset-4 decoration-2 leading-3 lg:text-[1.5vw]"
               >
                 {data.title.romaji || data.title.english || data.title.native}
               </Link>

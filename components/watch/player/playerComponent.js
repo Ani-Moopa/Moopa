@@ -453,7 +453,6 @@ export default function PlayerComponent({
     screenshot: true,
     hotkey: true,
     pip: true,
-    fastForward: true,
     airplay: true,
     lock: true,
   };

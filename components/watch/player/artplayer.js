@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
 import Hls from "hls.js";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
-import { seekBackward, seekForward } from "./component/overlay";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 
 export default function NewPlayer({
@@ -270,8 +269,26 @@ export default function NewPlayer({
             setTheaterMode((prev) => !prev);
           },
         },
-        seekBackward,
-        seekForward,
+        {
+          index: 10,
+          name: "fast-rewind",
+          position: "left",
+          html: '<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20"><path fill="currentColor" d="M17.959 4.571L10.756 9.52s-.279.201-.279.481s.279.479.279.479l7.203 4.951c.572.38 1.041.099 1.041-.626V5.196c0-.727-.469-1.008-1.041-.625zm-9.076 0L1.68 9.52s-.279.201-.279.481s.279.479.279.479l7.203 4.951c.572.381 1.041.1 1.041-.625v-9.61c0-.727-.469-1.008-1.041-.625z"></path></svg>',
+          tooltip: "Backward 5s",
+          click: function () {
+            art.backward = 5;
+          },
+        },
+        {
+          index: 11,
+          name: "fast-forward",
+          position: "left",
+          html: '<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20"><path fill="currentColor" d="M9.244 9.52L2.041 4.571C1.469 4.188 1 4.469 1 5.196v9.609c0 .725.469 1.006 1.041.625l7.203-4.951s.279-.199.279-.478c0-.28-.279-.481-.279-.481zm9.356.481c0 .279-.279.478-.279.478l-7.203 4.951c-.572.381-1.041.1-1.041-.625V5.196c0-.727.469-1.008 1.041-.625L18.32 9.52s.28.201.28.481z"></path></svg>',
+          tooltip: "Forward 5s",
+          click: function () {
+            art.forward = 5;
+          },
+        },
       ],
     });
 

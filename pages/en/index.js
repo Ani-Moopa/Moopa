@@ -404,7 +404,7 @@ export default function Home({ detail, populars, upComing }) {
 
         <div className="lg:mt-16 mt-5 flex flex-col gap-5 items-center">
           <motion.div
-            className="w-screen flex-none lg:w-[87%]"
+            className="w-screen flex-none lg:w-[95%] xl:w-[87%]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop
@@ -516,7 +516,7 @@ export default function Home({ detail, populars, upComing }) {
           </motion.div>
 
           <motion.div
-            className="w-screen flex-none lg:w-[87%]"
+            className="w-screen flex-none lg:w-[95%] xl:w-[87%]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, staggerChildren: 0.2 }} // Add staggerChildren prop

@@ -14,7 +14,7 @@ export default function EpisodeLists({
   const progress = info.mediaListEntry?.progress;
 
   return (
-    <div className="w-screen lg:max-w-sm xl:max-w-xl">
+    <div className="w-screen lg:max-w-sm xl:max-w-lg">
       <h1 className="text-xl font-karla pl-5 pb-5 font-semibold">Up Next</h1>
       <div className="flex flex-col gap-5 lg:pl-5 py-2 scrollbar-thin px-2 scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
         {episode && episode.length > 0 ? (
@@ -44,7 +44,7 @@ export default function EpisodeLists({
                       : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                   }`}
                 >
-                  <div className="w-[43%] lg:w-[40%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
+                  <div className="w-[43%] lg:w-[42%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
                     <div className="relative">
                       {/* <div className="absolute inset-0 w-full h-full z-40" /> */}
                       <Image
@@ -75,7 +75,7 @@ export default function EpisodeLists({
                               : "0%",
                         }}
                       />
-                      <span className="absolute bottom-2 left-2 font-karla font-bold text-sm">
+                      <span className="absolute bottom-2 left-2 font-karla font-bold text-sm text-white">
                         Episode {item?.number}
                       </span>
                       {item.id == watchId && (

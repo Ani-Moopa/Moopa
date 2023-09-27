@@ -442,7 +442,7 @@ export default function Watch({
           <div
             id="default"
             className={`${
-              theaterMode ? "lg:max-w-[80%]" : "lg:max-w-[95%]"
+              theaterMode ? "lg:max-w-[95%] xl:max-w-[80%]" : "lg:max-w-[95%]"
             } w-full flex flex-col lg:flex-row mx-auto`}
           >
             <div id="primary" className="w-full">
