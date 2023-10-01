@@ -1,0 +1,38 @@
+name: Create Pre-Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "pre-release.md"
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Get version from package.json
+        id: app-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Create Pre-Release
+        id: create_prerelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: pre-v${{ steps.app-version.outputs.current-version}}
+          release_name: Moopa pre-v${{ steps.app-version.outputs.current-version}}
+          body_path: "pre-release.md"
+          draft: false
+          prerelease: true
