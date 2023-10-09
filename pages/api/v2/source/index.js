@@ -21,7 +21,7 @@ async function anifySource(providerId, watchId, episode, id, sub) {
     const { data } = await axios.get(
       `https://api.anify.tv/sources?providerId=${providerId}&watchId=${encodeURIComponent(
         watchId
-      )}&episode=${episode}&id=${id}&subType=${sub}&apikey=${API_KEY}`
+      )}&episodeNumber=${episode}&id=${id}&subType=${sub}&apikey=${API_KEY}`
     );
     return data;
   } catch (error) {
