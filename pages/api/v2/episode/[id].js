@@ -73,15 +73,8 @@ async function fetchAnify(id) {
     const filtered = data.filter(
       (item) => item.providerId !== "animepahe" && item.providerId !== "kass"
     );
-    const modifiedData = filtered.map((provider) => {
-      if (provider.providerId === "gogoanime") {
-        const reversedEpisodes = [...provider.episodes].reverse();
-        return { ...provider, episodes: reversedEpisodes };
-      }
-      return provider;
-    });
 
-    return modifiedData;
+    return filtered;
   } catch (error) {
     console.error("Error fetching and processing data:", error.message);
     return [];
@@ -95,7 +88,7 @@ async function fetchCoverImage(id) {
     }
 
     const { data } = await axios.get(
-      `https://api.anify.tv/episode-covers/${id}?apikey=${API_KEY}`
+      `https://api.anify.tv/content-metadata/${id}?apikey=${API_KEY}`
     );
 
     if (!data) {
@@ -163,7 +156,7 @@ export default async function handler(req, res) {
       )
     );
 
-    const rawData = [...consumet, ...anify];
+    const rawData = [...consumet, ...(anify[0]?.data ?? [])];
 
     let data = rawData;
 
