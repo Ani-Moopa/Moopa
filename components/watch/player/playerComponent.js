@@ -91,8 +91,8 @@ export default function PlayerComponent({
 
     async function compiler() {
       try {
-        const referer = JSON.stringify(data?.headers);
-        const source = data?.sources?.map((items) => {
+        const referer = data?.headers?.Referer;
+        const source = data.sources.map((items) => {
           const isDefault =
             provider !== "gogoanime"
               ? items.quality === "default" || items.quality === "auto"
@@ -101,12 +101,15 @@ export default function PlayerComponent({
               : items.quality === resolution;
           return {
             ...(isDefault && { default: true }),
-            html: items.quality === "default" ? "main" : items.quality,
-            url: `${proxy}/proxy/m3u8/${encodeURIComponent(
-              String(items.url)
-            )}/${encodeURIComponent(String(referer))}`,
+            html: items.quality === "default" ? "adaptive" : items.quality,
+            url:
+              provider === "gogoanime"
+                ? `https://cors.moopa.workers.dev/?url=${encodeURIComponent(
+                    items.url
+                  )}${referer ? `&referer=${encodeURIComponent(referer)}` : ""}`
+                : `${proxy}${items.url}`,
           };
-        });
+});
 
         const defSource = source?.find((i) => i?.default === true);
 
