@@ -37,6 +37,8 @@ export default function NewPlayer({
   }
 
   useEffect(() => {
+    Artplayer.PLAYBACK_RATE = [0.5, 0.75, 1, 1.15, 1.2, 1.5, 1.7, 2];
+
     const art = new Artplayer({
       ...option,
       container: artRef.current,
