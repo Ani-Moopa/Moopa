@@ -446,6 +446,7 @@ export default function PlayerComponent({
     url: url,
     autoplay: autoplay ? true : false,
     autoSize: false,
+    playbackRate: true,
     fullscreen: true,
     autoOrientation: true,
     icons: icons,
