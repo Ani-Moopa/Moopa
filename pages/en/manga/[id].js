@@ -90,6 +90,10 @@ export async function getServerSideProps(context) {
   const key = process.env.API_KEY;
   const data = await getAnifyInfo(id, key);
 
+  const chapters = await fetch("https://api.anify.tv/chapters/" + id).then((res) => res.json());
+
+  const aniListId = data.mappings.filter((i) => i.providerId === "anilist")[0]?.id || null;
+
   let userManga = null;
 
   if (session) {
@@ -120,7 +124,7 @@ export async function getServerSideProps(context) {
             }
         `,
         variables: {
-          id: parseInt(id),
+          id: parseInt(aniListId),
         },
       }),
     });
@@ -131,11 +135,17 @@ export async function getServerSideProps(context) {
     }
   }
 
-  if (!data?.chapters) {
+  if (!Array.isArray(chapters)) {
     return {
       notFound: true,
     };
   }
+
+  Object.assign(data, {
+    chapters: {
+      data: chapters,
+    },
+  })
 
   return {
     props: {

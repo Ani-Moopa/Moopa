@@ -247,7 +247,16 @@ export async function getServerSideProps(context) {
 
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  const data = await getAnifyPage(mediaId, providerId, chapterId, key);
+  const chapters = await fetch("https://api.anify.tv/chapters/" + mediaId).then((res) => res.json());
+
+  const currentChapter = chapters.find((x) => x.providerId === providerId)?.chapters.find((x) => x.id === chapterId);
+  if (!currentChapter) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const data = await getAnifyPage(mediaId, providerId, currentChapter, key);
 
   if (data.error) {
     return {
