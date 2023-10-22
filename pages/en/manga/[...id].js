@@ -347,14 +347,14 @@ export async function getServerSideProps(context) {
       },
     };
   } else {
-    const getCached = await redis.get(`mangaPage:${mangadexId}`);
+    if (redis) {
+      const getCached = await redis.get(`mangaPage:${mangadexId}`);
 
-    if (getCached) {
-      cached = JSON.parse(getCached);
+      if (getCached) {
+        cached = JSON.parse(getCached);
+      }
     }
-
     // let chapters;
-
     if (cached) {
       data = cached.data;
       info = cached.info;
@@ -389,12 +389,15 @@ export async function getServerSideProps(context) {
         color: textColor,
       };
 
-      await redis.set(
-        `mangaPage:${mangadexId}`,
-        JSON.stringify({ data, info, color }),
-        "ex",
-        60 * 60 * 24
-      );
+      if(redis)
+      {
+        await redis.set(
+          `mangaPage:${mangadexId}`,
+          JSON.stringify({ data, info, color }),
+          "ex",
+          60 * 60 * 24
+        );
+      }
     }
   }
 
