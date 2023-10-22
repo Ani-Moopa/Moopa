@@ -28,6 +28,8 @@ function Footer() {
       setLang("id");
       setChecked(true);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function switchLang() {

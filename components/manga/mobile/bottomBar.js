@@ -1,3 +1,4 @@
+import { getHeaders } from "@/utils/imageUtils";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -14,12 +15,15 @@ export default function BottomBar({
   nextChapter,
   currentPage,
   chapter,
-  page,
+  data,
   setSeekPage,
   setIsOpen,
+  number,
+  mangadexId,
 }) {
   const [openPage, setOpenPage] = useState(false);
   const router = useRouter();
+
   return (
     <div
       className={`fixed lg:hidden flex flex-col gap-3 z-50 h-auto w-screen ${
@@ -39,7 +43,9 @@ export default function BottomBar({
               router.push(
                 `/en/manga/read/${
                   chapter.providerId
-                }?id=${id}&chapterId=${encodeURIComponent(prevChapter)}`
+                }?id=${mangadexId}&chapterId=${encodeURIComponent(
+                  prevChapter.id
+                )}${id > 6 ? "" : `&anilist=${id}`}&num=${prevChapter.number}`
               )
             }
           >
@@ -56,7 +62,9 @@ export default function BottomBar({
               router.push(
                 `/en/manga/read/${
                   chapter.providerId
-                }?id=${id}&chapterId=${encodeURIComponent(nextChapter)}`
+                }?id=${mangadexId}&chapterId=${encodeURIComponent(
+                  nextChapter.id
+                )}${id > 6 ? "" : `&anilist=${id}`}&num=${nextChapter.number}`
               )
             }
           >
@@ -82,13 +90,14 @@ export default function BottomBar({
             <RectangleStackIcon className="w-5 h-5" />
           </button>
         </div>
-        <span className="flex bg-secondary shadow-lg ring-1 ring-black ring-opacity-5 p-2 rounded-md">{`${currentPage}/${page.length}`}</span>
+        <span className="flex bg-secondary shadow-lg ring-1 ring-black ring-opacity-5 p-2 rounded-md">{`${currentPage}/${data?.length}`}</span>
       </div>
       {openPage && (
         <div className="bg-secondary flex justify-center h-full w-screen py-2">
           <div className="flex overflow-scroll">
-            {Array.isArray(page) ? (
-              page.map((x) => {
+            {Array.isArray(data) ? (
+              data.map((x, index) => {
+                const indx = index + 1;
                 return (
                   <div
                     key={x.url}
@@ -101,9 +110,18 @@ export default function BottomBar({
                       <Image
                         src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                           x.url
-                        )}&headers=${encodeURIComponent(
-                          JSON.stringify({ Referer: x.headers.Referer })
-                        )}`}
+                        )}${
+                          x?.headers?.Referer
+                            ? `&headers=${encodeURIComponent(
+                                JSON.stringify(x?.headers)
+                              )}`
+                            : `&headers=${encodeURIComponent(
+                                JSON.stringify(getHeaders(chapter.providerId))
+                              )}`
+                        }`}
+                        // &headers=${encodeURIComponent(
+                        //   JSON.stringify({ Referer: x.headers.Referer })
+                        // )}
                         alt="chapter image"
                         width={100}
                         height={200}

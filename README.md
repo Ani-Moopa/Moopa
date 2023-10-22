@@ -41,7 +41,11 @@
 </p>
 
 <h3 align="center">Watch Page</h3>
-<img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/c654aa13-76d7-47fe-ac02-924fbbb40f76"/>
+<p align="center">Normal Mode</p>
+<img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/03b2c9c7-eb25-4f2c-8f26-a9ae817bfbaa"/>
+<br/>
+<p align="center">Theater Mode</p>
+<img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/767a0335-f6a3-4969-b415-3c45d07cce64"/>
  
 <h3 align="center">Manga Reader</h3>
 <img src="https://github.com/DevanAbinaya/Ani-Moopa/assets/97084324/ccd2ee11-4ee3-411c-b634-d48c84f1a9e2"/>
@@ -54,13 +58,23 @@
 
 ## Features
 
-- Free ad-supported streaming service
-- Anime tracking through Anilist API
-- Skip OP/ED buttons
-- Dub Anime support
-- User-friendly interface
-- Mobile-responsive design
-- PWA supported
+- General
+  - Free ad-supported streaming service
+  - Dub Anime support
+  - User-friendly interface
+  - Auto sync with AniList
+  - Add Anime/Manga to your AniList
+  - Scene Searching powered by [trace.moe](https://trace.moe)
+  - PWA supported
+  - Mobile responsive
+  - Fast page load
+- Watch Page
+  - Player
+    - Autoplay next episode
+    - Skip op/ed button
+    - Theater mode
+  - Comment section
+- Profile page to see your watch list
 
 ## To Do List
 
@@ -116,9 +130,7 @@ NEXTAUTH_URL="for development use http://localhost:3000/ and for production use 
 ## NextJS
 PROXY_URI="This is what I use for proxying video https://github.com/chaycee/M3U8Proxy. Don't put / at the end of the url."
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
-API_KEY="this API key is used for schedules, anime and manga page. get the key from https://anify.tv/discord"
 DISQUS_SHORTNAME='put your disqus shortname here (optional)'
-# ADMIN_USERNAME=""
 
 ## Prisma
 DATABASE_URL="Your postgresql connection url"
@@ -131,7 +143,7 @@ REDIS_URL="rediss://username:password@host:port"
 5. Add this endpoint as Redirect Url on AniList Developer :
 
 ```bash
-https://your-website-url/api/auth/callback/AniListProvider
+https://your-website-domain/api/auth/callback/AniListProvider
 ```
 
 6. Start local server :

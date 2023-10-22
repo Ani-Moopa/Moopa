@@ -1,27 +1,13 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { parseCookies } from "nookies";
 import Image from "next/image";
 import Footer from "@/components/shared/footer";
+import { NewNavbar } from "@/components/shared/NavBar";
+import { useRouter } from "next/router";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 export default function Custom404() {
-  const [lang, setLang] = useState("en");
-  const [cookie, setCookies] = useState(null);
-
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookies(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
-    }
-  }, []);
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -30,6 +16,7 @@ export default function Custom404() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/svg/c.svg" />
       </Head>
+      <NewNavbar withNav shrink />
       <div className="min-h-screen w-screen flex flex-col items-center justify-center ">
         <Image
           width={500}
@@ -44,11 +31,29 @@ export default function Custom404() {
         <p className="text-base sm:text-lg xl:text-xl text-gray-300 mb-6 text-center">
           The page you're looking for doesn't seem to exist.
         </p>
-        <Link href={`/${lang}/`}>
-          <div className="bg-[#fa7d56] xl:text-xl text-white font-bold py-2 px-4 rounded hover:bg-[#fb6f44]">
-            Go back home
-          </div>
-        </Link>
+        <div className="flex gap-5 font-karla">
+          <button
+            type="button"
+            onClick={() => {
+              router.back();
+            }}
+            className="flex items-center gap-2 py-2 px-4 ring-1 ring-action/70 rounded hover:text-white transition-all duration-200 ease-out"
+          >
+            <span>
+              <ArrowLeftIcon className="w-5 h-5" />
+            </span>
+            Go back
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              router.push("/en");
+            }}
+            className="bg-action xl:text-xl text-white font-bold py-2 px-4 rounded hover:bg-opacity-80 hover:text-white transition-all duration-200 ease-out"
+          >
+            Home Page
+          </button>
+        </div>
       </div>
       <Footer />
     </>

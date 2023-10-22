@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { setCookie } from "nookies";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 
-const ChapterSelector = ({ chaptersData, data, setFirstEp, userManga }) => {
+const ChapterSelector = ({ chaptersData, data, setWatch, mangaId }) => {
   const [selectedProvider, setSelectedProvider] = useState(
     chaptersData[0]?.providerId || ""
   );
-  const [selectedChapter, setSelectedChapter] = useState("");
+  // const [selectedChapter, setSelectedChapter] = useState("");
   const [chapters, setChapters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [chaptersPerPage] = useState(10);
@@ -16,12 +19,14 @@ const ChapterSelector = ({ chaptersData, data, setFirstEp, userManga }) => {
     const selectedChapters = chaptersData.find(
       (c) => c.providerId === selectedProvider
     );
-    if (selectedChapters) {
-      setSelectedChapter(selectedChapters);
-      setFirstEp(selectedChapters);
-    }
     setChapters(selectedChapters?.chapters || []);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProvider, chaptersData]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data.id]);
 
   // Get current posts
   const indexOfLastChapter = currentPage * chaptersPerPage;
@@ -30,24 +35,6 @@ const ChapterSelector = ({ chaptersData, data, setFirstEp, userManga }) => {
     indexOfFirstChapter,
     indexOfLastChapter
   );
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage((prev) => prev + 1);
-  const prevPage = () => setCurrentPage((prev) => prev - 1);
-
-  function saveManga() {
-    localStorage.setItem(
-      "manga",
-      JSON.stringify({ manga: selectedChapter, data: data })
-    );
-    setCookie(null, "manga", data.id, {
-      maxAge: 24 * 60 * 60,
-      path: "/",
-    });
-  }
-
-  // console.log(selectedChapter);
 
   // Create page numbers
   const pageNumbers = [];
@@ -59,7 +46,7 @@ const ChapterSelector = ({ chaptersData, data, setFirstEp, userManga }) => {
   const getDisplayedPageNumbers = (currentPage, totalPages, margin) => {
     const pageRange = [...Array(totalPages).keys()].map((i) => i + 1);
 
-    if (totalPages <= 10) {
+    if (totalPages <= 5) {
       return pageRange;
     }
 
@@ -83,104 +70,147 @@ const ChapterSelector = ({ chaptersData, data, setFirstEp, userManga }) => {
   const displayedPageNumbers = getDisplayedPageNumbers(
     currentPage,
     pageNumbers.length,
-    9
+    3
   );
 
-  // console.log(currentChapters);
+  useEffect(() => {
+    if (chapters) {
+      const getEpi = data?.nextAiringEpisode
+        ? chapters[data?.mediaListEntry?.progress]
+        : chapters[0];
+      if (getEpi) {
+        const watchUrl = `/en/manga/read/${selectedProvider}?id=${mangaId}&chapterId=${encodeURIComponent(
+          getEpi.id
+        )}&anilist=${data.id}&num=${getEpi.number}`;
+        setWatch(watchUrl);
+      } else {
+        setWatch(null);
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapters]);
 
   return (
-    <div className="flex flex-col items-center z-40">
-      <div className="flex flex-col w-full">
-        <label htmlFor="provider" className="text-sm md:text-base font-medium">
-          Select a Provider
-        </label>
-        <div className="relative w-full">
+    <div className="flex flex-col gap-2 px-3">
+      <div className="flex justify-between">
+        <h1 className="text-[20px] lg:text-2xl font-bold font-karla">
+          Chapters
+        </h1>
+        <div className="relative flex gap-2 items-center group">
           <select
             id="provider"
-            className="w-full text-xs md:text-base cursor-pointer mt-2 p-2 focus:outline-none rounded-md appearance-none bg-secondary"
+            className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus: focus:ring-action group-hover: group-hover:ring-action"
             value={selectedProvider}
             onChange={(e) => setSelectedProvider(e.target.value)}
           >
             {/* <option value="">--Select a provider--</option> */}
             {chaptersData.map((provider, index) => (
-              <option key={index} value={provider.providerId}>
+              <option key={provider.providerId} value={provider.providerId}>
                 {provider.providerId}
               </option>
             ))}
           </select>
-          <ChevronDownIcon className="absolute md:right-5 right-3 md:bottom-2 m-auto md:w-6 md:h-6 bottom-[0.5rem] h-4 w-4" />
+          <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
         </div>
       </div>
-      <div className="mt-4 w-full py-5 flex justify-between gap-5">
-        <button
-          onClick={prevPage}
-          disabled={currentPage === 1}
-          className={`w-24 py-1 shrink-0 rounded-md font-karla ${
-            currentPage === 1
-              ? "bg-[#1D1D20] text-[#313135]"
-              : `bg-secondary hover:bg-[#363639]`
-          }`}
-        >
-          Previous
-        </button>
-        <div className="flex gap-5 overflow-x-scroll scrollbar-thin scrollbar-thumb-secondary scrollbar-thumb- w-[420px] lg:w-auto">
-          {displayedPageNumbers.map((number, index) =>
-            number === "..." ? (
-              <span key={index + 2} className="w-10 py-1 text-center">
-                ...
-              </span>
-            ) : (
+
+      <div className="flex flex-col items-center z-40">
+        <div className="mt-4 w-full">
+          {currentChapters.map((chapter, index) => {
+            const isRead = chapter.number <= data?.mediaListEntry?.progress;
+            return (
+              <Link
+                key={index}
+                href={`/en/manga/read/${selectedProvider}?id=${mangaId}&chapterId=${encodeURIComponent(
+                  chapter.id
+                )}${data?.id?.length > 6 ? "" : `&anilist=${data.id}`}&num=${
+                  chapter.number
+                }`}
+                className={`flex gap-3 py-4 hover:bg-secondary odd:bg-secondary/30 even:bg-primary`}
+              >
+                <div className="flex w-full">
+                  <span className="shrink-0 px-4 text-center text-white/50">
+                    {chapter.number}
+                  </span>
+                  <p
+                    className={`w-full line-clamp-1 ${
+                      isRead ? "text-[#5f5f5f]" : "text-white"
+                    }
+                    `}
+                  >
+                    {chapter.title || `Chapter ${chapter.number}`}
+                  </p>
+                  <p className="capitalize text-sm text-white/50 px-4">
+                    {selectedProvider}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col mt-5 md:flex-row w-full sm:items-center sm:justify-between">
+          <div className="flex-center">
+            <p className="text-sm text-txt">
+              Showing{" "}
+              <span className="font-medium">{indexOfFirstChapter + 1}</span> to{" "}
+              <span className="font-medium">
+                {indexOfLastChapter > chapters.length
+                  ? chapters.length
+                  : indexOfLastChapter}
+              </span>{" "}
+              of <span className="font-medium">{chapters.length}</span> chapters
+            </p>
+          </div>
+          <div className="flex-center">
+            <nav
+              className="isolate inline-flex space-x-1 rounded-md shadow-sm"
+              aria-label="Pagination"
+            >
               <button
-                key={number}
-                onClick={() => paginate(number)}
-                className={`w-10 shrink-0 py-1 rounded-md hover:bg-[#363639] ${
-                  number === currentPage ? "bg-[#363639]" : "bg-secondary"
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                disabled={currentPage === 1}
+                className={`relative inline-flex items-center rounded px-2 py-2 text-gray-400 hover:bg-secondary focus:z-20 focus:outline-offset-0 ${
+                  currentPage === 1
+                    ? "opacity-50 cursor-default pointer-events-none"
+                    : ""
                 }`}
               >
-                {number}
+                <span className="sr-only">Previous</span>
+                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
               </button>
-            )
-          )}
-        </div>
-        <button
-          onClick={nextPage}
-          disabled={currentPage === pageNumbers.length}
-          className={`w-24 py-1 shrink-0 rounded-md font-karla ${
-            currentPage === pageNumbers.length
-              ? "bg-[#1D1D20] text-[#313135]"
-              : `bg-secondary hover:bg-[#363639]`
-          }`}
-        >
-          Next
-        </button>
-      </div>
-      <div className="mt-4 w-full">
-        {currentChapters.map((chapter, index) => {
-          const isRead = chapter.number <= userManga?.progress;
-          return (
-            <div key={index} className="p-2 border-b hover:bg-[#232325]">
-              <Link
-                href={`/en/manga/read/${selectedProvider}?id=${
-                  data.id
-                }&chapterId=${encodeURIComponent(chapter.id)}`}
-                onClick={saveManga}
+              <div className="flex w-full gap-1 overflow-x-scroll scrollbar-thin scrollbar-thumb-image scrollbar-thumb-rounded">
+                {displayedPageNumbers.map((pageNumber, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    disabled={pageNumber === "..."}
+                    className={`relative rounded inline-flex items-center px-4 py-2 text-sm font-semibold text-txt  hover:bg-secondary focus:z-20 focus:outline-offset-0 ${
+                      currentPage === pageNumber
+                        ? "z-10 bg-secondary rounded text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-none"
+                        : ""
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={currentPage === pageNumbers.length}
+                className={`relative inline-flex items-center rounded px-2 py-2 text-gray-400  hover:bg-secondary focus:z-20 focus:outline-offset-0 ${
+                  currentPage === pageNumbers.length
+                    ? "opacity-50 cursor-default"
+                    : ""
+                }`}
               >
-                <h2
-                  className={`text-lg font-medium ${
-                    isRead ? "text-[#424245]" : ""
-                  }`}
-                >
-                  {chapter.title}
-                </h2>
-                <p
-                  className={`text-[#59595d] ${isRead ? "text-[#313133]" : ""}`}
-                >
-                  Updated At: {new Date(chapter.updatedAt).toLocaleString()}
-                </p>
-              </Link>
-            </div>
-          );
-        })}
+                <span className="sr-only">Next</span>
+                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </nav>
+          </div>
+        </div>
       </div>
     </div>
   );

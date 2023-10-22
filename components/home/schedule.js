@@ -48,21 +48,26 @@ export default function Schedule({ data, scheduleData, anime, update }) {
       <h1 className="font-bold font-karla text-[20px] lg:px-5">
         Don't miss out!
       </h1>
-      <div className="rounded mb-5 shadow-md shadow-black">
+      <div className="rounded mb-5 shadow-tersier/50 shadow-button">
         <div className="overflow-hidden w-full h-[96px] lg:h-[10rem] rounded relative">
-          <div className="absolute flex flex-col lg:gap-1 justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-tersier to-transparent w-full h-full">
-            <h1 className="text-xs lg:text-lg">Coming Up Next!</h1>
-            <div className="w-1/2 lg:w-2/5 hidden lg:block font-karla font-medium">
+          <div className="absolute flex flex-col -space-y-1 lg:gap-1 justify-center pl-5 lg:pl-16 rounded z-20 bg-gradient-to-r from-30% from-tersier to-transparent w-full h-full">
+            <h1 className="text-xs lg:text-lg font-karla font-thin">
+              Coming Up Next!
+            </h1>
+            <div className="w-1/2 lg:w-2/5 hidden lg:flex font-karla font-semibold line-clamp-2">
               <Link
                 href={`/en/anime/${data.id}`}
-                className="hover:underline underline-offset-4 decoration-2 leading-3 lg:text-[1.5vw]"
+                className="hover:underline underline-offset-4 decoration-2 leading-8 line-clamp-2 lg:text-[1.5vw]"
               >
                 {data.title.romaji || data.title.english || data.title.native}
               </Link>
             </div>
-            <h1 className="w-1/2 lg:hidden font-medium font-karla leading-9 text-white line-clamp-1">
+            <Link
+              href={`/en/anime/${data.id}`}
+              className="w-1/2 lg:hidden font-medium font-karla leading-9 text-white line-clamp-1"
+            >
               {data.title.romaji || data.title.english || data.title.native}
-            </h1>
+            </Link>
           </div>
           {data.bannerImage ? (
             <Image
@@ -79,16 +84,16 @@ export default function Schedule({ data, scheduleData, anime, update }) {
               height={500}
               sizes="100vw"
               alt="banner next anime"
-              className="absolute z-10 top-0 right-0 h-full object-contain object-right brightness-[90%]"
+              className="absolute z-10 top-0 right-0 w-3/4 lg:w-auto h-full object-cover lg:object-contain object-right opacity-30 lg:opacity-100 brightness-[90%]"
             />
           )}
           <div
-            className={`absolute flex justify-end items-center pr-5 gap-5 md:gap-10 z-20 w-1/2 h-full right-0 ${
-              data.bannerImage ? "md:pr-16" : "md:pr-48"
+            className={`absolute flex justify-end items-center pr-5 gap-5 lg:gap-10 z-20 w-1/2 h-full right-0 ${
+              data.bannerImage ? "lg:pr-16" : "lg:pr-48"
             }`}
           >
             {/* Countdown Timer */}
-            <div className="flex items-center gap-2 md:gap-5 font-bold font-karla text-sm md:text-xl">
+            <div className="flex items-center gap-2 lg:gap-5 font-bold font-karla text-sm lg:text-xl">
               {/* Countdown Timer */}
               <div className="flex flex-col items-center">
                 <span className="text-action/80">{day}</span>

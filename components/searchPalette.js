@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Combobox, Dialog, Menu, Transition } from "@headlessui/react";
 import useDebounce from "../lib/hooks/useDebounce";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { useAniList } from "../lib/anilist/useAnilist";
 import { getFormat } from "../utils/getFormat";
+import SearchByImage from "./search/searchByImage";
 
 export default function SearchPalette() {
   const { isOpen, setIsOpen } = useSearch();
@@ -21,6 +22,7 @@ export default function SearchPalette() {
 
   const [nextPage, setNextPage] = useState(false);
 
+  let focusInput = useRef(null);
   const router = useRouter();
 
   function closeModal() {
@@ -44,6 +46,7 @@ export default function SearchPalette() {
 
   useEffect(() => {
     advance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounceSearch, type]);
 
   useEffect(() => {
@@ -62,11 +65,17 @@ export default function SearchPalette() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-[6969]" onClose={closeModal}>
+      <Dialog
+        as="div"
+        className="relative z-[6969]"
+        initialFocus={focusInput}
+        onClose={closeModal}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -112,13 +121,13 @@ export default function SearchPalette() {
                         <span>S</span>
                       </div>
                     </div>
-                    <div>
+                    <div className="flex gap-1 items-center">
                       <Menu
                         as="div"
                         className="relative inline-block text-left"
                       >
                         <div>
-                          <Menu.Button className="capitalize bg-secondary inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                          <Menu.Button className="capitalize bg-secondary inline-flex w-full justify-center rounded px-3 py-2 text-sm font-medium text-white hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
                             {type.toLowerCase()}
                             <ChevronDownIcon
                               className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
@@ -171,10 +180,15 @@ export default function SearchPalette() {
                           </Menu.Items>
                         </Transition>
                       </Menu>
+                      <SearchByImage
+                        searchPalette={true}
+                        setIsOpen={setIsOpen}
+                      />
                     </div>
                   </div>
                   <div className="flex items-center text-base font-medium rounded bg-secondary">
                     <Combobox.Input
+                      ref={focusInput}
                       className="p-5 text-white w-full bg-transparent border-0 outline-none"
                       placeholder="Search something..."
                       onChange={(event) => setQuery(event.target.value)}

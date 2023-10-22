@@ -443,6 +443,13 @@ pre code {
   }
 }
 
+/* create media queries for mobile */
+/* @media (max-width: 768px) {
+  .theater {
+    display: none;
+  }
+} */
+
 /* Hide the default checkbox */
 .containers input {
   position: absolute;

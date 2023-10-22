@@ -56,7 +56,7 @@ export function NewNavbar({
                   shrink ? "py-1" : `${paddingY}`
                 }`
             : `${paddingY}`
-        }  transition-all duration-200 ease-linear`}
+        } transition-all duration-200 ease-linear`}
       >
         <div
           className={`flex items-center justify-between mx-auto ${
@@ -83,6 +83,7 @@ export function NewNavbar({
                 >
                   <ArrowLeftIcon className="w-full h-full" />
                 </button>
+
                 <span
                   className={`font-inter font-semibold w-[50%] line-clamp-1 select-none ${
                     scrollPosition?.y >= scrollP + 80
@@ -196,7 +197,7 @@ export function NewNavbar({
                 // title={sessions ? "Go to Profile" : "Login With AniList"}
               > */}
             {session ? (
-              <div className="w-7 h-7 relative flex flex-col items-center group">
+              <div className="w-7 h-7 relative flex flex-col items-center group shrink-0">
                 <button
                   type="button"
                   onClick={() =>
@@ -233,7 +234,7 @@ export function NewNavbar({
                 type="button"
                 onClick={() => signIn("AniListProvider")}
                 title="Login With AniList"
-                className="w-7 h-7 bg-white/30 rounded-full overflow-hidden"
+                className="w-7 h-7 bg-white/30 rounded-full overflow-hidden shrink-0"
               >
                 <UserIcon className="w-full h-full translate-y-1" />
               </button>
