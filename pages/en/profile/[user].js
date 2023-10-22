@@ -5,8 +5,8 @@ import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { getUser } from "@/prisma/user";
-import { toast } from "react-toastify";
 import { NewNavbar } from "@/components/shared/NavBar";
+import { toast } from "sonner";
 
 export default function MyList({ media, sessions, user, time, userSettings }) {
   const [listFilter, setListFilter] = useState("all");

@@ -8,16 +8,6 @@ export default async function handler(req, res) {
   // create random id each time the endpoint is called
   const id = Math.random().toString(36).substr(2, 9);
 
-  //   if (!admin) {
-  //     return res.status(401).json({ message: "Unauthorized" });
-  //   }
-  const { data } = req.body;
-
-  // if method is not POST return message "Method not allowed"
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
   try {
     if (redis) {
       try {
@@ -29,16 +19,22 @@ export default async function handler(req, res) {
         });
       }
 
-      const getId = await redis.get(`report:${id}`);
-      if (getId) {
+      if (req.method === "POST") {
+        const { data } = req.body;
+
+        data.id = id;
+
+        await redis.set(`report:${id}`, JSON.stringify(data));
         return res
           .status(200)
-          .json({ message: `Data already exist for id: ${id}` });
+          .json({ message: `Report has successfully sent, with Id of ${id}` });
+      } else if (req.method === "DELETE") {
+        const { reportId } = req.body;
+        await redis.del(`report:${reportId}`);
+        return res.status(200).json({ message: `Report has been deleted` });
+      } else {
+        return res.status(405).json({ message: "Method not allowed" });
       }
-      await redis.set(`report:${id}`, JSON.stringify(data));
-      return res
-        .status(200)
-        .json({ message: `Report has successfully sent, with Id of ${id}` });
     }
 
     return res.status(200).json({ message: "redis is not defined" });

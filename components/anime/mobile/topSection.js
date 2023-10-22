@@ -1,4 +1,9 @@
-import { PlayIcon, PlusIcon, ShareIcon } from "@heroicons/react/24/solid";
+import {
+  BookOpenIcon,
+  PlayIcon,
+  PlusIcon,
+  ShareIcon,
+} from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -21,6 +26,8 @@ export default function DetailTop({
 
   const [showAll, setShowAll] = useState(false);
 
+  const isAnime = info.type === "ANIME";
+
   useEffect(() => {
     setReadMore(false);
   }, [info.id]);
@@ -29,7 +36,7 @@ export default function DetailTop({
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `Watch Now - ${info?.title?.english}`,
+          title: `${isAnime ? "Watch" : "Read"} Now - ${info?.title?.english}`,
           // text: `Watch [${info?.title?.romaji}] and more on Moopa. Join us for endless anime entertainment"`,
           url: window.location.href,
         });
@@ -50,7 +57,7 @@ export default function DetailTop({
       <div className="flex flex-col md:flex-row w-full items-center md:items-end gap-5 pt-12">
         <div className="shrink-0 w-[180px] h-[250px] rounded overflow-hidden">
           <Image
-            src={info?.coverImage?.extraLarge}
+            src={info?.coverImage?.extraLarge || info?.coverImage}
             alt="poster anime"
             width={300}
             height={300}
@@ -59,8 +66,9 @@ export default function DetailTop({
         </div>
         <div className="flex flex-col gap-4 items-center md:items-start justify-end w-full">
           <div className="flex flex-col gap-1 text-center md:text-start">
-            <h3 className="font-karla text-lg capitalize  leading-none">
-              {info?.season?.toLowerCase()} {info.seasonYear}
+            <h3 className="font-karla text-lg capitalize leading-none">
+              {info?.season?.toLowerCase() || getMonth(info?.startDate?.month)}{" "}
+              {info.seasonYear || info?.startDate?.year}
             </h3>
             <h1 className="font-outfit font-extrabold text-2xl md:text-4xl line-clamp-2 text-white">
               {info?.title?.romaji || info?.title?.english}
@@ -87,12 +95,20 @@ export default function DetailTop({
           onClick={() => router.push(watchUrl)}
           className={`${
             !watchUrl ? "opacity-30 pointer-events-none" : ""
-          } w-[180px] flex-center text-lg font-karla font-semibold gap-1 border-black border-opacity-10 text-black rounded-full py-1 px-4 bg-white hover:opacity-80`}
+          } w-[180px] flex-center text-lg font-karla font-semibold gap-2 border-black border-opacity-10 text-black rounded-full py-1 px-4 bg-white hover:opacity-80`}
         >
-          <PlayIcon className="w-5 h-5" />
+          {isAnime ? (
+            <PlayIcon className="w-5 h-5" />
+          ) : (
+            <BookOpenIcon className="w-5 h-5" />
+          )}
           {progress > 0 ? (
             statuses?.value === "COMPLETED" ? (
-              "Rewatch"
+              isAnime ? (
+                "Rewatch"
+              ) : (
+                "Reread"
+              )
             ) : !watchUrl && info?.nextAiringEpisode ? (
               <span>
                 {convertSecondsToTime(info.nextAiringEpisode.timeUntilAiring)}{" "}
@@ -100,8 +116,10 @@ export default function DetailTop({
             ) : (
               "Continue"
             )
-          ) : (
+          ) : isAnime ? (
             "Watch Now"
+          ) : (
+            "Read Now"
           )}
         </button>
         <div className="flex gap-2">
@@ -121,14 +139,14 @@ export default function DetailTop({
             onClick={handleShareClick}
           >
             <span className="absolute pointer-events-none z-40 opacity-0 -translate-y-8 group-hover:-translate-y-10 group-hover:opacity-100 font-karla shadow-tersier shadow-md whitespace-nowrap bg-secondary px-2 py-1 rounded transition-all duration-200 ease-out">
-              Share Anime
+              Share {isAnime ? "Anime" : "Manga"}
             </span>
             <ShareIcon className="w-5 h-5" />
           </button>
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://anilist.co/anime/${info.id}`}
+            href={`https://anilist.co/${info.type.toLowerCase()}/${info.id}`}
             className="flex-center group relative w-10 h-10 bg-secondary rounded-full"
           >
             <span className="absolute pointer-events-none z-40 opacity-0 -translate-y-8 group-hover:-translate-y-10 group-hover:opacity-100 font-karla shadow-tersier shadow-md whitespace-nowrap bg-secondary px-2 py-1 rounded transition-all duration-200 ease-out">
@@ -156,18 +174,24 @@ export default function DetailTop({
           <PlusIcon className="w-5 h-5" />
         </button>
         <button
-          // href={watchUrl || ""}
           type="button"
-          // disabled={!watchUrl || info?.nextAiringEpisode}
           onClick={() => router.push(watchUrl)}
           className={`${
             !watchUrl ? "opacity-30 pointer-events-none" : ""
           } flex items-center text-lg font-karla font-semibold gap-1 border-black border-opacity-10 text-black rounded-full py-2 px-4 bg-white`}
         >
-          <PlayIcon className="w-5 h-5" />
+          {isAnime ? (
+            <PlayIcon className="w-5 h-5" />
+          ) : (
+            <BookOpenIcon className="w-5 h-5" />
+          )}
           {progress > 0 ? (
             statuses?.value === "COMPLETED" ? (
-              "Rewatch"
+              isAnime ? (
+                "Rewatch"
+              ) : (
+                "Reread"
+              )
             ) : !watchUrl && info?.nextAiringEpisode ? (
               <span>
                 {convertSecondsToTime(info.nextAiringEpisode.timeUntilAiring)}{" "}
@@ -175,8 +199,10 @@ export default function DetailTop({
             ) : (
               "Continue"
             )
-          ) : (
+          ) : isAnime ? (
             "Watch Now"
+          ) : (
+            "Read Now"
           )}
         </button>
         <button
@@ -185,7 +211,7 @@ export default function DetailTop({
           onClick={handleShareClick}
         >
           <span className="absolute pointer-events-none z-40 opacity-0 -translate-y-8 group-hover:-translate-y-10 group-hover:opacity-100 font-karla shadow-tersier shadow-md whitespace-nowrap bg-secondary px-2 py-1 rounded transition-all duration-200 ease-out">
-            Share Anime
+            Share {isAnime ? "Anime" : "Manga"}
           </span>
           <ShareIcon className="w-5 h-5" />
         </button>
@@ -286,4 +312,12 @@ export default function DetailTop({
       )}
     </div>
   );
+}
+
+function getMonth(month) {
+  if (!month) return "";
+  const formattedMonth = new Date(0, month).toLocaleString("default", {
+    month: "long",
+  });
+  return formattedMonth;
 }

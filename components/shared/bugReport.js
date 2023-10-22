@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const severityOptions = [
   { id: 1, name: "Low" },
@@ -42,17 +42,11 @@ const BugReportForm = ({ isOpen, setIsOpen }) => {
       });
 
       const json = await res.json();
-      toast.success(json.message, {
-        hideProgressBar: true,
-        theme: "colored",
-      });
+      toast.success(json.message);
       closeModal();
     } catch (err) {
       console.log(err);
-      toast.error("Something went wrong: " + err.message, {
-        hideProgressBar: true,
-        theme: "colored",
-      });
+      toast.error("Something went wrong: " + err.message);
     }
   };
 

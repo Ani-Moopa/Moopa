@@ -6,12 +6,12 @@ import Skeleton from "react-loading-skeleton";
 import Footer from "@/components/shared/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import { toast } from "react-toastify";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import HistoryOptions from "@/components/home/content/historyOptions";
 import Head from "next/head";
 import MobileNav from "@/components/shared/MobileNav";
+import { toast } from "sonner";
 
 export default function PopularAnime({ sessions }) {
   const [data, setData] = useState(null);
@@ -105,11 +105,6 @@ export default function PopularAnime({ sessions }) {
       if (data?.message === "Episode deleted") {
         toast.success("Episode removed from history", {
           position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          theme: "dark",
         });
       }
     } else {

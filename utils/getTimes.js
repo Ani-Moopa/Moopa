@@ -132,3 +132,10 @@ export function unixTimestampToRelativeTime(unixTimestamp) {
 
   return "just now";
 }
+
+export function unixToSeconds(unixTimestamp) {
+  const now = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
+  const secondsAgo = now - unixTimestamp;
+
+  return secondsAgo;
+}

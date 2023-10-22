@@ -13,8 +13,8 @@ import { parseCookies } from "nookies";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import HistoryOptions from "./content/historyOptions";
+import { toast } from "sonner";
 
 export default function Content({
   ids,
@@ -24,6 +24,7 @@ export default function Content({
   og,
   userName,
   setRemoved,
+  type = "anime",
 }) {
   const router = useRouter();
 
@@ -53,6 +54,7 @@ export default function Content({
     } else if (lang === "id") {
       setLang("id");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [scrollLeft, setScrollLeft] = useState(false);
@@ -174,14 +176,7 @@ export default function Content({
       setRemoved(id || aniId);
 
       if (data?.message === "Episode deleted") {
-        toast.success("Episode removed from history", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          theme: "dark",
-        });
+        toast.success("Episode removed from history");
       }
     } else {
       if (id) {
@@ -259,7 +254,7 @@ export default function Content({
                       href={
                         ids === "listManga"
                           ? `/en/manga/${anime.id}`
-                          : `/${lang}/anime/${anime.id}`
+                          : `/en/${type}/${anime.id}`
                       }
                       className="hover:scale-105 hover:shadow-lg duration-300 ease-out group relative"
                       title={anime.title.romaji}
@@ -352,7 +347,7 @@ export default function Content({
                         href={
                           ids === "listManga"
                             ? `/en/manga/${anime.id}`
-                            : `/en/anime/${anime.id}`
+                            : `/en/${type.toLowerCase()}/${anime.id}`
                         }
                         className="w-[135px] lg:w-[185px] line-clamp-2"
                         title={anime.title.romaji}

@@ -24,6 +24,10 @@ module.exports = withPWA({
         protocol: "https",
         hostname: "simkl.in",
       },
+      {
+        protocol: "https",
+        hostname: "tenor.com",
+      },
     ],
   },
   // distDir: process.env.BUILD_DIR || ".next",

@@ -2,7 +2,7 @@ async function appendMetaToEpisodes(episodesData, images) {
   // Create a dictionary for faster lookup of images based on episode number
   const episodeImages = {};
   images.forEach((image) => {
-    episodeImages[image.episode] = image;
+    episodeImages[image.number || image.episode] = image;
   });
 
   // Iterate through each provider's episodes data

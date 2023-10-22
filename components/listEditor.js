@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
-import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 
 const ListEditor = ({
   animeId,
@@ -9,11 +9,12 @@ const ListEditor = ({
   stats,
   prg,
   max,
-  image = null,
+  info = null,
   close,
 }) => {
   const [status, setStatus] = useState(stats ?? "CURRENT");
   const [progress, setProgress] = useState(prg ?? 0);
+  const isAnime = info?.type === "ANIME";
 
   const router = useRouter();
 
@@ -47,27 +48,11 @@ const ListEditor = ({
       });
       const { data } = await response.json();
       if (data.SaveMediaListEntry === null) {
-        toast.error("Something went wrong", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-        });
+        toast.error("Something went wrong");
         return;
       }
       console.log("Saved media list entry", data);
-      toast.success("Media list entry saved", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
+      toast.success("Media list entry saved");
       close();
       setTimeout(() => {
         // window.location.reload();
@@ -75,15 +60,7 @@ const ListEditor = ({
       }, 1000);
       // showAlert("Media list entry saved", "success");
     } catch (error) {
-      toast.error("Something went wrong", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-      });
+      toast.error("Something went wrong");
       console.error(error);
     }
   };
@@ -95,10 +72,10 @@ const ListEditor = ({
       </div>
       <div className="relative bg-secondary rounded-sm w-screen md:w-auto">
         <div className="md:flex">
-          {image && (
+          {info?.bannerImage && (
             <div>
               <Image
-                src={image.coverImage.large}
+                src={info.coverImage.large}
                 alt="image"
                 height={500}
                 width={500}
@@ -106,9 +83,9 @@ const ListEditor = ({
               />
               <Image
                 src={
-                  image.bannerImage ||
-                  image.coverImage.extraLarge ||
-                  image.coverImage.large
+                  info.bannerImage ||
+                  info.coverImage.extraLarge ||
+                  info.coverImage.large
                 }
                 alt="image"
                 height={500}
@@ -136,11 +113,15 @@ const ListEditor = ({
                   onChange={(e) => setStatus(e.target.value)}
                   className="rounded-sm px-2 py-1 bg-[#363642] w-[50%] sm:w-[150px] text-sm sm:text-base"
                 >
-                  <option value="CURRENT">Watching</option>
+                  <option value="CURRENT">
+                    {isAnime ? "Watching" : "Reading"}
+                  </option>
                   <option value="COMPLETED">Completed</option>
                   <option value="PAUSED">Paused</option>
                   <option value="DROPPED">Dropped</option>
-                  <option value="PLANNING">Plan to watch</option>
+                  <option value="PLANNING">
+                    Plan to {isAnime ? "watch" : "read"}
+                  </option>
                 </select>
               </div>
               <div className="flex justify-between items-center mt-2">

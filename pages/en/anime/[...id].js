@@ -72,6 +72,8 @@ export default function Info({ info, color }) {
       }
     }
     fetchData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, info, session?.user?.name]);
 
   function handleOpen() {
@@ -143,7 +145,7 @@ export default function Info({ info, color }) {
               stats={statuses?.value}
               prg={progress}
               max={info?.episodes}
-              image={info}
+              info={info}
               close={handleClose}
             />
           )}
@@ -208,7 +210,12 @@ export default function Info({ info, color }) {
 
 export async function getServerSideProps(ctx) {
   const { id } = ctx.query;
-  const API_URI = process.env.API_URI;
+
+  let API_URI;
+  API_URI = process.env.API_URI;
+  if (API_URI.endsWith("/")) {
+    API_URI = API_URI.slice(0, -1);
+  }
 
   let cache;
 
