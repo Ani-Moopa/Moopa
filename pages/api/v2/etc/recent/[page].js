@@ -1,6 +1,10 @@
 import { rateLimiterRedis, redis } from "@/lib/redis";
 
-const API_URL = process.env.API_URI;
+let API_URL;
+API_URL = process.env.API_URI;
+if (API_URL.endsWith("/")) {
+  API_URL = API_URL.slice(0, -1);
+}
 
 export default async function handler(req, res) {
   try {

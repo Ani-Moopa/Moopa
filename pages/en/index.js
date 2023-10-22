@@ -118,23 +118,23 @@ export default function Home({ detail, populars, upComing }) {
     }
   }, [upComing]);
 
-  useEffect(() => {
-    const getSchedule = async () => {
-      try {
-        const res = await fetch(`/api/v2/etc/schedule`);
-        const data = await res.json();
+  // useEffect(() => {
+  //   const getSchedule = async () => {
+  //     try {
+  //       const res = await fetch(`/api/v2/etc/schedule`);
+  //       const data = await res.json();
 
-        if (!res.ok) {
-          setSchedules(null);
-        } else {
-          setSchedules(data);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getSchedule();
-  }, []);
+  //       if (!res.ok) {
+  //         setSchedules(null);
+  //       } else {
+  //         setSchedules(data);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   getSchedule();
+  // }, []);
 
   const [releaseData, setReleaseData] = useState([]);
 
@@ -290,6 +290,8 @@ export default function Home({ detail, populars, upComing }) {
       }
     }
     userData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessions?.user?.name, currentAnime, plan]);
 
   // console.log({ recentAdded });
@@ -402,7 +404,7 @@ export default function Home({ detail, populars, upComing }) {
           </div>
         )}
 
-        <div className="lg:mt-16 mt-5 flex flex-col gap-5 items-center">
+        <div className="lg:mt-16 mt-5 flex flex-col items-center">
           <motion.div
             className="w-screen flex-none lg:w-[95%] xl:w-[87%]"
             initial={{ opacity: 0 }}

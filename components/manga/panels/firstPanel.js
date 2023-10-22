@@ -4,10 +4,13 @@ import {
   ArrowsPointingInIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PlusIcon,
+  MinusIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAniList } from "../../../lib/anilist/useAnilist";
+import { getHeaders, getRandomId } from "@/utils/imageUtils";
 
 export default function FirstPanel({
   aniId,
@@ -26,13 +29,19 @@ export default function FirstPanel({
   mobileVisible,
   setMobileVisible,
   setCurrentPage,
+  number,
+  mangadexId,
 }) {
   const { markProgress } = useAniList(session);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const imageRefs = useRef([]);
   const scrollContainerRef = useRef();
 
+  const [imageQuality, setImageQuality] = useState(80);
+
   const router = useRouter();
+
+  // console.log({ chapter });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,13 +62,17 @@ export default function FirstPanel({
         }
       }
 
-      if (index === data.length - 3 && !hasRun.current) {
+      if (index === data?.length - 3 && !hasRun.current) {
         if (session) {
+          if (aniId?.length > 6) return;
           const currentChapter = chapter.chapters?.find(
             (x) => x.id === currentId
           );
           if (currentChapter) {
-            markProgress(aniId, currentChapter.number);
+            const chapterNumber =
+              currentChapter.number ??
+              chapter.chapters.indexOf(currentChapter) + 1;
+            markProgress(aniId, chapterNumber);
             console.log("marking progress");
           }
         }
@@ -82,7 +95,11 @@ export default function FirstPanel({
         });
       }
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, session, chapter]);
+
+  // console.log({ imageQuality });
 
   useEffect(() => {
     if (scrollContainerRef.current && seekPage !== currentImageIndex) {
@@ -119,19 +136,26 @@ export default function FirstPanel({
         {data && Array.isArray(data) && data?.length > 0 ? (
           data.map((i, index) => (
             <div
-              key={i.url}
+              key={getRandomId()}
               className="w-screen lg:h-auto lg:w-full"
               ref={(el) => (imageRefs.current[index] = el)}
             >
               <Image
                 src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                   i.url
-                )}&headers=${encodeURIComponent(
-                  JSON.stringify({ Referer: i.headers.Referer })
-                )}`}
-                alt={i.index}
+                )}${
+                  i?.headers?.Referer
+                    ? `&headers=${encodeURIComponent(
+                        JSON.stringify(i?.headers)
+                      )}`
+                    : `&headers=${encodeURIComponent(
+                        JSON.stringify(getHeaders(chapter.providerId))
+                      )}`
+                }`}
+                alt={index}
                 width={500}
                 height={500}
+                quality={imageQuality}
                 onClick={() => setMobileVisible(!mobileVisible)}
                 className="w-screen lg:w-full h-auto bg-[#bbb]"
               />
@@ -145,6 +169,26 @@ export default function FirstPanel({
         )}
       </div>
       <div className="absolute hidden lg:flex bottom-5 left-5 gap-5">
+        {/* <button
+          type="button"
+          disabled={imageQuality >= 100}
+          onClick={() => {
+            setImageQuality((prev) => (prev <= 100 ? prev + 10 : prev));
+          }}
+          className="flex-center p-2 bg-secondary"
+        >
+          <PlusIcon className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          disabled={imageQuality <= 10}
+          onClick={() => {
+            setImageQuality((prev) => (prev >= 10 ? prev - 10 : prev));
+          }}
+          className="flex-center p-2 bg-secondary"
+        >
+          <MinusIcon className="w-5 h-5" />
+        </button> */}
         <span className="flex bg-secondary p-2 rounded-sm">
           {visible ? (
             <button type="button" onClick={() => setVisible(!visible)}>
@@ -168,7 +212,11 @@ export default function FirstPanel({
               router.push(
                 `/en/manga/read/${
                   chapter.providerId
-                }?id=${aniId}&chapterId=${encodeURIComponent(prevChapter)}`
+                }?id=${mangadexId}&chapterId=${encodeURIComponent(
+                  prevChapter?.id
+                )}${aniId?.length > 6 ? "" : `&anilist=${aniId}`}&num=${
+                  prevChapter?.number
+                }`
               )
             }
           >
@@ -185,7 +233,11 @@ export default function FirstPanel({
               router.push(
                 `/en/manga/read/${
                   chapter.providerId
-                }?id=${aniId}&chapterId=${encodeURIComponent(nextChapter)}`
+                }?id=${mangadexId}&chapterId=${encodeURIComponent(
+                  nextChapter?.id
+                )}${aniId?.length > 6 ? "" : `&anilist=${aniId}`}&num=${
+                  nextChapter?.number
+                }`
               )
             }
           >
@@ -195,7 +247,7 @@ export default function FirstPanel({
       </div>
       <span className="hidden lg:flex bg-secondary p-2 rounded-sm absolute bottom-5 right-5">{`Page ${
         currentImageIndex + 1
-      }/${data.length}`}</span>
+      }/${data?.length}`}</span>
     </section>
   );
 }

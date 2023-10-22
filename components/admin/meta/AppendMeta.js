@@ -1,7 +1,7 @@
 import Loading from "@/components/shared/loading";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // Define a function to convert the data
 function convertData(episodes) {
@@ -217,6 +217,7 @@ export default function AppendMeta({ api }) {
                       </p>
                       <Image
                         src={i.image}
+                        alt="query-image"
                         width={500}
                         height={500}
                         className="w-[160px] h-[210px] object-cover"

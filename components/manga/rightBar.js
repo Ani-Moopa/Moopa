@@ -4,16 +4,15 @@ import {
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useAniList } from "../../lib/anilist/useAnilist";
-import { toast } from "react-toastify";
 import AniList from "../media/aniList";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function RightBar({
   id,
   hasRun,
   session,
   data,
-  error,
   currentChapter,
   paddingX,
   setPaddingX,
@@ -47,18 +46,12 @@ export default function RightBar({
         markProgress(id, progress, status, volumeProgress);
         hasRun.current = true;
       } else {
-        toast.error("Progress must be a whole number!", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-        });
+        toast.error("Progress must be a whole number!");
       }
     }
   };
+
+  // console.log({ id });
 
   const changeMode = (e) => {
     setLayout(Number(e.target.value));
@@ -129,63 +122,72 @@ export default function RightBar({
           </button>
         </div>
       </div>
+      {/* <div className="flex flex-col gap-3 w-full">
+        <h1 className="font-karla font-bold xl:text-lg">Set Quality</h1>
+      </div> */}
       <div className="flex flex-col gap-3 w-full">
         <h1 className="font-karla font-bold xl:text-lg">Tracking</h1>
         {session ? (
-          <div className="flex flex-col gap-2">
-            <div className="space-y-1">
-              <label className="font-karla font-semibold text-gray-500 text-xs">
-                Status
-              </label>
-              <div className="relative">
-                <select
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-2 py-1 font-karla rounded-md bg-[#161617] appearance-none text-sm"
-                >
-                  <option value="CURRENT">Reading</option>
-                  <option value="PLANNING">Plan to Read</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="REPEATING">Rereading</option>
-                  <option value="PAUSED">Paused</option>
-                  <option value="DROPPED">Dropped</option>
-                </select>
-                <ChevronDownIcon className="w-5 h-5 text-white absolute inset-0 my-auto mx-52" />
+          id?.length > 6 ? (
+            <p className="flex-center w-full py-2 font-karla">
+              Not available on AniList
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <div className="space-y-1">
+                <label className="font-karla font-semibold text-gray-500 text-xs">
+                  Status
+                </label>
+                <div className="relative">
+                  <select
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-2 py-1 font-karla rounded-md bg-[#161617] appearance-none text-sm"
+                  >
+                    <option value="CURRENT">Reading</option>
+                    <option value="PLANNING">Plan to Read</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="REPEATING">Rereading</option>
+                    <option value="PAUSED">Paused</option>
+                    <option value="DROPPED">Dropped</option>
+                  </select>
+                  <ChevronDownIcon className="w-5 h-5 text-white absolute inset-0 my-auto mx-52" />
+                </div>
               </div>
+              <div className="space-y-1">
+                <label className="font-karla font-semibold text-gray-500 text-xs">
+                  Chapter Progress
+                </label>
+                <input
+                  id="chapter-progress"
+                  type="number"
+                  placeholder="0"
+                  min={0}
+                  value={progress}
+                  onChange={(e) => setProgress(e.target.value)}
+                  className="w-full px-2 py-1 rounded-md bg-[#161617] text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="font-karla font-semibold text-gray-500 text-xs">
+                  Volume Progress
+                </label>
+                <input
+                  type="number"
+                  placeholder="0"
+                  min={0}
+                  onChange={(e) => setVolumeProgress(e.target.value)}
+                  className="w-full px-2 py-1 rounded-md bg-[#161617] text-sm"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={saveProgress}
+                className="w-full bg-[#424245] py-1 my-5 rounded-md text-white text-sm xl:text-base shadow-md font-karla font-semibold"
+              >
+                Save Progress
+              </button>
             </div>
-            <div className="space-y-1">
-              <label className="font-karla font-semibold text-gray-500 text-xs">
-                Chapter Progress
-              </label>
-              <input
-                id="chapter-progress"
-                type="number"
-                placeholder="0"
-                min={0}
-                value={progress}
-                onChange={(e) => setProgress(e.target.value)}
-                className="w-full px-2 py-1 rounded-md bg-[#161617] text-sm"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="font-karla font-semibold text-gray-500 text-xs">
-                Volume Progress
-              </label>
-              <input
-                type="number"
-                placeholder="0"
-                min={0}
-                onChange={(e) => setVolumeProgress(e.target.value)}
-                className="w-full px-2 py-1 rounded-md bg-[#161617] text-sm"
-              />
-            </div>
-            <button
-              type="button"
-              onClick={saveProgress}
-              className="w-full bg-[#424245] py-1 my-5 rounded-md text-white text-sm xl:text-base shadow-md font-karla font-semibold"
-            >
-              Save Progress
-            </button>
-          </div>
+          )
         ) : (
           <button
             type="button"

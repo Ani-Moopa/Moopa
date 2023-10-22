@@ -5,9 +5,11 @@ import {
   ArrowsPointingInIcon,
 } from "@heroicons/react/24/outline";
 import { useAniList } from "../../../lib/anilist/useAnilist";
+import { getHeaders } from "@/utils/imageUtils";
 
 export default function SecondPanel({
   aniId,
+  chapterData,
   data,
   hasRun,
   currentChapter,
@@ -17,6 +19,7 @@ export default function SecondPanel({
   visible,
   setVisible,
   session,
+  providerId,
 }) {
   const [index, setIndex] = useState(0);
   const [image, setImage] = useState(null);
@@ -26,6 +29,7 @@ export default function SecondPanel({
   useEffect(() => {
     setIndex(0);
     setSeekPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, currentId]);
 
   const seekToIndex = (newIndex) => {
@@ -41,6 +45,7 @@ export default function SecondPanel({
 
   useEffect(() => {
     seekToIndex(seekPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seekPage]);
 
   useEffect(() => {
@@ -63,13 +68,14 @@ export default function SecondPanel({
         }
 
         if (index + 1 >= image.length - 4 && !hasRun.current) {
-          let chapterNumber = currentChapter?.number;
-          if (chapterNumber % 1 !== 0) {
-            // If it's a decimal, round it
-            chapterNumber = Math.round(chapterNumber);
-          }
+          const current = chapterData.chapters?.find(
+            (x) => x.id === currentChapter.id
+          );
+          const chapterNumber = chapterData.chapters.indexOf(current) + 1;
 
-          markProgress(aniId, chapterNumber);
+          if (chapterNumber) {
+            markProgress(aniId, chapterNumber);
+          }
           hasRun.current = true;
         }
       }
@@ -80,6 +86,7 @@ export default function SecondPanel({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, image]);
 
   const handleNext = () => {
@@ -90,10 +97,13 @@ export default function SecondPanel({
 
     if (index + 1 >= image.length - 4 && !hasRun.current) {
       console.log("marking progress");
-      let chapterNumber = currentChapter?.number;
-      if (chapterNumber % 1 !== 0) {
-        // If it's a decimal, round it
-        chapterNumber = Math.round(chapterNumber);
+      const current = chapterData.chapters?.find(
+        (x) => x.id === currentChapter.id
+      );
+      const chapterNumber = chapterData.chapters.indexOf(current) + 1;
+
+      if (chapterNumber) {
+        markProgress(aniId, chapterNumber);
       }
 
       markProgress(aniId, chapterNumber);
@@ -107,6 +117,7 @@ export default function SecondPanel({
       setSeekPage(index - 2);
     }
   };
+
   return (
     <div className="flex-grow h-screen">
       <div className="flex items-center w-full relative group">
@@ -127,11 +138,17 @@ export default function SecondPanel({
                   className="w-1/2 h-screen object-contain"
                   src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                     image[image.length - index - 2]?.url
-                  )}&headers=${encodeURIComponent(
-                    JSON.stringify({
-                      Referer: image[image.length - index - 2]?.headers.Referer,
-                    })
-                  )}`}
+                  )}${
+                    image[image.length - index - 2]?.headers?.Referer
+                      ? `&headers=${encodeURIComponent(
+                          JSON.stringify(
+                            image[image.length - index - 2]?.headers
+                          )
+                        )}`
+                      : `&headers=${encodeURIComponent(
+                          JSON.stringify(getHeaders(providerId))
+                        )}`
+                  }`}
                   alt="Manga Page"
                 />
               )}
@@ -142,11 +159,15 @@ export default function SecondPanel({
                 className="w-1/2 h-screen object-contain"
                 src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
                   image[image.length - index - 1]?.url
-                )}&headers=${encodeURIComponent(
-                  JSON.stringify({
-                    Referer: image[image.length - index - 1]?.headers.Referer,
-                  })
-                )}`}
+                )}${
+                  image[image.length - index - 1]?.headers?.Referer
+                    ? `&headers=${encodeURIComponent(
+                        JSON.stringify(image[image.length - index - 1]?.headers)
+                      )}`
+                    : `&headers=${encodeURIComponent(
+                        JSON.stringify(getHeaders(providerId))
+                      )}`
+                }`}
                 alt="Manga Page"
               />
             </div>

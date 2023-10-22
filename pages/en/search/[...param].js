@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion as m } from "framer-motion";
+import { motion as m } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -25,6 +25,8 @@ import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { NewNavbar } from "@/components/shared/NavBar";
 import MobileNav from "@/components/shared/MobileNav";
+import SearchByImage from "@/components/search/searchByImage";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 export async function getServerSideProps(context) {
   const { param } = context.query;
@@ -91,9 +93,10 @@ export default function Card({
 }) {
   const inputRef = useRef(null);
   const router = useRouter();
-  // const { data: session } = useSession();
 
   const [data, setData] = useState();
+  const [imageSearch, setImageSearch] = useState();
+
   const [loading, setLoading] = useState(true);
 
   const [search, setQuery] = useState(query);
@@ -125,16 +128,18 @@ export default function Card({
     });
     if (data?.media?.length === 0) {
       setNextPage(false);
+      setLoading(false);
     } else if (data !== null && page > 1) {
       setData((prevData) => {
         return [...(prevData ?? []), ...data?.media];
       });
       setNextPage(data?.pageInfo.hasNextPage);
+      setLoading(false);
     } else {
       setData(data?.media);
+      setNextPage(data?.pageInfo.hasNextPage);
+      setLoading(false);
     }
-    setNextPage(data?.pageInfo.hasNextPage);
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -142,6 +147,7 @@ export default function Card({
     setPage(1);
     setNextPage(true);
     advance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     debounceSearch,
     type?.value,
@@ -153,11 +159,17 @@ export default function Card({
   ]);
 
   useEffect(() => {
+    if (imageSearch) return;
     advance();
-  }, [page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, imageSearch]);
 
   useEffect(() => {
     function handleScroll() {
+      if (imageSearch) {
+        window.removeEventListener("scroll", handleScroll);
+        return;
+      }
       if (page > 10 || !nextPage) {
         window.removeEventListener("scroll", handleScroll);
         return;
@@ -174,7 +186,7 @@ export default function Card({
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, nextPage]);
+  }, [page, nextPage, imageSearch]);
 
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
@@ -189,6 +201,7 @@ export default function Card({
   };
 
   function trash() {
+    setImageSearch();
     setQuery();
     setGenre();
     setFormat();
@@ -201,6 +214,18 @@ export default function Card({
   function handleVisible() {
     setIsVisible(!isVisible);
   }
+
+  const handleVideoHover = (hovered, id) => {
+    const updatedImageSearch = imageSearch?.map((item) => {
+      if (item.filename === id) {
+        return { ...item, hovered };
+      }
+      return item;
+    });
+    setImageSearch(updatedImageSearch);
+  };
+
+  // console.log({ loading, data });
 
   return (
     <>
@@ -290,6 +315,7 @@ export default function Card({
               >
                 <Cog6ToothIcon className="w-5 h-5" />
               </div>
+              <SearchByImage setMedia={setData} setData={setImageSearch} />
               <div
                 className="py-2 px-2 bg-secondary rounded flex justify-center items-center cursor-pointer hover:bg-opacity-75 transition-all duration-100 group"
                 onClick={trash}
@@ -343,91 +369,200 @@ export default function Card({
           )}
           {/* <div> */}
           <div className="flex flex-col gap-14 items-center z-30">
-            <AnimatePresence>
-              <div
-                key="card-keys"
-                className="grid pt-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 justify-items-center grid-cols-2 xxs:grid-cols-3 w-screen px-2 xl:w-auto xl:gap-10 gap-2 xl:gap-y-24 gap-y-12 overflow-hidden"
-              >
-                {loading
-                  ? ""
-                  : !data?.length && (
-                      <div className="w-screen text-[#ff7f57] xl:col-start-3 col-start-2 items-center flex justify-center text-center font-bold font-karla xl:text-2xl">
-                        Oops!<br></br> Nothing's Found...
-                      </div>
-                    )}
-                {data &&
-                  data?.map((anime, index) => {
-                    return (
-                      <m.div
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1, transition: { duration: 0.35 } }}
-                        className="w-[146px] xxs:w-[115px] xs:w-[135px] xl:w-[185px]"
-                        key={index}
-                      >
-                        <Link
-                          href={
-                            anime.format === "MANGA" || anime.format === "NOVEL"
-                              ? `/en/manga/${anime.id}`
-                              : `/en/anime/${anime.id}`
-                          }
-                          title={anime.title.userPreferred}
-                        >
-                          <Image
-                            className="object-cover bg-[#3B3C41] w-[146px] h-[208px] xxs:w-[115px] xxs:h-[163px] xs:w-[135px] xs:h-[192px] xl:w-[185px] xl:h-[265px] hover:scale-105 scale-100 transition-all cursor-pointer duration-200 ease-out rounded-[10px]"
-                            src={anime.coverImage.extraLarge}
-                            alt={anime.title.userPreferred}
-                            width={500}
-                            height={500}
-                          />
-                        </Link>
-                        <Link
-                          href={`/en/anime/${anime.id}`}
-                          title={anime.title.userPreferred}
-                        >
-                          <h1 className="font-outfit font-bold xl:text-base text-[15px] pt-4 line-clamp-2">
-                            {anime.status === "RELEASING" ? (
-                              <span className="dots bg-green-500" />
-                            ) : anime.status === "NOT_YET_RELEASED" ? (
-                              <span className="dots bg-red-500" />
-                            ) : null}
-                            {anime.title.userPreferred}
-                          </h1>
-                        </Link>
-                        <h2 className="font-outfit xl:text-[15px] text-[11px] font-light pt-2 text-[#8B8B8B]">
-                          {anime.format || <p>-</p>} &#183;{" "}
-                          {anime.status || <p>-</p>} &#183;{" "}
-                          {anime.episodes
-                            ? `${anime.episodes || "N/A"} Episodes`
-                            : `${anime.chapters || "N/A"} Chapters`}
-                        </h2>
-                      </m.div>
-                    );
-                  })}
+            <div
+              key="card-keys"
+              className={`${
+                imageSearch ? "hidden" : ""
+              } grid pt-3 px-5 xl:px-0 xxs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 justify-items-center grid-cols-2 w-screen xl:w-auto xl:gap-7 gap-5 gap-y-10`}
+            >
+              {loading
+                ? ""
+                : !data && (
+                    <div className="w-full text-[#ff7f57] col-span-6 items-center flex justify-center text-center font-bold font-karla xl:text-2xl">
+                      Oops!<br></br> Nothing's Found...
+                    </div>
+                  )}
 
-                {loading && (
-                  <>
-                    {[1, 2, 4, 5, 6, 7, 8].map((item) => (
-                      <div
-                        key={item}
-                        className="flex flex-col w-[135px] xl:w-[185px] gap-5"
-                        style={{ scale: 0.98 }}
+              {data &&
+                data?.length > 0 &&
+                !imageSearch &&
+                data?.map((anime, index) => {
+                  const anilistId = anime?.mappings?.find(
+                    (x) => x.providerId === "anilist"
+                  )?.id;
+                  return (
+                    <m.div
+                      initial={{ scale: 0.98 }}
+                      animate={{ scale: 1, transition: { duration: 0.35 } }}
+                      className="w-full"
+                      key={index}
+                    >
+                      <Link
+                        href={
+                          anime.format === "MANGA" || anime.format === "NOVEL"
+                            ? `/en/manga/${
+                                anilistId ? anilistId : ""
+                              }${`/${anime.id}`}`
+                            : `/en/anime/${anime.id}`
+                        }
+                        title={anime.title.userPreferred}
+                        className="block relative overflow-hidden bg-secondary hover:scale-[1.03] scale-100 transition-all cursor-pointer duration-200 ease-out rounded"
+                        style={{
+                          paddingTop: "145%", // 2:3 aspect ratio (3/2 * 100%)
+                        }}
                       >
-                        <Skeleton className="h-[192px] w-[135px] xl:h-[265px] xl:w-[185px]" />
-                        <Skeleton width={110} height={30} />
+                        <Image
+                          className="object-cover"
+                          src={anime.coverImage.extraLarge}
+                          alt={anime.title.userPreferred}
+                          sizes="(min-width: 808px) 50vw, 100vw"
+                          quality={100}
+                          fill
+                        />
+                      </Link>
+                      <Link
+                        href={
+                          anime.format === "MANGA" || anime.format === "NOVEL"
+                            ? `/en/manga/${
+                                anilistId ? anilistId : ""
+                              }${`/${anime.id}`}`
+                            : `/en/anime/${anime.id}`
+                        }
+                        title={anime.title.userPreferred}
+                      >
+                        <h1 className="font-outfit font-bold xl:text-base text-[15px] pt-4 line-clamp-2">
+                          {anime.status === "RELEASING" ? (
+                            <span className="dots bg-green-500" />
+                          ) : anime.status === "NOT_YET_RELEASED" ? (
+                            <span className="dots bg-red-500" />
+                          ) : null}
+                          {anime.title.userPreferred}
+                        </h1>
+                      </Link>
+                      <h2 className="font-outfit xl:text-[15px] text-[11px] font-light pt-2 text-[#8B8B8B]">
+                        {anime.format || <p>-</p>} &#183;{" "}
+                        {anime.status || <p>-</p>} &#183;{" "}
+                        {anime.episodes
+                          ? `${anime.episodes || "N/A"} Episodes`
+                          : `${anime.chapters || "N/A"} Chapters`}
+                      </h2>
+                    </m.div>
+                  );
+                })}
+
+              {loading && (
+                <>
+                  {[1, 2, 4, 5, 6, 7, 8].map((item) => (
+                    <div className="w-full" key={item}>
+                      <div className="w-full">
+                        <Skeleton
+                          className="w-full rounded"
+                          style={{
+                            paddingTop: "140%", // 2:3 aspect ratio (3/2 * 100%)
+                            width: "(min-width: 808px) 50vw, 100vw",
+                            lineHeight: 1,
+                          }}
+                        />
                       </div>
-                    ))}
-                  </>
-                )}
-              </div>
-              {!loading && page > 10 && nextPage && (
-                <button
-                  onClick={() => setPage((p) => p + 1)}
-                  className="bg-secondary xl:w-[30%] w-[80%] h-10 rounded-md"
-                >
-                  Load More
-                </button>
+                      <div>
+                        <h1 className="font-outfit w-[320px] font-bold xl:text-base text-[15px] pt-4 line-clamp-2">
+                          <Skeleton width={120} height={26} />
+                        </h1>
+                      </div>
+                    </div>
+                  ))}
+                </>
               )}
-            </AnimatePresence>
+            </div>
+
+            {imageSearch && (
+              <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3 md:gap-7 px-5 lg:px-0">
+                {imageSearch.map((a, index) => {
+                  return (
+                    <m.div
+                      key={index}
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: 1, transition: { duration: 0.35 } }}
+                      className="flex flex-col gap-2 shrink-0 cursor-pointer relative group/item"
+                    >
+                      <Link
+                        className="relative aspect-video rounded-md overflow-hidden group"
+                        href={`/en/anime/${a.anilist.id}`}
+                        onMouseEnter={() => {
+                          handleVideoHover(true, a.filename);
+                        }}
+                        onMouseLeave={() => handleVideoHover(false, a.filename)}
+                      >
+                        <div className="w-full h-full bg-gradient-to-t from-black/70 from-20% to-transparent group-hover:to-black/40 transition-all duration-300 ease-out absolute z-30" />
+                        <div className="absolute bottom-3 left-0 mx-2 text-white flex gap-2 items-center w-[80%] z-30">
+                          <PlayIcon className="w-5 h-5 shrink-0" />
+                          <h1
+                            className="font-semibold font-karla line-clamp-1"
+                            title={a?.anilist.title.romaji}
+                          >
+                            {`Episode ${a.episode}`}
+                          </h1>
+                        </div>
+
+                        {a?.image && (
+                          <Image
+                            src={a?.image}
+                            width={200}
+                            height={200}
+                            alt="Episode Thumbnail"
+                            className={`w-full object-cover group-hover:scale-[1.02] duration-300 ease-out z-10 ${
+                              !a.hovered ? "visible" : "hidden"
+                            }`}
+                          />
+                        )}
+                        {a?.video && (
+                          <video
+                            src={a.video}
+                            className={`w-full object-cover group-hover:scale-[1.02] duration-300 ease-out z-10 ${
+                              a.hovered ? "visible" : "hidden"
+                            }`}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                          />
+                        )}
+                      </Link>
+
+                      <Link
+                        className="flex flex-col font-karla w-full"
+                        href={`/en/anime/${a.anilist.id}`}
+                      >
+                        {/* <h1 className="font-semibold">{a.title}</h1> */}
+                        <p className="flex items-center gap-1 text-sm text-gray-400 w-[320px]">
+                          <span
+                            className="text-white max-w-[120px] md:max-w-[200px] lg:max-w-[220px]"
+                            style={{
+                              display: "inline-block",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                            title={a?.anilist.title.romaji}
+                          >
+                            {a?.anilist.title.romaji}
+                          </span>{" "}
+                          | Episode {a.episode}
+                        </p>
+                      </Link>
+                    </m.div>
+                  );
+                })}
+              </div>
+            )}
+            {!loading && page > 10 && nextPage && (
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                className="bg-secondary xl:w-[30%] w-[80%] h-10 rounded-md"
+              >
+                Load More
+              </button>
+            )}
           </div>
           {/* </div> */}
         </div>

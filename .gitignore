@@ -8,7 +8,7 @@
 
 # testing
 /coverage
-/pages/test.js
+/pages/en/test.js
 /components/devComp
 
 # next.js

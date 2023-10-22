@@ -47,6 +47,7 @@ export default function Genres() {
     } else if (lang === "id") {
       setLang("id");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="antialiased">

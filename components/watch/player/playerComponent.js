@@ -4,6 +4,7 @@ import { icons } from "./component/overlay";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { useRouter } from "next/router";
 import { useAniList } from "@/lib/anilist/useAnilist";
+import Loading from "@/components/shared/loading";
 
 export function calculateAspectRatio(width, height) {
   const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
@@ -74,20 +75,18 @@ export default function PlayerComponent({
       setResolution(resol);
     }
 
-    if (provider === "zoro") {
-      const size = fontSize.map((i) => {
-        const isDefault = !sub ? i.html === "Small" : i.html === sub?.html;
-        return {
-          ...(isDefault && { default: true }),
-          html: i.html,
-          size: i.size,
-        };
-      });
+    const size = fontSize.map((i) => {
+      const isDefault = !sub ? i.html === "Small" : i.html === sub?.html;
+      return {
+        ...(isDefault && { default: true }),
+        html: i.html,
+        size: i.size,
+      };
+    });
 
-      const defSize = size?.find((i) => i?.default === true);
-      setDefSize(defSize);
-      setSubSize(size);
-    }
+    const defSize = size?.find((i) => i?.default === true);
+    setDefSize(defSize);
+    setSubSize(size);
 
     async function compiler() {
       try {
@@ -114,19 +113,26 @@ export default function PlayerComponent({
           setUrl(defSource.url);
         }
 
-        if (provider === "zoro") {
-          const subtitle = data?.subtitles
-            .filter((subtitle) => subtitle.lang !== "Thumbnails")
-            .map((subtitle) => {
-              const isEnglish = subtitle.lang === "English";
-              return {
-                ...(isEnglish && { default: true }),
-                url: subtitle.url,
-                html: `${subtitle.lang}`,
-              };
-            });
+        const subtitle = data?.subtitles
+          ?.filter(
+            (subtitle) =>
+              subtitle.lang !== "Thumbnails" && subtitle.lang !== "thumbnails"
+          )
+          ?.map((subtitle) => {
+            const isEnglish =
+              subtitle.lang === "English" ||
+              subtitle.lang === "English / English (US)";
+            return {
+              ...(isEnglish && { default: true }),
+              url: subtitle.url,
+              html: `${subtitle.lang}`,
+            };
+          });
 
-          const defSub = data?.subtitles.find((i) => i.lang === "English");
+        if (subtitle) {
+          const defSub = data?.subtitles.find(
+            (i) => i.lang === "English" || i.lang === "English / English (US)"
+          );
 
           setDefSub(defSub?.url);
 
@@ -162,6 +168,8 @@ export default function PlayerComponent({
       setSubtitle([]);
       setLoading(true);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider, data]);
 
   /**
@@ -170,6 +178,17 @@ export default function PlayerComponent({
   function getInstance(art) {
     art.on("ready", () => {
       const autoplay = localStorage.getItem("autoplay_video") || false;
+
+      // check media queries for mobile devices
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+      // console.log(art.fullscreen);
+
+      if (isMobile) {
+        art.controls.remove("theater-button");
+        // art.controls.remove("fast-rewind");
+        // art.controls.remove("fast-forward");
+      }
 
       if (autoplay === "true" || autoplay === true) {
         if (playerState.currentTime === 0) {
@@ -465,10 +484,13 @@ export default function PlayerComponent({
       style={{ aspectRatio: aspectRatio }}
     >
       <div className="flex-center w-full h-full">
+        {!data?.error && !url && (
+          <div className="flex-center w-full h-full">
+            <Loading />
+          </div>
+        )}
         {!error ? (
-          !loading &&
-          track &&
-          url && (
+          !loading && track && url && !data?.error ? (
             <NewPlayer
               playerRef={playerRef}
               res={resolution}
@@ -486,6 +508,12 @@ export default function PlayerComponent({
                 height: "100%",
               }}
             />
+          ) : (
+            <p className="text-center">
+              {data?.status === 404 && "Not Found"}
+              <br />
+              {data?.error}
+            </p>
           )
         ) : (
           <p className="text-center">

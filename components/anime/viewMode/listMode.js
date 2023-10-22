@@ -19,7 +19,7 @@ export default function ListMode({
       href={`/en/anime/watch/${info.id}/${providerId}?id=${encodeURIComponent(
         episode.id
       )}&num=${episode.number}${dub ? `&dub=${dub}` : ""}`}
-      className={`flex gap-3 py-4 hover:bg-secondary/10 odd:bg-secondary/30 even:bg-primary`}
+      className={`flex gap-3 py-4 hover:bg-secondary odd:bg-secondary/30 even:bg-primary`}
     >
       <div className="flex w-full">
         <span className="shrink-0 px-4 text-center text-white/50">

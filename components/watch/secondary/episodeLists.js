@@ -1,6 +1,8 @@
 import Skeleton from "react-loading-skeleton";
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 export default function EpisodeLists({
   info,
@@ -9,13 +11,56 @@ export default function EpisodeLists({
   watchId,
   episode,
   artStorage,
+  track,
   dub,
 }) {
   const progress = info.mediaListEntry?.progress;
 
+  const router = useRouter();
+
   return (
     <div className="w-screen lg:max-w-sm xl:max-w-lg">
-      <h1 className="text-xl font-karla pl-5 pb-5 font-semibold">Up Next</h1>
+      <div className="flex gap-4 pl-5 pb-5">
+        <button
+          disabled={!track?.next}
+          onClick={() => {
+            router.push(
+              `/en/anime/watch/${info.id}/${providerId}?id=${
+                track?.next?.id
+              }&num=${track?.next?.number}${dub ? `&dub=${dub}` : ""}`
+            );
+          }}
+          className="text-xl font-karla font-semibold"
+        >
+          Next Episode {">"}
+        </button>
+        {episode && (
+          <div className="relative flex gap-2 items-center group">
+            <select
+              value={track?.playing?.number}
+              onChange={(e) => {
+                const selectedEpisode = episode.find(
+                  (episode) => episode.number === parseInt(e.target.value)
+                );
+
+                router.push(
+                  `/en/anime/watch/${info.id}/${providerId}?id=${
+                    selectedEpisode.id
+                  }&num=${selectedEpisode.number}${dub ? `&dub=${dub}` : ""}`
+                );
+              }}
+              className="flex items-center text-sm gap-5 rounded-[3px] bg-secondary py-1 px-3 pr-8 font-karla appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-action group-hover:ring-1 group-hover:ring-action"
+            >
+              {episode?.map((x) => (
+                <option key={x.id} value={x.number}>
+                  Episode {x.number}
+                </option>
+              ))}
+            </select>
+            <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" />
+          </div>
+        )}
+      </div>
       <div className="flex flex-col gap-5 lg:pl-5 py-2 scrollbar-thin px-2 scrollbar-thumb-[#313131] scrollbar-thumb-rounded-full">
         {episode && episode.length > 0 ? (
           map?.some(

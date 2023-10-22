@@ -3,7 +3,13 @@ import { rateLimitStrict, rateLimiterRedis, redis } from "@/lib/redis";
 import appendImagesToEpisodes from "@/utils/combineImages";
 import appendMetaToEpisodes from "@/utils/appendMetaToEpisodes";
 
-const CONSUMET_URI = process.env.API_URI;
+let CONSUMET_URI;
+
+CONSUMET_URI = process.env.API_URI;
+if (CONSUMET_URI.endsWith("/")) {
+  CONSUMET_URI = CONSUMET_URI.slice(0, -1);
+}
+
 const API_KEY = process.env.API_KEY;
 
 const isAscending = (data) => {
@@ -15,37 +21,70 @@ const isAscending = (data) => {
   return true;
 };
 
-async function fetchConsumet(id, dub) {
+function filterData(data, type) {
+  // Filter the data based on the type (sub or dub) and providerId
+  const filteredData = data.map((item) => {
+    if (item?.map === true) {
+      if (item.episodes[type].length === 0) {
+        return null;
+      } else {
+        return {
+          ...item,
+          episodes: Object?.entries(item.episodes[type]).map(
+            ([id, episode]) => ({
+              ...episode,
+            })
+          ),
+        };
+      }
+    }
+    return item;
+  });
+
+  const noEmpty = filteredData.filter((i) => i !== null);
+  return noEmpty;
+}
+
+async function fetchConsumet(id) {
   try {
-    if (dub) {
-      return [];
+    async function fetchData(dub) {
+      const { data } = await axios.get(
+        `${CONSUMET_URI}/meta/anilist/episodes/${id}${dub ? "?dub=true" : ""}`
+      );
+      if (data?.message === "Anime not found" && data?.length < 1) {
+        return [];
+      }
+
+      if (dub) {
+        if (!data?.some((i) => i.id.includes("dub"))) return [];
+      }
+
+      const reformatted = data.map((item) => ({
+        id: item?.id || null,
+        title: item?.title || null,
+        img: item?.image || null,
+        number: item?.number || null,
+        createdAt: item?.createdAt || null,
+        description: item?.description || null,
+        url: item?.url || null,
+      }));
+
+      return reformatted;
     }
 
-    const { data } = await axios.get(
-      `${CONSUMET_URI}/meta/anilist/episodes/${id}`
-    );
-
-    if (data?.message === "Anime not found" && data?.length < 1) {
-      return [];
-    }
-
-    const reformatted = data.map((item) => ({
-      id: item?.id || null,
-      title: item?.title || null,
-      img: item?.image || null,
-      number: item?.number || null,
-      createdAt: item?.createdAt || null,
-      description: item?.description || null,
-      url: item?.url || null,
-    }));
+    const [subData, dubData] = await Promise.all([
+      fetchData(),
+      fetchData(true),
+    ]);
 
     const array = [
       {
         map: true,
         providerId: "gogoanime",
-        episodes: isAscending(reformatted)
-          ? reformatted
-          : reformatted.reverse(),
+        episodes: {
+          sub: isAscending(subData) ? subData : subData.reverse(),
+          dub: isAscending(dubData) ? dubData : dubData.reverse(),
+        },
       },
     ];
 
@@ -73,7 +112,15 @@ async function fetchAnify(id) {
     const filtered = data.filter(
       (item) => item.providerId !== "animepahe" && item.providerId !== "kass"
     );
+    // const modifiedData = filtered.map((provider) => {
+    //   if (provider.providerId === "gogoanime") {
+    //     const reversedEpisodes = [...provider.episodes].reverse();
+    //     return { ...provider, episodes: reversedEpisodes };
+    //   }
+    //   return provider;
+    // });
 
+    // return modifiedData;
     return filtered;
   } catch (error) {
     console.error("Error fetching and processing data:", error.message);
@@ -81,10 +128,14 @@ async function fetchAnify(id) {
   }
 }
 
-async function fetchCoverImage(id) {
+async function fetchCoverImage(id, available = false) {
   try {
     if (!process.env.API_KEY) {
       return [];
+    }
+
+    if (available) {
+      return null;
     }
 
     const { data } = await axios.get(
@@ -95,7 +146,9 @@ async function fetchCoverImage(id) {
       return [];
     }
 
-    return data;
+    const getData = data[0].data;
+
+    return getData;
   } catch (error) {
     console.error("Error fetching and processing data:", error.message);
     return [];
@@ -124,10 +177,10 @@ export default async function handler(req, res) {
     }
 
     if (refresh) {
-      await redis.del(id);
+      await redis.del(`episode:${id}`);
       console.log("deleted cache");
     } else {
-      cached = await redis.get(id);
+      cached = await redis.get(`episode:${id}`);
       console.log("using redis");
     }
 
@@ -136,49 +189,75 @@ export default async function handler(req, res) {
 
   if (cached && !refresh) {
     if (dub) {
-      const filtered = JSON.parse(cached).filter((item) =>
-        item.episodes.some((epi) => epi.hasDub === true)
+      const filteredData = filterData(JSON.parse(cached), "dub");
+
+      let filtered = filteredData.filter((item) =>
+        item?.episodes?.some((epi) => epi.hasDub !== false)
       );
+
+      if (meta) {
+        filtered = await appendMetaToEpisodes(filtered, JSON.parse(meta));
+      }
+
       return res.status(200).json(filtered);
     } else {
-      return res.status(200).json(JSON.parse(cached));
+      const filteredData = filterData(JSON.parse(cached), "sub");
+
+      let filtered = filteredData;
+
+      if (meta) {
+        filtered = await appendMetaToEpisodes(filteredData, JSON.parse(meta));
+      }
+
+      return res.status(200).json(filtered);
     }
   } else {
     const [consumet, anify, cover] = await Promise.all([
       fetchConsumet(id, dub),
       fetchAnify(id),
-      fetchCoverImage(id),
+      fetchCoverImage(id, meta),
     ]);
 
-    const hasImage = consumet.map((i) =>
-      i.episodes.some(
-        (e) => e.img !== null || !e.img.includes("https://s4.anilist.co/")
-      )
-    );
+    // const hasImage = consumet.map((i) =>
+    //   i.episodes?.sub?.some(
+    //     (e) => e.img !== null || !e.img.includes("https://s4.anilist.co/")
+    //   )
+    // );
 
-    const rawData = [...consumet, ...(anify[0]?.data ?? [])];
+    let subDub = "sub";
+    if (dub) {
+      subDub = "dub";
+    }
 
-    let data = rawData;
+    const rawData = [...consumet, ...anify];
+
+    const filteredData = filterData(rawData, subDub);
+
+    let data = filteredData;
 
     if (meta) {
-      data = await appendMetaToEpisodes(rawData, JSON.parse(meta));
-    } else if (cover && cover?.length > 0 && !hasImage.includes(true))
-      data = await appendImagesToEpisodes(rawData, cover);
+      data = await appendMetaToEpisodes(filteredData, JSON.parse(meta));
+    } else if (cover && !cover.some((e) => e.img === null)) {
+      await redis.set(`meta:${id}`, JSON.stringify(cover));
+      data = await appendMetaToEpisodes(filteredData, cover);
+    }
 
     if (redis && cacheTime !== null) {
       await redis.set(
-        id,
-        JSON.stringify(data.filter((i) => i.episodes.length > 0)),
+        `episode:${id}`,
+        JSON.stringify(rawData),
         "EX",
         cacheTime
       );
     }
 
     if (dub) {
-      const filtered = data.filter((item) =>
-        item.episodes.some((epi) => epi.hasDub === true)
+      const filtered = data.filter(
+        (item) => !item.episodes.some((epi) => epi.hasDub === false)
       );
-      return res.status(200).json(filtered);
+      return res
+        .status(200)
+        .json(filtered.filter((i) => i.episodes.length > 0));
     }
 
     console.log("fresh data");

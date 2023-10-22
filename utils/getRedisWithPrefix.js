@@ -63,6 +63,19 @@ export async function getValuesWithNumericKeys() {
   return values;
 }
 
+export async function getKeysWithNumericKeys() {
+  const allKeys = await redis.keys("*"); // Fetch all keys in Redis
+  const numericKeys = allKeys.filter((key) => /^\d+$/.test(key)); // Filter keys that contain only numbers
+
+  const values = [];
+
+  for (const key of numericKeys) {
+    const value = await redis.del(key);
+  }
+
+  return values;
+}
+
 export async function countNumericKeys() {
   const allKeys = await redis.keys("*"); // Fetch all keys in Redis
   const numericKeys = allKeys.filter((key) => /^\d+$/.test(key)); // Filter keys that contain only numbers
