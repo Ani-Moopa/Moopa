@@ -39,10 +39,12 @@ export default async function handler(req, res) {
   try {
     let cached;
     // const data = await fetchInfo(id);
-    cached = await redis.get(`manga:${id}`);
+    if (redis) {
+      cached = await redis.get(`manga:${id}`);
 
-    if (cached) {
-      return res.status(200).json(JSON.parse(cached));
+      if (cached) {
+        return res.status(200).json(JSON.parse(cached));
+      }
     }
 
     const manga = await fetchInfo(id);
@@ -51,7 +53,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Manga not found" });
     }
 
-    await redis.set(`manga:${id}`, JSON.stringify(manga), "ex", 60 * 60 * 24);
+    if (redis) await redis.set(`manga:${id}`, JSON.stringify(manga), "ex", 60 * 60 * 24);
 
     res.status(200).json(manga);
   } catch (error) {
