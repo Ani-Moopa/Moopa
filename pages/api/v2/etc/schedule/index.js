@@ -2,13 +2,11 @@ import axios from "axios";
 import cron from "cron";
 import { rateLimiterRedis, redis } from "@/lib/redis";
 
-const API_KEY = process.env.API_KEY;
-
 // Function to fetch new data
 async function fetchData() {
   try {
     const { data } = await axios.get(
-      `https://api.anify.tv/schedule?apikey=${API_KEY}`
+      `https://api.anify.tv/schedule?fields=[id,coverImage,title,bannerImage]`
     );
     return data;
   } catch (error) {
