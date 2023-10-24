@@ -2,24 +2,10 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.2.0
+## 🎉 Update v4.2.1
 
-### Added
+### What's Changed
 
-- Added scene search for anime
-- Added next episode button on watch page
-- Added episode selector on watch page
-- Added dub gogoanime from consumet
-
-### Fixed
-
-- Greatly improved search ui/ux
-- Fixed when using search palette it focused on other button instead of search input
-- Resolved issue: home button on error page doesn't work
-- Resolved issue: website showing error when user pressing `pages` button on reader page
-
-### Changed
-
-- Searching manga now using Anify instead of AniList
-- Info page for Manga now has a similar UI as Anime making it more consistent
-- API Key isn't needed anymore
+- fix: disqus showing the same comment on every episodes
+- fix(premid): discord presence not working properly
+- Increased releasing anime episodes cache time to 1 hour

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { rateLimitStrict, rateLimiterRedis, redis } from "@/lib/redis";
-import appendImagesToEpisodes from "@/utils/combineImages";
 import appendMetaToEpisodes from "@/utils/appendMetaToEpisodes";
 
 let CONSUMET_URI;
@@ -158,8 +157,13 @@ async function fetchCoverImage(id, available = false) {
 export default async function handler(req, res) {
   const { id, releasing = "false", dub = false, refresh = null } = req.query;
 
-  // if releasing is true then cache for 10 minutes, if it false cache for 1 month;
-  const cacheTime = releasing === "true" ? 60 * 10 : 60 * 60 * 24 * 30;
+  // if releasing is true then cache for 1 hour, if it false cache for 1 month;
+  let cacheTime = null;
+  if (releasing === "true") {
+    cacheTime = 60 * 60; // 1 hour
+  } else if (releasing === "false") {
+    cacheTime = 60 * 60 * 24 * 30; // 1 month
+  }
 
   let cached;
   let meta;

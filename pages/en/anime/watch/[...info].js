@@ -354,9 +354,13 @@ export default function Watch({
           {episodeNavigation?.playing?.title ||
             `${info?.title?.romaji} - Episode ${epiNumber}`}
         </title>
-        {/* Write the best SEO for this watch page with data of anime title from info.title.romaji, episode title from episodeNavigation?.playing?.title, description from episodeNavigation?.playing?.description, episode number from epiNumber */}
+        <meta
+          name="title"
+          data-title-romaji={info?.title?.romaji}
+          data-title-english={info?.title?.english}
+          data-title-native={info?.title?.native}
+        />
         <meta name="twitter:card" content="summary_large_image" />
-        {/* Write the best SEO for this homepage */}
         <meta
           name="description"
           content={episodeNavigation?.playing?.description || info?.description}
@@ -486,13 +490,13 @@ export default function Watch({
                           "Loading..."}
                       </Link>
                     </div>
-                    <p className="font-karla">
+                    <h3 className="font-karla">
                       {episodeNavigation?.playing?.number ? (
                         `Episode ${episodeNavigation?.playing?.number}`
                       ) : (
                         <Skeleton width={120} height={16} />
                       )}
-                    </p>
+                    </h3>
                   </div>
                   <div>
                     <div className="flex gap-2 text-sm">

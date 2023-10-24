@@ -26,7 +26,12 @@ export default function Details({
   }
 
   useEffect(() => {
-    setShowComments(false);
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      setShowComments(false);
+    } else {
+      setShowComments(true);
+    }
   }, [id]);
 
   return (
@@ -35,12 +40,11 @@ export default function Details({
       <div className="pb-4 h-full flex">
         <div className="aspect-[9/13] h-[240px]">
           {info ? (
-            <Image
+            <img
               src={info.coverImage.extraLarge}
               alt="Anime Cover"
               width={1000}
               height={1000}
-              priority
               className="object-cover aspect-[9/13] h-[240px] rounded-md"
             />
           ) : (
@@ -169,7 +173,7 @@ export default function Details({
       {showComments && (
         <div>
           {info && (
-            <div className="mt-5 px-5">
+            <div className="mt-5">
               <DisqusComments
                 key={id}
                 post={{

@@ -8,8 +8,6 @@ import {
   ArrowRightCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import { parseCookies } from "nookies";
-
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
@@ -30,29 +28,14 @@ export default function Content({
 
   const ref = useRef();
   const { events } = useDraggable(ref);
-  const [cookie, setCookie] = useState(null);
 
   const [clicked, setClicked] = useState(false);
-
-  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const click = localStorage.getItem("clicked");
 
     if (click) {
       setClicked(JSON.parse(click));
-    }
-
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookie(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -109,22 +92,22 @@ export default function Content({
 
   const goToPage = () => {
     if (section === "Recently Watched") {
-      router.push(`/${lang}/anime/recently-watched`);
+      router.push(`/en/anime/recently-watched`);
     }
     if (section === "New Episodes") {
-      router.push(`/${lang}/anime/recent`);
+      router.push(`/en/anime/recent`);
     }
     if (section === "Trending Now") {
-      router.push(`/${lang}/anime/trending`);
+      router.push(`/en/anime/trending`);
     }
     if (section === "Popular Anime") {
-      router.push(`/${lang}/anime/popular`);
+      router.push(`/en/anime/popular`);
     }
     if (section === "Your Plan") {
-      router.push(`/${lang}/profile/${userName}/#planning`);
+      router.push(`/en/profile/${userName}/#planning`);
     }
     if (section === "On-Going Anime" || section === "Your Watch List") {
-      router.push(`/${lang}/profile/${userName}/#current`);
+      router.push(`/en/profile/${userName}/#current`);
     }
   };
 

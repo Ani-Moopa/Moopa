@@ -1,8 +1,6 @@
 import Image from "next/image";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { parseCookies } from "nookies";
 
 const g = [
   {
@@ -32,23 +30,6 @@ const g = [
 ];
 
 export default function Genres() {
-  const [lang, setLang] = useState("en");
-  const [cookie, setCookie] = useState(null);
-
-  useEffect(() => {
-    let lang = null;
-    if (!cookie) {
-      const cookie = parseCookies();
-      lang = cookie.lang || null;
-      setCookie(cookie);
-    }
-    if (lang === "en" || lang === null) {
-      setLang("en");
-    } else if (lang === "id") {
-      setLang("id");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <div className="antialiased">
       <div className="flex items-center justify-between lg:justify-normal lg:gap-3 px-5">
@@ -61,7 +42,7 @@ export default function Genres() {
           <div className="flex lg:gap-10 gap-4">
             {g.map((a, index) => (
               <Link
-                href={`${lang}/search/anime/?genres=${a.name}`}
+                href={`/en/search/anime/?genres=${a.name}`}
                 key={index}
                 className="relative hover:shadow-lg hover:scale-105 duration-200 cursor-pointer ease-out h-[190px] w-[135px] lg:h-[265px] lg:w-[230px] rounded-md shrink-0"
               >
