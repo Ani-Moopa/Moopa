@@ -276,7 +276,7 @@ async function fetchAnifyPages(id, number, provider, readId, key) {
   try {
     let cached;
 
-    cached = await redis.get(`pages:${readId}`);
+    if (redis) cached = await redis.get(`pages:${readId}`);
 
     if (cached) {
       return JSON.parse(cached);
@@ -292,12 +292,13 @@ async function fetchAnifyPages(id, number, provider, readId, key) {
       return null;
     }
 
-    await redis.set(
-      `pages:${readId}`,
-      JSON.stringify(data),
-      "EX",
-      60 * 60 * 24 * 7
-    );
+    if (redis)
+      await redis.set(
+        `pages:${readId}`,
+        JSON.stringify(data),
+        "EX",
+        60 * 60 * 24 * 7
+      );
 
     return data;
   } catch (error) {
@@ -357,7 +358,7 @@ export async function getServerSideProps(context) {
   }
 
   const chapters = await (
-    await fetch("https://api.anify.tv/chapters/" + mediaId + "?apikey=" + key)
+    await fetch("https://api.anify.tv/chapters/" + mediaId)
   ).json();
 
   if ((dataManga && dataManga?.error) || dataManga?.length === 0) {

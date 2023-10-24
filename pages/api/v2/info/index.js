@@ -7,7 +7,7 @@ export async function fetchInfo(id) {
   try {
     // console.log(id);
     const { data } = await axios
-      .get(`https://api.anify.tv/info/${id}?apikey=${API_KEY}`)
+      .get(`https://api.anify.tv/info/${id}`)
       .catch((err) => {
         return {
           data: null,
@@ -19,7 +19,7 @@ export async function fetchInfo(id) {
     }
 
     const { data: Chapters } = await axios.get(
-      `https://api.anify.tv/chapters/${data.id}?apikey=${API_KEY}`
+      `https://api.anify.tv/chapters/${data.id}`
     );
 
     if (!Chapters) {
@@ -53,7 +53,8 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Manga not found" });
     }
 
-    if (redis) await redis.set(`manga:${id}`, JSON.stringify(manga), "ex", 60 * 60 * 24);
+    if (redis)
+      await redis.set(`manga:${id}`, JSON.stringify(manga), "ex", 60 * 60 * 24);
 
     res.status(200).json(manga);
   } catch (error) {

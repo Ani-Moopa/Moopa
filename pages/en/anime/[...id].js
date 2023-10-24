@@ -212,8 +212,8 @@ export async function getServerSideProps(ctx) {
   const { id } = ctx.query;
 
   let API_URI;
-  API_URI = process.env.API_URI;
-  if (API_URI.endsWith("/")) {
+  API_URI = process.env.API_URI || null || null;
+  if (API_URI && API_URI.endsWith("/")) {
     API_URI = API_URI.slice(0, -1);
   }
 

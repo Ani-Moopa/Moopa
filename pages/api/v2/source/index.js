@@ -2,8 +2,8 @@ import { rateLimiterRedis, redis } from "@/lib/redis";
 import axios from "axios";
 
 let CONSUMET_URI;
-CONSUMET_URI = process.env.API_URI;
-if (CONSUMET_URI.endsWith("/")) {
+CONSUMET_URI = process.env.API_URI || null;
+if (CONSUMET_URI && CONSUMET_URI.endsWith("/")) {
   CONSUMET_URI = CONSUMET_URI.slice(0, -1);
 }
 const API_KEY = process.env.API_KEY;
@@ -25,7 +25,7 @@ async function anifySource(providerId, watchId, episode, id, sub) {
     const { data } = await axios.get(
       `https://api.anify.tv/sources?providerId=${providerId}&watchId=${encodeURIComponent(
         watchId
-      )}&episodeNumber=${episode}&id=${id}&subType=${sub}&apikey=${API_KEY}`
+      )}&episodeNumber=${episode}&id=${id}&subType=${sub}`
     );
     return data;
   } catch (error) {

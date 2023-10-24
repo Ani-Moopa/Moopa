@@ -4,8 +4,8 @@ import appendMetaToEpisodes from "@/utils/appendMetaToEpisodes";
 
 let CONSUMET_URI;
 
-CONSUMET_URI = process.env.API_URI;
-if (CONSUMET_URI.endsWith("/")) {
+CONSUMET_URI = process.env.API_URI || null;
+if (CONSUMET_URI && CONSUMET_URI.endsWith("/")) {
   CONSUMET_URI = CONSUMET_URI.slice(0, -1);
 }
 
@@ -96,13 +96,7 @@ async function fetchConsumet(id) {
 
 async function fetchAnify(id) {
   try {
-    if (!process.env.API_KEY) {
-      return [];
-    }
-
-    const { data } = await axios.get(
-      `https://api.anify.tv/episodes/${id}?apikey=${API_KEY}`
-    );
+    const { data } = await axios.get(`https://api.anify.tv/episodes/${id}`);
 
     if (!data) {
       return [];
@@ -138,7 +132,7 @@ async function fetchCoverImage(id, available = false) {
     }
 
     const { data } = await axios.get(
-      `https://api.anify.tv/content-metadata/${id}?apikey=${API_KEY}`
+      `https://api.anify.tv/content-metadata/${id}`
     );
 
     if (!data) {

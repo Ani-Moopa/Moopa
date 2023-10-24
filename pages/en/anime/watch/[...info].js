@@ -31,7 +31,7 @@ export async function getServerSideProps(context) {
 
   let proxy;
   proxy = process.env.PROXY_URI;
-  if (proxy.endsWith("/")) {
+  if (proxy && proxy.endsWith("/")) {
     proxy = proxy.slice(0, -1);
   }
   const disqus = process.env.DISQUS_SHORTNAME;

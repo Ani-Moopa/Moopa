@@ -29,8 +29,8 @@ export async function getServerSideProps(context) {
   const admin = sessions?.user?.name === process.env.ADMIN_USERNAME;
 
   let api;
-  api = process.env.API_URI;
-  if (api.endsWith("/")) {
+  api = process.env.API_URI || null;
+  if (api && api.endsWith("/")) {
     api = api.slice(0, -1);
   }
 

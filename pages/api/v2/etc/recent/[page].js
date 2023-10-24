@@ -1,8 +1,8 @@
 import { rateLimiterRedis, redis } from "@/lib/redis";
 
 let API_URL;
-API_URL = process.env.API_URI;
-if (API_URL.endsWith("/")) {
+API_URL = process.env.API_URI || null;
+if (API_URL && API_URL.endsWith("/")) {
   API_URL = API_URL.slice(0, -1);
 }
 

@@ -2,10 +2,11 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.2.1
+## 🎉 Update v4.2.2
 
 ### What's Changed
 
-- fix: disqus showing the same comment on every episodes
-- fix(premid): discord presence not working properly
-- Increased releasing anime episodes cache time to 1 hour
+- fix: anify doesn't return anything
+- fix: non-consumet user recieve error when parsing the API url
+- fix: manga doesn't work without redis
+- fix: fixed some functionality when searching manga
