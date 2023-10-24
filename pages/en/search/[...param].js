@@ -33,9 +33,7 @@ export async function getServerSideProps(context) {
 
   const { search, format, genres, season, year } = context.query;
 
-  let getFormat;
-  let getSeason;
-  let getYear;
+  let getFormat, getSeason, getYear;
   let getGenres = [];
 
   if (genres) {
@@ -400,9 +398,9 @@ export default function Card({
                       <Link
                         href={
                           anime.format === "MANGA" || anime.format === "NOVEL"
-                            ? `/en/manga/${
-                                anilistId ? anilistId : ""
-                              }${`/${anime.id}`}`
+                            ? `/en/manga/${anilistId ? `${anilistId}/` : ""}${
+                                anime.id
+                              }`
                             : `/en/anime/${anime.id}`
                         }
                         title={anime.title.userPreferred}
@@ -423,9 +421,9 @@ export default function Card({
                       <Link
                         href={
                           anime.format === "MANGA" || anime.format === "NOVEL"
-                            ? `/en/manga/${
-                                anilistId ? anilistId : ""
-                              }${`/${anime.id}`}`
+                            ? `/en/manga/${anilistId ? `${anilistId}/` : ""}${
+                                anime.id
+                              }`
                             : `/en/anime/${anime.id}`
                         }
                         title={anime.title.userPreferred}
