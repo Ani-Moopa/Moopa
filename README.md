@@ -52,6 +52,8 @@
 
 </details>
 
+> **Warning:** If you are not familiar with JavaScript or any other programming language related to this project, please learn it first before attempting to work on this project. **I won't be able to help anyone who doesn't know how to do basic stuff.**
+
 ## Introduction
 
 <p><a href="https://moopa.live">Moopa</a> is an anime streaming website made possible by the <a href="https://github.com/consumet">Consumet API</a>, built with <a href="https://github.com/vercel/next.js/">Next.js</a> and <a href="https://github.com/tailwindlabs/tailwindcss">Tailwind</a>, featuring a sleek and modern design. It offers Anilist integration to help you keep track of your favorite anime series. Moopa is entirely free and does not display any ads, making it a great option for those who want an uninterrupted viewing experience.</p>
