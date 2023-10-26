@@ -102,9 +102,7 @@ async function fetchAnify(id) {
       return [];
     }
 
-    const filtered = data.filter(
-      (item) => item.providerId !== "animepahe" && item.providerId !== "kass"
-    );
+    const filtered = data.filter((item) => item.providerId !== "kass");
     // const modifiedData = filtered.map((provider) => {
     //   if (provider.providerId === "gogoanime") {
     //     const reversedEpisodes = [...provider.episodes].reverse();
