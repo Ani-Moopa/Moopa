@@ -1,4 +1,4 @@
-import { rateLimiterRedis, redis } from "@/lib/redis";
+import { rateLimitStrict, redis } from "@/lib/redis";
 
 let API_URL;
 API_URL = process.env.API_URI || null;
@@ -11,31 +11,46 @@ export default async function handler(req, res) {
     if (redis) {
       try {
         const ipAddress = req.socket.remoteAddress;
-        await rateLimiterRedis.consume(ipAddress);
+        await rateLimitStrict.consume(ipAddress);
       } catch (error) {
         return res.status(429).json({
           error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
         });
       }
     }
-    const page = req.query.page || 1;
 
-    var hasNextPage = true;
-    var datas = [];
+    let cache;
 
-    async function fetchData(page) {
-      const data = await fetch(
-        `${API_URL}/meta/anilist/recent-episodes?page=${page}&perPage=30&provider=gogoanime`
-      ).then((res) => res.json());
-
-      const filtered = data?.results?.filter((i) => i.type !== "ONA");
-      hasNextPage = data?.hasNextPage;
-      datas = filtered;
+    if (redis) {
+      cache = await redis.get(`recent-episode`);
     }
 
-    await fetchData(page);
+    if (cache) {
+      return res.status(200).json({ results: JSON.parse(cache) });
+    } else {
+      const page = req.query.page || 1;
 
-    return res.status(200).json({ hasNextPage, results: datas });
+      var hasNextPage = true;
+      var datas = [];
+
+      async function fetchData(page) {
+        const data = await fetch(
+          `https://api.anify.tv/recent?type=anime&page=${page}&perPage=45`
+        ).then((res) => res.json());
+
+        // const filtered = data?.results?.filter((i) => i.type !== "ONA");
+        // hasNextPage = data?.hasNextPage;
+        datas = data;
+      }
+
+      await fetchData(page);
+
+      if (redis) {
+        await redis.set(`recent-episode`, JSON.stringify(datas), "EX", 60 * 60);
+      }
+
+      return res.status(200).json({ results: datas });
+    }
   } catch (error) {
     res.status(500).json({ error });
   }

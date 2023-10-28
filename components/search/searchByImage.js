@@ -65,7 +65,7 @@ export default function SearchByImage({
   useEffect(() => {
     // Add a global event listener for the paste event
     const handlePaste = async (e) => {
-      e.preventDefault();
+      // e.preventDefault();
 
       const items = e.clipboardData.items;
 

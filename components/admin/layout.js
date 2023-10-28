@@ -49,6 +49,7 @@ export default function AdminLayout({ children, page, setPage }) {
         <div className="flex flex-col px-1">
           {Navigation.map((item, index) => (
             <button
+              title="Dashboard"
               key={item.name}
               onClick={() => {
                 setPage(item.page);

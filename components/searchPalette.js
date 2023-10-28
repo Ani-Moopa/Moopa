@@ -149,6 +149,7 @@ export default function SearchPalette() {
                               <Menu.Item>
                                 {({ active }) => (
                                   <button
+                                    title="Anime"
                                     onClick={() => setType("ANIME")}
                                     className={`${
                                       active
@@ -164,6 +165,7 @@ export default function SearchPalette() {
                               <Menu.Item>
                                 {({ active }) => (
                                   <button
+                                    title="Manga"
                                     onClick={() => setType("MANGA")}
                                     className={`${
                                       active
@@ -239,6 +241,7 @@ export default function SearchPalette() {
                         {nextPage && (
                           <button
                             type="button"
+                            title="View More"
                             onClick={() => {
                               router.push(
                                 `/en/search/${type.toLowerCase()}/${

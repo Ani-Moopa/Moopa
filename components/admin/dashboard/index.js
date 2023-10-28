@@ -168,12 +168,14 @@ export default function AdminDashboard({
               </div>
               <div className="flex font-karla font-semibold gap-2">
                 <button
+                  title="Broadcast"
                   type="submit"
                   className="bg-image text-white py-2 px-4 rounded-md hover:bg-opacity-80 transition duration-300"
                 >
                   Broadcast
                 </button>
                 <button
+                  title="Remove"
                   type="button"
                   onClick={handleRemove}
                   className="bg-red-700 text-white py-2 px-4 rounded-md hover:bg-opacity-80 transition duration-300"
@@ -247,6 +249,7 @@ export default function AdminDashboard({
                     )}
                     <button
                       type="button"
+                      title="Resolved"
                       onClick={() => {
                         setReportId(i?.id);
                         handleResolved();

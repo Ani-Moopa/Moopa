@@ -173,6 +173,7 @@ export function NewNavbar({
           <div className="flex w-[20%] justify-end items-center gap-4">
             <button
               type="button"
+              title="Search"
               onClick={() => setIsOpen(true)}
               className="flex-center w-[26px] h-[26px]"
             >

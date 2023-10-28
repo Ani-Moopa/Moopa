@@ -13,6 +13,7 @@ import { ExclamationCircleIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import HistoryOptions from "./content/historyOptions";
 import { toast } from "sonner";
+import { truncateImgUrl } from "@/utils/imageUtils";
 
 export default function Content({
   ids,
@@ -287,7 +288,7 @@ export default function Content({
                             anime.image ||
                             anime.coverImage?.extraLarge ||
                             anime.coverImage?.large ||
-                            anime?.coverImage ||
+                            truncateImgUrl(anime?.coverImage) ||
                             "https://cdn.discordapp.com/attachments/986579286397964290/1058415946945003611/gray_pfp.png"
                           }
                           alt={

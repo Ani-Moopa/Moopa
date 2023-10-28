@@ -1,5 +1,5 @@
 import axios from "axios";
-import { rateLimitStrict, rateLimiterRedis, redis } from "@/lib/redis";
+import { rateLimiterRedis, rateSuperStrict, redis } from "@/lib/redis";
 import appendMetaToEpisodes from "@/utils/appendMetaToEpisodes";
 
 let CONSUMET_URI;
@@ -159,16 +159,26 @@ export default async function handler(req, res) {
 
   let cached;
   let meta;
+  let headers;
 
   if (redis) {
     try {
       const ipAddress = req.socket.remoteAddress;
       refresh
-        ? await rateLimitStrict.consume(ipAddress)
+        ? await rateSuperStrict.consume(ipAddress)
         : await rateLimiterRedis.consume(ipAddress);
+
+      headers = refresh
+        ? await rateSuperStrict.get(ipAddress)
+        : await rateLimiterRedis.get(ipAddress);
+
+      console.log(headers);
     } catch (error) {
       return res.status(429).json({
-        error: `Too Many Requests, retry after ${error.msBeforeNext / 1000}`,
+        error: `Too Many Requests, retry after ${getTimeFromMs(
+          error.msBeforeNext
+        )}`,
+        remaining: error.remainingPoints,
       });
     }
 
@@ -195,6 +205,9 @@ export default async function handler(req, res) {
         filtered = await appendMetaToEpisodes(filtered, JSON.parse(meta));
       }
 
+      res.setHeader("X-RateLimit-Remaining", headers.remainingPoints);
+      res.setHeader("X-RateLimit-BeforeReset", headers.msBeforeNext);
+
       return res.status(200).json(filtered);
     } else {
       const filteredData = filterData(JSON.parse(cached), "sub");
@@ -205,7 +218,10 @@ export default async function handler(req, res) {
         filtered = await appendMetaToEpisodes(filteredData, JSON.parse(meta));
       }
 
-      return res.status(200).json(filtered);
+      res.setHeader("X-RateLimit-Remaining", headers.remainingPoints);
+      res.setHeader("X-RateLimit-BeforeReset", headers.msBeforeNext);
+
+      return res.status(200).send(filtered);
     }
   } else {
     const [consumet, anify, cover] = await Promise.all([
@@ -256,8 +272,26 @@ export default async function handler(req, res) {
         .json(filtered.filter((i) => i.episodes.length > 0));
     }
 
-    console.log("fresh data");
+    if (redis) {
+      res.setHeader("X-RateLimit-Limit", refresh ? 1 : 50);
+      res.setHeader("X-RateLimit-Remaining", headers.remainingPoints);
+      res.setHeader("X-RateLimit-BeforeReset", headers.msBeforeNext);
+    }
 
     return res.status(200).json(data.filter((i) => i.episodes.length > 0));
+  }
+}
+
+function getTimeFromMs(time) {
+  const timeInSeconds = time / 1000;
+
+  if (timeInSeconds >= 3600) {
+    const hours = Math.floor(timeInSeconds / 3600);
+    return `${hours} hour${hours > 1 ? "s" : ""}`;
+  } else if (timeInSeconds >= 60) {
+    const minutes = Math.floor(timeInSeconds / 60);
+    return `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  } else {
+    return `${timeInSeconds} second${timeInSeconds > 1 ? "s" : ""}`;
   }
 }

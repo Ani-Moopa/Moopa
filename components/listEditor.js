@@ -145,6 +145,7 @@ const ListEditor = ({
             </div>
             <button
               type="submit"
+              title="Save"
               className="bg-[#363642] text-white rounded-sm mt-2 py-1 text-sm sm:text-base"
             >
               Save

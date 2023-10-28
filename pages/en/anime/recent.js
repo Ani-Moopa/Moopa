@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import Image from "next/image";
 import MobileNav from "@/components/shared/MobileNav";
+import { truncateImgUrl } from "@/utils/imageUtils";
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -99,7 +100,7 @@ export default function Recent({ sessions }) {
                 <div className="w-[140px] h-[190px] lg:w-[170px] lg:h-[230px] object-cover rounded opacity-90 z-20">
                   <div className="absolute bg-gradient-to-b from-black/30 to-transparent from-5% to-30% top-0 z-30 w-[140px] h-[190px] lg:w-[170px] lg:h-[230px] rounded" />
                   <Image
-                    src={i.image}
+                    src={i.image || truncateImgUrl(i.coverImage)}
                     alt={i.title.romaji}
                     width={500}
                     height={500}
@@ -108,13 +109,16 @@ export default function Recent({ sessions }) {
                 </div>
                 <Image
                   src="/svg/episode-badge.svg"
-                  alt="episode-bade"
+                  alt="episode-badge"
                   width={200}
                   height={100}
                   className="w-24 lg:w-28 absolute top-1 -right-[13px] lg:-right-[15px] z-40"
                 />
                 <p className="absolute z-40 text-center w-[80px] lg:w-[100px] top-[5px] -right-2 lg:top-[4px] lg:-right-3 font-karla text-sm lg:text-base">
-                  Episode <span className="text-white">{i?.episodeNumber}</span>
+                  Episode{" "}
+                  <span className="text-white">
+                    {i?.episodeNumber || i?.currentEpisode}
+                  </span>
                 </p>
               </Link>
               <Link
