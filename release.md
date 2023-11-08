@@ -2,9 +2,8 @@
 
 This document contains a summary of all significant changes made to this release.
 
-## 🎉 Update v4.2.4
+## 🎉 Update v4.2.5
 
 ### What's Changed
 
-- fix: Re-Added new episodes
-- fix: Cannot paste text on search bar
+- fix: Gogoanime episode id is null
