@@ -14,6 +14,12 @@ export default function ThumbnailOnly({
   const duration = artStorage?.[episode?.id]?.duration;
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
+
+  const parsedImage = image
+    ? image?.includes("null")
+      ? info.coverImage?.extraLarge
+      : image
+    : info.coverImage?.extraLarge || null;
   return (
     <Link
       // key={index}
@@ -37,9 +43,9 @@ export default function ThumbnailOnly({
         }}
       />
       {/* <div className="absolute inset-0 bg-black z-30 opacity-20" /> */}
-      {image && (
+      {parsedImage && (
         <Image
-          src={image || ""}
+          src={parsedImage || ""}
           alt={`Episode ${episode?.number} Thumbnail`}
           width={500}
           height={500}

@@ -20,7 +20,7 @@ export default function EpisodeLists({
 
   return (
     <div className="w-screen lg:max-w-sm xl:max-w-lg">
-      <div className="flex gap-4 pl-5 pb-5">
+      <div className="flex gap-4 px-3 lg:pl-5 pb-5">
         <button
           disabled={!track?.next}
           onClick={() => {

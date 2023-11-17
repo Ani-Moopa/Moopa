@@ -254,7 +254,7 @@ export async function getServerSideProps(context) {
     const datas = await getAnifyInfo(mangadexId);
 
     aniId =
-      datas.mappings.filter((i) => i.providerId === "anilist")[0]?.id || null;
+      datas.mappings?.filter((i) => i.providerId === "anilist")[0]?.id || null;
 
     if (!aniId) {
       info = datas;
@@ -363,7 +363,7 @@ export async function getServerSideProps(context) {
       data = await getAnifyInfo(mangadexId);
 
       const aniListId =
-        data.mappings.filter((i) => i.providerId === "anilist")[0]?.id || null;
+        data.mappings?.filter((i) => i.providerId === "anilist")[0]?.id || null;
 
       const response = await fetch("https://graphql.anilist.co/", {
         method: "POST",
@@ -389,8 +389,7 @@ export async function getServerSideProps(context) {
         color: textColor,
       };
 
-      if(redis)
-      {
+      if (redis) {
         await redis.set(
           `mangaPage:${mangadexId}`,
           JSON.stringify({ data, info, color }),

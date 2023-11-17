@@ -18,6 +18,12 @@ export default function ThumbnailDetail({
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
 
+  const parsedImage = image
+    ? image?.includes("null")
+      ? info.coverImage?.extraLarge
+      : image
+    : info.coverImage?.extraLarge || null;
+
   return (
     <Link
       key={index}
@@ -28,9 +34,9 @@ export default function ThumbnailDetail({
     >
       <div className="w-[43%] lg:w-[30%] relative shrink-0 z-40 rounded-lg overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
         <div className="relative">
-          {image && (
+          {parsedImage && (
             <Image
-              src={image || ""}
+              src={parsedImage || ""}
               alt={`Episode ${epi?.number} Thumbnail`}
               width={520}
               height={236}

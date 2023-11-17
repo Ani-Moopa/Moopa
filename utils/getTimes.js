@@ -109,7 +109,7 @@ export const timeStamptoHour = (timestamp) => {
 
 export function unixTimestampToRelativeTime(unixTimestamp) {
   const now = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
-  const secondsAgo = now - unixTimestamp;
+  let secondsDifference = now - unixTimestamp;
 
   const intervals = [
     { label: "year", seconds: 31536000 },
@@ -121,12 +121,14 @@ export function unixTimestampToRelativeTime(unixTimestamp) {
     { label: "second", seconds: 1 },
   ];
 
+  const isFuture = secondsDifference < 0;
+  secondsDifference = Math.abs(secondsDifference);
+
   for (const interval of intervals) {
-    const count = Math.floor(secondsAgo / interval.seconds);
+    const count = Math.floor(secondsDifference / interval.seconds);
     if (count >= 1) {
-      return count === 1
-        ? ` ${count} ${interval.label} ago`
-        : ` ${count} ${interval.label}s ago`;
+      const label = count === 1 ? interval.label : `${interval.label}s`;
+      return isFuture ? `${count} ${label} from now` : `${count} ${label} ago`;
     }
   }
 
