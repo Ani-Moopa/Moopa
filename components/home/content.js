@@ -312,7 +312,7 @@ export default function Content({
                         <Fragment>
                           <Image
                             src="/svg/episode-badge.svg"
-                            alt="episode-bade"
+                            alt="episode-badge"
                             width={200}
                             height={100}
                             className="w-24 lg:w-32 absolute top-1 -right-[12px] lg:-right-[17px] z-40"

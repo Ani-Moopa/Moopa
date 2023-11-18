@@ -110,14 +110,7 @@ git clone https://github.com/DevanAbinaya/Ani-Moopa.git
 npm install
 ```
 
-3. Generate Prisma :
-
-```bash
-npx prisma migrate dev
-npx prisma generate
-```
-
-4. Create `.env` file in the root folder and put this inside the file :
+3. Create `.env` file in the root folder and put this inside the file :
 
 ```bash
 ## AniList
@@ -142,10 +135,17 @@ DATABASE_URL="Your postgresql connection url"
 REDIS_URL="rediss://username:password@host:port"
 ```
 
-5. Add this endpoint as Redirect Url on AniList Developer :
+4. Add this endpoint as Redirect Url on AniList Developer :
 
 ```bash
 https://your-website-domain/api/auth/callback/AniListProvider
+```
+
+5. Generate Prisma :
+
+```bash
+npx prisma migrate dev
+npx prisma generate
 ```
 
 6. Start local server :
