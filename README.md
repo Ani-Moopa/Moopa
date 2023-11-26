@@ -149,7 +149,7 @@ npx prisma generate
 
 ### NOTE
 # If you get a vercel build error related to prisma that says prisma detected but no initialized just change the following line in package.json line number 8
-"build": "next build" to > "build": "npx prisma migrate dev && npx prisma generate && next build"
+"build": "next build" to > "build": "npx prisma migrate deploy && npx prisma generate && next build"
 ```
 
 6. Start local server :
