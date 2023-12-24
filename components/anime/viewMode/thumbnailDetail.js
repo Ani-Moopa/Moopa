@@ -1,3 +1,4 @@
+import { parseImageProxy } from "@/utils/imageUtils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -5,7 +6,7 @@ export default function ThumbnailDetail({
   index,
   epi,
   info,
-  image,
+  // image,
   title,
   description,
   provider,
@@ -18,10 +19,10 @@ export default function ThumbnailDetail({
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
 
-  const parsedImage = image
-    ? image?.includes("null")
+  const parsedImage = epi?.img
+    ? epi?.img?.includes("null")
       ? info.coverImage?.extraLarge
-      : image
+      : epi?.img
     : info.coverImage?.extraLarge || null;
 
   return (
@@ -36,7 +37,12 @@ export default function ThumbnailDetail({
         <div className="relative">
           {parsedImage && (
             <Image
-              src={parsedImage || ""}
+              src={
+                parseImageProxy(
+                  parsedImage,
+                  provider === "animepahe" ? "https://animepahe.ru" : undefined
+                ) || ""
+              }
               alt={`Episode ${epi?.number} Thumbnail`}
               width={520}
               height={236}
@@ -74,11 +80,11 @@ export default function ThumbnailDetail({
         className={`w-[70%] h-full select-none p-4 flex flex-col justify-center gap-3`}
       >
         <h1 className="font-karla font-bold text-base lg:text-lg xl:text-xl italic line-clamp-1">
-          {title || `Episode ${epi?.number || 0}`}
+          {epi?.title || `Episode ${epi?.number || 0}`}
         </h1>
-        {description && (
+        {epi?.description && (
           <p className="line-clamp-2 text-xs lg:text-md xl:text-lg italic font-outfit font-extralight">
-            {description}
+            {epi?.description}
           </p>
         )}
       </div>

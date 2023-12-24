@@ -13,6 +13,11 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+:root {
+  --media-brand: 245 245 245;
+  --media-focus: 78 156 246;
+}
+
 body {
   @apply bg-primary scrollbar-hide text-txt;
 }
@@ -413,7 +418,8 @@ pre code {
 
 .next-button {
   position: relative;
-  @apply xs:w-28 xs:h-9 w-24 h-7 rounded-md font-karla shadow-xl text-black xs:text-[15px] text-xs md:text-sm flex-center hover:bg-[#b9b9b9];
+  @apply px-4 py-2 font-karla text-primary hover:bg-white/80 font-semibold;
+  /* @apply xs:w-28 xs:h-9 w-24 h-7 rounded-md font-karla shadow-xl text-black xs:text-[15px] text-xs md:text-sm flex-center hover:bg-[#b9b9b9]; */
   background: #ffffff;
   border-radius: 6px;
   cursor: pointer;
@@ -432,7 +438,7 @@ pre code {
   border-radius: 6px;
 }
 .next-button.progress::before {
-  animation: progress 7s ease forwards;
+  animation: progress 7s linear forwards;
 }
 @keyframes progress {
   0% {
@@ -556,4 +562,28 @@ pre code {
     right: 0;
     left: unset;
   }
+}
+
+[data-media-player] {
+  height: 100%;
+  display: block;
+}
+
+[data-media-provider] {
+  height: 100%;
+  border: none;
+}
+
+[data-media-provider] video {
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.chat {
+  @apply flex flex-col gap-[10px];
+}
+
+.chat > span {
+  @apply font-karla w-full italic text-white/70;
 }

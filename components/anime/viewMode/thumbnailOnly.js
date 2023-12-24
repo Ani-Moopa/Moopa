@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { parseImageProxy } from "../../../utils/imageUtils";
 
 export default function ThumbnailOnly({
   info,
-  image,
+  // image,
   providerId,
   episode,
   artStorage,
@@ -15,10 +16,10 @@ export default function ThumbnailOnly({
   let prog = (time / duration) * 100;
   if (prog > 90) prog = 100;
 
-  const parsedImage = image
-    ? image?.includes("null")
+  const parsedImage = episode?.img
+    ? episode?.img?.includes("null")
       ? info.coverImage?.extraLarge
-      : image
+      : episode?.img
     : info.coverImage?.extraLarge || null;
   return (
     <Link
@@ -45,7 +46,12 @@ export default function ThumbnailOnly({
       {/* <div className="absolute inset-0 bg-black z-30 opacity-20" /> */}
       {parsedImage && (
         <Image
-          src={parsedImage || ""}
+          src={
+            parseImageProxy(
+              parsedImage,
+              providerId === "animepahe" ? "https://animepahe.ru" : undefined
+            ) || ""
+          }
           alt={`Episode ${episode?.number} Thumbnail`}
           width={500}
           height={500}
