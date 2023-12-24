@@ -22,6 +22,8 @@
   
 </p>
 
+> ⚠️ **DISCLAIMER**: This branch is not stable. Any errors or issues encountered while using this code will not be supported or addressed by me. Use this code at your own risk. I will not provide assistance for any problems that arise from using this code.
+
 <p align="center">
  <img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/c17d5d6a-36a2-4d08-957d-ad4683dcdf0d" alt="main">
 </p>
@@ -52,7 +54,7 @@
 
 </details>
 
-> **Warning:** If you are not familiar with JavaScript or any other programming language related to this project, please learn it first before attempting to work on this project. **I won't be able to help anyone who doesn't know how to do basic stuff.**
+> **Warning:** If you are not familiar with JavaScript or any other programming language related to this project, please learn it first before attempting to work on this project. **I won't help anyone who doesn't know how to do basic stuff.**
 
 ## Introduction
 

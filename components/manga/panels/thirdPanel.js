@@ -127,7 +127,7 @@ export default function ThirdPanel({
                 height={500}
                 className="w-full h-screen object-contain"
                 onClick={() => setMobileVisible(!mobileVisible)}
-                src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
+                src={`https://aoi.moopa.live/utils/image-proxy?url=${encodeURIComponent(
                   image[image.length - index - 1]?.url
                 )}${
                   image[image.length - index - 1]?.headers?.Referer

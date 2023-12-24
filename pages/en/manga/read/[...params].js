@@ -150,6 +150,7 @@ export default function Read({
           data-title-native={info?.title?.native}
         />
         <meta id="CoverImage" data-manga-cover={info?.coverImage} />
+        <meta name="robots" content="noindex" />
       </Head>
       <div className="w-screen flex justify-evenly relative">
         <ShortCutModal isOpen={isKeyOpen} setIsOpen={setIsKeyOpen} />

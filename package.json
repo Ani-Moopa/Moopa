@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "private": true,
   "founder": "Factiven",
   "scripts": {
@@ -8,24 +8,25 @@
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
+    "type-check": "tsc",
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.3",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^5.3.1",
     "@vercel/og": "^0.5.4",
-    "artplayer": "^5.0.9",
-    "artplayer-plugin-hls-quality": "^2.0.0",
-    "axios": "^1.6.0",
-    "closest-match": "^1.3.3",
+    "@vidstack/react": "^1.8.3",
+    "axios": "^1.4.0",
+    "cookies": "^0.8.0",
     "cron": "^2.4.0",
     "disqus-react": "^1.1.5",
     "framer-motion": "^8.5.0",
     "graphql": "^15.8.0",
-    "hls.js": "^1.3.2",
+    "hls.js": "^1.4.12",
     "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "media-icons": "^1.0.0",
     "next": "^13.5.5",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
@@ -42,12 +43,18 @@
     "workbox-webpack-plugin": "^7.0.0"
   },
   "devDependencies": {
+    "@types/cookies": "^0.7.10",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.33",
     "autoprefixer": "^10.4.14",
     "depcheck": "^1.4.3",
     "eslint": "^8.38.0",
     "eslint-config-next": "^13.5.2",
     "prisma": "^5.3.1",
     "tailwind-scrollbar": "^2.1.0",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.2.2"
   }
 }

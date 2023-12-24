@@ -9,8 +9,13 @@ const withPWA = require("next-pwa")({
 });
 
 module.exports = withPWA({
-  reactStrictMode: false,
+  reactStrictMode: true,
+  webpack(config, options) {
+    config.resolve.extensions.push(".ts", ".tsx");
+    return config;
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -28,6 +33,10 @@ module.exports = withPWA({
         protocol: "https",
         hostname: "tenor.com",
       },
+      {
+        protocol: "https",
+        hostname: "meionovel.id",
+      },
     ],
   },
   // distDir: process.env.BUILD_DIR || ".next",
@@ -38,6 +47,24 @@ module.exports = withPWA({
       {
         source: "/donate",
         destination: "https://ko-fi.com/factiven",
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: "/changelogs",
+        destination: "https://github.com/Ani-Moopa/Moopa/releases",
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: "/github",
+        destination: "https://github.com/Ani-Moopa/Moopa",
+        permanent: false,
+        basePath: false,
+      },
+      {
+        source: "/discord",
+        destination: "https://discord.gg/v5fjSdKwr2",
         permanent: false,
         basePath: false,
       },

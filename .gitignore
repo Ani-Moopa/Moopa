@@ -8,8 +8,11 @@
 
 # testing
 /coverage
-/pages/en/test.js
+/pages/en/test.tsx
+/pages/en/test-player.tsx
 /components/devComp
+/components/test
+/pages/en/w2g.tsx
 
 # next.js
 /.next/
@@ -27,6 +30,7 @@ docker-compose.yml
 /assets/dummyData.json
 /backup
 release-template.md
+.vscode
 
 # debug
 npm-debug.log*

@@ -108,7 +108,7 @@ export default function BottomBar({
                       onClick={() => setSeekPage(x.index)}
                     >
                       <Image
-                        src={`https://api.consumet.org/utils/image-proxy?url=${encodeURIComponent(
+                        src={`https://aoi.moopa.live/utils/image-proxy?url=${encodeURIComponent(
                           x.url
                         )}${
                           x?.headers?.Referer
