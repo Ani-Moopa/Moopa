@@ -66,12 +66,12 @@ export default function ThirdPanel({
         }
         if (index + 1 >= image.length - 2 && !hasRun.current) {
           const current = chapterData.chapters?.find(
-            (x) => x.id === currentChapter.id
+            (x) => x.id === currentChapter.id,
           );
           const chapterNumber = chapterData.chapters.indexOf(current) + 1;
 
           if (chapterNumber) {
-            markProgress(aniId, chapterNumber);
+            markProgress({ mediaId: aniId, progress: chapterNumber });
           }
           hasRun.current = true;
         }
@@ -94,12 +94,12 @@ export default function ThirdPanel({
     }
     if (index + 1 >= image.length - 2 && !hasRun.current) {
       const current = chapterData.chapters?.find(
-        (x) => x.id === currentChapter.id
+        (x) => x.id === currentChapter.id,
       );
       const chapterNumber = chapterData.chapters.indexOf(current) + 1;
 
       if (chapterNumber) {
-        markProgress(aniId, chapterNumber);
+        markProgress({ mediaId: aniId, progress: chapterNumber });
       }
 
       hasRun.current = true;
@@ -128,14 +128,16 @@ export default function ThirdPanel({
                 className="w-full h-screen object-contain"
                 onClick={() => setMobileVisible(!mobileVisible)}
                 src={`https://aoi.moopa.live/utils/image-proxy?url=${encodeURIComponent(
-                  image[image.length - index - 1]?.url
+                  image[image.length - index - 1]?.url,
                 )}${
                   image[image.length - index - 1]?.headers?.Referer
                     ? `&headers=${encodeURIComponent(
-                        JSON.stringify(image[image.length - index - 1]?.headers)
+                        JSON.stringify(
+                          image[image.length - index - 1]?.headers,
+                        ),
                       )}`
                     : `&headers=${encodeURIComponent(
-                        JSON.stringify(getHeaders(providerId))
+                        JSON.stringify(getHeaders(providerId)),
                       )}`
                 }`}
                 alt="Manga Page"

@@ -119,11 +119,11 @@ export default function VidStack({
     if (qualities.length > 0) {
       const sourceQuality = qualities.reduce(
         (max, obj) => (obj.height > max.height ? obj : max),
-        qualities[0]
+        qualities[0],
       );
       const aspectRatio = calculateAspectRatio(
         sourceQuality.width,
-        sourceQuality.height
+        sourceQuality.height,
       );
 
       setAspectRatio(aspectRatio);
@@ -336,11 +336,10 @@ export default function VidStack({
         console.log("time is up!");
         if (navigation?.next) {
           router.push(
-            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${
-              navigation?.next?.id
-            }&num=${navigation?.next?.number}${
+            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${navigation
+              ?.next?.id}&num=${navigation?.next?.number}${
               track?.isDub ? `&dub=${track?.isDub}` : ""
-            }`
+            }`,
           );
         }
       }, 7000);
@@ -379,7 +378,11 @@ export default function VidStack({
           mark = 1;
           setMarked(1);
           console.log("marking progress");
-          markProgress(dataMedia.id, navigation.playing.number);
+          // @ts-ignore Fix when convert useAnilist to typescript
+          markProgress({
+            mediaId: dataMedia.id,
+            progress: navigation.playing.number,
+          });
         }
       }
     }
@@ -388,7 +391,7 @@ export default function VidStack({
     const edButton = document.querySelector(".ed-button");
 
     const op: SkipData = track?.skip.find(
-        (item: SkipData) => item.text === "Opening"
+        (item: SkipData) => item.text === "Opening",
       ),
       ed = track?.skip.find((item: SkipData) => item.text === "Ending");
 
