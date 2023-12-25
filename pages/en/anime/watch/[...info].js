@@ -155,7 +155,7 @@ export default function Watch({
   const [rateModalOpen, setRateModalOpen] = useState(false);
 
   const { setAutoNext, dataMedia } = useWatchProvider();
-  const { markProgress } = useAniList();
+  const { markProgress } = useAniList(sessions);
 
   const [onList, setOnList] = useState(false);
 
