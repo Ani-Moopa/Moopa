@@ -4,6 +4,7 @@ import Skeleton from "react-loading-skeleton";
 import DisqusComments from "../../disqus";
 import { AniListInfoTypes } from "types/info/AnilistInfoTypes";
 import { SessionTypes } from "pages/en";
+import Link from "next/link";
 
 type DetailsProps = {
   info: AniListInfoTypes;
