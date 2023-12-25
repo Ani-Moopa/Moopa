@@ -155,7 +155,7 @@ export default function Watch({
   const [rateModalOpen, setRateModalOpen] = useState(false);
 
   const { setAutoNext, dataMedia } = useWatchProvider();
-  const { markProgress } = useAniList(sessions);
+  const { markComplete } = useAniList(sessions);
 
   const [onList, setOnList] = useState(false);
 
@@ -489,13 +489,18 @@ export default function Watch({
         onSubmit={async (e) => {
           e.preventDefault();
           const rating = e.target.rating.value;
+
           const review = e.target.review.value;
-          await markProgress({
-            mediaId: dataMedia.id,
-            progress: episodeNavigation.playing.number,
+
+          await markComplete(dataMedia.id, {
             notes: review,
             // scoreRaw is 1-100 while our input is 1-10
-            rating: 10 * rating,
+            scoreRaw: 10 * Number(rating),
+          }).catch((r) => {
+            toast.error(
+              `Failed to submit your review. Read console for more details`,
+            );
+            console.log(`Failed to submit review, `, r);
           });
           toast.success(`Successfully submitted your review and rating.`);
         }}
