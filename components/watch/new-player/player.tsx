@@ -57,6 +57,7 @@ type VidStackProps = {
   navigation: Navigation;
   userData: UserData;
   sessions: Sessions;
+  onEpisodeCompletion?: () => any;
 };
 
 export type UserData = {
@@ -88,6 +89,7 @@ export default function VidStack({
   navigation,
   userData,
   sessions,
+  onEpisodeCompletion,
 }: VidStackProps) {
   let player = useRef<MediaPlayerInstance>(null);
 
@@ -383,6 +385,7 @@ export default function VidStack({
             mediaId: dataMedia.id,
             progress: navigation.playing.number,
           });
+          onEpisodeCompletion && onEpisodeCompletion();
         }
       }
     }
@@ -425,40 +428,45 @@ export default function VidStack({
   }
 
   return (
-    <MediaPlayer
-      key={id}
-      className={`${style.player} player`}
-      title={
-        navigation?.playing?.title ||
-        `Episode ${navigation?.playing?.number}` ||
-        "Loading..."
-      }
-      load="idle"
-      crossorigin="anonymous"
-      src={{
-        src: defaultQuality?.url,
-        type: "application/vnd.apple.mpegurl",
-      }}
-      onTimeUpdate={onTimeUpdate}
-      playsinline
-      aspectRatio={aspectRatio}
-      onEnd={onEnded}
-      onSeeked={onSeeked}
-      onLoadedMetadata={onLoadedMetadata}
-      ref={player}
-    >
-      <MediaProvider>
-        {track &&
-          track?.subtitles &&
-          track?.subtitles?.map((track: Subtitle) => (
-            <Track {...track} key={track.src} />
-          ))}
-        {chapters?.length > 0 && (
-          <Track key={chapters} src={chapters} kind="chapters" default={true} />
-        )}
-      </MediaProvider>
-      <VideoLayout thumbnails={track?.thumbnails} navigation={navigation} />
-    </MediaPlayer>
+      <MediaPlayer
+        key={id}
+        className={`${style.player} player`}
+        title={
+          navigation?.playing?.title ||
+          `Episode ${navigation?.playing?.number}` ||
+          "Loading..."
+        }
+        load="idle"
+        crossorigin="anonymous"
+        src={{
+          src: defaultQuality?.url,
+          type: "application/vnd.apple.mpegurl",
+        }}
+        onTimeUpdate={onTimeUpdate}
+        playsinline
+        aspectRatio={aspectRatio}
+        onEnd={onEnded}
+        onSeeked={onSeeked}
+        onLoadedMetadata={onLoadedMetadata}
+        ref={player}
+      >
+        <MediaProvider>
+          {track &&
+            track?.subtitles &&
+            track?.subtitles?.map((track: Subtitle) => (
+              <Track {...track} key={track.src} />
+            ))}
+          {chapters?.length > 0 && (
+            <Track
+              key={chapters}
+              src={chapters}
+              kind="chapters"
+              default={true}
+            />
+          )}
+        </MediaProvider>
+        <VideoLayout thumbnails={track?.thumbnails} navigation={navigation} />
+      </MediaPlayer>
   );
 }
 
