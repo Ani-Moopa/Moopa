@@ -27,8 +27,7 @@
     "pages/api/v2/episode/[id].tsx",
     "utils/schedulesUtils.ts",
     "pages/middleware.js",
-    "pages/api/auth/[...nextauth].ts",
-    "components/anime/mobile/reused/infoChip.tsx"
+    "pages/api/auth/[...nextauth].ts"
   ],
   "exclude": ["node_modules"]
 }

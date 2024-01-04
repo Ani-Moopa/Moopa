@@ -12,7 +12,6 @@ import {
   type MediaPlayerInstance,
   Track,
   MediaTimeUpdateEventDetail,
-  MediaTimeUpdateEvent,
 } from "@vidstack/react";
 import { VideoLayout } from "./components/layouts/video-layout";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
@@ -57,7 +56,6 @@ type VidStackProps = {
   navigation: Navigation;
   userData: UserData;
   sessions: Sessions;
-  onEpisodeCompletion?: () => any;
 };
 
 export type UserData = {
@@ -89,7 +87,6 @@ export default function VidStack({
   navigation,
   userData,
   sessions,
-  onEpisodeCompletion,
 }: VidStackProps) {
   let player = useRef<MediaPlayerInstance>(null);
 
@@ -100,6 +97,7 @@ export default function VidStack({
     playerState,
     dataMedia,
     autoNext,
+    setRatingModalState,
   } = useWatchProvider();
 
   const { qualities, duration } = useMediaStore(player);
@@ -121,11 +119,11 @@ export default function VidStack({
     if (qualities.length > 0) {
       const sourceQuality = qualities.reduce(
         (max, obj) => (obj.height > max.height ? obj : max),
-        qualities[0],
+        qualities[0]
       );
       const aspectRatio = calculateAspectRatio(
         sourceQuality.width,
-        sourceQuality.height,
+        sourceQuality.height
       );
 
       setAspectRatio(aspectRatio);
@@ -338,10 +336,11 @@ export default function VidStack({
         console.log("time is up!");
         if (navigation?.next) {
           router.push(
-            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${navigation
-              ?.next?.id}&num=${navigation?.next?.number}${
+            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${
+              navigation?.next?.id
+            }&num=${navigation?.next?.number}${
               track?.isDub ? `&dub=${track?.isDub}` : ""
-            }`,
+            }`
           );
         }
       }, 7000);
@@ -385,7 +384,15 @@ export default function VidStack({
             mediaId: dataMedia.id,
             progress: navigation.playing.number,
           });
-          onEpisodeCompletion && onEpisodeCompletion();
+
+          if (dataMedia.episodes === +navigation.playing?.number) {
+            setRatingModalState((prev: any) => {
+              return {
+                ...prev,
+                isOpen: true,
+              };
+            });
+          }
         }
       }
     }
@@ -394,7 +401,7 @@ export default function VidStack({
     const edButton = document.querySelector(".ed-button");
 
     const op: SkipData = track?.skip.find(
-        (item: SkipData) => item.text === "Opening",
+        (item: SkipData) => item.text === "Opening"
       ),
       ed = track?.skip.find((item: SkipData) => item.text === "Ending");
 
@@ -428,45 +435,44 @@ export default function VidStack({
   }
 
   return (
-      <MediaPlayer
-        key={id}
-        className={`${style.player} player`}
-        title={
-          navigation?.playing?.title ||
-          `Episode ${navigation?.playing?.number}` ||
-          "Loading..."
-        }
-        load="idle"
-        crossorigin="anonymous"
-        src={{
-          src: defaultQuality?.url,
-          type: "application/vnd.apple.mpegurl",
-        }}
-        onTimeUpdate={onTimeUpdate}
-        playsinline
-        aspectRatio={aspectRatio}
-        onEnd={onEnded}
-        onSeeked={onSeeked}
-        onLoadedMetadata={onLoadedMetadata}
-        ref={player}
-      >
-        <MediaProvider>
-          {track &&
-            track?.subtitles &&
-            track?.subtitles?.map((track: Subtitle) => (
-              <Track {...track} key={track.src} />
-            ))}
-          {chapters?.length > 0 && (
-            <Track
-              key={chapters}
-              src={chapters}
-              kind="chapters"
-              default={true}
-            />
-          )}
-        </MediaProvider>
-        <VideoLayout thumbnails={track?.thumbnails} navigation={navigation} />
-      </MediaPlayer>
+    <MediaPlayer
+      key={id}
+      className={`${style.player} player relative`}
+      title={
+        navigation?.playing?.title ||
+        `Episode ${navigation?.playing?.number}` ||
+        "Loading..."
+      }
+      load="idle"
+      crossorigin="anonymous"
+      src={{
+        src: defaultQuality?.url,
+        type: "application/vnd.apple.mpegurl",
+      }}
+      onTimeUpdate={onTimeUpdate}
+      playsinline
+      aspectRatio={aspectRatio}
+      onEnd={onEnded}
+      onSeeked={onSeeked}
+      onLoadedMetadata={onLoadedMetadata}
+      ref={player}
+    >
+      <MediaProvider>
+        {track &&
+          track?.subtitles &&
+          track?.subtitles?.map((track: Subtitle) => (
+            <Track {...track} key={track.src} />
+          ))}
+        {chapters?.length > 0 && (
+          <Track key={chapters} src={chapters} kind="chapters" default={true} />
+        )}
+      </MediaProvider>
+      <VideoLayout
+        thumbnails={track?.thumbnails}
+        navigation={navigation}
+        session={sessions}
+      />
+    </MediaPlayer>
   );
 }
 

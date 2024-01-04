@@ -17,13 +17,14 @@ import { Title } from "../title";
 import { ChapterTitleComponent } from "../chapter-title";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { Navigation } from "../../player";
-import BufferingIndicator from "../bufferingIndicator";
 import { useEffect, useState } from "react";
+import RateModal from "@/components/shared/RateModal";
 
 export interface VideoLayoutProps {
   thumbnails?: string;
   navigation?: Navigation;
   host?: boolean;
+  session?: any;
 }
 
 function isMobileDevice() {
@@ -40,15 +41,25 @@ export function VideoLayout({
   thumbnails,
   navigation,
   host = true,
+  session,
 }: VideoLayoutProps) {
   const [isMobile, setIsMobile] = useState(false);
 
-  const { track } = useWatchProvider();
+  const { track, setRatingModalState, ratingModalState } = useWatchProvider();
   const isFullscreen = useMediaState("fullscreen");
 
   useEffect(() => {
     setIsMobile(isMobileDevice());
   }, []);
+
+  useEffect(() => {
+    setRatingModalState((prev: any) => {
+      return {
+        ...prev,
+        isFullscreen: isFullscreen,
+      };
+    });
+  }, [isFullscreen]);
 
   return (
     <>
@@ -56,6 +67,14 @@ export function VideoLayout({
       <Captions
         className={`${captionStyles.captions} media-preview:opacity-0 media-controls:bottom-[85px] media-captions:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300`}
       />
+      {ratingModalState.isFullscreen && (
+        <RateModal
+          toggle={ratingModalState.isOpen}
+          setToggle={setRatingModalState}
+          position="top"
+          session={session}
+        />
+      )}
       <Controls.Root
         className={`${styles.controls} media-paused:bg-black/10 duration-200 media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/30 via-transparent to-black/30 opacity-0 transition-opacity`}
       >

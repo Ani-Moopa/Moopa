@@ -6,7 +6,6 @@ import { getServerSession } from "next-auth";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { authOptions } from "../../../api/auth/[...nextauth]";
 import { useAniList } from "@/lib/anilist/useAnilist";
-import { toast } from "sonner";
 import { createList, createUser, getEpisode } from "@/prisma/user";
 import Link from "next/link";
 import MobileNav from "@/components/shared/MobileNav";
@@ -20,7 +19,7 @@ import Head from "next/head";
 import VidStack from "@/components/watch/new-player/player";
 import { useRouter } from "next/router";
 import { Spinner } from "@vidstack/react";
-import { RateModal } from "@/components/shared/rateModal";
+import RateModal from "@/components/shared/RateModal";
 
 export async function getServerSideProps(context) {
   let userData = null;
@@ -110,7 +109,7 @@ export async function getServerSideProps(context) {
             return String(value);
           }
           return value;
-        }),
+        })
       );
     }
   } catch (error) {
@@ -152,10 +151,8 @@ export default function Watch({
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [rateModalOpen, setRateModalOpen] = useState(false);
-
-  const { setAutoNext, dataMedia } = useWatchProvider();
-  const { markComplete } = useAniList(sessions);
+  const { setAutoNext, ratingModalState, setRatingModalState } =
+    useWatchProvider();
 
   const [onList, setOnList] = useState(false);
 
@@ -182,7 +179,7 @@ export default function Watch({
       const response = await fetch(
         `/api/v2/episode/${info.id}?releasing=${
           info.status === "RELEASING" ? "true" : "false"
-        }${dub ? "&dub=true" : ""}`,
+        }${dub ? "&dub=true" : ""}`
       ).then((res) => res.json());
       const getMap = response.find((i) => i?.map === true) || response[0];
       let episodes = response;
@@ -204,22 +201,22 @@ export default function Watch({
         const getProvider = episodes?.find((i) => i.providerId === provider);
         const episodeList = getProvider?.episodes.slice(
           0,
-          getMap?.episodes.length,
+          getMap?.episodes.length
         );
         const playingData = getMap?.episodes.find(
-          (i) => i.number === Number(epiNumber),
+          (i) => i.number === Number(epiNumber)
         );
 
         if (getProvider) {
           setepisodesList(episodeList);
           const currentEpisode = episodeList?.find(
-            (i) => i.number === parseInt(epiNumber),
+            (i) => i.number === parseInt(epiNumber)
           );
           const nextEpisode = episodeList?.find(
-            (i) => i.number === parseInt(epiNumber) + 1,
+            (i) => i.number === parseInt(epiNumber) + 1
           );
           const previousEpisode = episodeList?.find(
-            (i) => i.number === parseInt(epiNumber) - 1,
+            (i) => i.number === parseInt(epiNumber) - 1
           );
           const vidNav = {
             prev: previousEpisode,
@@ -284,8 +281,8 @@ export default function Watch({
 
         const skip = await fetch(
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
-            epiNumber,
-          )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`,
+            epiNumber
+          )}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
         ).then((res) => {
           if (!res.ok) {
             switch (res.status) {
@@ -320,7 +317,7 @@ export default function Watch({
 
         const quality =
           anify?.sources?.find(
-            (i) => i.quality === "default" || i.quality === "auto",
+            (i) => i.quality === "default" || i.quality === "auto"
           ) || anify?.sources[0];
 
         const reFormSubtitles = anify?.subtitles?.map((i) => {
@@ -333,11 +330,11 @@ export default function Watch({
         });
 
         const thumbnails = reFormSubtitles?.find(
-          (i) => i.kind === "thumbnails",
+          (i) => i.kind === "thumbnails"
         );
 
         const subtitles = reFormSubtitles?.filter(
-          (i) => i.kind !== "thumbnails",
+          (i) => i.kind !== "thumbnails"
         );
 
         const episode = {
@@ -346,7 +343,7 @@ export default function Watch({
           defaultQuality: {
             // url: quality?.url,
             url: `${proxy}/proxy/m3u8/${encodeURIComponent(
-              String(quality?.url),
+              String(quality?.url)
             )}/${encodeURIComponent(JSON.stringify(anify?.headers))}`,
             headers: anify?.headers,
           },
@@ -423,11 +420,6 @@ export default function Watch({
     document.body.style.overflow = "auto";
   }
 
-  function onEpisodeCompletion() {
-    // If theres no next episode
-    if (!episodeNavigation.next) setRateModalOpen(true);
-  }
-
   return (
     <>
       <Head>
@@ -485,28 +477,6 @@ export default function Watch({
           content={episodeNavigation?.playing?.description || info?.description}
         />
       </Head>
-      <RateModal
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const rating = e.target.rating.value;
-
-          const review = e.target.review.value;
-
-          await markComplete(dataMedia.id, {
-            notes: review,
-            // scoreRaw is 1-100 while our input is 1-10
-            scoreRaw: 10 * Number(rating),
-          }).catch((r) => {
-            toast.error(
-              `Failed to submit your review. Read console for more details`,
-            );
-            console.log(`Failed to submit review, `, r);
-          });
-          toast.success(`Successfully submitted your review and rating.`);
-        }}
-        show={rateModalOpen}
-        onClose={() => setRateModalOpen(false)}
-      />
       <Modal open={open} onClose={() => handleClose()}>
         {!sessions && (
           <div className="flex-center flex-col gap-5 px-10 py-5 bg-secondary rounded-md">
@@ -527,6 +497,14 @@ export default function Watch({
       </Modal>
       <BugReportForm isOpen={isOpen} setIsOpen={setIsOpen} />
       <main className="w-screen h-full">
+        {!ratingModalState.isFullscreen && (
+          <RateModal
+            toggle={ratingModalState.isOpen}
+            setToggle={setRatingModalState}
+            position="bottom"
+            session={sessions}
+          />
+        )}
         <Navbar
           scrollP={20}
           withNav={true}
@@ -548,7 +526,6 @@ export default function Watch({
                   navigation={episodeNavigation}
                   sessions={sessions}
                   userData={userData}
-                  onEpisodeCompletion={onEpisodeCompletion}
                 />
               ) : (
                 <div className="flex-center aspect-video w-full h-full relative">
@@ -577,7 +554,6 @@ export default function Watch({
                       navigation={episodeNavigation}
                       sessions={sessions}
                       userData={userData}
-                      onEpisodeCompletion={onEpisodeCompletion}
                     />
                   ) : (
                     <div className="flex-center aspect-video w-full h-full relative">
@@ -649,11 +625,6 @@ export default function Watch({
               id="secondary"
               className={`relative ${theaterMode ? "pt-5" : "pt-4 lg:pt-0"}`}
             >
-              {/* <div className="w-full h-[150px] text-black p-3">
-                <span className="bg-white w-full h-full flex-center">
-                  ad banner
-                </span>
-              </div> */}
               <EpisodeLists
                 info={info}
                 session={sessions}
