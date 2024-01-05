@@ -1,5 +1,5 @@
 import { rateLimitStrict, redis } from "@/lib/redis";
-import { AnifyRecentEpisode } from "@/utils/types";
+import { AnifyRecentEpisode } from "types";
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 

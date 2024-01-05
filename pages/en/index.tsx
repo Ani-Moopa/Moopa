@@ -29,7 +29,7 @@ export async function getServerSideProps() {
   }
 
   if (cachedData) {
-    const { genre, detail, populars } = JSON.parse(cachedData);
+    const { genre, detail, populars, firstTrend } = JSON.parse(cachedData);
     const upComing = await getUpcomingAnime();
     return {
       props: {
@@ -37,6 +37,7 @@ export async function getServerSideProps() {
         detail,
         populars,
         upComing,
+        firstTrend,
       },
     };
   } else {
@@ -57,6 +58,7 @@ export async function getServerSideProps() {
           genre: genreDetail.props,
           detail: trendingDetail.props,
           populars: popularDetail.props,
+          firstTrend: trendingDetail.props.data[0],
         }), // set cache for 2 hours
         "EX",
         60 * 60 * 2
@@ -334,7 +336,7 @@ export default function Home({
   }, [userSession?.name, currentAnime, plan]);
 
   function removeHtmlTags(text: string): string {
-    return text.replace(/<[^>]+>/g, "");
+    return text?.replace(/<[^>]+>/g, "");
   }
 
   return (

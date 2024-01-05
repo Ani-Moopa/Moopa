@@ -5,6 +5,7 @@ import DisqusComments from "../../disqus";
 import { AniListInfoTypes } from "types/info/AnilistInfoTypes";
 import { SessionTypes } from "pages/en";
 import Link from "next/link";
+import Image from "next/image";
 
 type DetailsProps = {
   info: AniListInfoTypes;
@@ -66,7 +67,7 @@ export default function Details({
               className="hover:scale-105 hover:shadow-lg duration-300 ease-out"
               href={`/en/anime/${id}`}
             >
-              <img
+              <Image
                 src={info.coverImage.extraLarge}
                 alt="Anime Cover"
                 width={1000}

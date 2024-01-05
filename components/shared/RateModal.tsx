@@ -17,6 +17,7 @@ export default function RateModal({
   session,
 }: Props) {
   const [startRate, setStartRate] = useState(false);
+  const { markComplete } = useAniList(session);
 
   const { dataMedia } = useWatchProvider();
 
@@ -26,7 +27,6 @@ export default function RateModal({
     const rating = data.get("rating");
     const notes = data.get("notes");
     try {
-      const { markComplete } = useAniList(session);
       await markComplete(dataMedia?.id, { notes, scoreRaw: rating });
       toast.success("Successfully rated!");
       setToggle((prev: any) => {
