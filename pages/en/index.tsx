@@ -19,6 +19,7 @@ import { getGreetings } from "@/utils/getGreetings";
 import { redis } from "@/lib/redis";
 import { Navbar } from "@/components/shared/NavBar";
 import UserRecommendation from "@/components/home/recommendation";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps() {
   let cachedData;
@@ -70,6 +71,7 @@ export async function getServerSideProps() {
         detail: trendingDetail.props,
         populars: popularDetail.props,
         upComing,
+        firstTrend: trendingDetail.props.data[0],
       },
     };
   }
@@ -80,6 +82,7 @@ type HomeProps = {
   detail: any;
   populars: any;
   upComing: any;
+  firstTrend: any;
 };
 
 export interface SessionTypes {
@@ -106,7 +109,12 @@ interface Image {
   medium: string;
 }
 
-export default function Home({ detail, populars, upComing }: HomeProps) {
+export default function Home({
+  detail,
+  populars,
+  upComing,
+  firstTrend,
+}: HomeProps) {
   const { data: sessions }: any = useSession();
   const userSession: SessionTypes = sessions?.user;
 
@@ -125,6 +133,8 @@ export default function Home({ detail, populars, upComing }: HomeProps) {
     stats: "PLANNING",
   });
   const { anime: release } = GetMedia(sessions);
+
+  const router = useRouter();
 
   const [schedules, setSchedules] = useState(null);
   const [anime, setAnime] = useState([]);
@@ -195,7 +205,6 @@ export default function Home({ detail, populars, upComing }: HomeProps) {
   const [prog, setProg] = useState<any[] | null>();
 
   const popular = populars?.data;
-  const data = detail.data[0];
 
   useEffect(() => {
     async function userData() {
@@ -324,6 +333,10 @@ export default function Home({ detail, populars, upComing }: HomeProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userSession?.name, currentAnime, plan]);
 
+  function removeHtmlTags(text: string): string {
+    return text.replace(/<[^>]+>/g, "");
+  }
+
   return (
     <Fragment>
       <Head>
@@ -370,54 +383,41 @@ export default function Home({ detail, populars, upComing }: HomeProps) {
 
       <Navbar paddingY="pt-2 lg:pt-10" withNav={true} home={true} />
       <div className="h-auto w-screen bg-[#141519] text-[#dbdcdd]">
-        {/* PC / TABLET */}
-        <div className=" hidden justify-center lg:flex my-16">
-          <div className="relative grid grid-rows-2 items-center lg:flex lg:h-[467px] lg:w-[80%] lg:justify-between">
-            <div className="row-start-2 flex h-full flex-col gap-7 lg:w-[55%] lg:justify-center">
-              <h1 className="w-[85%] font-outfit font-extrabold lg:text-[34px] line-clamp-2">
-                {data.title.english || data.title.romaji || data.title.native}
-              </h1>
-              <p
-                className="font-roboto font-light lg:text-[18px] line-clamp-5"
-                dangerouslySetInnerHTML={{ __html: data?.description }}
-              />
-
-              <div className="lg:pt-5 flex">
-                <Link
-                  href={`/en/anime/${data.id}`}
-                  className="rounded-sm p-3 text-md font-karla font-light ring-1 ring-[#FF7F57]"
+        <div className="hidden lg:flex w-full justify-center my-16">
+          <div className="flex justify-between w-[80%] h-[470px]">
+            <div className="flex flex-col items-start justify-center w-[55%] gap-5">
+              <p className="font-outfit font-extrabold text-[34px] line-clamp-2 leading-10">
+                {firstTrend?.title?.english || firstTrend?.title?.romaji}
+              </p>
+              <p className="font-roboto font-light lg:text-[18px] line-clamp-3 tracking-wide">
+                {removeHtmlTags(firstTrend?.description)}
+              </p>
+              {firstTrend && (
+                <button
+                  onClick={() => {
+                    router.push(`/en/anime/${firstTrend?.id}`);
+                  }}
+                  className="p-3 text-md font-karla font-light ring-1 ring-action/50 rounded"
                 >
                   START WATCHING
-                </Link>
-              </div>
+                </button>
+              )}
             </div>
-            <div className="z-10 row-start-1 flex justify-center ">
-              <div className="relative  lg:h-[467px] lg:w-[322px] lg:scale-100">
-                <div className="absolute bg-gradient-to-t from-[#141519] to-transparent lg:h-[467px] lg:w-[322px]" />
-
-                <Image
-                  draggable={false}
-                  src={data.coverImage?.extraLarge || data.image}
-                  alt={`cover ${data.title.english || data.title.romaji}`}
-                  width={1200}
-                  height={1200}
-                  priority
-                  className="rounded-tl-xl rounded-tr-xl object-cover bg-blend-overlay lg:h-[467px] lg:w-[322px]"
-                />
-              </div>
+            <div className="relative block h-[467px] w-[322px]">
+              <div className="absolute bg-gradient-to-t from-primary to-transparent w-full h-full inset-0 z-20" />
+              <Image
+                src={firstTrend?.coverImage?.extraLarge || firstTrend?.image}
+                alt={`cover ${
+                  firstTrend?.title?.english || firstTrend?.title?.romaji
+                }`}
+                fill
+                sizes="100%"
+                quality={100}
+                className="object-cover rounded z-10"
+              />
             </div>
           </div>
         </div>
-        {/* <div className="relative w-screen h-screen overflow-hidden">
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/VVfdqw-qvNE?autoplay=1&controls=0&rel=0&mute=1"
-            frameborder="0"
-            allowfullscreen
-            className="absolute w-screen h-screen top-0 scale-[115%] left-0 z-0"
-          />
-        </div> */}
 
         {sessions && (
           <div className="flex items-center justify-center lg:bg-none mt-4 lg:mt-0 w-screen">
