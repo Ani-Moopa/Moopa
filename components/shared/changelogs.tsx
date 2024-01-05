@@ -3,34 +3,46 @@ import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 const web = {
-  version: "v4.3.1",
+  version: "v4.4.0",
 };
 
 const logs = [
   {
     version: "v4.3.1",
-    pre: true,
+    pre: false,
     notes: null,
     highlights: true,
     changes: [
-      "Fix: Auto Next Episode forcing to play sub even if dub is selected",
-      "Fix: Episode metadata not showing after switching to dub",
-      "Fix: Profile picture weirdly cropped",
-      "Fix: Weird padding on the navbar in profile page",
+      "Added rate modal when user finished watching the whole series",
+      "Fix: only half of the episodes has episodes thumbnail",
+      "Fix: pressing back button in anime info page redirects user to the wrong page",
+      "Progressively migrate codebase to typescript",
     ],
   },
-  {
-    version: "v4.3.0",
-    pre: true,
-    notes: null,
-    highlights: false,
-    changes: [
-      "Added changelogs section",
-      "Added recommendations based on user lists",
-      "New Player!",
-      "And other minor bug fixes!",
-    ],
-  },
+  // {
+  //   version: "v4.3.1",
+  //   pre: true,
+  //   notes: null,
+  //   highlights: false,
+  //   changes: [
+  //     "Fix: Auto Next Episode forcing to play sub even if dub is selected",
+  //     "Fix: Episode metadata not showing after switching to dub",
+  //     "Fix: Profile picture weirdly cropped",
+  //     "Fix: Weird padding on the navbar in profile page",
+  //   ],
+  // },
+  // {
+  //   version: "v4.3.0",
+  //   pre: true,
+  //   notes: null,
+  //   highlights: false,
+  //   changes: [
+  //     "Added changelogs section",
+  //     "Added recommendations based on user lists",
+  //     "New Player!",
+  //     "And other minor bug fixes!",
+  //   ],
+  // },
 ];
 
 export default function ChangeLogs() {
@@ -146,11 +158,11 @@ export default function ChangeLogs() {
                       Hi! Welcome to the new changelogs section. Here you can
                       see a lists of the latest changes and updates to the site.
                     </p>
-                    <p className="inline-block text-sm italic my-2 text-gray-400">
+                    {/* <p className="inline-block text-sm italic my-2 text-gray-400">
                       *This update is still in it's pre-release state, please
                       expect to see some bugs. If you find any, please report
                       them.
-                    </p>
+                    </p> */}
                   </div>
 
                   {logs.map((x) => (
@@ -165,32 +177,6 @@ export default function ChangeLogs() {
                       ))}
                     </ChangelogsVersions>
                   ))}
-
-                  {/* <div className="my-2 flex items-center justify-evenly">
-                    <div className="w-full h-[1px] bg-gradient-to-r from-white/5 to-white/40" />
-                    <p className="relative flex flex-1 whitespace-nowrap font-bold mx-2 font-inter">
-                      v4.3.0
-                      <span className="flex text-xs font-light font-roboto ml-1 italic">
-                        pre
-                      </span>
-                    </p>
-                    <div className="w-full h-[1px] bg-gradient-to-l from-white/5 to-white/40" />
-                  </div>
-
-                  <div className="flex flex-col gap-2 text-sm text-gray-200">
-                    <div>
-                      <p className="inline-block italic mb-2 text-gray-400">
-                        *This update is still in it's pre-release state, please
-                        expect to see some bugs. If you find any, please report
-                        them.
-                      </p>
-
-                      <p>- Added changelogs section</p>
-                      <p>- Added recommendations based on user lists</p>
-                      <p>- New Player!</p>
-                      <p>- And other minor bug fixes!</p>
-                    </div>
-                  </div> */}
 
                   <div className="mt-2 text-gray-400 text-sm">
                     <p>

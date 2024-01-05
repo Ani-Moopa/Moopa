@@ -139,10 +139,6 @@ async function fetchAnify(id?: string) {
 
 async function fetchCoverImage(id: string, available = false) {
   try {
-    if (!process.env.API_KEY) {
-      return [];
-    }
-
     if (available) {
       return null;
     }
@@ -171,10 +167,10 @@ export default async function handler(
 ) {
   const { id, releasing = "false", dub = false, refresh = null } = req.query;
 
-  // if releasing is true then cache for 1 hour, if it false cache for 1 month;
+  // if releasing is true then cache for 3 hour, if it false cache for 1 month;
   let cacheTime = null;
   if (releasing === "true") {
-    cacheTime = 60 * 60; // 1 hour
+    cacheTime = 60 * 60 * 3; // 3 hours
   } else if (releasing === "false") {
     cacheTime = 60 * 60 * 24 * 30; // 1 month
   }
@@ -210,7 +206,7 @@ export default async function handler(
       meta = null;
     }
 
-    if (refresh) {
+    if (refresh !== null) {
       await redis.del(`episode:${id}`);
     } else {
       cached = await redis.get(`episode:${id}`);
@@ -261,12 +257,6 @@ export default async function handler(
       fetchAnify(id),
       fetchCoverImage(id, meta),
     ]);
-
-    // const hasImage = consumet.map((i) =>
-    //   i.episodes?.sub?.some(
-    //     (e) => e.img !== null || !e.img.includes("https://s4.anilist.co/")
-    //   )
-    // );
 
     let subDub = "sub";
     if (dub) {

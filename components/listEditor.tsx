@@ -2,7 +2,7 @@ import { useState, FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import { AniListInfoTypes } from "@/types/info/AnilistInfoTypes";
+import { AniListInfoTypes } from "types/info/AnilistInfoTypes";
 
 interface ListEditorProps {
   animeId: number;

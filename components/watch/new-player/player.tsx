@@ -12,7 +12,6 @@ import {
   type MediaPlayerInstance,
   Track,
   MediaTimeUpdateEventDetail,
-  MediaTimeUpdateEvent,
 } from "@vidstack/react";
 import { VideoLayout } from "./components/layouts/video-layout";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
@@ -98,6 +97,7 @@ export default function VidStack({
     playerState,
     dataMedia,
     autoNext,
+    setRatingModalState,
   } = useWatchProvider();
 
   const { qualities, duration } = useMediaStore(player);
@@ -379,7 +379,20 @@ export default function VidStack({
           mark = 1;
           setMarked(1);
           console.log("marking progress");
-          markProgress(dataMedia.id, navigation.playing.number);
+          // @ts-ignore Fix when convert useAnilist to typescript
+          markProgress({
+            mediaId: dataMedia.id,
+            progress: navigation.playing.number,
+          });
+
+          if (dataMedia.episodes === +navigation.playing?.number) {
+            setRatingModalState((prev: any) => {
+              return {
+                ...prev,
+                isOpen: true,
+              };
+            });
+          }
         }
       }
     }
@@ -424,7 +437,7 @@ export default function VidStack({
   return (
     <MediaPlayer
       key={id}
-      className={`${style.player} player`}
+      className={`${style.player} player relative`}
       title={
         navigation?.playing?.title ||
         `Episode ${navigation?.playing?.number}` ||
@@ -454,7 +467,11 @@ export default function VidStack({
           <Track key={chapters} src={chapters} kind="chapters" default={true} />
         )}
       </MediaProvider>
-      <VideoLayout thumbnails={track?.thumbnails} navigation={navigation} />
+      <VideoLayout
+        thumbnails={track?.thumbnails}
+        navigation={navigation}
+        session={sessions}
+      />
     </MediaPlayer>
   );
 }

@@ -4,6 +4,8 @@ import Skeleton from "react-loading-skeleton";
 import DisqusComments from "../../disqus";
 import { AniListInfoTypes } from "types/info/AnilistInfoTypes";
 import { SessionTypes } from "pages/en";
+import Link from "next/link";
+import Image from "next/image";
 
 type DetailsProps = {
   info: AniListInfoTypes;
@@ -61,13 +63,18 @@ export default function Details({
       <div className="pb-4 h-full flex">
         <div className="aspect-[9/13] h-[240px]">
           {info ? (
-            <img
-              src={info.coverImage.extraLarge}
-              alt="Anime Cover"
-              width={1000}
-              height={1000}
-              className="object-cover aspect-[9/13] h-[240px] rounded-md"
-            />
+            <Link
+              className="hover:scale-105 hover:shadow-lg duration-300 ease-out"
+              href={`/en/anime/${id}`}
+            >
+              <Image
+                src={info.coverImage.extraLarge}
+                alt="Anime Cover"
+                width={1000}
+                height={1000}
+                className="object-cover aspect-[9/13] h-[240px] rounded-md"
+              />
+            </Link>
           ) : (
             <Skeleton height={240} />
           )}

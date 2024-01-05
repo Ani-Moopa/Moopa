@@ -5,6 +5,7 @@ import EpisodeLists from "@/components/watch/secondary/episodeLists";
 import { getServerSession } from "next-auth";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { authOptions } from "../../../api/auth/[...nextauth]";
+import { useAniList } from "@/lib/anilist/useAnilist";
 import { createList, createUser, getEpisode } from "@/prisma/user";
 import Link from "next/link";
 import MobileNav from "@/components/shared/MobileNav";
@@ -18,6 +19,7 @@ import Head from "next/head";
 import VidStack from "@/components/watch/new-player/player";
 import { useRouter } from "next/router";
 import { Spinner } from "@vidstack/react";
+import RateModal from "@/components/shared/RateModal";
 
 export async function getServerSideProps(context) {
   let userData = null;
@@ -32,11 +34,11 @@ export async function getServerSideProps(context) {
   }
 
   let proxy;
-  proxy = process.env.PROXY_URI;
+  proxy = process.env.PROXY_URI || null;
   if (proxy && proxy.endsWith("/")) {
     proxy = proxy.slice(0, -1);
   }
-  const disqus = process.env.DISQUS_SHORTNAME;
+  const disqus = process.env.DISQUS_SHORTNAME || null;
 
   const [aniId, provider] = query?.info;
   const watchId = query?.id;
@@ -149,7 +151,8 @@ export default function Watch({
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { setAutoNext } = useWatchProvider();
+  const { setAutoNext, ratingModalState, setRatingModalState } =
+    useWatchProvider();
 
   const [onList, setOnList] = useState(false);
 
@@ -494,6 +497,14 @@ export default function Watch({
       </Modal>
       <BugReportForm isOpen={isOpen} setIsOpen={setIsOpen} />
       <main className="w-screen h-full">
+        {!ratingModalState.isFullscreen && (
+          <RateModal
+            toggle={ratingModalState.isOpen}
+            setToggle={setRatingModalState}
+            position="bottom"
+            session={sessions}
+          />
+        )}
         <Navbar
           scrollP={20}
           withNav={true}
@@ -614,11 +625,6 @@ export default function Watch({
               id="secondary"
               className={`relative ${theaterMode ? "pt-5" : "pt-4 lg:pt-0"}`}
             >
-              {/* <div className="w-full h-[150px] text-black p-3">
-                <span className="bg-white w-full h-full flex-center">
-                  ad banner
-                </span>
-              </div> */}
               <EpisodeLists
                 info={info}
                 session={sessions}
@@ -641,10 +647,7 @@ export default function Watch({
 function SpinLoader() {
   return (
     <div className="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center">
-      <Spinner.Root
-        className="text-white animate-spin opacity-100"
-        size={84}
-      >
+      <Spinner.Root className="text-white animate-spin opacity-100" size={84}>
         <Spinner.Track className="opacity-25" width={8} />
         <Spinner.TrackFill className="opacity-75" width={8} />
       </Spinner.Root>

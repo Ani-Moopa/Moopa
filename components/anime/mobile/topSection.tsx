@@ -65,7 +65,7 @@ export default function DetailTop({
       <div className="flex flex-col md:flex-row w-full items-center md:items-end gap-5 pt-12">
         <div className="shrink-0 w-[180px] h-[250px] rounded overflow-hidden">
           {info ? (
-            <img
+            <Image
               src={
                 info?.coverImage?.extraLarge?.toString() ??
                 info?.coverImage?.toString()

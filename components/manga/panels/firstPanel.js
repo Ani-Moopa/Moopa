@@ -66,13 +66,13 @@ export default function FirstPanel({
         if (session) {
           if (aniId?.length > 6) return;
           const currentChapter = chapter.chapters?.find(
-            (x) => x.id === currentId
+            (x) => x.id === currentId,
           );
           if (currentChapter) {
             const chapterNumber =
               currentChapter.number ??
               chapter.chapters.indexOf(currentChapter) + 1;
-            markProgress(aniId, chapterNumber);
+            markProgress({ mediaId: aniId, progress: chapterNumber });
             console.log("marking progress");
           }
         }
@@ -142,14 +142,14 @@ export default function FirstPanel({
             >
               <Image
                 src={`https://aoi.moopa.live/utils/image-proxy?url=${encodeURIComponent(
-                  i.url
+                  i.url,
                 )}${
                   i?.headers?.Referer
                     ? `&headers=${encodeURIComponent(
-                        JSON.stringify(i?.headers)
+                        JSON.stringify(i?.headers),
                       )}`
                     : `&headers=${encodeURIComponent(
-                        JSON.stringify(getHeaders(chapter.providerId))
+                        JSON.stringify(getHeaders(chapter.providerId)),
                       )}`
                 }`}
                 alt={index}
@@ -213,10 +213,10 @@ export default function FirstPanel({
                 `/en/manga/read/${
                   chapter.providerId
                 }?id=${mangadexId}&chapterId=${encodeURIComponent(
-                  prevChapter?.id
+                  prevChapter?.id,
                 )}${aniId?.length > 6 ? "" : `&anilist=${aniId}`}&num=${
                   prevChapter?.number
-                }`
+                }`,
               )
             }
           >
@@ -234,10 +234,10 @@ export default function FirstPanel({
                 `/en/manga/read/${
                   chapter.providerId
                 }?id=${mangadexId}&chapterId=${encodeURIComponent(
-                  nextChapter?.id
+                  nextChapter?.id,
                 )}${aniId?.length > 6 ? "" : `&anilist=${aniId}`}&num=${
                   nextChapter?.number
-                }`
+                }`,
               )
             }
           >

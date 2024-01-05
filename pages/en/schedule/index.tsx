@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -15,7 +17,6 @@ import {
 import { scheduleQuery } from "@/lib/graphql/query";
 import MobileNav from "@/components/shared/MobileNav";
 
-import { useSession } from "next-auth/react";
 import { redis } from "@/lib/redis";
 import Head from "next/head";
 import { Navbar } from "@/components/shared/NavBar";
@@ -344,7 +345,7 @@ export default function Schedule({ schedule }: any) {
                         {/* {!isAired(time) && <p>Airing Next</p>} */}
                         <p
                           className={`absolute left-0 h-1.5 w-1.5 rounded-full ${
-                            isAired(time) ? "bg-action" : "bg-gray-600" // Add a class for currently airing anime
+                            isAired(+time) ? "bg-action" : "bg-gray-600" // Add a class for currently airing anime
                           }`}
                         ></p>
                       </div>
@@ -371,14 +372,15 @@ export default function Schedule({ schedule }: any) {
                                     {m.title.romaji}
                                   </h1>
                                   <p className="text-gray-400 group-hover:text-action/80 transition-all duration-200 ease-out">
-                                    Ep {s.episode} {timeStamptoHour(s.airingAt)}
+                                    Ep {s?.episode}{" "}
+                                    {timeStamptoHour(s.airingAt)}
                                   </p>
                                 </div>
                               </Link>
                               <p
                                 key={`p_${s.id}_${index}`}
                                 className={`absolute translate-x-full top-1/2 -translate-y-1/2 h-full w-0.5 ${
-                                  isAired(time) ? "bg-action" : "bg-gray-600" // Add a class for currently airing anime
+                                  isAired(+time) ? "bg-action" : "bg-gray-600" // Add a class for currently airing anime
                                 }`}
                               ></p>
                             </>
