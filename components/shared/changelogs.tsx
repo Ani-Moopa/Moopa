@@ -8,7 +8,7 @@ const web = {
 
 const logs = [
   {
-    version: "v4.3.1",
+    version: "v4.4.0",
     pre: false,
     notes: null,
     highlights: true,
