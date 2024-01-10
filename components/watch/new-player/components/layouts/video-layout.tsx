@@ -122,7 +122,12 @@ export function VideoLayout({
           <Sliders.Time thumbnails={thumbnails} host={host} />
         </Controls.Group>
         <Controls.Group className="-mt-0.5 flex w-full items-center px-2 pb-2">
+          <Buttons.PreviousEpisode
+            navigation={navigation}
+            tooltipPlacement="top"
+          />
           <Buttons.Play tooltipPlacement="top start" />
+          <Buttons.NextEpisode navigation={navigation} tooltipPlacement="top" />
           <Buttons.Mute tooltipPlacement="top" />
           <Sliders.Volume />
           <TimeGroup />
