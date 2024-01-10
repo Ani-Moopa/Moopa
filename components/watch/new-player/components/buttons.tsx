@@ -77,9 +77,9 @@ export function NextEpisode({
           <button
             onClick={() => {
               router.push(
-                `/en/anime/watch/${dataMedia.id}/${
-                  track.provider
-                }?id=${navigation?.next?.id}&num=${navigation?.next?.number}${
+                `/en/anime/watch/${dataMedia.id}/${track?.provider}?id=${
+                  navigation?.next?.id
+                }&num=${navigation?.next?.number}${
                   track?.isDub ? `&dub=${track?.isDub}` : ""
                 }`
               );
@@ -110,9 +110,9 @@ export function PreviousEpisode({
           <button
             onClick={() => {
               router.push(
-                `/en/anime/watch/${dataMedia.id}/${
-                  track.provider
-                }?id=${navigation?.prev?.id}&num=${navigation?.prev?.number}${
+                `/en/anime/watch/${dataMedia.id}/${track?.provider}?id=${
+                  navigation?.prev?.id
+                }&num=${navigation?.prev?.number}${
                   track?.isDub ? `&dub=${track?.isDub}` : ""
                 }`
               );
@@ -268,10 +268,11 @@ export function PlayNextButton({
       onClick={() => {
         if (navigation?.next) {
           router.push(
-            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${navigation
-              ?.next?.id}&num=${navigation?.next?.number}${
+            `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${
+              navigation?.next?.id
+            }&num=${navigation?.next?.number}${
               track?.isDub ? `&dub=${track?.isDub}` : ""
-            }`,
+            }`
           );
         }
       }}
