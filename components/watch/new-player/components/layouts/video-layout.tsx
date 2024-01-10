@@ -122,13 +122,20 @@ export function VideoLayout({
           <Sliders.Time thumbnails={thumbnails} host={host} />
         </Controls.Group>
         <Controls.Group className="-mt-0.5 flex w-full items-center px-2 pb-2">
+          <Buttons.PreviousEpisode
+            navigation={navigation}
+            tooltipPlacement="top"
+          />
           <Buttons.Play tooltipPlacement="top start" />
+          <Buttons.NextEpisode navigation={navigation} tooltipPlacement="top" />
           <Buttons.Mute tooltipPlacement="top" />
           <Sliders.Volume />
           <TimeGroup />
           <ChapterTitleComponent />
           <div className="flex-1" />
-          {track?.subtitles && <Buttons.Caption tooltipPlacement="top" />}
+          {!!track?.subtitles?.length && (
+            <Buttons.Caption tooltipPlacement="top" />
+          )}
           <Menus.Settings placement="top end" tooltipPlacement="top" />
           {!isMobile && !isFullscreen && (
             <Buttons.TheaterButton tooltipPlacement="top" />

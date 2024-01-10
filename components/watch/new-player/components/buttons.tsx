@@ -24,9 +24,11 @@ import {
   PlayIcon,
   ReplayIcon,
   TheatreModeExitIcon,
+  NextIcon,
   TheatreModeIcon,
   VolumeHighIcon,
   VolumeLowIcon,
+  PreviousIcon,
 } from "@vidstack/react/icons";
 import { useRouter } from "next/router";
 import { Navigation } from "../player";
@@ -59,6 +61,72 @@ export function Play({ tooltipPlacement }: MediaButtonProps) {
         {tooltipText}
       </Tooltip.Content>
     </Tooltip.Root>
+  );
+}
+
+export function NextEpisode({
+  tooltipPlacement,
+  navigation,
+}: MediaButtonProps) {
+  const router = useRouter();
+  const { dataMedia, track } = useWatchProvider();
+  return (
+    navigation?.next && (
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <button
+            onClick={() => {
+              router.push(
+                `/en/anime/watch/${dataMedia.id}/${track?.provider}?id=${
+                  navigation?.next?.id
+                }&num=${navigation?.next?.number}${
+                  track?.isDub ? `&dub=${track?.isDub}` : ""
+                }`
+              );
+            }}
+            className={buttonClass}
+          >
+            <NextIcon className="w-8 h-8" />
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Content className={tooltipClass} placement={tooltipPlacement}>
+          Next Episode
+        </Tooltip.Content>
+      </Tooltip.Root>
+    )
+  );
+}
+
+export function PreviousEpisode({
+  tooltipPlacement,
+  navigation,
+}: MediaButtonProps) {
+  const router = useRouter();
+  const { dataMedia, track } = useWatchProvider();
+  return (
+    navigation?.prev && (
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <button
+            onClick={() => {
+              router.push(
+                `/en/anime/watch/${dataMedia.id}/${track?.provider}?id=${
+                  navigation?.prev?.id
+                }&num=${navigation?.prev?.number}${
+                  track?.isDub ? `&dub=${track?.isDub}` : ""
+                }`
+              );
+            }}
+            className={buttonClass}
+          >
+            <PreviousIcon className="w-8 h-8" />
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Content className={tooltipClass} placement={tooltipPlacement}>
+          Previous Episode
+        </Tooltip.Content>
+      </Tooltip.Root>
+    )
   );
 }
 
