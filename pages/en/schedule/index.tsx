@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import Image from "next/image";
+import { cubicBezier, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CalendarIcon } from "@heroicons/react/24/solid";
@@ -410,7 +411,22 @@ export default function Schedule({ schedule }: any) {
                   >
                     {day}
                   </h2>
-                  <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 md:gap-7 grid-flow-row">
+                  <motion.div
+                    initial={{
+                      y: 30,
+                      opacity: 0
+                    }}
+                    whileInView={{
+                      y: 0,
+                      opacity: 1
+                    }}
+                    
+                    transition={{
+                      duration: 0.5,
+                      ease: cubicBezier(0.35, 0.17, 0.3, 0.86)
+                    }}
+                    className="w-full grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 sm:gap-4 grid-flow-row"
+                  >
                     {schedules.map((s) => {
                       const m = s.media;
                       console.log(m);
@@ -471,7 +487,7 @@ export default function Schedule({ schedule }: any) {
                         </Link>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 </div>
               )
             )
