@@ -11,7 +11,7 @@ import {
   filterFormattedSchedule,
   filterScheduleByDay,
   sortScheduleByDay,
-  transformSchedule,
+  transformSchedule
 } from "@/utils/schedulesUtils";
 
 import { scheduleQuery } from "@/lib/graphql/query";
@@ -28,7 +28,7 @@ const day = [
   "Wednesday",
   "Thursday",
   "Friday",
-  "Saturday",
+  "Saturday"
 ];
 
 const isAired = (timestamp: number | null) => {
@@ -68,9 +68,9 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        schedule: scheduleByDay,
+        schedule: scheduleByDay
         // today: todaySchedule,
-      },
+      }
     };
   } else {
     now.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
@@ -88,16 +88,16 @@ export async function getServerSideProps() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
         body: JSON.stringify({
           query: scheduleQuery,
           variables: {
             weekStart,
             weekEnd,
-            page,
-          },
-        }),
+            page
+          }
+        })
       });
 
       const json = await res.json();
@@ -113,7 +113,7 @@ export async function getServerSideProps() {
 
     const timestampToDay = (timestamp: number) => {
       return new Date(timestamp * 1000).toLocaleDateString(undefined, {
-        weekday: "long",
+        weekday: "long"
       });
     };
 
@@ -137,9 +137,9 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        schedule: scheduleByDay,
+        schedule: scheduleByDay
         // today: todaySchedule,
-      },
+      }
     };
   }
   // setSchedule(scheduleByDay);
@@ -267,14 +267,14 @@ export default function Schedule({ schedule }: any) {
       <MobileNav hideProfile={true} />
       <Navbar scrollP={10} toTop={true} />
       <div className="w-screen">
-        <span className="absolute z-20 top-0 left-0 w-screen h-[190px] lg:h-[250px] bg-secondary overflow-hidden">
-          <div className="absolute top-40 lg:top-36 w-full h-full bg-primary rounded-t-3xl xl:rounded-t-[50px]" />
+        <span className="w-screen h-[190px] lg:h-[250px] bg-secondary overflow-hidden">
+          <div className="w-full h-full bg-primary rounded" />
         </span>
-        <div className="flex flex-col mx-auto my-10 w-full mt-16 lg:mt-24 max-w-screen-2xl gap-5 md:gap-10 z-30">
-          <div className="flex flex-col lg:flex-row gap-2 justify-between z-20 px-3">
+        <div className="flex flex-col mx-auto my-10 w-full mt-16 lg:mt-24 max-w-screen-2xl gap-5 md:gap-10">
+          <div className="flex flex-col lg:flex-row gap-2 justify-between px-3">
             <ul
               ref={scrollContainerRef}
-              className="flex overflow-x-scroll cust-scroll items-center gap-5 font-karla text-2xl font-semibold"
+              className="flex overflow-x-scroll px-8 cust-scroll items-center gap-5 font-karla text-2xl font-semibold"
             >
               <button
                 type="button"
@@ -327,9 +327,9 @@ export default function Schedule({ schedule }: any) {
                 <div
                   key={`section_${day}`}
                   // id={`same_${day}`}
-                  className="flex flex-col gap-5 z-50 px-3"
+                  className="grid gap-5 p-12"
                 >
-                  <h2 className="font-bold font-outfit text-white text-2xl z-[250]">
+                  <h2 className="font-bold font-outfit text-white text-2xl">
                     {day}
                   </h2>
                   {Object.entries(timeSlots).map(([time, animeList]) => (
@@ -358,7 +358,7 @@ export default function Schedule({ schedule }: any) {
                                 key={m.id}
                                 // id={`same_${m.id}`}
                                 href={`/en/${m.type.toLowerCase()}/${m.id}`}
-                                className={`flex bg-secondary rounded group cursor-pointer overflow-hidden ml-4 z-50`}
+                                className={`flex bg-secondary rounded group cursor-pointer overflow-hidden ml-4`}
                               >
                                 <Image
                                   src={m.coverImage.extraLarge}
@@ -402,7 +402,7 @@ export default function Schedule({ schedule }: any) {
                 <div
                   key={`section2_${day}`}
                   // id={`same_${day}`}
-                  className="flex flex-col gap-5 px-3 z-50"
+                  className="flex flex-col gap-5 p-12"
                 >
                   <h2
                     // id={day}
@@ -410,9 +410,10 @@ export default function Schedule({ schedule }: any) {
                   >
                     {day}
                   </h2>
-                  <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-7 grid-flow-row">
+                  <div className="w-full grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5 md:gap-7 grid-flow-row">
                     {schedules.map((s) => {
                       const m = s.media;
+                      console.log(m);
 
                       return (
                         <Link
