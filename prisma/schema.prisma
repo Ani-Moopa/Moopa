@@ -7,6 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model RemovedMedia {
+  id        String   @id @default(cuid())
+  aniId     String?
+  additions String[]
+}
+
 model UserProfile {
   id               String             @id @default(cuid())
   name             String             @unique

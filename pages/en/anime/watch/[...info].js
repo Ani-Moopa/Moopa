@@ -5,7 +5,7 @@ import EpisodeLists from "@/components/watch/secondary/episodeLists";
 import { getServerSession } from "next-auth";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { authOptions } from "../../../api/auth/[...nextauth]";
-import { useAniList } from "@/lib/anilist/useAnilist";
+import { getRemovedMedia } from "@/prisma/removed";
 import { createList, createUser, getEpisode } from "@/prisma/user";
 import Link from "next/link";
 import MobileNav from "@/components/shared/MobileNav";
@@ -44,6 +44,19 @@ export async function getServerSideProps(context) {
   const watchId = query?.id;
   const epiNumber = query?.num;
   const dub = query?.dub;
+
+  const removed = await getRemovedMedia();
+
+  const isRemoved = removed?.find((i) => +i?.aniId === +aniId);
+
+  if (isRemoved) {
+    return {
+      redirect: {
+        destination: "/en/removed",
+        permanent: false,
+      },
+    };
+  }
 
   const ress = await fetch(`https://graphql.anilist.co`, {
     method: "POST",
