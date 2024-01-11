@@ -334,7 +334,21 @@ export default function Schedule({ schedule }: any) {
                     {day}
                   </h2>
                   {Object.entries(timeSlots).map(([time, animeList]) => (
-                    <div
+                    <motion.div
+                      initial={{
+                        y: 30,
+                        opacity: 0
+                      }}
+                      whileInView={{
+                        y: 0,
+                        opacity: 1
+                      }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 0.2,
+
+                        ease: cubicBezier(0.35, 0.17, 0.3, 0.86)
+                      }}
                       key={time}
                       // id={`same_${time}`}
                       className="relative space-y-2"
@@ -388,7 +402,7 @@ export default function Schedule({ schedule }: any) {
                           );
                         })}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ))
@@ -420,7 +434,6 @@ export default function Schedule({ schedule }: any) {
                       y: 0,
                       opacity: 1
                     }}
-                    
                     transition={{
                       duration: 0.5,
                       ease: cubicBezier(0.35, 0.17, 0.3, 0.86)
