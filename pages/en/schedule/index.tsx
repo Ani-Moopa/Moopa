@@ -268,14 +268,14 @@ export default function Schedule({ schedule }: any) {
       <MobileNav hideProfile={true} />
       <Navbar scrollP={10} toTop={true} />
       <div className="w-screen">
-        <span className="w-screen h-[190px] lg:h-[250px] bg-secondary overflow-hidden">
-          <div className="w-full h-full bg-primary rounded" />
-        </span>
-        <div className="flex flex-col mx-auto my-10 w-full mt-16 lg:mt-24 max-w-screen-2xl gap-5 md:gap-10">
-          <div className="flex flex-col lg:flex-row gap-2 justify-between px-3">
+        {/* <span className="absolute w-screen h-[190px] lg:h-[250px] bg-white overflow-hidden">
+          <div className="w-full h-full bg-white rounded" />
+        </span> */}
+        <div className="flex flex-col mx-auto my-10 w-full mt-16 lg:mt-24 max-w-screen-2xl gap-10">
+          <div className="flex flex-col lg:flex-row gap-2 justify-between px-5">
             <ul
               ref={scrollContainerRef}
-              className="flex overflow-x-scroll px-8 cust-scroll items-center gap-5 font-karla text-2xl font-semibold"
+              className="flex overflow-x-scroll cust-scroll items-center gap-5 font-karla text-2xl font-semibold"
             >
               <button
                 type="button"
@@ -328,7 +328,7 @@ export default function Schedule({ schedule }: any) {
                 <div
                   key={`section_${day}`}
                   // id={`same_${day}`}
-                  className="grid gap-5 p-12"
+                  className="grid gap-5 px-5"
                 >
                   <h2 className="font-bold font-outfit text-white text-2xl">
                     {day}
@@ -417,7 +417,7 @@ export default function Schedule({ schedule }: any) {
                 <div
                   key={`section2_${day}`}
                   // id={`same_${day}`}
-                  className="flex flex-col gap-5 p-12"
+                  className="flex flex-col gap-5 px-5 lg:px-10"
                 >
                   <h2
                     // id={day}
@@ -442,7 +442,6 @@ export default function Schedule({ schedule }: any) {
                   >
                     {schedules.map((s) => {
                       const m = s.media;
-                      console.log(m);
 
                       return (
                         <Link
