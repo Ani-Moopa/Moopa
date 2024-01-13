@@ -29,6 +29,8 @@ import {
   VolumeHighIcon,
   VolumeLowIcon,
   PreviousIcon,
+  SeekForward10Icon,
+  SeekBackward10Icon,
 } from "@vidstack/react/icons";
 import { useRouter } from "next/router";
 import { Navigation } from "../player";
@@ -62,6 +64,50 @@ export function Play({ tooltipPlacement }: MediaButtonProps) {
       </Tooltip.Content>
     </Tooltip.Root>
   );
+}
+
+export function SeekForwardButton({
+  tooltipPlacement
+}: MediaButtonProps) {
+  const currentTime = useMediaState("currentTime");
+  const remote = useMediaRemote();
+  return (
+    <Tooltip.Root>
+      <Tooltip.Trigger asChild>
+        <button
+          className={buttonClass}
+          onClick={() => { remote.seek(currentTime + 10) }}
+        >
+          <SeekForward10Icon className="w-8 h-8" />
+        </button>
+      </Tooltip.Trigger>
+      <Tooltip.Content className={tooltipClass} placement={tooltipPlacement}>
+          Forward 10 Seconds
+      </Tooltip.Content>
+    </Tooltip.Root>
+  )
+}
+
+export function SeekBackwardButton({
+  tooltipPlacement
+}: MediaButtonProps) {
+  const currentTime = useMediaState("currentTime");
+  const remote = useMediaRemote();
+  return (
+    <Tooltip.Root>
+      <Tooltip.Trigger asChild>
+        <button
+          className={buttonClass}
+          onClick={() => { remote.seek(currentTime - 10) }}
+        >
+          <SeekForward10Icon className="w-8 h-8" />
+        </button>
+      </Tooltip.Trigger>
+      <Tooltip.Content className={tooltipClass} placement={tooltipPlacement}>
+          Backward 10 Seconds
+      </Tooltip.Content>
+    </Tooltip.Root>
+  )
 }
 
 export function NextEpisode({

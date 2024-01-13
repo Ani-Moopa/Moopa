@@ -136,6 +136,9 @@ export function VideoLayout({
           {!!track?.subtitles?.length && (
             <Buttons.Caption tooltipPlacement="top" />
           )}
+          <Buttons.SeekBackwardButton tooltipPlacement="top" />
+          <Buttons.SeekForwardButton tooltipPlacement="top" />
+          <div className="ml-4"/>
           <Menus.Settings placement="top end" tooltipPlacement="top" />
           {!isMobile && !isFullscreen && (
             <Buttons.TheaterButton tooltipPlacement="top" />
