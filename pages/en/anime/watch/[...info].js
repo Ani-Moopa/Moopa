@@ -29,7 +29,7 @@ export async function getServerSideProps(context) {
   const query = context?.query;
   if (!query) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
 
@@ -53,8 +53,8 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         destination: "/en/removed",
-        permanent: false,
-      },
+        permanent: false
+      }
     };
   }
 
@@ -62,7 +62,7 @@ export async function getServerSideProps(context) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` })
     },
     body: JSON.stringify({
       query: `query ($id: Int) {
@@ -103,9 +103,9 @@ export async function getServerSideProps(context) {
             }
           `,
       variables: {
-        id: aniId,
-      },
-    }),
+        id: aniId
+      }
+    })
   });
   const data = await ress.json();
   // const variables = { id: aniId };
@@ -139,8 +139,8 @@ export async function getServerSideProps(context) {
       userData: userData?.[0] || null,
       info: data?.data?.Media || null,
       proxy,
-      disqus,
-    },
+      disqus
+    }
   };
 }
 
@@ -153,7 +153,7 @@ export default function Watch({
   userData,
   sessions,
   provider,
-  epiNumber,
+  epiNumber
 }) {
   const [artStorage, setArtStorage] = useState(null);
 
@@ -178,7 +178,7 @@ export default function Watch({
     setMarked,
     setTrack,
     aspectRatio,
-    setDataMedia,
+    setDataMedia
   } = useWatchProvider();
 
   useEffect(() => {
@@ -238,9 +238,9 @@ export default function Watch({
               title: playingData?.title || info?.title?.romaji,
               description: playingData?.description,
               img: playingData?.img || playingData?.image,
-              number: currentEpisode.number,
+              number: currentEpisode.number
             },
-            next: nextEpisode,
+            next: nextEpisode
           };
           setEpisodeNavigation(vidNav);
         }
@@ -272,7 +272,7 @@ export default function Watch({
         const anify = await fetch("/api/v2/source", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             source:
@@ -283,8 +283,8 @@ export default function Watch({
             watchId: watchId,
             episode: epiNumber,
             id: info.id,
-            sub: dub ? "dub" : "sub",
-          }),
+            sub: dub ? "dub" : "sub"
+          })
         }).then((res) => res.json());
 
         if (!anify?.sources?.length > 0) {
@@ -317,14 +317,14 @@ export default function Watch({
                   anify?.intro?.start ?? Math.round(getOp?.interval.startTime),
                 endTime:
                   anify?.intro?.end ?? Math.round(getOp?.interval.endTime),
-                text: "Opening",
+                text: "Opening"
               }
             : null,
           ed = {
             startTime:
               anify?.outro?.start ?? Math.round(getEd?.interval.startTime),
             endTime: anify?.outro?.end ?? Math.round(getEd?.interval.endTime),
-            text: "Ending",
+            text: "Ending"
           };
         const skipData = [op, ed].filter((i) => i !== null);
 
@@ -338,7 +338,7 @@ export default function Watch({
             src: proxy + "/" + i.url,
             label: i.lang,
             kind: i.lang === "Thumbnails" ? "thumbnails" : "subtitles",
-            ...(i.lang === "English" && { default: true }),
+            ...(i.lang === "English" && { default: true })
           };
         });
 
@@ -358,12 +358,12 @@ export default function Watch({
             url: `${proxy}/proxy/m3u8/${encodeURIComponent(
               String(quality?.url)
             )}/${encodeURIComponent(JSON.stringify(anify?.headers))}`,
-            headers: anify?.headers,
+            headers: anify?.headers
           },
           subtitles: subtitles,
           thumbnails: thumbnails?.src,
           epiData: anify,
-          skip: skipData,
+          skip: skipData
         };
 
         setTrack(episode);
@@ -374,7 +374,7 @@ export default function Watch({
     return () => {
       setPlayerState({
         currentTime: 0,
-        isPlaying: false,
+        isPlaying: false
       });
       setMarked(0);
       setTrack(null);
@@ -402,7 +402,7 @@ export default function Watch({
           ? "- Episode " + epiNumber
           : `- ${info?.title?.romaji || info?.title?.english}`
       }`,
-      artwork,
+      artwork
     });
   }, [episodeNavigation, info, epiNumber]);
 
@@ -412,7 +412,7 @@ export default function Watch({
         await navigator.share({
           title: `Watch Now - ${info?.title?.english || info.title.romaji}`,
           // text: `Watch [${info?.title?.romaji}] and more on Moopa. Join us for endless anime entertainment"`,
-          url: window.location.href,
+          url: window.location.href
         });
       } else {
         // Web Share API is not supported, provide a fallback or show a message
