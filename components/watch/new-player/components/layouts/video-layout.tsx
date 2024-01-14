@@ -6,7 +6,8 @@ import {
   Controls,
   Gesture,
   Spinner,
-  useMediaState,
+  Time,
+  useMediaState
 } from "@vidstack/react";
 
 import * as Buttons from "../buttons";
@@ -41,7 +42,7 @@ export function VideoLayout({
   thumbnails,
   navigation,
   host = true,
-  session,
+  session
 }: VideoLayoutProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -56,7 +57,7 @@ export function VideoLayout({
     setRatingModalState((prev: any) => {
       return {
         ...prev,
-        isFullscreen: isFullscreen,
+        isFullscreen: isFullscreen
       };
     });
   }, [isFullscreen]);
@@ -65,7 +66,7 @@ export function VideoLayout({
     <>
       <Gestures host={host} />
       <Captions
-        className={`${captionStyles.captions} media-preview:opacity-0 media-controls:bottom-[85px] media-captions:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300`}
+        className={`${captionStyles.captions} media-preview:opacity-0 media-controls:bottom-[28px] sm:media-controls:bottom-[85px] media-captions:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300`}
       />
       {ratingModalState.isFullscreen && (
         <RateModal
@@ -75,24 +76,51 @@ export function VideoLayout({
           session={session}
         />
       )}
+
+      {/* TOP CONTROLS */}
       <Controls.Root
         className={`${styles.controls} media-paused:bg-black/10 duration-200 media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/30 via-transparent to-black/30 opacity-0 transition-opacity`}
       >
         <Controls.Group className="flex justify-between items-center w-full px-2 pt-2">
           <Title navigation={navigation} />
+
           <div className="flex-1" />
-          {/* <Menus.Episodes placement="left start" /> */}
+          <div className="flex sm:hidden items-center">
+            {!!track?.subtitles?.length && (
+              <Buttons.Caption tooltipPlacement="top" />
+            )}
+            <Buttons.Mute offset={10} tooltipPlacement="bottom" />
+            <Buttons.PIP offset={10} tooltipPlacement="bottom" />
+            <Menus.Settings
+              offset={10}
+              placement="bottom end"
+              tooltipPlacement="bottom end"
+            />
+          </div>
         </Controls.Group>
         <div className="flex-1" />
 
-        {/* {isPaused && ( */}
         <Controls.Group
-          className={`media-paused:opacity-100 media-paused:scale-100 backdrop-blur-sm scale-[160%] opacity-0 duration-200 ease-out flex shadow bg-white/10 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+          className={`hidden media-paused:opacity-100 media-paused:scale-100 backdrop-blur-sm scale-[160%] opacity-0 duration-200 ease-out sm:flex shadow bg-white/10 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
         >
           <Buttons.MobilePlayButton tooltipPlacement="top center" host={host} />
         </Controls.Group>
-        {/* )} */}
 
+        {/* MOBILE CENTER */}
+        <Controls.Group
+          className={`duration-200 ease-out flex sm:hidden gap-5 items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20`}
+        >
+          <Buttons.SeekBackwardButton offset={10} tooltipPlacement="top" />
+          <div className="backdrop-blur-sm shadow bg-white/10 rounded-full">
+            <Buttons.MobilePlayButton
+              tooltipPlacement="top center"
+              host={host}
+            />
+          </div>
+          <Buttons.SeekForwardButton offset={10} tooltipPlacement="top" />
+        </Controls.Group>
+
+        {/* LOADING */}
         <div className="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center">
           <Spinner.Root
             className="text-white opacity-0 transition-opacity duration-200 ease-linear media-buffering:animate-spin media-buffering:opacity-100"
@@ -102,7 +130,6 @@ export function VideoLayout({
             <Spinner.TrackFill className="opacity-75" width={8} />
           </Spinner.Root>
         </div>
-        {/* </Controls.Group> */}
 
         <Controls.Group className="flex px-4">
           <div className="flex-1" />
@@ -118,15 +145,16 @@ export function VideoLayout({
           )}
         </Controls.Group>
 
-        <Controls.Group className="flex w-full items-center px-2">
+        {/* DESKTOP CONTROLS */}
+        <Controls.Group className="hidden sm:flex w-full items-center px-2">
           <Sliders.Time thumbnails={thumbnails} host={host} />
         </Controls.Group>
-        <Controls.Group className="-mt-0.5 flex w-full items-center px-2 pb-2">
+        <Controls.Group className="hidden -mt-0.5 sm:flex w-full items-center px-2 pb-2">
           <Buttons.PreviousEpisode
             navigation={navigation}
-            tooltipPlacement="top"
+            tooltipPlacement="top start"
           />
-          <Buttons.Play tooltipPlacement="top start" />
+          <Buttons.Play tooltipPlacement="top" />
           <Buttons.NextEpisode navigation={navigation} tooltipPlacement="top" />
           <Buttons.Mute tooltipPlacement="top" />
           <Sliders.Volume />
@@ -136,12 +164,40 @@ export function VideoLayout({
           {!!track?.subtitles?.length && (
             <Buttons.Caption tooltipPlacement="top" />
           )}
+          <Buttons.SeekBackwardButton tooltipPlacement="top" />
+          <Buttons.SeekForwardButton tooltipPlacement="top" />
           <Menus.Settings placement="top end" tooltipPlacement="top" />
           {!isMobile && !isFullscreen && (
             <Buttons.TheaterButton tooltipPlacement="top" />
           )}
           <Buttons.PIP tooltipPlacement="top" />
           <Buttons.Fullscreen tooltipPlacement="top end" />
+        </Controls.Group>
+
+        {/* MOBILE CONTROLS */}
+        <Controls.Group className="flex sm:hidden w-full items-center px-2 pb-1 z-40">
+          <div className="flex items-center mr-1 z-40">
+            <Buttons.PreviousEpisode
+              navigation={navigation}
+              offset={10}
+              tooltipPlacement="top start"
+            />
+            <Buttons.NextEpisode
+              offset={10}
+              navigation={navigation}
+              tooltipPlacement="top"
+            />
+          </div>
+          <div className="text-xs">
+            <Time className="time" type="current" />
+          </div>
+          <Sliders.Time thumbnails={thumbnails} host={host} />
+          <div className="text-xs">
+            <Time className="time" type="duration" />
+          </div>
+          <div className="flex ml-1">
+            <Buttons.Fullscreen offset={10} tooltipPlacement="top end" />
+          </div>
         </Controls.Group>
       </Controls.Root>
     </>

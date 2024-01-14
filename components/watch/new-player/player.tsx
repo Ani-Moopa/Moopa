@@ -11,7 +11,7 @@ import {
   useMediaRemote,
   type MediaPlayerInstance,
   Track,
-  MediaTimeUpdateEventDetail,
+  MediaTimeUpdateEventDetail
 } from "@vidstack/react";
 import { VideoLayout } from "./components/layouts/video-layout";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
@@ -86,7 +86,7 @@ export default function VidStack({
   id,
   navigation,
   userData,
-  sessions,
+  sessions
 }: VidStackProps) {
   let player = useRef<MediaPlayerInstance>(null);
 
@@ -97,7 +97,7 @@ export default function VidStack({
     playerState,
     dataMedia,
     autoNext,
-    setRatingModalState,
+    setRatingModalState
   } = useWatchProvider();
 
   const { qualities, duration } = useMediaStore(player);
@@ -193,8 +193,8 @@ export default function VidStack({
               provider: track?.provider,
               nextId: navigation?.next?.id,
               nextNumber: Number(navigation?.next?.number),
-              dub: track?.isDub ? true : false,
-            }),
+              dub: track?.isDub ? true : false
+            })
           });
         }
 
@@ -214,7 +214,7 @@ export default function VidStack({
           nextId: navigation?.next?.id,
           nextNumber: navigation?.next?.number,
           dub: track?.isDub ? true : false,
-          createdAt: new Date().toISOString(),
+          createdAt: new Date().toISOString()
         });
         // console.log("update");
       }, 5000);
@@ -256,58 +256,49 @@ export default function VidStack({
   }, [playerState?.currentTime, playerState?.isPlaying]);
 
   useEffect(() => {
-    const chapter = track?.skip,
-      videoDuration = Math.round(duration);
+    const chapter = track?.skip;
+    const videoDuration = Math.round(duration);
+
+    if (!chapter || chapter.length === 0 || !player.current) {
+      // Handle cases where there's no chapter data or player is not ready
+      setChapters("");
+      return;
+    }
 
     let vtt = "WEBVTT\n\n";
 
-    let lastEndTime = 0;
-
-    if (chapter && chapter?.length > 0) {
-      chapter.forEach((item: SkipData) => {
-        let startMinutes = Math.floor(item.startTime / 60);
-        let startSeconds = item.startTime % 60;
-        let endMinutes = Math.floor(item.endTime / 60);
-        let endSeconds = item.endTime % 60;
-
-        let start = `${startMinutes.toString().padStart(2, "0")}:${startSeconds
-          .toString()
-          .padStart(2, "0")}`;
-        let end = `${endMinutes.toString().padStart(2, "0")}:${endSeconds
-          .toString()
-          .padStart(2, "0")}`;
-
-        vtt += `${start} --> ${end}\n${item.text}\n\n`;
-        if (item.endTime > lastEndTime) {
-          lastEndTime = item.endTime;
-        }
-      });
-
-      if (lastEndTime < videoDuration) {
-        let startMinutes = Math.floor(lastEndTime / 60);
-        let startSeconds = lastEndTime % 60;
-        let endMinutes = Math.floor(videoDuration / 60);
-        let endSeconds = videoDuration % 60;
-
-        let start = `${startMinutes.toString().padStart(2, "0")}:${startSeconds
-          .toString()
-          .padStart(2, "0")}`;
-        let end = `${endMinutes.toString().padStart(2, "0")}:${endSeconds
-          .toString()
-          .padStart(2, "0")}`;
-
-        vtt += `${start} --> ${end}\n\n\n`;
+    chapter.forEach((item: { endTime: any; startTime: any; text: any }) => {
+      if (!item.endTime) {
+        // Handle missing endTime gracefully
+        console.warn("Skipping item with missing endTime:", item);
+        return;
       }
 
-      const vttBlob = new Blob([vtt], { type: "text/vtt" });
-      const vttUrl = URL.createObjectURL(vttBlob);
+      const [startMinutes, startSeconds] = formatTime(item.startTime);
+      const [endMinutes, endSeconds] = formatTime(item.endTime);
 
-      setChapters(vttUrl);
+      vtt += `${startMinutes}:${startSeconds} --> ${endMinutes}:${endSeconds}\n${item.text}\n\n`;
+    });
+
+    if (chapter[chapter.length - 1].endTime < videoDuration) {
+      // Add a final chapter if needed
+      const [startMinutes, startSeconds] = formatTime(
+        chapter[chapter.length - 1].endTime
+      );
+      const [endMinutes, endSeconds] = formatTime(videoDuration);
+      vtt += `${startMinutes}:${startSeconds} --> ${endMinutes}:${endSeconds}\n\n\n`;
     }
+
+    const vttBlob = new Blob([vtt], { type: "text/vtt" });
+    const vttUrl = URL.createObjectURL(vttBlob);
+
+    setChapters(vttUrl);
+
     return () => {
       setChapters("");
+      URL.revokeObjectURL(vttUrl); // Clean up VTT URL
     };
-  }, [track?.skip, duration]);
+  }, [track?.skip, duration, player.current]);
 
   useEffect(() => {
     return () => {
@@ -315,7 +306,7 @@ export default function VidStack({
         player.current.destroy();
       }
     };
-  }, []);
+  }, [id]);
 
   function onEnded() {
     if (!navigation?.next?.id) return;
@@ -382,14 +373,14 @@ export default function VidStack({
           // @ts-ignore Fix when convert useAnilist to typescript
           markProgress({
             mediaId: dataMedia.id,
-            progress: navigation.playing.number,
+            progress: navigation.playing.number
           });
 
           if (dataMedia.episodes === +navigation.playing?.number) {
             setRatingModalState((prev: any) => {
               return {
                 ...prev,
-                isOpen: true,
+                isOpen: true
               };
             });
           }
@@ -447,7 +438,7 @@ export default function VidStack({
       crossorigin="anonymous"
       src={{
         src: defaultQuality?.url,
-        type: "application/vnd.apple.mpegurl",
+        type: "application/vnd.apple.mpegurl"
       }}
       onTimeUpdate={onTimeUpdate}
       playsinline
@@ -485,4 +476,13 @@ export function calculateAspectRatio(width: number, height: number) {
   const divisor = gcd(width, height);
   const aspectRatio = `${width / divisor}/${height / divisor}`;
   return aspectRatio;
+}
+
+function formatTime(timeInSeconds: number) {
+  const minutes = Math.floor(timeInSeconds / 60);
+  const seconds = Math.floor(timeInSeconds % 60);
+  return [
+    minutes.toString().padStart(2, "0"),
+    seconds.toString().padStart(2, "0")
+  ];
 }

@@ -28,7 +28,7 @@ export default function Details({
   onList,
   setOnList,
   handleOpen,
-  disqus,
+  disqus
 }: DetailsProps) {
   const [showComments, setShowComments] = useState(false);
   const { markPlanning } = useAniList(session);
@@ -65,7 +65,7 @@ export default function Details({
           {info ? (
             <Link
               className="hover:scale-105 hover:shadow-lg duration-300 ease-out"
-              href={`/en/anime/${id}`}
+              href={`/en/anime/${info.id}`}
             >
               <Image
                 src={info.coverImage.extraLarge}
@@ -170,7 +170,7 @@ export default function Details({
                   ? description
                   : description?.length > 420
                   ? truncatedDesc
-                  : description,
+                  : description
               }}
               className={`p-5 text-sm font-light font-roboto text-[#e4e4e4] `}
             />
@@ -224,7 +224,7 @@ export default function Details({
                   title: info.title.romaji,
                   url: window.location.href,
                   episode: epiNumber,
-                  name: disqus,
+                  name: disqus
                 }}
               />
             </div>

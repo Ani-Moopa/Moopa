@@ -1,11 +1,11 @@
 {
   "name": "moopa",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "private": true,
   "founder": "Factiven",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma migrate deploy && npx prisma generate && next build",
     "export": "next build && next export",
     "start": "next start",
     "type-check": "tsc",
@@ -16,7 +16,7 @@
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^5.3.1",
     "@vercel/og": "^0.5.4",
-    "@vidstack/react": "^1.8.3",
+    "@vidstack/react": "^1.9.8",
     "axios": "^1.4.0",
     "cookies": "^0.8.0",
     "cron": "^2.4.0",

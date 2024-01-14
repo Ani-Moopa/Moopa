@@ -3,22 +3,37 @@ import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 const web = {
-  version: "v4.4.0",
+  version: "v4.4.1"
 };
 
 const logs = [
   {
-    version: "v4.4.0",
+    version: "v4.4.1",
     pre: false,
     notes: null,
     highlights: true,
     changes: [
+      "New player layout for mobile devices",
+      "Added seek buttons in the player",
+      "Added previous and next episode buttons in the player",
       "Added rate modal when user finished watching the whole series",
       "Fix: only half of the episodes has episodes thumbnail",
       "Fix: pressing back button in anime info page redirects user to the wrong page",
-      "Progressively migrate codebase to typescript",
-    ],
-  },
+      "Progressively migrate codebase to typescript"
+    ]
+  }
+  // {
+  //   version: "v4.4.0",
+  //   pre: false,
+  //   notes: null,
+  //   highlights: false,
+  //   changes: [
+  //     "Added rate modal when user finished watching the whole series",
+  //     "Fix: only half of the episodes has episodes thumbnail",
+  //     "Fix: pressing back button in anime info page redirects user to the wrong page",
+  //     "Progressively migrate codebase to typescript"
+  //   ]
+  // }
   // {
   //   version: "v4.3.1",
   //   pre: true,
@@ -221,7 +236,7 @@ export function ChangelogsVersions({
   pre,
   notes,
   highlights,
-  children,
+  children
 }: ChangelogsVersionsProps) {
   return (
     <>

@@ -28,7 +28,7 @@ export function Time({ thumbnails, host }: TimeSliderProps) {
     <TimeSlider.Root
       className={`${
         host ? "" : "pointer-events-none"
-      } time-slider group relative mx-[7.5px] inline-flex h-10 w-full cursor-pointer touch-none select-none items-center outline-none`}
+      } time-slider group relative mx-[7.5px] inline-flex h-7 w-full cursor-pointer touch-none select-none items-center outline-none`}
     >
       <TimeSlider.Chapters className="relative flex h-full w-full items-center rounded-[1px]">
         {(cues, forwardRef) =>
@@ -39,7 +39,7 @@ export function Time({ thumbnails, host }: TimeSliderProps) {
               key={cue.startTime}
               ref={forwardRef}
             >
-              <TimeSlider.Track className="relative ring-media-focus z-0 h-[5px] group-hover/slider:h-[10px] transition-all duration-100 w-full rounded-sm bg-white/30 group-data-[focus]:ring-[3px]">
+              <TimeSlider.Track className="relative ring-media-focus z-0 h-[4px] group-hover/slider:h-[10px] transition-all duration-100 w-full rounded-sm bg-white/30 group-data-[focus]:ring-[3px]">
                 <TimeSlider.TrackFill className="bg-white absolute h-full w-[var(--chapter-fill)] rounded-sm will-change-[width]" />
                 <TimeSlider.Progress className="absolute z-10 h-full w-[var(--chapter-progress)] rounded-sm bg-white/50 will-change-[width]" />
               </TimeSlider.Track>

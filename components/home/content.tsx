@@ -321,7 +321,7 @@ export default function Content({
                             ? `/en/anime/watch/${
                                 anime.id
                               }/gogoanime?id=${encodeURIComponent(
-                                anime?.slug
+                                anime?.slug?.replace('/', '')
                               )}&num=${anime.currentEpisode}`
                             : `/en/${type}/${anime.id}`
                           : `/en/${type}/${anime.id}`

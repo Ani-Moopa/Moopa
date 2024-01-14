@@ -12,7 +12,7 @@ import {
   type TooltipPlacement,
   useVideoQualityOptions,
   useMediaState,
-  usePlaybackRateOptions,
+  usePlaybackRateOptions
 } from "@vidstack/react";
 import {
   ChevronLeftIcon,
@@ -25,7 +25,7 @@ import {
   // EpisodesIcon,
   SettingsSwitchIcon,
   // PlaybackSpeedCircleIcon,
-  OdometerIcon,
+  OdometerIcon
 } from "@vidstack/react/icons";
 
 import { buttonClass, tooltipClass } from "./buttons";
@@ -34,6 +34,7 @@ import React from "react";
 
 export interface SettingsProps {
   placement: MenuPlacement;
+  offset?: number;
   tooltipPlacement: TooltipPlacement;
 }
 
@@ -44,10 +45,15 @@ export const submenuClass =
   "hidden w-full flex-col items-start justify-center outline-none data-[keyboard]:mt-[3px] data-[open]:inline-block";
 
 export const contentMenuClass =
-  "flex cust-scroll h-[var(--menu-height)] max-h-[180px] lg:max-h-[400px] min-w-[260px] flex-col overflow-y-auto overscroll-y-contain rounded-md border border-white/10 bg-secondary p-2 font-sans text-[15px] font-medium outline-none backdrop-blur-sm transition-[height] duration-300 will-change-[height] data-[resizing]:overflow-hidden";
+  "flex cust-scroll h-[var(--menu-height)] max-h-[180px] lg:max-h-[400px] min-w-[260px] flex-col overflow-y-auto overscroll-y-contain rounded-md border border-white/10 bg-secondary p-1 font-sans text-[15px] font-medium outline-none backdrop-blur-sm transition-[height] duration-300 will-change-[height] data-[resizing]:overflow-hidden";
 
-export function Settings({ placement, tooltipPlacement }: SettingsProps) {
+export function Settings({
+  placement,
+  offset,
+  tooltipPlacement
+}: SettingsProps) {
   const { track } = useWatchProvider();
+  const isFullscreen = useMediaState("fullscreen");
   const isSubtitleAvailable = track?.epiData?.subtitles?.length > 0;
 
   return (
@@ -58,21 +64,33 @@ export function Settings({ placement, tooltipPlacement }: SettingsProps) {
             <SettingsIcon className="h-8 w-8 transform transition-transform duration-200 ease-out group-data-[open]:rotate-90" />
           </Menu.Button>
         </Tooltip.Trigger>
-        <Tooltip.Content className={tooltipClass} placement={tooltipPlacement}>
+        <Tooltip.Content
+          offset={offset}
+          className={tooltipClass}
+          placement={tooltipPlacement}
+        >
           Settings
         </Tooltip.Content>
       </Tooltip.Root>
-      {/* <Menu.Content className={menuClass} placement={placement}>
-        {isSubtitleAvailable && <CaptionSubmenu />}
-        <QualitySubmenu />
-      </Menu.Content> */}
-      <Menu.Content className={contentMenuClass} placement={placement}>
-        <AutoPlay />
-        <AutoNext />
-        <SpeedSubmenu />
-        {isSubtitleAvailable && <CaptionSubmenu />}
-        <QualitySubmenu />
-      </Menu.Content>
+      {!isFullscreen ? (
+        <Menu.Portal>
+          <Menu.Content className={contentMenuClass} placement={placement}>
+            <AutoPlay />
+            <AutoNext />
+            <SpeedSubmenu />
+            {isSubtitleAvailable && <CaptionSubmenu />}
+            <QualitySubmenu />
+          </Menu.Content>
+        </Menu.Portal>
+      ) : (
+        <Menu.Content className={contentMenuClass} placement={placement}>
+          <AutoPlay />
+          <AutoNext />
+          <SpeedSubmenu />
+          {isSubtitleAvailable && <CaptionSubmenu />}
+          <QualitySubmenu />
+        </Menu.Content>
+      )}
     </Menu.Root>
   );
 }
@@ -194,13 +212,13 @@ function AutoPlay() {
     {
       label: "On",
       value: "on",
-      selected: false,
+      selected: false
     },
     {
       label: "Off",
       value: "off",
-      selected: true,
-    },
+      selected: true
+    }
   ]);
 
   const { autoplay, setAutoPlay } = useWatchProvider();
@@ -254,13 +272,13 @@ function AutoNext() {
     {
       label: "On",
       value: "on",
-      selected: false,
+      selected: false
     },
     {
       label: "Off",
       value: "off",
-      selected: true,
-    },
+      selected: true
+    }
   ]);
 
   const { autoNext, setAutoNext } = useWatchProvider();
@@ -368,7 +386,7 @@ function SubmenuButton({
   label,
   hint,
   icon: Icon,
-  disabled,
+  disabled
 }: SubmenuButtonProps) {
   return (
     <Menu.Button
