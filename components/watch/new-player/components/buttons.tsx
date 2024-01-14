@@ -11,8 +11,7 @@ import {
   type TooltipPlacement,
   useMediaRemote,
   useMediaStore,
-  SeekButton,
-  ToggleButton
+  SeekButton
 } from "@vidstack/react";
 import {
   ClosedCaptionsIcon,
