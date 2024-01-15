@@ -44,9 +44,9 @@ function filterData(data: RawEpisodeData[], type: "sub" | "dub") {
           ...item,
           episodes: Object?.entries(item.episodes[type]).map(
             ([id, episode]) => ({
-              ...episode,
+              ...episode
             })
-          ),
+          )
         };
       }
     }
@@ -61,23 +61,23 @@ async function fetchConsumet(id?: string | string[] | undefined) {
   try {
     const fetchData = async (dub?: any) => {
       const { data } = await axios.get<ConsumetInfo>(
-        `${CONSUMET_URI}/meta/anilist/info/${id}${dub ? "?dub=true" : ""}`
+        `${CONSUMET_URI}/meta/anilist/episodes/${id}${dub ? "?dub=true" : ""}`
       );
       if (data?.message === "Anime not found" && data?.length < 1) {
         return [];
       }
 
       if (dub) {
-        if (!data?.episodes?.some((i) => i.id.includes("dub"))) return [];
+        if (!data?.some((i) => i.id.includes("dub"))) return [];
       }
 
-      const reformatted = data.episodes?.map((item) => ({
+      const reformatted = data?.map((item) => ({
         id: item.id,
         title: item?.title || null,
         img: item?.image || null,
         number: item?.number || null,
         createdAt: item?.airDate || null,
-        description: item?.description || null,
+        description: item?.description || null
       }));
 
       return reformatted;
@@ -85,7 +85,7 @@ async function fetchConsumet(id?: string | string[] | undefined) {
 
     const [subData, dubData] = await Promise.all([
       fetchData(),
-      fetchData(true),
+      fetchData(true)
     ]);
 
     if (subData.every((i) => i.id?.includes("dub"))) {
@@ -104,9 +104,9 @@ async function fetchConsumet(id?: string | string[] | undefined) {
         providerId: "gogoanime",
         episodes: {
           sub: isAscending(subData) ? subData : subData.reverse(),
-          dub: isAscending(dubData) ? dubData : dubData.reverse(),
-        },
-      },
+          dub: isAscending(dubData) ? dubData : dubData.reverse()
+        }
+      }
     ];
 
     return array;
@@ -194,7 +194,7 @@ export default async function handler(
         error: `Too Many Requests, retry after ${getTimeFromMs(
           error.msBeforeNext
         )}`,
-        remaining: error.remainingPoints,
+        remaining: error.remainingPoints
       });
     }
 
@@ -255,7 +255,7 @@ export default async function handler(
     const [consumet, anify, cover] = await Promise.all([
       fetchConsumet(id),
       fetchAnify(id),
-      fetchCoverImage(id, meta),
+      fetchCoverImage(id, meta)
     ]);
 
     let subDub = "sub";
@@ -276,7 +276,8 @@ export default async function handler(
       // !cover?.some((item: { img: null }) => item.img === null) &&
       cover?.length > 0
     ) {
-      if (redis) await redis.set(`meta:${id}`, JSON.stringify(cover));
+      if (redis)
+        await redis.set(`meta:${id}`, JSON.stringify(cover), "EX", cacheTime);
       data = await appendMetaToEpisodes(filteredData, cover);
     }
 
