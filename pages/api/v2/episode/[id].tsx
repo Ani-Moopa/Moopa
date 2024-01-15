@@ -151,10 +151,13 @@ async function fetchCoverImage(id: string, available = false) {
       return [];
     }
 
-    const getData = getProviderWithMostEpisodesAndImage(data);
+    // const getData = getProviderWithMostEpisodesAndImage(data);
     // const getData = data?.[0]?.data;
 
-    return getData.data;
+    const tmdbCover = data.find((object) => { return object.providerId === "tmdb" });
+
+    if(tmdbCover) return tmdbCover.data;
+    return [];
   } catch (error: any) {
     console.error("Error fetching and processing data:", error.message);
     return [];
