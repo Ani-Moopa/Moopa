@@ -9,6 +9,10 @@
 </h1>
 
 <p align="center">
+  <i>Migrating to typescript! More active development <a href="https://github.com/Ani-Moopa/Moopa/tree/beta">on the beta branch</a></i>
+
+<br />
+<br />
 
  <a href="https://github.com/DevanAbinaya/Ani-Moopa/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/DevanAbinaya/Ani-Moopa" alt="license"/>
