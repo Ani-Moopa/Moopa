@@ -20,6 +20,7 @@ import { Subtitle } from "types/episodes/TrackData";
 import useWatchStorage from "@/lib/hooks/useWatchStorage";
 import { Sessions } from "types/episodes/Sessions";
 import { useAniList } from "@/lib/anilist/useAnilist";
+import useChapterTracks from "@/lib/hooks/useChapterTracks";
 
 export interface Navigation {
   prev: Prev;
@@ -114,6 +115,8 @@ export default function VidStack({
   const [chapters, setChapters] = useState<string>("");
 
   const router = useRouter();
+
+  useChapterTracks(track, duration, setChapters);
 
   useEffect(() => {
     if (qualities.length > 0) {
@@ -255,58 +258,13 @@ export default function VidStack({
     });
   }, [playerState?.currentTime, playerState?.isPlaying]);
 
-  useEffect(() => {
-    const chapter = track?.skip;
-    const videoDuration = Math.round(duration);
-
-    if (!chapter || chapter.length === 0 || !player.current) {
-      // Handle cases where there's no chapter data or player is not ready
-      setChapters("");
-      return;
-    }
-
-    let vtt = "WEBVTT\n\n";
-
-    chapter.forEach((item: { endTime: any; startTime: any; text: any }) => {
-      if (!item.endTime) {
-        // Handle missing endTime gracefully
-        console.warn("Skipping item with missing endTime:", item);
-        return;
-      }
-
-      const [startMinutes, startSeconds] = formatTime(item.startTime);
-      const [endMinutes, endSeconds] = formatTime(item.endTime);
-
-      vtt += `${startMinutes}:${startSeconds} --> ${endMinutes}:${endSeconds}\n${item.text}\n\n`;
-    });
-
-    if (chapter[chapter.length - 1].endTime < videoDuration) {
-      // Add a final chapter if needed
-      const [startMinutes, startSeconds] = formatTime(
-        chapter[chapter.length - 1].endTime
-      );
-      const [endMinutes, endSeconds] = formatTime(videoDuration);
-      vtt += `${startMinutes}:${startSeconds} --> ${endMinutes}:${endSeconds}\n\n\n`;
-    }
-
-    const vttBlob = new Blob([vtt], { type: "text/vtt" });
-    const vttUrl = URL.createObjectURL(vttBlob);
-
-    setChapters(vttUrl);
-
-    return () => {
-      setChapters("");
-      URL.revokeObjectURL(vttUrl); // Clean up VTT URL
-    };
-  }, [track?.skip, duration, player.current]);
-
-  useEffect(() => {
-    return () => {
-      if (player.current) {
-        player.current.destroy();
-      }
-    };
-  }, [id]);
+  // useEffect(() => {
+  //   return () => {
+  //     if (player.current) {
+  //       player.current.destroy();
+  //     }
+  //   };
+  // }, [id]);
 
   function onEnded() {
     if (!navigation?.next?.id) return;

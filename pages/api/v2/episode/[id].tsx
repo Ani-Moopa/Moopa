@@ -25,7 +25,7 @@ const isAscending = (data: Episode[]) => {
 };
 
 export interface RawEpisodeData {
-  map?: boolean;
+  from?: boolean;
   providerId: string;
   episodes: {
     sub: Episode[];
@@ -36,7 +36,7 @@ export interface RawEpisodeData {
 function filterData(data: RawEpisodeData[], type: "sub" | "dub") {
   // Filter the data based on the type (sub or dub) and providerId
   const filteredData = data.map((item) => {
-    if (item?.map === true) {
+    if (item?.from === "consumet") {
       if (item.episodes[type].length === 0) {
         return null;
       } else {
@@ -100,7 +100,7 @@ async function fetchConsumet(id?: string | string[] | undefined) {
 
     const array = [
       {
-        map: true,
+        from: "consumet",
         providerId: "gogoanime",
         episodes: {
           sub: isAscending(subData) ? subData : subData.reverse(),
@@ -130,7 +130,13 @@ async function fetchAnify(id?: string) {
       (item) => item.providerId !== "9anime" && item.providerId !== "kass"
     );
 
-    return filtered;
+    const array = filtered?.map((item) => ({
+      from: "anify",
+      providerId: item.providerId,
+      episodes: item.episodes
+    }));
+
+    return array;
   } catch (error: any) {
     console.error("Error fetching and processing data:", error.message);
     return [];

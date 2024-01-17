@@ -25,7 +25,7 @@ export default function EpisodeLists({
   episode,
   artStorage,
   track,
-  dub,
+  dub
 }: EpisodeListsProps) {
   const progress = info.mediaListEntry?.progress;
 
@@ -108,6 +108,7 @@ export default function EpisodeLists({
                       ? "pointer-events-none ring-1 ring-action"
                       : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                   }`}
+                  replace
                 >
                   <div className="w-[43%] lg:w-[42%] h-[110px] relative rounded-lg z-40 shrink-0 overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
                     <div className="relative">
@@ -133,7 +134,7 @@ export default function EpisodeLists({
                               ? "100%"
                               : artStorage?.[item?.id] !== undefined
                               ? `${prog}%`
-                              : "0%",
+                              : "0%"
                         }}
                       />
                       <span className="absolute bottom-2 left-2 font-karla font-bold text-sm text-white">
@@ -183,6 +184,7 @@ export default function EpisodeLists({
                       ? "pointer-events-none ring-1 ring-action text-[#5d5d5d]"
                       : "cursor-pointer hover:scale-[1.02] ring-0 hover:ring-1 hover:shadow-lg ring-white"
                   }`}
+                  replace
                 >
                   Episode {item.number}
                 </Link>
