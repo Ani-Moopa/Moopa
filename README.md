@@ -8,11 +8,20 @@
   <a href="https://moopa.live">Moopa Anime Streaming Website</a>
 </h1>
 
-<p align="center">
-  <i>Migrating to typescript! More active development <a href="https://github.com/Ani-Moopa/Moopa/tree/beta">on the beta branch</a></i>
 
+> [!WARNING]  
+>  
+> As of Jul 14 2024, this repository is no longer maintained and will not receive any further updates or support from the author. If you choose to use the code in this repository, please do so at your own risk.
+>
+> ### Important Points:
+> - **No Updates**: There will be no further updates or improvements made to this repository.
+> - **No Support**: The author will not provide any support, fixes, or acknowledge any issues found in the code.
+> - **Use at Your Own Risk**: Any errors, bugs, or other issues that arise from using this code are your responsibility.
+> 
+> Thank you for your understanding. 
 <br />
-<br />
+
+<p align="center">
 
  <a href="https://github.com/DevanAbinaya/Ani-Moopa/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/DevanAbinaya/Ani-Moopa" alt="license"/>
@@ -25,17 +34,6 @@
   </a>
   
 </p>
-
-> [!WARNING]  
->  
-> As of Jul 14 2024, this repository is no longer maintained and will not receive any further updates or support from the author. If you choose to use the code in this repository, please do so at your own risk.
->
-> ### Important Points:
-> - **No Updates**: There will be no further updates or improvements made to this repository.
-> - **No Support**: The author will not provide any support, fixes, or acknowledge any issues found in the code.
-> - **Use at Your Own Risk**: Any errors, bugs, or other issues that arise from using this code are your responsibility.
-> 
-> Thank you for your understanding. 
 
 <p align="center">
  <img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/c17d5d6a-36a2-4d08-957d-ad4683dcdf0d" alt="main">
