@@ -130,9 +130,6 @@ GRAPHQL_ENDPOINT="https://graphql.anilist.co"
 
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
-
-PROXY_URI="This is what I use for proxying video https://github.com/chaycee/M3U8Proxy. Don't put / at the end of the url."
-API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
 DISQUS_SHORTNAME='put your disqus shortname here (optional)'
 
 ## Use any postgresql db, or supabase for free options
