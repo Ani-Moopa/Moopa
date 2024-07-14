@@ -89,7 +89,7 @@ const ChapterSelector = ({ chaptersData, data, setWatch, mangaId }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapters]);
+  }, [chapters, mangaId]);
 
   return (
     <div className="flex flex-col gap-2 px-3">

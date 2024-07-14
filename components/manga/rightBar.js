@@ -43,7 +43,7 @@ export default function RightBar({
         parsedProgress === parseInt(parsedProgress) &&
         parsedVolumeProgress === parseInt(parsedVolumeProgress)
       ) {
-        markProgress(id, progress, status, volumeProgress);
+        markProgress({ mediaId: id, progress, stats: status, volumeProgress });
         hasRun.current = true;
       } else {
         toast.error("Progress must be a whole number!");

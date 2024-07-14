@@ -4,7 +4,7 @@ import { convertUnixToTime } from "../../utils/getTimes";
 import { PlayIcon } from "@heroicons/react/20/solid";
 import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import { useCountdown } from "../../utils/useCountdownSeconds";
+import { useCountdown } from "../../lib/hooks/useCountdownSeconds";
 
 export default function Schedule({ data, scheduleData, anime, update }) {
   let now = new Date();
@@ -13,10 +13,12 @@ export default function Schedule({ data, scheduleData, anime, update }) {
     "Schedule";
   currentDay = currentDay.replace("Schedule", "");
 
-  const [day, hours, minutes, seconds] = useCountdown(
+  const { countdown } = useCountdown(
     anime[0]?.airingSchedule.nodes[0]?.airingAt * 1000 || Date.now(),
     update
   );
+
+  const {days: day, hours, minutes, seconds} = countdown;
 
   const [currentPage, setCurrentPage] = useState(0);
   const [days, setDay] = useState();

@@ -1,21 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
-import PlayerComponent from "@/components/watch/player/playerComponent";
+import { useEffect, useState } from "react";
 import { FlagIcon, ShareIcon } from "@heroicons/react/24/solid";
 import Details from "@/components/watch/primary/details";
 import EpisodeLists from "@/components/watch/secondary/episodeLists";
 import { getServerSession } from "next-auth";
 import { useWatchProvider } from "@/lib/context/watchPageProvider";
 import { authOptions } from "../../../api/auth/[...nextauth]";
+import { getRemovedMedia } from "@/prisma/removed";
 import { createList, createUser, getEpisode } from "@/prisma/user";
 import Link from "next/link";
 import MobileNav from "@/components/shared/MobileNav";
-import { NewNavbar } from "@/components/shared/NavBar";
+import { Navbar } from "@/components/shared/NavBar";
 import Modal from "@/components/modal";
 import AniList from "@/components/media/aniList";
 import { signIn } from "next-auth/react";
 import BugReportForm from "@/components/shared/bugReport";
 import Skeleton from "react-loading-skeleton";
 import Head from "next/head";
+import VidStack from "@/components/watch/new-player/player";
+import { useRouter } from "next/router";
+import { Spinner } from "@vidstack/react";
+import RateModal from "@/components/shared/RateModal";
 
 export async function getServerSideProps(context) {
   let userData = null;
@@ -25,27 +29,40 @@ export async function getServerSideProps(context) {
   const query = context?.query;
   if (!query) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
 
   let proxy;
-  proxy = process.env.PROXY_URI;
+  proxy = process.env.PROXY_URI || null;
   if (proxy && proxy.endsWith("/")) {
     proxy = proxy.slice(0, -1);
   }
-  const disqus = process.env.DISQUS_SHORTNAME;
+  const disqus = process.env.DISQUS_SHORTNAME || null;
 
   const [aniId, provider] = query?.info;
   const watchId = query?.id;
   const epiNumber = query?.num;
   const dub = query?.dub;
 
+  const removed = await getRemovedMedia();
+
+  const isRemoved = removed?.find((i) => +i?.aniId === +aniId);
+
+  if (isRemoved) {
+    return {
+      redirect: {
+        destination: "/en/removed",
+        permanent: false
+      }
+    };
+  }
+
   const ress = await fetch(`https://graphql.anilist.co`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` })
     },
     body: JSON.stringify({
       query: `query ($id: Int) {
@@ -81,16 +98,18 @@ export async function getServerSideProps(context) {
                   color
                 }
                 synonyms
-                  
+
               }
             }
           `,
       variables: {
-        id: aniId,
-      },
-    }),
+        id: aniId
+      }
+    })
   });
   const data = await ress.json();
+  // const variables = { id: aniId };
+  // const data = await getAnilistMediaInfo(variables, context.req);
 
   try {
     if (session) {
@@ -120,8 +139,8 @@ export async function getServerSideProps(context) {
       userData: userData?.[0] || null,
       info: data?.data?.Media || null,
       proxy,
-      disqus,
-    },
+      disqus
+    }
   };
 }
 
@@ -134,7 +153,7 @@ export default function Watch({
   userData,
   sessions,
   provider,
-  epiNumber,
+  epiNumber
 }) {
   const [artStorage, setArtStorage] = useState(null);
 
@@ -142,23 +161,33 @@ export default function Watch({
   const [episodesList, setepisodesList] = useState();
   const [mapEpisode, setMapEpisode] = useState(null);
 
-  const [episodeSource, setEpisodeSource] = useState(null);
-
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [onList, setOnList] = useState(false);
-
-  const { theaterMode, setPlayerState, setAutoPlay, setMarked } =
+  const { setAutoNext, ratingModalState, setRatingModalState } =
     useWatchProvider();
 
-  const playerRef = useRef(null);
+  const [onList, setOnList] = useState(false);
+
+  const router = useRouter();
+
+  const {
+    theaterMode,
+    setPlayerState,
+    setAutoPlay,
+    setMarked,
+    setTrack,
+    aspectRatio,
+    setDataMedia
+  } = useWatchProvider();
 
   useEffect(() => {
     async function getInfo() {
       if (info.mediaListEntry) {
         setOnList(true);
       }
+
+      setDataMedia(info);
 
       const response = await fetch(
         `/api/v2/episode/${info.id}?releasing=${
@@ -202,17 +231,18 @@ export default function Watch({
           const previousEpisode = episodeList?.find(
             (i) => i.number === parseInt(epiNumber) - 1
           );
-          setEpisodeNavigation({
+          const vidNav = {
             prev: previousEpisode,
             playing: {
               id: currentEpisode.id,
-              title: playingData?.title,
+              title: playingData?.title || info?.title?.romaji,
               description: playingData?.description,
               img: playingData?.img || playingData?.image,
-              number: currentEpisode.number,
+              number: currentEpisode.number
             },
-            next: nextEpisode,
-          });
+            next: nextEpisode
+          };
+          setEpisodeNavigation(vidNav);
         }
       }
 
@@ -228,16 +258,21 @@ export default function Watch({
   }, [sessions?.user?.name, epiNumber, dub]);
 
   useEffect(() => {
+    const autoNext = localStorage.getItem("autoNext"),
+      autoPlay = localStorage.getItem("autoplay");
+    if (autoNext) {
+      setAutoNext(autoNext);
+    }
+    if (autoPlay) {
+      setAutoPlay(autoPlay);
+    }
+
     async function fetchData() {
       if (info) {
-        const autoplay =
-          localStorage.getItem("autoplay_video") === "true" ? true : false;
-        setAutoPlay(autoplay);
-
         const anify = await fetch("/api/v2/source", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             source:
@@ -248,9 +283,14 @@ export default function Watch({
             watchId: watchId,
             episode: epiNumber,
             id: info.id,
-            sub: dub ? "dub" : "sub",
-          }),
+            sub: dub ? "dub" : "sub"
+          })
         }).then((res) => res.json());
+
+        if (!anify?.sources?.length > 0) {
+          router.push(`/en/anime/${info.id}?notfound=true`);
+          return;
+        }
 
         const skip = await fetch(
           `https://api.aniskip.com/v2/skip-times/${info.idMal}/${parseInt(
@@ -267,31 +307,74 @@ export default function Watch({
           return res.json();
         });
 
-        const op =
-          skip?.results?.find((item) => item.skipType === "op") || null;
-        const ed =
-          skip?.results?.find((item) => item.skipType === "ed") || null;
+        let getOp =
+            skip?.results?.find((item) => item.skipType === "op") || null,
+          getEd = skip?.results?.find((item) => item.skipType === "ed") || null;
+
+        const op = getOp
+            ? {
+                startTime:
+                  anify?.intro?.start ?? Math.round(getOp?.interval.startTime),
+                endTime:
+                  anify?.intro?.end ?? Math.round(getOp?.interval.endTime),
+                text: "Opening"
+              }
+            : null,
+          ed = {
+            startTime:
+              anify?.outro?.start ?? Math.round(getEd?.interval.startTime),
+            endTime: anify?.outro?.end ?? Math.round(getEd?.interval.endTime),
+            text: "Ending"
+          };
+        const skipData = [op, ed].filter((i) => i !== null);
+
+        const quality =
+          anify?.sources?.find(
+            (i) => i.quality === "default" || i.quality === "auto"
+          ) || anify?.sources[0];
+
+        const reFormSubtitles = anify?.subtitles?.map((i) => {
+          return {
+            src: proxy + "/" + i.url,
+            label: i.lang,
+            kind: i.lang === "Thumbnails" ? "thumbnails" : "subtitles",
+            ...(i.lang === "English" && { default: true })
+          };
+        });
+
+        const thumbnails = reFormSubtitles?.find(
+          (i) => i.kind === "thumbnails"
+        );
+
+        const subtitles = reFormSubtitles?.filter(
+          (i) => i.kind !== "thumbnails"
+        );
 
         const episode = {
-          epiData: anify,
-          skip: {
-            op,
-            ed,
+          provider,
+          isDub: dub,
+          defaultQuality: {
+            url: quality?.url,
+            headers: anify?.headers
           },
+          subtitles: subtitles,
+          thumbnails: thumbnails?.src,
+          epiData: anify,
+          skip: skipData
         };
 
-        setEpisodeSource(episode);
+        setTrack(episode);
       }
     }
 
     fetchData();
     return () => {
-      setEpisodeSource();
       setPlayerState({
         currentTime: 0,
-        isPlaying: false,
+        isPlaying: false
       });
       setMarked(0);
+      setTrack(null);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -316,7 +399,7 @@ export default function Watch({
           ? "- Episode " + epiNumber
           : `- ${info?.title?.romaji || info?.title?.english}`
       }`,
-      artwork,
+      artwork
     });
   }, [episodeNavigation, info, epiNumber]);
 
@@ -326,7 +409,7 @@ export default function Watch({
         await navigator.share({
           title: `Watch Now - ${info?.title?.english || info.title.romaji}`,
           // text: `Watch [${info?.title?.romaji}] and more on Moopa. Join us for endless anime entertainment"`,
-          url: window.location.href,
+          url: window.location.href
         });
       } else {
         // Web Share API is not supported, provide a fallback or show a message
@@ -424,7 +507,15 @@ export default function Watch({
       </Modal>
       <BugReportForm isOpen={isOpen} setIsOpen={setIsOpen} />
       <main className="w-screen h-full">
-        <NewNavbar
+        {!ratingModalState.isFullscreen && (
+          <RateModal
+            toggle={ratingModalState.isOpen}
+            setToggle={setRatingModalState}
+            position="bottom"
+            session={sessions}
+          />
+        )}
+        <Navbar
           scrollP={20}
           withNav={true}
           shrink={true}
@@ -435,21 +526,23 @@ export default function Watch({
           className={`mx-auto pt-16 ${theaterMode ? "lg:pt-16" : "lg:pt-20"}`}
         >
           {theaterMode && (
-            <PlayerComponent
-              id={"cinematic"}
-              session={sessions}
-              playerRef={playerRef}
-              dub={dub}
-              info={info}
-              watchId={watchId}
-              proxy={proxy}
-              track={episodeNavigation}
-              data={episodeSource?.epiData}
-              skip={episodeSource?.skip}
-              timeWatched={userData?.timeWatched}
-              provider={provider}
-              className="w-screen max-h-[85dvh]"
-            />
+            <div
+              className={`bg-black w-full max-h-[84dvh] h-full flex-center rounded-md`}
+              style={{ aspectRatio: aspectRatio }}
+            >
+              {episodeNavigation ? (
+                <VidStack
+                  id={`${watchId}-theater`}
+                  navigation={episodeNavigation}
+                  sessions={sessions}
+                  userData={userData}
+                />
+              ) : (
+                <div className="flex-center aspect-video w-full h-full relative">
+                  <SpinLoader />
+                </div>
+              )}
+            </div>
           )}
           <div
             id="default"
@@ -459,20 +552,25 @@ export default function Watch({
           >
             <div id="primary" className="w-full">
               {!theaterMode && (
-                <PlayerComponent
-                  id={"default"}
-                  session={sessions}
-                  playerRef={playerRef}
-                  dub={dub}
-                  info={info}
-                  watchId={watchId}
-                  proxy={proxy}
-                  track={episodeNavigation}
-                  data={episodeSource?.epiData}
-                  skip={episodeSource?.skip}
-                  timeWatched={userData?.timeWatched}
-                  provider={provider}
-                />
+                <div
+                  className={`bg-black w-full flex-center rounded-md overflow-hidden ${
+                    aspectRatio === "4/3" ? "aspect-video" : ""
+                  }`}
+                  // style={{ aspectRatio: aspectRatio }}
+                >
+                  {episodeNavigation ? (
+                    <VidStack
+                      id={`${watchId}-default`}
+                      navigation={episodeNavigation}
+                      sessions={sessions}
+                      userData={userData}
+                    />
+                  ) : (
+                    <div className="flex-center aspect-video w-full h-full relative">
+                      <SpinLoader />
+                    </div>
+                  )}
+                </div>
               )}
               <div
                 id="details"
@@ -506,7 +604,7 @@ export default function Watch({
                         className="flex items-center gap-2 px-3 py-1 ring-[1px] ring-white/20 rounded overflow-hidden"
                       >
                         <ShareIcon className="w-5 h-5" />
-                        share
+                        <span className="hidden lg:block">share</span>
                       </button>
                       <button
                         type="button"
@@ -514,11 +612,10 @@ export default function Watch({
                         className="flex items-center gap-2 px-3 py-1 ring-[1px] ring-white/20 rounded overflow-hidden"
                       >
                         <FlagIcon className="w-5 h-5" />
-                        report
+                        <span className="hidden lg:block">report</span>
                       </button>
                     </div>
                   </div>
-                  {/* <div>right</div> */}
                 </div>
 
                 <Details
@@ -554,5 +651,16 @@ export default function Watch({
         </div>
       </main>
     </>
+  );
+}
+
+function SpinLoader() {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center">
+      <Spinner.Root className="text-white animate-spin opacity-100" size={84}>
+        <Spinner.Track className="opacity-25" width={8} />
+        <Spinner.TrackFill className="opacity-75" width={8} />
+      </Spinner.Root>
+    </div>
   );
 }

@@ -4,13 +4,14 @@ export default function ViewSelector({ view, setView, episode, map }) {
       <div
         className={
           episode?.length > 0
-            ? map?.every(
+            ? episode?.every(
                 (item) =>
                   item?.img === null ||
+                  item?.img?.includes("null") ||
                   item?.img?.includes("https://s4.anilist.co/") ||
                   item?.image?.includes("https://s4.anilist.co/") ||
                   item.title === null
-              ) || !map
+              ) || !episode
               ? "pointer-events-none"
               : "cursor-pointer"
             : "pointer-events-none"
@@ -32,13 +33,14 @@ export default function ViewSelector({ view, setView, episode, map }) {
             height="20"
             className={`${
               episode?.length > 0
-                ? map?.every(
+                ? episode?.every(
                     (item) =>
                       item?.img === null ||
+                      item?.img?.includes("null") ||
                       item?.img?.includes("https://s4.anilist.co/") ||
                       item?.image?.includes("https://s4.anilist.co/") ||
                       item.title === null
-                  ) || !map
+                  ) || !episode
                   ? "fill-[#1c1c22]"
                   : view === 1
                   ? "fill-action"
@@ -52,13 +54,14 @@ export default function ViewSelector({ view, setView, episode, map }) {
       <div
         className={
           episode?.length > 0
-            ? map?.every(
+            ? episode?.every(
                 (item) =>
                   item?.img === null ||
+                  item?.img?.includes("null") ||
                   item?.img?.includes("https://s4.anilist.co/") ||
                   item?.image?.includes("https://s4.anilist.co/") ||
                   item.title === null
-              ) || !map
+              ) || !episode
               ? "pointer-events-none"
               : "cursor-pointer"
             : "pointer-events-none"
@@ -75,13 +78,14 @@ export default function ViewSelector({ view, setView, episode, map }) {
           fill="none"
           className={`${
             episode?.length > 0
-              ? map?.every(
+              ? episode?.every(
                   (item) =>
                     item?.img === null ||
+                    item?.img?.includes("null") ||
                     item?.img?.includes("https://s4.anilist.co/") ||
                     item?.image?.includes("https://s4.anilist.co/") ||
                     item.title === null
-                ) || !map
+                ) || !episode
                 ? "fill-[#1c1c22]"
                 : view === 2
                 ? "fill-action"

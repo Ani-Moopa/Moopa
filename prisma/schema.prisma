@@ -1,10 +1,17 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+model RemovedMedia {
+  id        String   @id @default(cuid())
+  aniId     String?
+  additions String[]
 }
 
 model UserProfile {
