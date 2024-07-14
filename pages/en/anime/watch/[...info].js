@@ -354,10 +354,7 @@ export default function Watch({
           provider,
           isDub: dub,
           defaultQuality: {
-            // url: quality?.url,
-            url: `${proxy}/proxy/m3u8/${encodeURIComponent(
-              String(quality?.url)
-            )}/${encodeURIComponent(JSON.stringify(anify?.headers))}`,
+            url: quality?.url,
             headers: anify?.headers
           },
           subtitles: subtitles,

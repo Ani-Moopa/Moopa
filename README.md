@@ -22,7 +22,16 @@
   
 </p>
 
-> ⚠️ **DISCLAIMER**: This branch is not stable. Any errors or issues encountered while using this code will not be supported or addressed by me. Use this code at your own risk. I will not provide assistance for any problems that arise from using this code.
+> [!WARNING]  
+>  
+> As of Jul 14 2024, this repository is no longer maintained and will not receive any further updates or support from the author. If you choose to use the code in this repository, please do so at your own risk.
+>
+> ### Important Points:
+> - **No Updates**: There will be no further updates or improvements made to this repository.
+> - **No Support**: The author will not provide any support, fixes, or acknowledge any issues found in the code.
+> - **Use at Your Own Risk**: Any errors, bugs, or other issues that arise from using this code are your responsibility.
+> 
+> Thank you for your understanding. 
 
 <p align="center">
  <img src="https://github.com/Ani-Moopa/Moopa/assets/97084324/c17d5d6a-36a2-4d08-957d-ad4683dcdf0d" alt="main">
@@ -115,26 +124,23 @@ npm install
 3. Create `.env` file in the root folder and put this inside the file :
 
 ```bash
-## AniList
 CLIENT_ID="get the id from here https://anilist.co/settings/developer"
 CLIENT_SECRET="get the secret from here https://anilist.co/settings/developer"
 GRAPHQL_ENDPOINT="https://graphql.anilist.co"
 
-## NextAuth
 NEXTAUTH_SECRET='run this cmd in your bash terminal (openssl rand -base64 32) with no bracket, and paste it here'
 NEXTAUTH_URL="for development use http://localhost:3000/ and for production use your domain url"
 
-## NextJS
 PROXY_URI="This is what I use for proxying video https://github.com/chaycee/M3U8Proxy. Don't put / at the end of the url."
 API_URI="host your own API from this repo https://github.com/consumet/api.consumet.org. Don't put / at the end of the url."
 DISQUS_SHORTNAME='put your disqus shortname here (optional)'
 
-## Prisma
-DATABASE_URL="Your postgresql connection url"
+## Use any postgresql db, or supabase for free options
+DATABASE_URL="postgresql://user:password@host:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://user:password@host:5432/postgres"
 
-## Redis
 # If you don't want to use redis, just comment the REDIS_URL (press ctrl + / on windows or cmd + / on mac)
-REDIS_URL="rediss://username:password@host:port"
+REDIS_URL="redis://user:password@host:port"
 ```
 
 4. Add this endpoint as Redirect Url on AniList Developer :
@@ -148,6 +154,10 @@ https://your-website-domain/api/auth/callback/AniListProvider
 ```bash
 npx prisma migrate dev
 npx prisma generate
+
+### NOTE
+# If you get a vercel build error related to prisma that says prisma detected but no initialized just change the following line in package.json line number 8
+"build": "next build" to > "build": "npx prisma migrate deploy && npx prisma generate && next build"
 ```
 
 6. Start local server :

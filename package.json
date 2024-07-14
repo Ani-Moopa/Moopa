@@ -1,6 +1,6 @@
 {
   "name": "moopa",
-  "version": "4.4.1",
+  "version": "4.4.0",
   "private": true,
   "founder": "Factiven",
   "scripts": {
@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@consumet/extensions": "^1.6.0",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.17",
     "@prisma/client": "^5.3.1",
@@ -27,7 +28,7 @@
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "media-icons": "^1.0.0",
-    "next": "^13.5.5",
+    "next": "^14.2.5",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
     "nextjs-progressbar": "^0.0.16",

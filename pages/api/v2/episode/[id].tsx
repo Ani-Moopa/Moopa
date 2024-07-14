@@ -7,13 +7,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { AnifyEpisode, ConsumetInfo, EpisodeData } from "types";
 import { Episode } from "@/types/api/Episode";
 import { getProviderWithMostEpisodesAndImage } from "@/utils/parseMetaData";
-
-let CONSUMET_URI: string | null;
-
-CONSUMET_URI = process.env.API_URI || null;
-if (CONSUMET_URI && CONSUMET_URI.endsWith("/")) {
-  CONSUMET_URI = CONSUMET_URI.slice(0, -1);
-}
+import { getAnimeEpisode } from "@/lib/consumet/anime/episodes";
 
 const isAscending = (data: Episode[]) => {
   for (let i = 1; i < data.length; i++) {
@@ -60,9 +54,8 @@ function filterData(data: RawEpisodeData[], type: "sub" | "dub") {
 async function fetchConsumet(id?: string | string[] | undefined) {
   try {
     const fetchData = async (dub?: any) => {
-      const { data } = await axios.get<ConsumetInfo>(
-        `${CONSUMET_URI}/meta/anilist/episodes/${id}${dub ? "?dub=true" : ""}`
-      );
+      const data = await getAnimeEpisode(id, dub);
+      
       if (data?.message === "Anime not found" && data?.length < 1) {
         return [];
       }
@@ -95,7 +88,7 @@ async function fetchConsumet(id?: string | string[] | undefined) {
           item.id = item.id?.replace("dub", "anime");
         }
       });
-      console.log("replaced dub with sub");
+      // console.log("replaced dub with sub");
     }
 
     const array = [

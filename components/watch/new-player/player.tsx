@@ -324,7 +324,7 @@ export default function VidStack({
       nextButton?.classList.add("progress");
 
       timeoutId = setTimeout(() => {
-        console.log("time is up!");
+        // console.log("time is up!");
         if (navigation?.next) {
           router.push(
             `/en/anime/watch/${dataMedia.id}/${track.provider}?id=${
@@ -369,7 +369,7 @@ export default function VidStack({
         if (mark < 1 && marked < 1) {
           mark = 1;
           setMarked(1);
-          console.log("marking progress");
+          // console.log("marking progress");
           // @ts-ignore Fix when convert useAnilist to typescript
           markProgress({
             mediaId: dataMedia.id,
